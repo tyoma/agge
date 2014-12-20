@@ -10,12 +10,12 @@ namespace aggx
 	public:
 		enum
 		{
-			extra_precision_shift = 8,
 			_1_shift = 8,
+			_ep_shift = 4,
 
-			extra_precision = 1 << extra_precision_shift,
 			_1 = 1 << _1_shift,
 			_1_mask = _1 - 1,
+			_ep = 1 << (_1_shift + _ep_shift),
 		};
 
 #pragma pack(push, 1)
@@ -43,7 +43,7 @@ namespace aggx
 	private:
 		const vector_rasterizer &operator =(const vector_rasterizer &);
 
-		void hline(float tg, short ey, int x1, int x2);
+		void hline(int tg, short ey, int x1, int x2, int dy);
 		void jump(short x, short y);
 		void jumpc(short x, short y);
 		void extend_bounds(int x, int y);

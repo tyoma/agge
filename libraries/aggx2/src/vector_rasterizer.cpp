@@ -86,9 +86,9 @@ namespace aggx
 		if (ey2 == ey1)
 		{
 			if (ex2 == ex1)
-				add(_current, fx1 + fx2, fy2 - fy1);
+				add(_current, fx1 + fx2, y2 - y1);
 			else
-				hline(static_cast<float>(extra_precision * (y2 - y1)) / static_cast<float>(x2 - x1), ey1, x1, x2);
+				hline(_ep * (y2 - y1) / (x2 - x1), ey1, x1, x2, y2 - y1);
 			return;
 		}
 
@@ -105,40 +105,46 @@ namespace aggx
 		}
 	}
 
-	void vector_rasterizer::hline(float tg, short ey, int x1, int x2)
+	void vector_rasterizer::hline(int tg, short ey, int x1, int x2, int dy)
 	{
-		short ex1 = static_cast<short>(x1 >> _1_shift);
+		int ex1 = x1 >> _1_shift;
 		const int fx1 = x1 & _1_mask;
-		const int ex2 = static_cast<short>(x2 >> _1_shift);
+		const int ex2 = x2 >> _1_shift;
 		const int fx2 = x2 & _1_mask;
-
-		short stepx = -1;
-		int first = 0;
+		int stepx, first;
+		int delta_precise, delta_approx, accy_precise = 0, accy_approx = 0;
 
 		if (x2 > x1)
-		{
-			stepx = +1;
-			first = _1;
-		}
+			stepx = +1, first = _1;
+		else
+			stepx = -1, first = 0;
 				
 		jump(ex1, ey);
-		set(_current, fx1 + first, static_cast<int>(tg * (first - fx1)));
 
+		delta_precise = tg * (first - fx1);
+		delta_approx = delta_precise / _ep;
+
+		set(_current, fx1 + first, delta_approx);
+		accy_precise += delta_precise;
+		accy_approx += delta_approx;
 		ex1 += stepx;
-		jumpc(ex1, ey);
+		jump(ex1, ey);
 
 		if (ex1 != ex2)
 		{
-			const int inner_area = static_cast<int>((first + first - _1) * _1 * tg), inner_delta = inner_area >> _1_shift;
-
+			delta_precise = (first + first - _1) * tg;
 			do
 			{
-				seta(_current, inner_area, inner_delta);
+				accy_precise += delta_precise;
+				delta_approx = (accy_precise - _ep * accy_approx) / _ep;
+				accy_approx += delta_approx;
+
+				set(_current, _1, delta_approx);
 				ex1 += stepx;
-				jumpc(ex1, ey);
+				jump(ex1, ey);
 			} while (ex1 != ex2);
 		}
-		set(_current, fx2 + _1 - first, static_cast<int>(tg * (fx2 + first - _1)));
+		set(_current, fx2 + _1 - first, dy - accy_approx);
 	}
 
 	void vector_rasterizer::jump(short x, short y)
@@ -150,8 +156,8 @@ namespace aggx
 	void vector_rasterizer::jumpc(short x, short y)
 	{
 		commit();
-		_current.x = static_cast<short>(x);
-		_current.y = static_cast<short>(y);
+		_current.x = x;
+		_current.y = y;
 	}
 
 	void vector_rasterizer::extend_bounds(int x, int y)

@@ -479,7 +479,7 @@ namespace aggx
 				vector_rasterizer::cells_container cells;
 				vector_rasterizer vr(cells);
 
-				// ACT
+				// ACT (76 x 153)
 				vr.line(fp(15.1), fp(10.1), fp(15.4), fp(10.1));
 				vr.line(fp(15.4), fp(10.1), fp(15.4), fp(10.7));
 				vr.line(fp(15.4), fp(10.7), fp(15.1), fp(10.7));
@@ -488,7 +488,7 @@ namespace aggx
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
-					{ 15, 10, 23256, 0 },
+					{ 15, 10, 2 * 11628, 0 },
 				};
 
 				assert_equal(reference1, cells);
@@ -496,7 +496,7 @@ namespace aggx
 				// INIT
 				cells.clear();
 
-				// ACT
+				// ACT (190 x 128)
 				vr.line(fp(17.15), fp(101.1), fp(17.15), fp(101.6));
 				vr.line(fp(17.15), fp(101.6), fp(17.89), fp(101.6));
 				vr.line(fp(17.89), fp(101.6), fp(17.89), fp(101.1));
@@ -505,7 +505,7 @@ namespace aggx
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
-					{ 17, 101, -48640, 0 },
+					{ 17, 101, -2 * 24320, 0 },
 				};
 
 				assert_equal(reference2, cells);
@@ -567,7 +567,7 @@ namespace aggx
 				vector_rasterizer vr(cells);
 
 				// ACT
-				vr.line(fp(0.83), fp(0.42), fp(0.14), fp(0.71));
+				vr.line(fp(0.83), fp(0.42), fp(0.14), fp(0.71)); // in fp - [(212, 108); (36, 182)), v(-176, 74)
 				vr.commit();
 
 				// ASSERT
@@ -581,7 +581,7 @@ namespace aggx
 				cells.clear();
 
 				// ACT
-				vr.line(fp(-3.93), fp(-17000.7), fp(-3.428), fp(-17000.3));
+				vr.line(fp(-3.93), fp(-17000.7), fp(-3.428), fp(-17000.3)); // in fp - [(-1006, -4352179); (-878, -4352077)), v(128, 102)
 				vr.commit();
 
 				// ASSERT
@@ -614,19 +614,20 @@ namespace aggx
 			}
 
 
-			test( IntraCellPositivelyInclinedHLineProducePositiveCoverAndArea )
+			test( DeltaReminderIsAddedToTheLastCell )
 			{
 				// INIT
 				vector_rasterizer::cells_container cells;
 				vector_rasterizer vr(cells);
 
-				// ACT
+				// ACT (tg = 2447)
 				vr.line(fp(1.34), fp(10.13), fp(2.0), fp(10.523)); // in fp - [(343, 2593); (512, 2694)), v(169, 101)
 				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
-					{ 1, 10, 8868608, 25856 },
+					{ 1, 10, 34300, 100 },
+					{ 2, 10, 0, 1 },
 				};
 
 				assert_equal(reference, cells);
@@ -639,17 +640,17 @@ namespace aggx
 				vector_rasterizer::cells_container cells;
 				vector_rasterizer vr(cells);
 
-				// ACT (forward x)
+				// ACT (forward x, tg = 395)
 				vr.line(fp(1.34), fp(130.13), fp(5.43), fp(130.523)); // in fp - [(343, 33313); (1390, 33414)), v(1047, 101)
 				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
-					{ 1, 130, 1431339, 4173 },
-					{ 2, 130, 1618432, 6322 },
-					{ 3, 130, 1618432, 6322 },
-					{ 4, 130, 1618432, 6322 },
-					{ 5, 130, 298760, 2716 },
+					{ 1, 130, 5488, 16 },
+					{ 2, 130, 6144, 24 },
+					{ 3, 130, 6400, 25 },
+					{ 4, 130, 6400, 25 },
+					{ 5, 130, 1210, 11 },
 				};
 
 				assert_equal(reference1, cells);
@@ -657,17 +658,17 @@ namespace aggx
 				// INIT
 				cells.clear();
 
-				// ACT (backward x)
+				// ACT (backward x, tg = -395)
 				vr.line(fp(5.43), fp(130.13), fp(1.34), fp(130.523)); // in fp - [(1390, 33313); (343, 33414)), v(-1047, 101)
 				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
-					{ 5, 130, 298760, 2716 },
-					{ 4, 130, 1618432, 6322 },
-					{ 3, 130, 1618432, 6322 },
-					{ 2, 130, 1618432, 6322 },
-					{ 1, 130, 1431339, 4173 },
+					{ 5, 130, 1100, 10 },
+					{ 4, 130, 6400, 25 },
+					{ 3, 130, 6144, 24 },
+					{ 2, 130, 6400, 25 },
+					{ 1, 130, 5831, 17 },
 				};
 
 				assert_equal(reference2, cells);
@@ -680,17 +681,38 @@ namespace aggx
 				vector_rasterizer::cells_container cells;
 				vector_rasterizer vr(cells);
 
-				// ACT (right triangle)
+				// ACT
 				vr.line(fp(5.43), fp(130.523), fp(1.34), fp(130.13)); // in fp - [(1390, 33414); (343, 33313)), v(-1047, -101)
 				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
-					{ 5, 130, -298760, -2716 },
-					{ 4, 130, -1618432, -6322 },
-					{ 3, 130, -1618432, -6322 },
-					{ 2, 130, -1618432, -6322 },
-					{ 1, 130, -1431339, -4173 },
+					{ 5, 130, -1100, -10 },
+					{ 4, 130, -6400, -25},
+					{ 3, 130, -6144, -24 },
+					{ 2, 130, -6400, -25 },
+					{ 1, 130, -5831, -17 },
+				};
+
+				assert_equal(reference, cells);
+			}
+
+
+			test( InterCellLowRisingLineRepresentedBySparsedCells )
+			{
+				// INIT
+				vector_rasterizer::cells_container cells;
+				vector_rasterizer vr(cells);
+
+				// ACT
+				vr.line(0, 0, 1536, 3);
+				vr.commit();
+
+				// ASSERT
+				const vector_rasterizer::cell reference[] = {
+					{ 1, 0, 256, 1 },
+					{ 3, 0, 256, 1 },
+					{ 5, 0, 256, 1 },
 				};
 
 				assert_equal(reference, cells);
@@ -712,7 +734,7 @@ namespace aggx
 
 				for (short x = 0; x < 255; ++x)
 				{
-					const vector_rasterizer::cell c = { x, 0, 256 * 256, 256 };
+					const vector_rasterizer::cell c = { x, 0, 256, 1 };
 
 					reference.push_back(c);
 				}

@@ -12,6 +12,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sandbox.android", "tests\sandbox.android\sandbox.android.vcxproj", "{8D284FFF-6B35-4F6A-ADCE-CFCF759D6BC3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "aggx.tests", "tests\aggx\aggx.tests.vcxproj", "{4520E6F4-5FCB-4D40-8391-AA96614F799A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AD0BA725-9F6F-474E-ADB0-1F506B1CD394} = {AD0BA725-9F6F-474E-ADB0-1F506B1CD394}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8B1C0537-2027-4D8C-82BD-72E0E69DB827}"
 EndProject
