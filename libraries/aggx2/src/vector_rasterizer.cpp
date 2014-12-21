@@ -144,7 +144,7 @@ namespace aggx
 		if (ex1 == ex2)
 		{
 			jump(ex1, ey);
-			add(_current, fx1 + fx2, dy); // TODO: need 'add'
+			add(_current, fx1 + fx2, dy);
 		}
 		else
 		{
