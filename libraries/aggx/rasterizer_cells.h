@@ -1,5 +1,7 @@
 #pragma once
 
+#include <aggx2/vector_rasterizer.h>
+
 #include <vector>
 #include "pod_vector.h"
 
@@ -8,15 +10,7 @@ namespace aggx
 	class rasterizer_cells
 	{
 	public:
-#pragma pack(push, 1)
-		struct cell
-		{
-			int cover, area;
-			short x, y;
-
-			static cell initial;
-		};
-#pragma pack(pop)
+		typedef vector_rasterizer::cell cell;
 
 	public:
 		rasterizer_cells();
@@ -24,10 +18,10 @@ namespace aggx
 		void reset();
 		void line(int x1, int y1, int x2, int y2);
 
-		int min_x() const { return m_min_x; }
-		int min_y() const { return m_min_y; }
-		int max_x() const { return m_max_x; }
-		int max_y() const { return m_max_y; }
+		int min_x() const { return m_vrasterizer.hrange().first; }
+		int min_y() const { return m_vrasterizer.vrange().first; }
+		int max_x() const { return m_vrasterizer.hrange().second; }
+		int max_y() const { return m_vrasterizer.vrange().second; }
 
 		void sort_cells();
 
@@ -43,19 +37,9 @@ namespace aggx
 		typedef std::vector<sorted_bin> scanline_blocks_container_type;
 
 	private:
-		void switch_cell(int x, int y);
-		void force_switch_cell(int x, int y);
-		void commit_cell();
-		void render_hline(int tg, short ey, int x1, int fy1, int x2, int fy2);
-
-	private:
-		cell m_current;
 		cells_container m_cells, m_cells_temporary;
 		scanline_blocks_container_type m_sorted_bins;
-		int m_min_x;
-		int m_min_y;
-		int m_max_x;
-		int m_max_y;
+		vector_rasterizer m_vrasterizer;
 		bool m_sorted;
 	};
 
@@ -66,10 +50,19 @@ namespace aggx
 	};
 
 
+	inline void rasterizer_cells::reset()
+	{
+		m_cells.clear();
+		m_sorted = false;
+		m_vrasterizer.reset();
+	}
+
+	inline void rasterizer_cells::line(int x1, int y1, int x2, int y2)
+	{	m_vrasterizer.line(x1, y1, x2, y2);	}
 
 	inline unsigned rasterizer_cells::scanline_num_cells(unsigned y) const 
-	{	return m_sorted_bins[y - m_min_y].num;	}
+	{	return m_sorted_bins[y - m_vrasterizer.vrange().first].num;	}
 
 	inline const rasterizer_cells::cell *rasterizer_cells::scanline_cells(unsigned y) const
-	{	return m_cells.data() + m_sorted_bins[y - m_min_y].start;	}
+	{	return m_cells.data() + m_sorted_bins[y - m_vrasterizer.vrange().first].start;	}
 }

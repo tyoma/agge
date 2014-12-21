@@ -285,6 +285,11 @@
   <ItemGroup>
     <ResourceCompile Include="gdi-performance.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\libraries\aggx2\src\aggx.library.vcxproj">
+      <Project>{4124f401-2fa6-454e-8143-06c12aa01905}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

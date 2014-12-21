@@ -41,10 +41,10 @@ namespace aggx
 				vector_rasterizer::range hrange = vr.hrange();
 
 				// ASSERT
-				assert_equal(0x7FFFFFFF, vrange.first);
-				assert_equal(-0x7FFFFFFF, vrange.second);
-				assert_equal(0x7FFFFFFF, hrange.first);
-				assert_equal(-0x7FFFFFFF, hrange.second);
+				assert_equal(0x7FFF, vrange.first);
+				assert_equal(-0x7FFF, vrange.second);
+				assert_equal(0x7FFF, hrange.first);
+				assert_equal(-0x7FFF, hrange.second);
 			}
 
 
@@ -71,6 +71,27 @@ namespace aggx
 				assert_equal(-24, hrange2.second);
 				assert_equal(-37, vrange2.first);
 				assert_equal(-37, vrange2.second);
+			}
+
+
+			test( BoundsAreResetOnRequest )
+			{
+				// INIT
+				vector_rasterizer::cells_container cells;
+				vector_rasterizer vr(cells);
+
+				vr.line(fp(13.0), fp(17.0), fp(13.5), fp(17.7));
+
+				// ACT
+				vr.reset();
+				vector_rasterizer::range vrange = vr.vrange();
+				vector_rasterizer::range hrange = vr.hrange();
+
+				// ASSERT
+				assert_equal(0x7FFF, vrange.first);
+				assert_equal(-0x7FFF, vrange.second);
+				assert_equal(0x7FFF, hrange.first);
+				assert_equal(-0x7FFF, hrange.second);
 			}
 
 
@@ -121,6 +142,24 @@ namespace aggx
 
 				// ASSERT
 				assert_is_true(cells.empty());
+			}
+
+
+			test( RepeatedCommitDoesNotProduceOutput )
+			{
+				// INIT
+				vector_rasterizer::cells_container cells;
+				vector_rasterizer vr(cells);
+
+				vr.line(fp(15.0), fp(10.1), fp(15.0), fp(10.7));
+				vr.commit();
+				cells.clear();
+
+				// ACT
+				vr.commit();
+
+				// ASSERT
+				assert_is_empty(cells);
 			}
 
 
@@ -743,6 +782,148 @@ namespace aggx
 			}
 
 
+			test( InclinedIntraCellLinesCoversAndAreasAreAdditiveOnJoin )
+			{
+				// INIT
+				vector_rasterizer::cells_container cells;
+				vector_rasterizer vr(cells);
+
+				// ACT (right triangle)
+				vr.line(fp(0.2), fp(0.9), fp(0.2), fp(0.5));
+				vr.line(fp(0.2), fp(0.5), fp(2.9), fp(0.7));
+				vr.commit();
+
+				// ASSERT
+				const vector_rasterizer::cell reference[] = {
+					{ 0, 0, -5799, -87 },
+					{ 1, 0, 4608, 18 },
+					{ 2, 0, 4140, 18 },
+				};
+
+				assert_equal(reference, cells);
+			}
+
+
+			test( InterCellPositivelyInclinedTwoShortHLinesProducePositiveCoverAndArea )
+			{
+				// INIT
+				vector_rasterizer::cells_container cells;
+				vector_rasterizer vr(cells);
+
+				// ACT (ctg = 252)
+				vr.line(fp(1.2), fp(-1.9), fp(1.3), fp(-0.25)); // in fp - [(307, -486); (333, -64)), v(26, 422)
+				vr.commit();
+
+				// ASSERT
+				const vector_rasterizer::cell reference1[] = {
+					{ 1, -2, 26680, 230 }, // dx = 14
+					{ 1, -1, 27264, 192 }, // dx = 12
+				};
+
+				assert_equal(reference1, cells);
+
+				// INIT
+				cells.clear();
+
+				// ACT (ctg = 3319)
+				vr.line(fp(0.2), fp(1.9), fp(0.5), fp(2.27)); // in fp - [(51, 486); (128, 581)), v(77, 95)
+				vr.commit();
+
+				// ASSERT
+				const vector_rasterizer::cell reference2[] = {
+					{ 0, 1, 3198, 26 }, // dx = 21
+					{ 0, 2, 13800, 69 }, // dx = 56
+				};
+
+				assert_equal(reference2, cells);
+			}
+
+
+			test( InterCellNegativelyInclinedTwoShortHLinesProducePositiveCoverAndArea )
+			{
+				// INIT
+				vector_rasterizer::cells_container cells;
+				vector_rasterizer vr(cells);
+
+				// ACT (ctg = -713)
+				vr.line(fp(1.2), fp(1.9), fp(1.5), fp(0.17)); // in fp - [(307, 486); (384, 44)), v(77, -442)
+				vr.commit();
+
+				// ASSERT
+				const vector_rasterizer::cell reference[] = {
+					{ 1, 1, -32660, -230 }, // dx = 40
+					{ 1, 0, -46428, -212 }, // dx = 37
+				};
+
+				assert_equal(reference, cells);
+			}
+
+
+			test( InterCellPositivelyInclinedMultipleShortHLinesProducePositiveCoverAndArea )
+			{
+				// INIT
+				vector_rasterizer::cells_container cells;
+				vector_rasterizer vr(cells);
+
+				// ACT
+				vr.line(fp(10.2), fp(-1.9), fp(10.9), fp(1.7)); // in fp - [(2611, -486); (2790, 435)), v(179, 921)
+				vr.commit();
+
+				// ASSERT
+				const vector_rasterizer::cell reference[] = {
+					{ 10, -2, 33580, 230 },
+					{ 10, -1, 61440, 256 },
+					{ 10, 0, 87040, 256 },
+					{ 10, 1, 76075, 179 },
+				};
+
+				assert_equal(reference, cells);
+			}
+
+
+			test( InterCellPositivelyInclinedMultipleShortHLinesNearBoundsProducePositiveCoverAndArea )
+			{
+				// INIT
+				vector_rasterizer::cells_container cells;
+				vector_rasterizer vr(cells);
+
+				// ACT
+				vr.line(fp(8189.2), fp(-1.9), fp(8189.9), fp(1.7));
+				vr.commit();
+
+				// ASSERT
+				const vector_rasterizer::cell reference[] = {
+					{ 8189, -2, 33580, 230 },
+					{ 8189, -1, 61440, 256 },
+					{ 8189, 0, 87040, 256 },
+					{ 8189, 1, 76075, 179 },
+				};
+
+				assert_equal(reference, cells);
+			}
+
+
+			test( InclinedInterCellShortHLinesCoversAndAreasAreAdditiveOnJoin )
+			{
+				// INIT
+				vector_rasterizer::cells_container cells;
+				vector_rasterizer vr(cells);
+
+				// ACT
+				vr.line(fp(8189.1), fp(-1.7), fp(8189.2), fp(-1.9));
+				vr.line(fp(8189.2), fp(-1.9), fp(8189.9), fp(1.7));
+				vr.commit();
+
+				// ASSERT
+				const vector_rasterizer::cell reference[] = {
+					{ 8189, -2, 29653, 179 },
+					{ 8189, -1, 61440, 256 },
+					{ 8189, 0, 87040, 256 },
+					{ 8189, 1, 76075, 179 },
+				};
+
+				assert_equal(reference, cells);
+			}
 
 		end_test_suite
 	}

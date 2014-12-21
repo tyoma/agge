@@ -22,7 +22,8 @@ namespace aggx
 		struct cell
 		{
 			short x, y;
-			int area, cover;
+			int area;
+			short cover;
 
 			static const cell empty;
 		};
@@ -33,6 +34,8 @@ namespace aggx
 
 	public:
 		explicit vector_rasterizer(cells_container &cells);
+		
+		void reset();
 
 		void line(int x1, int y1, int x2, int y2);
 		void commit();
@@ -46,11 +49,11 @@ namespace aggx
 		void hline(int tg, short ey, int x1, int x2, int dy);
 		void jump(short x, short y);
 		void jumpc(short x, short y);
-		void extend_bounds(int x, int y);
+		void extend_bounds(short x, short y);
 
 	private:
 		cells_container &_cells;
-		int _min_x, _min_y, _max_x, _max_y;
+		short _min_x, _min_y, _max_x, _max_y;
 		cell _current;
 	};
 
