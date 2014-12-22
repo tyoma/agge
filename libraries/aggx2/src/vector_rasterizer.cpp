@@ -42,64 +42,81 @@ namespace aggx
 		if (y2 == y1)
 		{
 			// Trivial case. Happens often.
-			jump(ex2, ey2);
+
+			jump_xy(ex2, ey2);
 			return;
 		}
 
 		const int dx = x2 - x1;
 		const int dy = y2 - y1;
-		const short stepy = dy > 0 ? +1 : -1;
-		const int first = dy > 0 ? _1 : 0;
+
+		if (ey2 == ey1)
+		{
+			// Everything is on a single hline.
+
+			if (ex2 == ex1)
+			{
+				jump_xy(ex1, ey1);
+				add(_current, (x1 & _1_mask) + (x2 & _1_mask), dy);
+			}
+			else
+				hline(float(_ep * dy) / dx, ey1, x1, x2, dy);
+			return;
+		}
+
 		const int fy1 = y1 & _1_mask;
 		const int fy2 = y2 & _1_mask;
+		const short step = dy > 0 ? +1 : -1;
+		const int near = dy > 0 ? _1 : 0;
+		const int far = _1 - near;
 
-		jump(ex1, ey1);
+		jump_xy(ex1, ey1);
 
-		if (x2 == x1 && ey2 != ey1)
+		if (x2 == x1)
 		{
+			// Vertical line - we have to calculate start and end cells,
+			// and then - the common values of the area and coverage for
+			// all cells of the line. We know exactly there's only one 
+			// cell, so, we don't have to call hline().
+
 			const int two_fx = 2 * (x1 & _1_mask);
 
-			add(_current, two_fx, first - fy1);
+			add(_current, two_fx, near - fy1);
 
-			ey1 += stepy;
+			ey1 += step;
 			jumpc(ex1, ey1);
 
 			if (ey1 != ey2)
 			{
-				const int inner_delta = first + first - _1, inner_area = two_fx * inner_delta;
+				const int inner_delta = near - far, inner_area = two_fx * inner_delta;
 
 				do
 				{
 					seta(_current, inner_area, inner_delta);
-					ey1 += stepy;
+					ey1 += step;
 					jumpc(ex1, ey1);
 				} while (ey1 != ey2);
 			}
-			set(_current, two_fx, fy2 + first - _1);
-		}
-		else if (ey2 == ey1)
-		{
-			if (ex2 == ex1)
-				add(_current, (x1 & _1_mask) + (x2 & _1_mask), dy);
-			else
-				hline(float(_ep * dy) / dx, ey1, x1, x2, dy);
+			set(_current, two_fx, fy2 - far);
 		}
 		else
 		{
+			// Ok, we have to render several hlines.
+
 			const int tg = float(_ep * dy) / dx, ctg = float(_ep * dx) / dy;
 			int delta, accx_precise, accx, x_to;
 
-			accx_precise = ctg * (first - fy1);
+			accx_precise = ctg * (near - fy1);
 			delta = accx_precise / _ep;
 			accx = delta;
 			x_to = x1 + delta;
 			
-			hline(tg, ey1, x1, x_to, first - fy1);
-			ey1 += stepy;
+			hline(tg, ey1, x1, x_to, near - fy1);
+			ey1 += step;
 
 			if (ey1 != ey2)
 			{
-				const int lift = first + first - _1;
+				const int lift = near - far;
 				const int delta_precise = ctg * lift;
 
 				do
@@ -111,10 +128,10 @@ namespace aggx
 					x_to += delta;
 
 					hline(tg, ey1, x1, x_to, lift);
-					ey1 += stepy;
+					ey1 += step;
 				} while (ey1 != ey2);
 			}
-			hline(tg, ey1, x_to, x2, fy2 - _1 + first);
+			hline(tg, ey1, x_to, x2, fy2 - far);
 		}
 	}
 
@@ -133,7 +150,9 @@ namespace aggx
 
 		if (!dy)
 		{
-			jump(ex2, ey);	// Untestable optimization.
+			// Trivial case. Happens often.
+
+			jump_xy(ex2, ey);
 			return;
 		}
 
@@ -141,30 +160,34 @@ namespace aggx
 		const int fx1 = x1 & _1_mask;
 		const int fx2 = x2 & _1_mask;
 
+		jump_xy(ex1, ey);
+
 		if (ex1 == ex2)
 		{
-			jump(ex1, ey);
+			// Everything is located in a single cell. That is easy!
+
 			add(_current, fx1 + fx2, dy);
 		}
 		else
 		{
-			const short stepx = x2 > x1 ? +1 : -1;
-			const int first = x2 > x1 ? _1 : 0;
-			int delta, accy_precise, accy;
-				
-			jump(ex1, ey);
+			// Ok, we'll have to render a run of adjacent cells on the same hline...
 
-			accy_precise = tg * (first - fx1);
+			const int step = x2 > x1 ? +1 : -1;
+			const int near = x2 > x1 ? _1 : 0;
+			const int far = _1 - near;
+			int delta, accy_precise, accy;
+
+			accy_precise = tg * (near - fx1);
 			delta = accy_precise / _ep;
 			accy = delta;
 
-			add(_current, fx1 + first, delta);
-			ex1 += stepx;
-			jump(ex1, ey);
+			add(_current, fx1 + near, delta);
+			ex1 += step;
+			jump_x(ex1);
 
 			if (ex1 != ex2)
 			{
-				const int delta_precise = (first + first - _1) * tg;
+				const int delta_precise = (near - far) * tg;
 
 				do
 				{
@@ -173,18 +196,24 @@ namespace aggx
 					accy += delta;
 
 					set(_current, _1, delta);
-					ex1 += stepx;
-					jump(ex1, ey);
+					ex1 += step;
+					jump_x(ex1);
 				} while (ex1 != ex2);
 			}
-			set(_current, fx2 + _1 - first, dy - accy);
+			set(_current, fx2 + far, dy - accy);
 		}
 	}
 
-	void vector_rasterizer::jump(short x, short y)
+	void vector_rasterizer::jump_xy(short x, short y)
 	{
 		if (_current.x != x || _current.y != y)
 			jumpc(x, y);
+	}
+
+	void vector_rasterizer::jump_x(short x)
+	{
+		commit();
+		_current.x = x;
 	}
 
 	void vector_rasterizer::jumpc(short x, short y)

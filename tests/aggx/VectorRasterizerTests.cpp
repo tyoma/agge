@@ -925,6 +925,33 @@ namespace aggx
 				assert_equal(reference, cells);
 			}
 
+
+			test( SteepInclinedLineIsSubjectedToSparsedHDeltaCalculation )
+			{
+				// INIT
+				vector_rasterizer::cells_container cells;
+				vector_rasterizer vr(cells);
+
+				// ACT
+				vr.line(0x1FF005, 0, 0x1FF008, 3 * 3 * 256);
+				vr.commit();
+
+				// ASSERT
+				const vector_rasterizer::cell reference[] = {
+					{ 0x1FF0, 0, 2560, 256 },
+					{ 0x1FF0, 1, 2560, 256 },
+					{ 0x1FF0, 2, 2560, 256 },
+					{ 0x1FF0, 3, 2816, 256 },
+					{ 0x1FF0, 4, 3072, 256 },
+					{ 0x1FF0, 5, 3072, 256 },
+					{ 0x1FF0, 6, 3328, 256 },
+					{ 0x1FF0, 7, 3584, 256 },
+					{ 0x1FF0, 8, 3584, 256 },
+				};
+
+				assert_equal(reference, cells);
+			}
+
 		end_test_suite
 	}
 }

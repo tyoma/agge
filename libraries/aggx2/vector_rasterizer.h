@@ -47,7 +47,8 @@ namespace aggx
 		const vector_rasterizer &operator =(const vector_rasterizer &);
 
 		void hline(int tg, short ey, int x1, int x2, int dy);
-		void jump(short x, short y);
+		void jump_xy(short x, short y);
+		void jump_x(short x);
 		void jumpc(short x, short y);
 		void extend_bounds(short x, short y);
 
