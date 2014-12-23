@@ -8,13 +8,13 @@ namespace aggx
 	{
 		void add(vector_rasterizer::cell &c, int x1x2, int delta)
 		{
-			c.cover += delta;
+			c.cover += static_cast<short>(delta);
 			c.area += x1x2 * delta;
 		}
 
 		void seta(vector_rasterizer::cell &c, int area, int delta)
 		{
-			c.cover = delta;
+			c.cover = static_cast<short>(delta);
 			c.area = area;
 		}
 
@@ -60,7 +60,7 @@ namespace aggx
 				add(_current, (x1 & _1_mask) + (x2 & _1_mask), dy);
 			}
 			else
-				hline(float(_ep * dy) / dx, ey1, x1, x2, dy);
+				hline(_ep * dy / dx, ey1, x1, x2, dy);
 			return;
 		}
 
@@ -103,7 +103,7 @@ namespace aggx
 		{
 			// Ok, we have to render several hlines.
 
-			const int tg = float(_ep * dy) / dx, ctg = float(_ep * dx) / dy;
+			const int tg = _ep * dy / dx, ctg = _ep * dx / dy;
 			int delta, accx_precise, accx, x_to;
 
 			accx_precise = ctg * (near - fy1);
@@ -146,7 +146,7 @@ namespace aggx
 
 	__forceinline void vector_rasterizer::hline(int tg, short ey, int x1, int x2, int dy)
 	{
-		const short ex2 = x2 >> _1_shift;
+		const short ex2 = static_cast<short>(x2 >> _1_shift);
 
 		if (!dy)
 		{
@@ -156,7 +156,7 @@ namespace aggx
 			return;
 		}
 
-		short ex1 = x1 >> _1_shift;
+		short ex1 = static_cast<short>(x1 >> _1_shift);
 		const int fx1 = x1 & _1_mask;
 		const int fx2 = x2 & _1_mask;
 
@@ -182,7 +182,7 @@ namespace aggx
 			accy = delta;
 
 			add(_current, fx1 + near, delta);
-			ex1 += step;
+			ex1 += static_cast<short>(step);
 			jump_x(ex1);
 
 			if (ex1 != ex2)
@@ -196,7 +196,7 @@ namespace aggx
 					accy += delta;
 
 					set(_current, _1, delta);
-					ex1 += step;
+					ex1 += static_cast<short>(step);
 					jump_x(ex1);
 				} while (ex1 != ex2);
 			}
