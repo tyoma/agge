@@ -58,6 +58,7 @@
       <AdditionalIncludeDirectories>../../libraries</AdditionalIncludeDirectories>
       <GccExceptionHandling>true</GccExceptionHandling>
       <StrictAliasing>true</StrictAliasing>
+      <InlineLimit>5000</InlineLimit>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -72,10 +73,15 @@
     <None Include="AndroidApk\src\impression\sandbox\SandboxView.java" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\libraries\aggx2\src\vector_rasterizer.cpp" />
     <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp" />
     <ClCompile Include="..\..\libraries\aggx\rasterizer.cpp" />
     <ClCompile Include="..\..\libraries\aggx\rasterizer_cells.cpp" />
     <ClCompile Include="sandbox_view.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\libraries\aggx2\basics.h" />
+    <ClInclude Include="..\..\libraries\aggx2\vector_rasterizer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
