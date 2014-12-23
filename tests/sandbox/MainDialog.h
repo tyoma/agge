@@ -25,7 +25,6 @@
 
 struct HWND__;
 typedef HWND__ *HWND;
-typedef long longptr_t;
 
 namespace aggx
 {
@@ -44,8 +43,8 @@ public:
 	void Update();
 
 private:
-	static longptr_t __stdcall windowProcProxy(HWND hwnd, unsigned int message, uintptr_t wparam, longptr_t lparam);
-	longptr_t windowProc(unsigned int message, uintptr_t wparam, longptr_t lparam);
+	static uintptr_t __stdcall windowProcProxy(HWND hwnd, unsigned int message, uintptr_t wparam, uintptr_t lparam);
+	uintptr_t windowProc(unsigned int message, uintptr_t wparam, uintptr_t lparam);
 
 	void onDestroy();
 
@@ -53,7 +52,7 @@ private:
 
 private:
 	HWND _window;
-	longptr_t _previousWindowProc;
+	uintptr_t _previousWindowProc;
 	std::auto_ptr<aggx::bitmap> _bitmap;
 	const render_method _render;
 

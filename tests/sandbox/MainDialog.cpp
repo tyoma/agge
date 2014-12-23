@@ -42,7 +42,7 @@ MainDialog::MainDialog(const render_method &render)
 	if (!_window)
 		throw std::runtime_error("Cannot create window!");
 	::SetProp(_window, _T("windowProc"), static_cast<HANDLE>(this));
-	_previousWindowProc = ::SetWindowLongPtr(_window, GWLP_WNDPROC, reinterpret_cast<longptr_t>(&windowProcProxy));
+	_previousWindowProc = ::SetWindowLongPtr(_window, GWLP_WNDPROC, reinterpret_cast<uintptr_t>(&windowProcProxy));
 
 	::SetTimer(_window, 1, 10, NULL);
 
@@ -75,12 +75,12 @@ void MainDialog::destroy()
 	}
 }
 
-longptr_t __stdcall MainDialog::windowProcProxy(HWND hwnd, unsigned int message, uintptr_t wparam, longptr_t lparam)
+uintptr_t __stdcall MainDialog::windowProcProxy(HWND hwnd, unsigned int message, uintptr_t wparam, uintptr_t lparam)
 {
 	return static_cast<MainDialog *>(::GetProp(hwnd, _T("windowProc")))->windowProc(message, wparam, lparam);
 }
 
-longptr_t MainDialog::windowProc(unsigned int message, uintptr_t wparam, longptr_t lparam)
+uintptr_t MainDialog::windowProc(unsigned int message, uintptr_t wparam, uintptr_t lparam)
 {
 	switch (message)
 	{
