@@ -4,8 +4,6 @@
 *.user
 *.ipch
 _*
-/tests/sandbox.android/AndroidApk/bin
-/tests/sandbox.android/AndroidApk/gen
-/tests/sandbox.android/AndroidApk/libs
-
-
+/misc/experiments/sandbox.android/AndroidApk/bin
+/misc/experiments/sandbox.android/AndroidApk/gen
+/misc/experiments/sandbox.android/AndroidApk/libs
