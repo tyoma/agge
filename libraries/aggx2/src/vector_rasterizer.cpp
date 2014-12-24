@@ -104,11 +104,11 @@ namespace aggx
 			// Ok, we have to render several hlines.
 
 			const int tg = _ep * dy / dx, ctg = _ep * dx / dy;
-			int delta, accx_precise, accx, x_to;
+			int delta, acc, x_to;
 
-			accx_precise = ctg * (near - fy1);
-			delta = accx_precise / _ep;
-			accx = delta;
+			acc = ctg * (near - fy1);
+			delta = acc >> _ep_shift;
+			acc -= delta << _ep_shift;
 			x_to = x1 + delta;
 			
 			hline(tg, ey1, x1, x_to, near - fy1);
@@ -121,10 +121,10 @@ namespace aggx
 
 				do
 				{
-					accx_precise += delta_precise;
-					delta = (accx_precise - _ep * accx) / _ep;
+					acc += delta_precise;
+					delta = acc >> _ep_shift;
+					acc -= delta << _ep_shift;
 					x1 = x_to;
-					accx += delta;
 					x_to += delta;
 
 					hline(tg, ey1, x1, x_to, lift);
@@ -175,11 +175,12 @@ namespace aggx
 			const int step = x2 > x1 ? +1 : -1;
 			const int near = x2 > x1 ? _1 : 0;
 			const int far = _1 - near;
-			int delta, accy_precise, accy;
+			int delta, acc, y_to;
 
-			accy_precise = tg * (near - fx1);
-			delta = accy_precise / _ep;
-			accy = delta;
+			acc = tg * (near - fx1);
+			delta = acc >> _ep_shift;
+			acc -= delta << _ep_shift;
+			y_to = delta;
 
 			add(_current, fx1 + near, delta);
 			ex1 += static_cast<short>(step);
@@ -191,16 +192,17 @@ namespace aggx
 
 				do
 				{
-					accy_precise += delta_precise;
-					delta = (accy_precise - _ep * accy) / _ep;
-					accy += delta;
+					acc += delta_precise;
+					delta = acc >> _ep_shift;
+					acc -= delta << _ep_shift;
+					y_to += delta;
 
 					set(_current, _1, delta);
 					ex1 += static_cast<short>(step);
 					jump_x(ex1);
 				} while (ex1 != ex2);
 			}
-			set(_current, fx2 + far, dy - accy);
+			set(_current, fx2 + far, dy - y_to);
 		}
 	}
 

@@ -11,11 +11,11 @@ namespace aggx
 		enum
 		{
 			_1_shift = 8,
-			_ep_shift = 4,
+			_ep_shift = _1_shift + 4,
 
 			_1 = 1 << _1_shift,
 			_1_mask = _1 - 1,
-			_ep = 1 << (_1_shift + _ep_shift),
+			_ep = 1 << _ep_shift,
 		};
 
 #pragma pack(push, 1)

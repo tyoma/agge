@@ -725,15 +725,29 @@ namespace aggx
 				vr.commit();
 
 				// ASSERT
-				const vector_rasterizer::cell reference[] = {
-					{ 5, 130, -1100, -10 },
+				const vector_rasterizer::cell reference1[] = {
+					{ 5, 130, -1210, -11 },
 					{ 4, 130, -6400, -25},
 					{ 3, 130, -6144, -24 },
 					{ 2, 130, -6400, -25 },
-					{ 1, 130, -5831, -17 },
+					{ 1, 130, -5488, -16 },
 				};
 
-				assert_equal(reference, cells);
+				assert_equal(reference1, cells);
+
+				// INIT
+				cells.clear();
+
+				// ACT (extra-thin line)
+				vr.line(0, 0, 512, -1);
+				vr.commit();
+
+				// ASSERT
+				const vector_rasterizer::cell reference2[] = {
+					{ 0, -1, -256, -1 },
+				};
+
+				assert_equal(reference2, cells);
 			}
 
 
