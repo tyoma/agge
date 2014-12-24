@@ -31,10 +31,10 @@ namespace aggx
 
 	void vector_rasterizer::line(int x1, int y1, int x2, int y2)
 	{
-		const short ex1 = static_cast<short>(x1 >> _1_shift);
-		short ey1 = static_cast<short>(y1 >> _1_shift);
-		const short ex2 = static_cast<short>(x2 >> _1_shift);
-		const short ey2 = static_cast<short>(y2 >> _1_shift);
+		const int ex1 = x1 >> _1_shift;
+		int ey1 = y1 >> _1_shift;
+		const int ex2 = x2 >> _1_shift;
+		const int ey2 = y2 >> _1_shift;
 
 		extend_bounds(ex1, ey1);
 		extend_bounds(ex2, ey2);
@@ -66,7 +66,7 @@ namespace aggx
 
 		const int fy1 = y1 & _1_mask;
 		const int fy2 = y2 & _1_mask;
-		const short step = dy > 0 ? +1 : -1;
+		const int step = dy > 0 ? +1 : -1;
 		const int near = dy > 0 ? _1 : 0;
 		const int far = _1 - near;
 
@@ -144,9 +144,9 @@ namespace aggx
 		}
 	}
 
-	__forceinline void vector_rasterizer::hline(int tg, short ey, int x1, int x2, int dy)
+	__forceinline void vector_rasterizer::hline(int tg, int ey, int x1, int x2, int dy)
 	{
-		const short ex2 = static_cast<short>(x2 >> _1_shift);
+		const int ex2 = x2 >> _1_shift;
 
 		if (!dy)
 		{
@@ -156,7 +156,7 @@ namespace aggx
 			return;
 		}
 
-		short ex1 = static_cast<short>(x1 >> _1_shift);
+		int ex1 = x1 >> _1_shift;
 		const int fx1 = x1 & _1_mask;
 		const int fx2 = x2 & _1_mask;
 
@@ -183,7 +183,7 @@ namespace aggx
 			y_to = delta;
 
 			add(_current, fx1 + near, delta);
-			ex1 += static_cast<short>(step);
+			ex1 += step;
 			jump_x(ex1);
 
 			if (ex1 != ex2)
@@ -198,7 +198,7 @@ namespace aggx
 					y_to += delta;
 
 					set(_current, _1, delta);
-					ex1 += static_cast<short>(step);
+					ex1 += step;
 					jump_x(ex1);
 				} while (ex1 != ex2);
 			}
@@ -206,25 +206,25 @@ namespace aggx
 		}
 	}
 
-	void vector_rasterizer::jump_xy(short x, short y)
+	void vector_rasterizer::jump_xy(int x, int y)
 	{
 		if (_current.x != x || _current.y != y)
 			jumpc(x, y);
 	}
 
-	void vector_rasterizer::jump_x(short x)
+	void vector_rasterizer::jump_x(int x)
 	{
 		commit();
-		_current.x = x;
+		_current.x = static_cast<short>(x);
 	}
 
-	void vector_rasterizer::jumpc(short x, short y)
+	void vector_rasterizer::jumpc(int x, int y)
 	{
 		commit();
-		_current.x = x, _current.y = y;
+		_current.x = static_cast<short>(x), _current.y = static_cast<short>(y);
 	}
 
-	void vector_rasterizer::extend_bounds(short x, short y)
+	void vector_rasterizer::extend_bounds(int x, int y)
 	{
 		if (x < _min_x) _min_x = x;
 		if (x > _max_x) _max_x = x;

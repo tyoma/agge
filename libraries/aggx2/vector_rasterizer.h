@@ -46,15 +46,15 @@ namespace aggx
 	private:
 		const vector_rasterizer &operator =(const vector_rasterizer &);
 
-		void hline(int tg, short ey, int x1, int x2, int dy);
-		void jump_xy(short x, short y);
-		void jump_x(short x);
-		void jumpc(short x, short y);
-		void extend_bounds(short x, short y);
+		void hline(int tg, int ey, int x1, int x2, int dy);
+		void jump_xy(int x, int y);
+		void jump_x(int x);
+		void jumpc(int x, int y);
+		void extend_bounds(int x, int y);
 
 	private:
 		cells_container &_cells;
-		short _min_x, _min_y, _max_x, _max_y;
+		int _min_x, _min_y, _max_x, _max_y;
 		cell _current;
 	};
 
