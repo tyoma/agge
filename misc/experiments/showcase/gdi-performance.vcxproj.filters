@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="aggx">
+      <UniqueIdentifier>{e7f1c68a-d20f-434f-b014-69607b00c844}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="agg">
+      <UniqueIdentifier>{74e90f80-0d7d-4eb6-9382-75daec28e718}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\gdiperformance.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\gdi-performance.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="gdi-performance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChildView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BarView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BarsModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\agg_conv_adaptor_vcgen.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\agg_conv_stroke.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\agg_math.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\agg_math_stroke.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\agg_shorten_path.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\agg_vcgen_stroke.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\agg_vertex_sequence.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\basics.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\rasterizer.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\rasterizer_cells.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\renderer.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\scanline.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\win32_bitmap.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\paths.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\blenders.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\blenders_intel.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\rendition_adapter.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\scanline_adapter.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="gdi-performance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BarView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BarsModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp">
+      <Filter>aggx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\aggx\rasterizer.cpp">
+      <Filter>aggx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\aggx\rasterizer_cells.cpp">
+      <Filter>aggx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\aggx\win32_bitmap.cpp">
+      <Filter>aggx</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="gdi-performance.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
