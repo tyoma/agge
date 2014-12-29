@@ -25,6 +25,15 @@ namespace agge
 	{
 		int fp(double value)
 		{	return static_cast<int>(vector_rasterizer::_1 * value + (value > 0 ? +0.5 : -0.5));	}
+
+		vector<vector_rasterizer::cell> assert_get_cells(const vector_rasterizer &r, short y)
+		{
+			vector_rasterizer::const_iterator row = r.scanlines_begin();
+
+			advance(row, y - r.vrange().first);
+			assert_equal((int)y, row->y);
+			return vector<vector_rasterizer::cell>(row->begin, row->end);
+		}
 	}
 
 	namespace tests
@@ -33,8 +42,7 @@ namespace agge
 			test( NewlyCreatedRasterizerIsEmpty )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vector_rasterizer::range vrange = vr.vrange();
@@ -51,8 +59,7 @@ namespace agge
 			test( SubPixelLineExpandsMargins )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr1(cells), vr2(cells);
+				vector_rasterizer vr1, vr2;
 
 				// ACT
 				vr1.line(fp(13.0), fp(17.0), fp(13.5), fp(17.7));
@@ -77,8 +84,7 @@ namespace agge
 			test( BoundsAreResetOnRequest )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				vr.line(fp(13.0), fp(17.0), fp(13.5), fp(17.7));
 
@@ -98,8 +104,7 @@ namespace agge
 			test( LongerLineExpandsMargins )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr1(cells), vr2(cells);
+				vector_rasterizer vr1, vr2;
 
 				// ACT
 				vr1.line(fp(13.0), fp(17.0), fp(-133.5), fp(137.7));
@@ -124,15 +129,14 @@ namespace agge
 			test( HorizontalLinesDoNotProduceOutput )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(10.0), fp(15.5), fp(70.0), fp(15.5));
 				vr.commit();
 
 				// ASSERT
-				assert_is_true(cells.empty());
+				assert_is_true(vr.cells().empty());
 
 				// ACT
 				vr.line(fp(10.0), fp(13.5), fp(70.0), fp(13.5));
@@ -141,33 +145,31 @@ namespace agge
 				vr.commit();
 
 				// ASSERT
-				assert_is_true(cells.empty());
+				assert_is_true(vr.cells().empty());
 			}
 
 
 			test( RepeatedCommitDoesNotProduceOutput )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				vr.line(fp(15.0), fp(10.1), fp(15.0), fp(10.7));
 				vr.commit();
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.commit();
 
 				// ASSERT
-				assert_is_empty(cells);
+				assert_is_empty(vr.cells());
 			}
 
 
 			test( PositiveIntraCellVerticalLinesProducePositiveCover )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(15.0), fp(10.1), fp(15.0), fp(11.0));
@@ -178,10 +180,10 @@ namespace agge
 					{ 15, 10, 0, 230 },
 				};
 
-				assert_equal(reference1, cells);
+				assert_equal(reference1, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.line(fp(53.0), fp(9.0), fp(53.0), fp(10.0));
@@ -192,10 +194,10 @@ namespace agge
 					{ 53, 9, 0, 256 },
 				};
 
-				assert_equal(reference2, cells);
+				assert_equal(reference2, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.line(fp(-30000.0), fp(-9.8), fp(-30000.0), fp(-9.5));
@@ -206,15 +208,14 @@ namespace agge
 					{ -30000, -10, 0, 77 },
 				};
 
-				assert_equal(reference3, cells);
+				assert_equal(reference3, vr.cells());
 			}
 
 
 			test( PositiveInterCellsVerticalLinesProducePositiveCover )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(15.0), fp(10.1), fp(15.0), fp(12.0));
@@ -226,10 +227,10 @@ namespace agge
 					{ 15, 11, 0, 256 },
 				};
 
-				assert_equal(reference1, cells);
+				assert_equal(reference1, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.line(fp(53.0), fp(9.0), fp(53.0), fp(13.0));
@@ -243,10 +244,10 @@ namespace agge
 					{ 53, 12, 0, 256 },
 				};
 
-				assert_equal(reference2, cells);
+				assert_equal(reference2, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.line(fp(-30001.0), fp(-2.8), fp(-30001.0), fp(-0.5));
@@ -259,15 +260,14 @@ namespace agge
 					{ -30001, -1, 0, 128 },
 				};
 
-				assert_equal(reference3, cells);
+				assert_equal(reference3, vr.cells());
 			}
 
 
 			test( NegativeIntraCellVerticalLinesProduceNegativeCover )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(15.0), fp(10.1), fp(15.0), fp(10.05));
@@ -278,10 +278,10 @@ namespace agge
 					{ 15, 10, 0, -13 },
 				};
 
-				assert_equal(reference1, cells);
+				assert_equal(reference1, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.line(fp(53.0), fp(9.0), fp(53.0), fp(8.0));
@@ -292,10 +292,10 @@ namespace agge
 					{ 53, 8, 0, -256 },
 				};
 
-				assert_equal(reference2, cells);
+				assert_equal(reference2, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.line(fp(-30000.0), fp(-9.8), fp(-30000.0), fp(-10.0));
@@ -306,15 +306,14 @@ namespace agge
 					{ -30000, -10, 0, -51 },
 				};
 
-				assert_equal(reference3, cells);
+				assert_equal(reference3, vr.cells());
 			}
 
 
 			test( NegativeInterCellsVerticalLinesProduceNegativeCover )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(3.0), fp(10.1), fp(3.0), fp(5.0));
@@ -330,10 +329,10 @@ namespace agge
 					{ 3, 5, 0, -256 },
 				};
 
-				assert_equal(reference1, cells);
+				assert_equal(reference1, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.line(fp(23.0), fp(19.0), fp(23.0), fp(17.0));
@@ -345,10 +344,10 @@ namespace agge
 					{ 23, 17, 0, -256 },
 				};
 
-				assert_equal(reference2, cells);
+				assert_equal(reference2, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.line(fp(-30001.0), fp(-2.8), fp(-30001.0), fp(-4.71));
@@ -361,15 +360,14 @@ namespace agge
 					{ -30001, -5, 0, -182 },
 				};
 
-				assert_equal(reference3, cells);
+				assert_equal(reference3, vr.cells());
 			}
 
 
 			test( PositiveOffsetXIntraCellVerticalLinesProducePositiveCoverAndArea )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(15.312), fp(10.1), fp(15.312), fp(11.0));
@@ -380,10 +378,10 @@ namespace agge
 					{ 15, 10, 36800, 230 },
 				};
 
-				assert_equal(reference1, cells);
+				assert_equal(reference1, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.line(fp(53.71), fp(9.0), fp(53.71), fp(10.0));
@@ -394,10 +392,10 @@ namespace agge
 					{ 53, 9, 93184, 256 },
 				};
 
-				assert_equal(reference2, cells);
+				assert_equal(reference2, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.line(fp(-3000.99), fp(-119.8), fp(-3000.99), fp(-119.5));
@@ -408,15 +406,14 @@ namespace agge
 					{ -3001, -120, 462, 77 },
 				};
 
-				assert_equal(reference3, cells);
+				assert_equal(reference3, vr.cells());
 			}
 
 
 			test( PositiveOffsetXInterCellsVerticalLinesProducePositiveCoverAndArea )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(15.17), fp(10.1), fp(15.17), fp(12.0));
@@ -428,10 +425,10 @@ namespace agge
 					{ 15, 11, 22528, 256 },
 				};
 
-				assert_equal(reference1, cells);
+				assert_equal(reference1, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.line(fp(53.73), fp(9.0), fp(53.73), fp(13.0));
@@ -445,10 +442,10 @@ namespace agge
 					{ 53, 12, 95744, 256 },
 				};
 
-				assert_equal(reference2, cells);
+				assert_equal(reference2, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.line(fp(-301.91), fp(-2.8), fp(-301.91), fp(-0.5));
@@ -461,15 +458,14 @@ namespace agge
 					{ -302, -1, 5888, 128 },
 				};
 
-				assert_equal(reference3, cells);
+				assert_equal(reference3, vr.cells());
 			}
 
 
 			test( NegativeOffsetXIntraCellVerticalLinesProduceNegativeCoverAndArea )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(15.1), fp(10.1), fp(15.1), fp(10.05));
@@ -480,10 +476,10 @@ namespace agge
 					{ 15, 10, -676, -13 },
 				};
 
-				assert_equal(reference1, cells);
+				assert_equal(reference1, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.line(fp(53.172), fp(9.0), fp(53.172), fp(8.0));
@@ -494,10 +490,10 @@ namespace agge
 					{ 53, 8, -22528, -256 },
 				};
 
-				assert_equal(reference2, cells);
+				assert_equal(reference2, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.line(fp(-3000.75), fp(-9.8), fp(-3000.75), fp(-10.0));
@@ -508,15 +504,14 @@ namespace agge
 					{ -3001, -10, -6528, -51 },
 				};
 
-				assert_equal(reference3, cells);
+				assert_equal(reference3, vr.cells());
 			}
 
 
 			test( InPixelRectsAreProperlyRasterizedToCells )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT (76 x 153)
 				vr.line(fp(15.1), fp(10.1), fp(15.4), fp(10.1));
@@ -530,10 +525,10 @@ namespace agge
 					{ 15, 10, 2 * 11628, 0 },
 				};
 
-				assert_equal(reference1, cells);
+				assert_equal(reference1, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT (190 x 128)
 				vr.line(fp(17.15), fp(101.1), fp(17.15), fp(101.6));
@@ -547,15 +542,14 @@ namespace agge
 					{ 17, 101, -2 * 24320, 0 },
 				};
 
-				assert_equal(reference2, cells);
+				assert_equal(reference2, vr.cells());
 			}
 
 
 			test( TwoRectsInPixelAreProperlyRasterizedToCells )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(15.1), fp(10.1), fp(15.4), fp(10.1));
@@ -574,15 +568,14 @@ namespace agge
 					{ 15, 10, 24506, 0 },
 				};
 
-				assert_equal(reference, cells);
+				assert_equal(reference, vr.cells());
 			}
 
 
 			test( CoverAndAreaAreAddedOnInterCellLineContinuation )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(151.3), fp(11.1), fp(151.3), fp(11.2));
@@ -595,15 +588,14 @@ namespace agge
 					{ 151, 12, 2 * 77 * 179, 179 },
 				};
 
-				assert_equal(reference, cells);
+				assert_equal(reference, vr.cells());
 			}
 
 
 			test( IntraCellPositivelyInclinedVectorsProducePositiveCoverAndArea )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(0.83), fp(0.42), fp(0.14), fp(0.71)); // in fp - [(212, 108); (36, 182)), v(-176, 74)
@@ -614,10 +606,10 @@ namespace agge
 					{ 0, 0, (212 + 36) * 74, 74 },
 				};
 
-				assert_equal(reference1, cells);
+				assert_equal(reference1, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT
 				vr.line(fp(-3.93), fp(-17000.7), fp(-3.428), fp(-17000.3)); // in fp - [(-1006, -4352179); (-878, -4352077)), v(128, 102)
@@ -628,15 +620,14 @@ namespace agge
 					{ -4, -17001, (18 + 146) * 102, 102 },
 				};
 
-				assert_equal(reference2, cells);
+				assert_equal(reference2, vr.cells());
 			}
 
 
 			test( IntraCellLinesCoversAndAreasAreAdditive )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT (right triangle)
 				vr.line(fp(0.0), fp(0.0), fp(0.5), fp(0.0));	// area: 0, cover: 0
@@ -649,15 +640,14 @@ namespace agge
 					{ 0, 0, 16384, 0 },
 				};
 
-				assert_equal(reference, cells);
+				assert_equal(reference, vr.cells());
 			}
 
 
 			test( DeltaReminderIsAddedToTheLastCell )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT (tg = 2447)
 				vr.line(fp(1.34), fp(10.13), fp(2.0), fp(10.523)); // in fp - [(343, 2593); (512, 2694)), v(169, 101)
@@ -669,15 +659,14 @@ namespace agge
 					{ 2, 10, 0, 1 },
 				};
 
-				assert_equal(reference, cells);
+				assert_equal(reference, vr.cells());
 			}
 
 
 			test( InterCellPositivelyInclinedHLineProducePositiveCoverAndArea )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT (forward x, tg = 395)
 				vr.line(fp(1.34), fp(130.13), fp(5.43), fp(130.523)); // in fp - [(343, 33313); (1390, 33414)), v(1047, 101)
@@ -692,10 +681,10 @@ namespace agge
 					{ 5, 130, 1210, 11 },
 				};
 
-				assert_equal(reference1, cells);
+				assert_equal(reference1, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT (backward x, tg = -395)
 				vr.line(fp(5.43), fp(130.13), fp(1.34), fp(130.523)); // in fp - [(1390, 33313); (343, 33414)), v(-1047, 101)
@@ -710,15 +699,14 @@ namespace agge
 					{ 1, 130, 5831, 17 },
 				};
 
-				assert_equal(reference2, cells);
+				assert_equal(reference2, vr.cells());
 			}
 
 
 			test( InterCellNegativelyInclinedHLineProduceNegativeCoverAndArea )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(5.43), fp(130.523), fp(1.34), fp(130.13)); // in fp - [(1390, 33414); (343, 33313)), v(-1047, -101)
@@ -733,10 +721,10 @@ namespace agge
 					{ 1, 130, -5488, -16 },
 				};
 
-				assert_equal(reference1, cells);
+				assert_equal(reference1, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT (extra-thin line)
 				vr.line(0, 0, 512, -1);
@@ -747,15 +735,14 @@ namespace agge
 					{ 0, -1, -256, -1 },
 				};
 
-				assert_equal(reference2, cells);
+				assert_equal(reference2, vr.cells());
 			}
 
 
 			test( InterCellLowRisingLineRepresentedBySparsedCells )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(0, 0, 1536, 3);
@@ -768,15 +755,14 @@ namespace agge
 					{ 5, 0, 256, 1 },
 				};
 
-				assert_equal(reference, cells);
+				assert_equal(reference, vr.cells());
 			}
 
 
 			test( InterCellHLineSpanningFrom0To254 )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(0.0), fp(0.0), fp(255.0), fp(1.0 * 255 / 256));
@@ -792,15 +778,14 @@ namespace agge
 					reference.push_back(c);
 				}
 
-				assert_equal(reference, cells);
+				assert_equal(reference, vr.cells());
 			}
 
 
 			test( InclinedIntraCellLinesCoversAndAreasAreAdditiveOnJoin )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT (right triangle)
 				vr.line(fp(0.2), fp(0.9), fp(0.2), fp(0.5));
@@ -814,15 +799,14 @@ namespace agge
 					{ 2, 0, 4140, 18 },
 				};
 
-				assert_equal(reference, cells);
+				assert_equal(reference, vr.cells());
 			}
 
 
 			test( InterCellPositivelyInclinedTwoShortHLinesProducePositiveCoverAndArea )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT (ctg = 252)
 				vr.line(fp(1.2), fp(-1.9), fp(1.3), fp(-0.25)); // in fp - [(307, -486); (333, -64)), v(26, 422)
@@ -834,10 +818,10 @@ namespace agge
 					{ 1, -1, 27264, 192 }, // dx = 12
 				};
 
-				assert_equal(reference1, cells);
+				assert_equal(reference1, vr.cells());
 
 				// INIT
-				cells.clear();
+				vr.reset();
 
 				// ACT (ctg = 3319)
 				vr.line(fp(0.2), fp(1.9), fp(0.5), fp(2.27)); // in fp - [(51, 486); (128, 581)), v(77, 95)
@@ -849,15 +833,14 @@ namespace agge
 					{ 0, 2, 13800, 69 }, // dx = 56
 				};
 
-				assert_equal(reference2, cells);
+				assert_equal(reference2, vr.cells());
 			}
 
 
 			test( InterCellNegativelyInclinedTwoShortHLinesProducePositiveCoverAndArea )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT (ctg = -713)
 				vr.line(fp(1.2), fp(1.9), fp(1.5), fp(0.17)); // in fp - [(307, 486); (384, 44)), v(77, -442)
@@ -869,15 +852,14 @@ namespace agge
 					{ 1, 0, -46428, -212 }, // dx = 37
 				};
 
-				assert_equal(reference, cells);
+				assert_equal(reference, vr.cells());
 			}
 
 
 			test( InterCellPositivelyInclinedMultipleShortHLinesProducePositiveCoverAndArea )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(10.2), fp(-1.9), fp(10.9), fp(1.7)); // in fp - [(2611, -486); (2790, 435)), v(179, 921)
@@ -891,15 +873,14 @@ namespace agge
 					{ 10, 1, 76075, 179 },
 				};
 
-				assert_equal(reference, cells);
+				assert_equal(reference, vr.cells());
 			}
 
 
 			test( InterCellPositivelyInclinedMultipleShortHLinesNearBoundsProducePositiveCoverAndArea )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(8189.2), fp(-1.9), fp(8189.9), fp(1.7));
@@ -913,15 +894,14 @@ namespace agge
 					{ 8189, 1, 76075, 179 },
 				};
 
-				assert_equal(reference, cells);
+				assert_equal(reference, vr.cells());
 			}
 
 
 			test( InclinedInterCellShortHLinesCoversAndAreasAreAdditiveOnJoin )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(fp(8189.1), fp(-1.7), fp(8189.2), fp(-1.9));
@@ -936,15 +916,14 @@ namespace agge
 					{ 8189, 1, 76075, 179 },
 				};
 
-				assert_equal(reference, cells);
+				assert_equal(reference, vr.cells());
 			}
 
 
 			test( SteepInclinedLineIsSubjectedToSparsedHDeltaCalculation )
 			{
 				// INIT
-				vector_rasterizer::cells_container cells;
-				vector_rasterizer vr(cells);
+				vector_rasterizer vr;
 
 				// ACT
 				vr.line(0x1FF005, 0, 0x1FF008, 3 * 3 * 256);
@@ -963,9 +942,216 @@ namespace agge
 					{ 0x1FF0, 8, 3584, 256 },
 				};
 
-				assert_equal(reference, cells);
+				assert_equal(reference, vr.cells());
 			}
 
+
+			test( CellsAreSortedHorizontally )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				// ACT
+				vr.line(0x100000, 0x210, 0x100000, 0x200);
+				vr.line(0x1FF000, 0x200, 0x1FF000, 0x210);
+				vr.line(0x20F000, 0x203, 0x20F000, 0x220);
+				vr.line(0x150000, 0x220, 0x150000, 0x200);
+				vr.line(0x20F000, 0x200, 0x20F000, 0x203);
+				vr.commit();
+				vr.sort();
+
+				// ASSERT
+				const vector_rasterizer::cell reference1[] = {
+					{ 0x1000, 0x2, 0, -0x10 },
+					{ 0x1500, 0x2, 0, -0x20 },
+					{ 0x1FF0, 0x2, 0, 0x10 },
+					{ 0x20F0, 0x2, 0, 0x1D },
+					{ 0x20F0, 0x2, 0, 0x03 },
+				};
+
+				assert_equal(reference1, vr.cells());
+
+				// INIT
+				vr.reset();
+
+				// ACT
+				vr.line(0x150000, 0x320, 0x150000, 0x300);
+				vr.line(0x208100, 0x300, 0x208100, 0x330);
+				vr.line(0x110000, 0x330, 0x110000, 0x320);
+				vr.commit();
+				vr.sort();
+
+				// ASSERT
+				const vector_rasterizer::cell reference2[] = {
+					{ 0x1100, 0x3, 0, -0x10 },
+					{ 0x1500, 0x3, 0, -0x20 },
+					{ 0x2081, 0x3, 0, 0x30 },
+				};
+
+				assert_equal(reference2, vr.cells());
+			}
+
+
+			test( CellsAreSortedVertically )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				// ACT
+				vr.line(0x100000, 0x000210, 0x100000, 0x000200);
+				vr.line(0x100010, 0x000200, 0x100010, 0x000210);
+				vr.line(0x100000, 0x100210, 0x100000, 0x100200);
+				vr.line(0x100010, 0x100200, 0x100010, 0x100210);
+				vr.line(0x100000, 0x070110, 0x100000, 0x070100);
+				vr.line(0x100010, 0x070100, 0x100010, 0x070110);
+				vr.commit();
+				vr.sort();
+
+				// ASSERT
+				const vector_rasterizer::cell reference1[] = {
+					{ 0x1000, 0x0002, 0x0200, 0 },
+					{ 0x1000, 0x0701, 0x0200, 0 },
+					{ 0x1000, 0x1002, 0x0200, 0 },
+				};
+
+				assert_equal(reference1, vr.cells());
+
+				// INIT
+				vr.reset();
+
+				// ACT
+				vr.line(0x110000, 0x030230, 0x110000, 0x030200);
+				vr.line(0x110010, 0x030200, 0x110010, 0x030230);
+				vr.line(0x110000, 0x100210, 0x110000, 0x100200);
+				vr.line(0x110010, 0x100200, 0x110010, 0x100210);
+				vr.line(0x110000, 0x070110, 0x110000, 0x070100);
+				vr.line(0x110010, 0x070100, 0x110010, 0x070110);
+				vr.line(0x110000, 0x070210, 0x110000, 0x070200);
+				vr.line(0x110010, 0x070200, 0x110010, 0x070210);
+				vr.line(0x110000, 0x030210, 0x110000, 0x030200);
+				vr.line(0x110010, 0x030200, 0x110010, 0x030210);
+				vr.commit();
+				vr.sort();
+
+				// ASSERT
+				const vector_rasterizer::cell reference2[] = {
+					{ 0x1100, 0x0302, 0x0600, 0 },
+					{ 0x1100, 0x0302, 0x0200, 0 },
+					{ 0x1100, 0x0701, 0x0200, 0 },
+					{ 0x1100, 0x0702, 0x0200, 0 },
+					{ 0x1100, 0x1002, 0x0200, 0 },
+				};
+
+				assert_equal(reference2, vr.cells());
+			}
+
+
+			test( EmptyCellsCanBeSorted )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				// ACT
+				vr.sort();
+
+				// ASSERT
+				assert_is_empty(vr.cells());
+
+				// INIT
+				vr.line(0x110000, 0x030230, 0x110000, 0x030200);
+				vr.line(0x110010, 0x030200, 0x110010, 0x030230);
+
+				// ACT
+				vr.reset();
+				vr.sort();
+
+				// ASSERT
+				assert_is_empty(vr.cells());
+			}
+
+
+			test( YsAreMoreSignificantThanXsWhileSorting )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				// ACT
+				vr.line(0x100F00, 0x100210, 0x100F00, 0x100200);
+				vr.line(0x100F10, 0x100200, 0x100F10, 0x100210);
+				vr.line(0x100F00, 0x700210, 0x100F00, 0x700200);
+				vr.line(0x100F10, 0x700200, 0x100F10, 0x700210);
+				vr.line(0x700F00, 0x700210, 0x700F00, 0x700200);
+				vr.line(0x700F10, 0x700200, 0x700F10, 0x700210);
+				vr.line(0x700F00, 0x100210, 0x700F00, 0x100200);
+				vr.line(0x700F10, 0x100200, 0x700F10, 0x100210);
+				vr.commit();
+				vr.sort();
+
+				// ASSERT
+				const vector_rasterizer::cell reference[] = {
+					{ 0x100F, 0x1002, 0x0200, 0 },
+					{ 0x700F, 0x1002, 0x0200, 0 },
+					{ 0x100F, 0x7002, 0x0200, 0 },
+					{ 0x700F, 0x7002, 0x0200, 0 },
+				};
+
+				assert_equal(reference, vr.cells());
+			}
+
+
+			test( AccessingSortedCells )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				// ACT
+				vr.line(0x100F00, 0x100210, 0x100F00, 0x100200);
+				vr.line(0x100F10, 0x100200, 0x100F10, 0x100210);
+				vr.line(0x100F00, 0x700210, 0x100F00, 0x700200);
+				vr.line(0x100F10, 0x700200, 0x100F10, 0x700210);
+				vr.line(0x700F00, 0x700210, 0x700F00, 0x700200);
+				vr.line(0x700F10, 0x700200, 0x700F10, 0x700210);
+				vr.line(0x700F00, 0x100210, 0x700F00, 0x100200);
+				vr.line(0x700F10, 0x100200, 0x700F10, 0x100210);
+				vr.line(0x100F00, 0x100220, 0x100F00, 0x100200);
+				vr.line(0x100F10, 0x100200, 0x100F10, 0x100220);
+				vr.commit();
+				vr.sort();
+
+				// ASSERT
+				const vector_rasterizer::cell reference1_row0x1002[] = {
+					{ 0x100F, 0x1002, 0x0200, 0 },
+					{ 0x100F, 0x1002, 0x0400, 0 },
+					{ 0x700F, 0x1002, 0x0200, 0 },
+				};
+				const vector_rasterizer::cell reference1_row0x7002[] = {
+					{ 0x100F, 0x7002, 0x0200, 0 },
+					{ 0x700F, 0x7002, 0x0200, 0 },
+				};
+
+				assert_equal(reference1_row0x1002, assert_get_cells(vr, 0x1002));
+				assert_equal(reference1_row0x7002, assert_get_cells(vr, 0x7002));
+			}
+
+
+			test( ScanlinesAreClearedAtReset )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				vr.line(0x100F00, 0x100210, 0x100F00, 0x100200);
+				vr.line(0x100F10, 0x100200, 0x100F10, 0x100210);
+				vr.line(0x100F00, 0x700210, 0x100F00, 0x700200);
+				vr.line(0x100F10, 0x700200, 0x100F10, 0x700210);
+				vr.commit();
+				vr.sort();
+
+				// ACT
+				vr.sort();
+
+				// ASSERT
+				assert_equal(vr.scanlines_begin(), vr.scanlines_end());
+			}
 		end_test_suite
 	}
 }

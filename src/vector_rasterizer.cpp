@@ -2,10 +2,10 @@
 
 namespace agge
 {
-	const vector_rasterizer::cell vector_rasterizer::cell::empty = { 0 };
-
 	namespace
 	{
+		const vector_rasterizer::cell empty_cell = { 0 };
+
 		void add(vector_rasterizer::cell &c, int x1x2, int delta)
 		{
 			c.cover += static_cast<short>(delta);
@@ -22,12 +22,16 @@ namespace agge
 		{	seta(c, x1x2 * delta, delta);	}
 	}
 
-	vector_rasterizer::vector_rasterizer(cells_container &cells)
-		: _cells(cells), _current(cell::empty)
+	vector_rasterizer::vector_rasterizer()
+		: _current(empty_cell)
 	{	reset();	}
 
 	void vector_rasterizer::reset()
-	{	_min_x = 0x7FFF, _min_y = 0x7FFF, _max_x = -0x7FFF, _max_y = -0x7FFF;	}
+	{
+		_min_x = 0x7FFF, _min_y = 0x7FFF, _max_x = -0x7FFF, _max_y = -0x7FFF;
+		_cells.clear();
+		_scanlines.clear();
+	}
 
 	void vector_rasterizer::line(int x1, int y1, int x2, int y2)
 	{
@@ -143,6 +147,61 @@ namespace agge
 			seta(_current, 0, 0);
 		}
 	}
+
+	void vector_rasterizer::sort()
+	{
+		count_t start;
+		int y;
+
+		_x_sorted_cells.resize(_cells.size());
+
+		if (_x_sorted_cells.empty())
+			return;
+
+		_x_bins.assign(_max_x - _min_x + 1, 0);
+		_y_counts.assign(_max_y - _min_y + 1, 0);
+		_scanlines.clear();
+		_scanlines.reserve(_y_counts.size());
+		for (const_cells_iterator i = _cells.begin(); i != _cells.end(); ++i)
+		{
+			++_x_bins[i->x - _min_x];
+			++_y_counts[i->y - _min_y];
+		}
+		start = 0;
+		for (sorted_bins_container::iterator i = _x_bins.begin(); i != _x_bins.end(); ++i)
+		{
+			count_t v = *i;
+
+			*i = start;
+			start += v;
+		}
+		start = 0;
+		y = _min_y;
+		for (sorted_bins_container::const_iterator i = _y_counts.begin(); i != _y_counts.end(); ++i, ++y)
+		{
+			count_t v = *i;
+			cells_iterator j = _cells.begin();
+
+			advance(j, start);
+
+			const scanline_cells s = { y, j, j };
+
+			_scanlines.push_back(s);
+
+			start += v;
+		}
+		for (const_cells_iterator i = _cells.begin(); i != _cells.end(); ++i)
+		{
+			const count_t j = _x_bins[i->x - _min_x]++;
+			_x_sorted_cells[j] = *i;
+		}
+		for (const_cells_iterator i = _x_sorted_cells.begin(); i != _x_sorted_cells.end(); ++i)
+		{
+			const cells_iterator j = _scanlines[i->y - _min_y].end++;
+			*j = *i;
+		}
+	}
+
 
 	__forceinline void vector_rasterizer::hline(int tg, int ey, int x1, int x2, int dy)
 	{

@@ -50,6 +50,11 @@ namespace aggx
 	};
 
 
+
+	inline rasterizer_cells::rasterizer_cells()
+		: m_sorted(false)
+	{	}
+
 	inline void rasterizer_cells::reset()
 	{
 		m_cells.clear();
@@ -60,9 +65,21 @@ namespace aggx
 	inline void rasterizer_cells::line(int x1, int y1, int x2, int y2)
 	{	m_vrasterizer.line(x1, y1, x2, y2);	}
 
+	inline void rasterizer_cells::sort_cells()
+	{
+		m_vrasterizer.sort();
+		m_sorted = true;
+	}
+
 	inline unsigned rasterizer_cells::scanline_num_cells(unsigned y) const 
-	{	return m_sorted_bins[y - m_vrasterizer.vrange().first].num;	}
+	{
+		const agge::vector_rasterizer::scanline_cells &scanline = *(m_vrasterizer.scanlines_begin() + (y - m_vrasterizer.vrange().first));
+		return scanline.end - scanline.begin;
+	}
 
 	inline const rasterizer_cells::cell *rasterizer_cells::scanline_cells(unsigned y) const
-	{	return m_cells.data() + m_sorted_bins[y - m_vrasterizer.vrange().first].start;	}
+	{
+		const agge::vector_rasterizer::scanline_cells &scanline = *(m_vrasterizer.scanlines_begin() + (y - m_vrasterizer.vrange().first));
+		return &*scanline.begin;
+	}
 }
