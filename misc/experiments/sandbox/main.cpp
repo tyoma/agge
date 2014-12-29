@@ -13,7 +13,13 @@
 #include <aggx/agg_conv_stroke.h>
 #include <aggx/agg_ellipse.h>
 
-#include <agg/include/agg_rasterizer_sl_clip.h>
+#include <agg_rasterizer_sl_clip.h>
+
+#include <agg_pixfmt_rgba.h>
+#include <agg_renderer_base.h>
+#include <agg_scanline_u.h>
+#include <agg_rasterizer_scanline_aa.h>
+#include <agg_renderer_scanline.h>
 
 #include <time.h>
 #include <windows.h>
@@ -24,6 +30,30 @@ using namespace std;
 namespace
 {
 	typedef std::vector< std::pair<std::pair<aggx::real, aggx::real>, unsigned> > AggPath;
+
+	class bitmap_rendering_buffer
+	{
+	public:
+		typedef unsigned int pixel_type;
+		typedef agg::const_row_info<pixel_type> row_data;
+
+	public:
+		bitmap_rendering_buffer(bitmap &target)
+			: _target(target)
+		{	}
+
+		pixel_type *row_ptr(int, int y, int)
+		{	return reinterpret_cast<pixel_type *>(_target.access(0, y));	}
+
+		unsigned int width() const
+		{	return _target.width();	}
+
+		unsigned int height() const
+		{	return _target.height();	}
+
+	private:
+		bitmap &_target;
+	};
 
 	double stopwatch(LARGE_INTEGER &counter)
 	{
@@ -143,7 +173,6 @@ int main()
 	AggPath spiral_line, spiral_flatten;
 
 	MainDialog dlg([&](bitmap &target, double &rasterization, double &rendition) {
-
 //		typedef blender_solid_color<bitmap::pixel> blenderx;
 		typedef intel::blender_solid_color blenderx;
 		typedef rendition_adapter<bitmap, blenderx> renderer;
@@ -166,36 +195,38 @@ int main()
 		rasterization = 0;
 		rendition = 0;
 
-		//for_each(ellipses.begin(), ellipses.end(), [&] (const pair<rect_r, rgba8> &e) {
-		//	aggx::ellipse ellipse(0.5 * (e.first.x1 + e.first.x2), 0.5 * (e.first.y1 + e.first.y2),
-		//		0.5 * (e.first.x2 - e.first.x1), 0.5 * (e.first.y2 - e.first.y1));
-
-		//	stopwatch(counter);
-
-		//	ras.add_path(ellipse);
-		//	ras.prepare();
-
-		//	rasterization += stopwatch(counter);
-
-		//	renderer r(target, blenderx(e.second));
-
-		//	ras.render<scanline>(r);
-		//	
-		//	rendition += stopwatch(counter);
-		//});
-
 		stopwatch(counter);
-
 		ras.add_path(agg_path_adaptor(spiral_flatten));
-
 		ras.prepare();
-
 		rasterization += stopwatch(counter);
-
-		renderer r(target, blenderx(rgba8(0, 154, 255, 255)));
+		renderer r(target, blenderx(rgba8(0, 154, 255, 240)));
 		ras.render<scanline>(r);
-
 		rendition += stopwatch(counter);
+
+		{
+			typedef agg::pixfmt_alpha_blend_rgba<agg::blender_bgra32, bitmap_rendering_buffer> pixfmt;
+			typedef agg::rgba8 color_type;
+			typedef agg::order_bgra component_order;
+			typedef agg::renderer_base<pixfmt> renderer_base;
+			typedef agg::renderer_scanline_aa_solid<renderer_base> renderer_aa;
+			typedef agg::rasterizer_scanline_aa<> rasterizer_scanline;
+			typedef agg::scanline_u8 scanline;
+
+			bitmap_rendering_buffer rbuf(target);
+			pixfmt pixf(rbuf);
+			renderer_base rb(pixf);
+			renderer_aa ren_aa(rb);
+			rasterizer_scanline ras_aa;
+			scanline sl;
+
+			//stopwatch(counter);
+			//ras_aa.add_path(agg_path_adaptor(spiral_flatten));
+			//ras_aa.sort();
+			//rasterization += stopwatch(counter);
+			//ren_aa.color(agg::rgba(0.4, 0.3, 0.1, 140.0 / 255));
+			//agg::render_scanlines(ras_aa, sl, ren_aa);
+			//rendition += stopwatch(counter);
+		}
 	});
 
 	while (::GetMessage(&msg, NULL, 0, 0))
