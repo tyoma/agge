@@ -1,5 +1,7 @@
 #include "agge/vector_rasterizer.h"
 
+using namespace std;
+
 namespace agge
 {
 	namespace
@@ -23,14 +25,14 @@ namespace agge
 	}
 
 	vector_rasterizer::vector_rasterizer()
-		: _current(empty_cell)
 	{	reset();	}
 
 	void vector_rasterizer::reset()
 	{
-		_min_x = 0x7FFF, _min_y = 0x7FFF, _max_x = -0x7FFF, _max_y = -0x7FFF;
+		_current = empty_cell;
 		_cells.clear();
 		_scanlines.clear();
+		_min_x = 0x7FFF, _min_y = 0x7FFF, _max_x = -0x7FFF, _max_y = -0x7FFF;
 	}
 
 	void vector_rasterizer::line(int x1, int y1, int x2, int y2)
@@ -150,55 +152,44 @@ namespace agge
 
 	void vector_rasterizer::sort()
 	{
-		count_t start;
-		int y;
+		const sorted_bin empty_bin = { 0 };
 
+		commit();
 		_x_sorted_cells.resize(_cells.size());
-
 		if (_x_sorted_cells.empty())
 			return;
 
-		_x_bins.assign(_max_x - _min_x + 1, 0);
-		_y_counts.assign(_max_y - _min_y + 1, 0);
-		_scanlines.clear();
-		_scanlines.reserve(_y_counts.size());
+		const int max_length = (max)(_max_x - _min_x + 1, _max_y - _min_y + 1);
+
+		_scanlines.assign(max_length, empty_bin);
+
 		for (const_cells_iterator i = _cells.begin(); i != _cells.end(); ++i)
 		{
-			++_x_bins[i->x - _min_x];
-			++_y_counts[i->y - _min_y];
+			++_scanlines[i->x - _min_x].length;
+			++_scanlines[i->y - _min_y].start;
 		}
-		start = 0;
-		for (sorted_bins_container::iterator i = _x_bins.begin(); i != _x_bins.end(); ++i)
+		count_t start_x = 0, start_y = 0;
+		for (sorted_bins_container::iterator i = _scanlines.begin(); i != _scanlines.end(); ++i)
 		{
-			count_t v = *i;
+			const count_t vx = i->length, vy = i->start;
 
-			*i = start;
-			start += v;
-		}
-		start = 0;
-		y = _min_y;
-		for (sorted_bins_container::const_iterator i = _y_counts.begin(); i != _y_counts.end(); ++i, ++y)
-		{
-			count_t v = *i;
-			cells_iterator j = _cells.begin();
-
-			advance(j, start);
-
-			const scanline_cells s = { y, j, j };
-
-			_scanlines.push_back(s);
-
-			start += v;
+			i->length = start_x;
+			i->start = start_y;
+			start_x += vx;
+			start_y += vy;
 		}
 		for (const_cells_iterator i = _cells.begin(); i != _cells.end(); ++i)
 		{
-			const count_t j = _x_bins[i->x - _min_x]++;
+			const count_t j = _scanlines[i->x - _min_x].length++;
 			_x_sorted_cells[j] = *i;
 		}
+		for (sorted_bins_container::iterator i = _scanlines.begin(); i != _scanlines.end(); ++i)
+			i->length = 0;
 		for (const_cells_iterator i = _x_sorted_cells.begin(); i != _x_sorted_cells.end(); ++i)
 		{
-			const cells_iterator j = _scanlines[i->y - _min_y].end++;
-			*j = *i;
+			sorted_bin &bin = _scanlines[i->y - _min_y];
+			const count_t j = bin.length++;
+			_cells[bin.start + j] = *i;
 		}
 	}
 

@@ -26,13 +26,11 @@ namespace agge
 		int fp(double value)
 		{	return static_cast<int>(vector_rasterizer::_1 * value + (value > 0 ? +0.5 : -0.5));	}
 
-		vector<vector_rasterizer::cell> assert_get_cells(const vector_rasterizer &r, short y)
+		vector<vector_rasterizer::cell> get_scanline_cells(const vector_rasterizer &r, short y)
 		{
-			vector_rasterizer::const_iterator row = r.scanlines_begin();
+			vector_rasterizer::scanline_cells row = r.get_scanline_cells(y);
 
-			advance(row, y - r.vrange().first);
-			assert_equal((int)y, row->y);
-			return vector<vector_rasterizer::cell>(row->begin, row->end);
+			return vector<vector_rasterizer::cell>(row.first, row.first + row.second);
 		}
 	}
 
@@ -98,6 +96,22 @@ namespace agge
 				assert_equal(-0x7FFF, vrange.second);
 				assert_equal(0x7FFF, hrange.first);
 				assert_equal(-0x7FFF, hrange.second);
+			}
+
+
+			test( UncommittedCellIsDiscardedAtReset )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				vr.line(fp(13.0), fp(17.0), fp(13.5), fp(17.7));
+
+				// ACT
+				vr.reset();
+				vr.commit();
+
+				// ASSERT
+				assert_is_empty(vr.cells());
 			}
 
 
@@ -1129,28 +1143,26 @@ namespace agge
 					{ 0x700F, 0x7002, 0x0200, 0 },
 				};
 
-				assert_equal(reference1_row0x1002, assert_get_cells(vr, 0x1002));
-				assert_equal(reference1_row0x7002, assert_get_cells(vr, 0x7002));
+				assert_equal(reference1_row0x1002, get_scanline_cells(vr, 0x1002));
+				assert_equal(reference1_row0x7002, get_scanline_cells(vr, 0x7002));
 			}
 
 
-			test( ScanlinesAreClearedAtReset )
+			test( UncommittedCellIsCommitedAtSort )
 			{
 				// INIT
 				vector_rasterizer vr;
 
-				vr.line(0x100F00, 0x100210, 0x100F00, 0x100200);
-				vr.line(0x100F10, 0x100200, 0x100F10, 0x100210);
-				vr.line(0x100F00, 0x700210, 0x100F00, 0x700200);
-				vr.line(0x100F10, 0x700200, 0x100F10, 0x700210);
-				vr.commit();
-				vr.sort();
-
 				// ACT
+				vr.line(0x100F00, 0x100210, 0x100F50, 0x100200);
 				vr.sort();
 
 				// ASSERT
-				assert_equal(vr.scanlines_begin(), vr.scanlines_end());
+				const vector_rasterizer::cell reference_row0x1002[] = {
+					{ 0x100F, 0x1002, -0x0500, -0x10 },
+				};
+
+				assert_equal(reference_row0x1002, get_scanline_cells(vr, 0x1002));
 			}
 		end_test_suite
 	}

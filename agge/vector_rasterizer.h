@@ -25,16 +25,12 @@ namespace agge
 			int area;
 			short cover;
 		};
-
-		struct scanline_cells;
 #pragma pack(pop)
 
 		typedef std::vector<cell> cells_container;
-		typedef cells_container::const_iterator const_cells_iterator;
-		typedef cells_container::iterator cells_iterator;
-		typedef std::vector<scanline_cells> scanline_cells_container;
-		typedef scanline_cells_container::const_iterator const_iterator;
+		typedef unsigned int count_t;
 		typedef std::pair<int, int> range;
+		typedef std::pair<const cell *, count_t> scanline_cells;
 
 	public:
 		vector_rasterizer();
@@ -45,15 +41,15 @@ namespace agge
 		void commit();
 		const cells_container &cells() const;
 		void sort();
-		const_iterator scanlines_begin() const;
-		const_iterator scanlines_end() const;
+		scanline_cells get_scanline_cells(int y) const;
 
 		range vrange() const;
 		range hrange() const;
 
 	private:
-		typedef unsigned int count_t;
-		typedef std::vector<count_t> sorted_bins_container;
+		struct sorted_bin;
+		typedef std::vector<sorted_bin> sorted_bins_container;
+		typedef cells_container::const_iterator const_cells_iterator;
 
 	private:
 		const vector_rasterizer &operator =(const vector_rasterizer &);
@@ -67,15 +63,14 @@ namespace agge
 	private:
 		cell _current;
 		cells_container _cells, _x_sorted_cells;
+		sorted_bins_container _scanlines;
 		int _min_x, _min_y, _max_x, _max_y;
-		sorted_bins_container _x_bins, _y_counts;
-		scanline_cells_container _scanlines;
 	};
 
-	struct vector_rasterizer::scanline_cells
+	struct vector_rasterizer::sorted_bin
 	{
-		int y;
-		vector_rasterizer::cells_iterator begin, end;
+		vector_rasterizer::count_t start;
+		vector_rasterizer::count_t length;
 	};
 
 
@@ -83,11 +78,12 @@ namespace agge
 	inline const vector_rasterizer::cells_container &vector_rasterizer::cells() const
 	{	return _cells;	}
 
-	inline vector_rasterizer::const_iterator vector_rasterizer::scanlines_begin() const
-	{	return _scanlines.begin();	}
+	inline vector_rasterizer::scanline_cells vector_rasterizer::get_scanline_cells(int y) const
+	{
+		const sorted_bin &scanline = _scanlines[y - _min_y];
+		return std::make_pair(&_cells[scanline.start], scanline.length);
+	}
 
-	inline vector_rasterizer::const_iterator vector_rasterizer::scanlines_end() const
-	{	return _scanlines.end();	}
 
 	inline vector_rasterizer::range vector_rasterizer::vrange() const
 	{	return std::make_pair(_min_y, _max_y);	}

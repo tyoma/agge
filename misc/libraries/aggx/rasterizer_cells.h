@@ -31,22 +31,8 @@ namespace aggx
 		bool sorted() const { return m_sorted; }
 
 	private:
-		struct sorted_bin;
-
-		typedef std::vector<cell> cells_container;
-		typedef std::vector<sorted_bin> scanline_blocks_container_type;
-
-	private:
-		cells_container m_cells, m_cells_temporary;
-		scanline_blocks_container_type m_sorted_bins;
 		agge::vector_rasterizer m_vrasterizer;
 		bool m_sorted;
-	};
-
-	struct rasterizer_cells::sorted_bin
-	{
-		unsigned start;
-		unsigned num;
 	};
 
 
@@ -57,7 +43,6 @@ namespace aggx
 
 	inline void rasterizer_cells::reset()
 	{
-		m_cells.clear();
 		m_sorted = false;
 		m_vrasterizer.reset();
 	}
@@ -67,19 +52,14 @@ namespace aggx
 
 	inline void rasterizer_cells::sort_cells()
 	{
-		m_vrasterizer.sort();
+		if (!m_sorted)
+			m_vrasterizer.sort();
 		m_sorted = true;
 	}
 
 	inline unsigned rasterizer_cells::scanline_num_cells(unsigned y) const 
-	{
-		const agge::vector_rasterizer::scanline_cells &scanline = *(m_vrasterizer.scanlines_begin() + (y - m_vrasterizer.vrange().first));
-		return scanline.end - scanline.begin;
-	}
+	{	return m_vrasterizer.get_scanline_cells(y).second;	}
 
 	inline const rasterizer_cells::cell *rasterizer_cells::scanline_cells(unsigned y) const
-	{
-		const agge::vector_rasterizer::scanline_cells &scanline = *(m_vrasterizer.scanlines_begin() + (y - m_vrasterizer.vrange().first));
-		return &*scanline.begin;
-	}
+	{	return m_vrasterizer.get_scanline_cells(y).first;	}
 }
