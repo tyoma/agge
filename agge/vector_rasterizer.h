@@ -42,6 +42,7 @@ namespace agge
 		const cells_container &cells() const;
 		void sort();
 		scanline_cells get_scanline_cells(int y) const;
+		bool sorted() const;
 
 		range vrange() const;
 		range hrange() const;
@@ -61,6 +62,7 @@ namespace agge
 		void extend_bounds(int x, int y);
 
 	private:
+		bool _sorted;
 		cell _current;
 		cells_container _cells, _x_sorted_cells;
 		sorted_bins_container _scanlines;
@@ -84,6 +86,8 @@ namespace agge
 		return std::make_pair(&_cells[scanline.start], scanline.length);
 	}
 
+	inline bool vector_rasterizer::sorted() const
+	{	return _sorted;	}
 
 	inline vector_rasterizer::range vector_rasterizer::vrange() const
 	{	return std::make_pair(_min_y, _max_y);	}

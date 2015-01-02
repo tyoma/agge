@@ -59,9 +59,6 @@
     <ClCompile Include="..\..\libraries\aggx\rasterizer.cpp">
       <Filter>aggx</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libraries\aggx\rasterizer_cells.cpp">
-      <Filter>aggx</Filter>
-    </ClCompile>
     <ClCompile Include="sandbox_view.cpp" />
     <ClCompile Include="..\..\..\src\vector_rasterizer.cpp">
       <Filter>agge</Filter>

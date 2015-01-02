@@ -2,7 +2,7 @@
 
 namespace aggx
 {
-	typedef double real;
+	typedef float real;
 
 	typedef signed char int8;
 	typedef unsigned char int8u;

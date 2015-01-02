@@ -33,6 +33,7 @@ namespace agge
 		_cells.clear();
 		_scanlines.clear();
 		_min_x = 0x7FFF, _min_y = 0x7FFF, _max_x = -0x7FFF, _max_y = -0x7FFF;
+		_sorted = false;
 	}
 
 	void vector_rasterizer::line(int x1, int y1, int x2, int y2)
@@ -154,6 +155,9 @@ namespace agge
 	{
 		const sorted_bin empty_bin = { 0 };
 
+		if (_sorted)
+			return;
+
 		commit();
 		_x_sorted_cells.resize(_cells.size());
 		if (_x_sorted_cells.empty())
@@ -191,6 +195,8 @@ namespace agge
 			const count_t j = bin.length++;
 			_cells[bin.start + j] = *i;
 		}
+
+		_sorted = true;
 	}
 
 

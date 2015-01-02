@@ -230,7 +230,6 @@
     <ClInclude Include="..\..\libraries\aggx\blenders_intel.h" />
     <ClInclude Include="..\..\libraries\aggx\paths.h" />
     <ClInclude Include="..\..\libraries\aggx\rasterizer.h" />
-    <ClInclude Include="..\..\libraries\aggx\rasterizer_cells.h" />
     <ClInclude Include="..\..\libraries\aggx\renderer.h" />
     <ClInclude Include="..\..\libraries\aggx\rendition_adapter.h" />
     <ClInclude Include="..\..\libraries\aggx\scanline.h" />
@@ -253,12 +252,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\libraries\aggx\rasterizer.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\..\libraries\aggx\rasterizer_cells.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

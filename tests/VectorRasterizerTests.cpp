@@ -1164,6 +1164,47 @@ namespace agge
 
 				assert_equal(reference_row0x1002, get_scanline_cells(vr, 0x1002));
 			}
+
+
+			test( CellsAreNotSortedInitially )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				// ACT / ASSERT
+				assert_is_false(vr.sorted());
+			}
+
+
+			test( CellsSortedPropertyIsSetAfterSort )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				vr.line(0x100F00, 0x100210, 0x100F50, 0x100200);
+
+				// ACT
+				vr.sort();
+
+				// ACT / ASSERT
+				assert_is_true(vr.sorted());
+			}
+
+
+			test( SortedPropertyIsSetToUnsortedOnReset )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				vr.line(0x100F00, 0x100210, 0x100F50, 0x100200);
+				vr.sort();
+
+				// ACT
+				vr.reset();
+
+				// ACT / ASSERT
+				assert_is_false(vr.sorted());
+			}
 		end_test_suite
 	}
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "rasterizer_cells.h"
+#include <agge/vector_rasterizer.h>
 
 #include "basics.h"
 
@@ -70,10 +70,10 @@ namespace aggx
 		template<class VertexSource>
 		void add_path(VertexSource& vs, unsigned path_id = 0);
 
-		int min_x() const { return m_outline.min_x(); }
-		int min_y() const { return m_outline.min_y(); }
-		int max_x() const { return m_outline.max_x(); }
-		int max_y() const { return m_outline.max_y(); }
+		int min_x() const { return m_outline.hrange().first; }
+		int min_y() const { return m_outline.vrange().first; }
+		int max_x() const { return m_outline.hrange().second; }
+		int max_y() const { return m_outline.vrange().second; }
 
 		void sort();
 
@@ -97,7 +97,7 @@ namespace aggx
 		};
 
 	private:
-		rasterizer_cells m_outline;
+		agge::vector_rasterizer m_outline;
 		clip_type m_clipper;
 		int m_gamma[aa_scale];
 		filling_rule_e m_filling_rule;
@@ -226,7 +226,7 @@ namespace aggx
 	{
 		if (m_auto_close)
 			close_polygon();
-		m_outline.sort_cells();
+		m_outline.sort();
 	}
 
 	template<class Clip>
@@ -234,21 +234,20 @@ namespace aggx
 	inline bool rasterizer_scanline_aa<Clip>::sweep_scanline(Scanline& sl, int scan_y) const
 	{
 		sl.reset_spans();
-		unsigned num_cells = m_outline.scanline_num_cells(scan_y);
-		const rasterizer_cells::cell *cell = m_outline.scanline_cells(scan_y);
+		agge::vector_rasterizer::scanline_cells cells = m_outline.get_scanline_cells(scan_y);
 		int cover = 0;
 
-		while (num_cells)
+		while (cells.second)
 		{
-			int x = cell->x, area = 0;
+			int x = cells.first->x, area = 0;
 
 			do
 			{
-				area += cell->area;
-				cover += cell->cover;
-				++cell;
-				--num_cells;
-			} while (num_cells && cell->x == x);
+				area += cells.first->area;
+				cover += cells.first->cover;
+				++cells.first;
+				--cells.second;
+			} while (cells.second && cells.first->x == x);
 
 			int cover_m = cover << (poly_subpixel_shift + 1);
 
@@ -259,10 +258,10 @@ namespace aggx
 				++x;
 			}
 
-			if (num_cells && cell->x > x)
+			if (cells.second && cells.first->x > x)
 			{
 				if (unsigned int alpha = calculate_alpha(cover_m))
-					sl.add_span(x, cell->x - x, alpha);
+					sl.add_span(x, cells.first->x - x, alpha);
 			}
 		}
 		return true;

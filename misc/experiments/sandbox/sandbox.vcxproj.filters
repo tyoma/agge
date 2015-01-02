@@ -9,9 +9,6 @@
     <ClCompile Include="..\..\libraries\aggx\rasterizer.cpp">
       <Filter>aggx</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libraries\aggx\rasterizer_cells.cpp">
-      <Filter>aggx</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp">
       <Filter>aggx</Filter>
     </ClCompile>
@@ -25,9 +22,6 @@
       <Filter>aggx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libraries\aggx\rasterizer.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\rasterizer_cells.h">
       <Filter>aggx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libraries\aggx\renderer.h">

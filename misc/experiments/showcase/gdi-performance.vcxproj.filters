@@ -80,9 +80,6 @@
     <ClInclude Include="..\..\libraries\aggx\rasterizer.h">
       <Filter>aggx</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\rasterizer_cells.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libraries\aggx\renderer.h">
       <Filter>aggx</Filter>
     </ClInclude>
@@ -131,9 +128,6 @@
       <Filter>aggx</Filter>
     </ClCompile>
     <ClCompile Include="..\..\libraries\aggx\rasterizer.cpp">
-      <Filter>aggx</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libraries\aggx\rasterizer_cells.cpp">
       <Filter>aggx</Filter>
     </ClCompile>
     <ClCompile Include="..\..\libraries\aggx\win32_bitmap.cpp">

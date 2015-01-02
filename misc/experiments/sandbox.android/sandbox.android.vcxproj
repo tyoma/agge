@@ -76,7 +76,6 @@
     <ClCompile Include="..\..\..\src\vector_rasterizer.cpp" />
     <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp" />
     <ClCompile Include="..\..\libraries\aggx\rasterizer.cpp" />
-    <ClCompile Include="..\..\libraries\aggx\rasterizer_cells.cpp" />
     <ClCompile Include="sandbox_view.cpp" />
   </ItemGroup>
   <ItemGroup>
