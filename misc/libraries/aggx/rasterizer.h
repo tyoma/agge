@@ -1,5 +1,6 @@
 #pragma once
 
+#include <agge/renderer.h>
 #include <agge/vector_rasterizer.h>
 
 #include "basics.h"
@@ -80,9 +81,6 @@ namespace aggx
 		unsigned calculate_alpha(int area) const;
 
 		void prepare();
-
-		template <class Scanline>
-		bool sweep_scanline(Scanline& sl, int scan_y) const;
 
 		template <typename ScanlineAdapter, typename Renderer>
 		void render(Renderer &r);
@@ -230,55 +228,38 @@ namespace aggx
 	}
 
 	template<class Clip>
-	template<class Scanline>
-	inline bool rasterizer_scanline_aa<Clip>::sweep_scanline(Scanline& sl, int scan_y) const
-	{
-		sl.reset_spans();
-		agge::vector_rasterizer::scanline_cells cells = m_outline.get_scanline_cells(scan_y);
-		int cover = 0;
-
-		while (cells.second)
-		{
-			int x = cells.first->x, area = 0;
-
-			do
-			{
-				area += cells.first->area;
-				cover += cells.first->cover;
-				++cells.first;
-				--cells.second;
-			} while (cells.second && cells.first->x == x);
-
-			int cover_m = cover << (poly_subpixel_shift + 1);
-
-			if (area)
-			{
-				if (unsigned int alpha = calculate_alpha(cover_m - area))
-					sl.add_cell(x, alpha);
-				++x;
-			}
-
-			if (cells.second && cells.first->x > x)
-			{
-				if (unsigned int alpha = calculate_alpha(cover_m))
-					sl.add_span(x, cells.first->x - x, alpha);
-			}
-		}
-		return true;
-	}
-
-	template<class Clip>
 	template <typename ScanlineAdapter, typename Renderer>
 	inline void rasterizer_scanline_aa<Clip>::render(Renderer &r)
 	{
+		using namespace agge;
+
+		struct calculate_alpha
+		{
+			unsigned int operator ()(int area) const
+			{
+				area >>= 9;
+				if (area < 0)
+					area = -area;
+				if (area > 255)
+					area = 255;
+				return area;
+			}
+		};
+
 		ScanlineAdapter sl(r, m_covers_buffer, min_x(), max_x());
 
 		prepare();
 		for (int y = min_y(); y <= max_y(); ++y)
 		{
-			sl.set_y(y);
-			sweep_scanline(sl, y);
-			sl.commit();
+			vector_rasterizer::scanline_cells cells = m_outline.get_scanline_cells(y);
+
+			if (cells.second)
+			{
+				sl.set_y(y);
+				sl.reset_spans();
+				sweep_scanline<vector_rasterizer::_1_shift>(cells.first, cells.first + cells.second, sl, calculate_alpha());
+				sl.commit();
+			}
 		}
 	}
 }

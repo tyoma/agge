@@ -12,5 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\agge\vector_rasterizer.h" />
+    <ClInclude Include="..\agge\rasterizer.h" />
+    <ClInclude Include="..\agge\renderer.h" />
   </ItemGroup>
 </Project>

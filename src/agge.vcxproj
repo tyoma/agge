@@ -22,7 +22,9 @@
     <ClCompile Include="vector_rasterizer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\agge\rasterizer.h" />
     <ClInclude Include="..\agge\vector_rasterizer.h" />
+    <ClInclude Include="..\agge\renderer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F849E92C-248A-46B2-9EAB-F86578A21316}</ProjectGuid>

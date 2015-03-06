@@ -37,6 +37,10 @@ namespace ut
          throw FailedAssertion("Values are not equal!", i_location);
    }
 
+	template <typename T1, size_t n, typename T2>
+	inline void are_equal(T1 (&i_lhs)[n], const T2 &i_rhs, const LocationInfo &location)
+	{	are_equal(std::vector<typename T2::value_type>(i_lhs, i_lhs + n), i_rhs, location);	}
+
    template <typename T1, typename T2>
    inline void are_not_equal(const T1 &i_lhs, const T2 &i_rhs, const LocationInfo &i_location)
    {

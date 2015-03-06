@@ -7,15 +7,6 @@
 
 using namespace std;
 
-
-namespace ut
-{
-	template <typename T1, size_t n, typename T2>
-	inline void are_equal(T1 (&lhs)[n], const T2 &rhs, const LocationInfo &location)
-	{	are_equal(std::vector<typename T2::value_type>(lhs, lhs + n), rhs, location);	}
-}
-
-
 namespace agge
 {
 	bool operator ==(const vector_rasterizer::cell &lhs, const vector_rasterizer::cell &rhs)

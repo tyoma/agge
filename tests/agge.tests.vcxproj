@@ -172,6 +172,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="RendererTests.cpp" />
+    <ClCompile Include="ScanlineRasterizerTests.cpp" />
     <ClCompile Include="VectorRasterizerTests.cpp" />
   </ItemGroup>
   <ItemGroup>
