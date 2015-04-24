@@ -21,7 +21,7 @@ namespace agge
 		{
 			vector_rasterizer::scanline_cells row = r.get_scanline_cells(y);
 
-			return vector<vector_rasterizer::cell>(row.first, row.first + row.second);
+			return vector<vector_rasterizer::cell>(row.first, row.second);
 		}
 	}
 

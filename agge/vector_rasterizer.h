@@ -28,9 +28,10 @@ namespace agge
 #pragma pack(pop)
 
 		typedef std::vector<cell> cells_container;
+		typedef cells_container::const_iterator const_cells_iterator;
 		typedef unsigned int count_t;
 		typedef std::pair<int, int> range;
-		typedef std::pair<const cell *, count_t> scanline_cells;
+		typedef std::pair<const_cells_iterator /*begin*/, const_cells_iterator /*end*/> scanline_cells;
 
 	public:
 		vector_rasterizer();
@@ -50,7 +51,6 @@ namespace agge
 	private:
 		struct sorted_bin;
 		typedef std::vector<sorted_bin> sorted_bins_container;
-		typedef cells_container::const_iterator const_cells_iterator;
 
 	private:
 		const vector_rasterizer &operator =(const vector_rasterizer &);
@@ -83,7 +83,10 @@ namespace agge
 	inline vector_rasterizer::scanline_cells vector_rasterizer::get_scanline_cells(int y) const
 	{
 		const sorted_bin &scanline = _scanlines[y - _min_y];
-		return std::make_pair(&_cells[scanline.start], scanline.length);
+		const const_cells_iterator begin = _cells.begin() + scanline.start;
+		const const_cells_iterator end = begin + scanline.length;
+
+		return std::make_pair(begin, end);
 	}
 
 	inline bool vector_rasterizer::sorted() const

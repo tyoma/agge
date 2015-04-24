@@ -153,14 +153,14 @@ int main()
 	{
 		rect_r r(random(1620), random(1080), 0, 0);
 		
-		r.x2 = r.x1 + random(300), r.y2 = r.y1 + random(200);
+		r.x2 = random(200), r.y2 = random(200);
 		
-		rgba8 c(random(255), random(255), random(255), 255);
+		rgba8 c(random(255), random(255), random(255), 200);
 
 		ellipses.push_back(make_pair(r, c));
 	}
 
-	//ellipses.push_back(make_pair(rect_r(10, 10, 999, 850), rgba8(23, 190, 250, 224)));
+	//ellipses.push_back(make_pair(rect_r(20, 30, 20, 30), rgba8(23, 190, 250, 224)));
 	//ellipses.push_back(make_pair(rect_r(10, 10, 1900, 1000), rgba8(23, 23, 250, 100)));
 	//ellipses.push_back(make_pair(rect_r(600, 400, 1900, 1000), rgba8(255, 30, 10, 224)));
 	//ellipses.push_back(make_pair(rect_r(600, 400, 1900, 1000), rgba8(255, 30, 10, 224)));
@@ -203,6 +203,21 @@ int main()
 		ras.render<scanline>(r);
 		rendition += stopwatch(counter);
 
+		//for (auto i = ellipses.begin(); i != ellipses.end(); ++i)
+		//{
+		//	aggx::ellipse e(i->first.x1, i->first.y1, i->first.x2, i->first.y2);
+
+		//	ras.reset();
+
+		//	stopwatch(counter);
+		//	ras.add_path(e);
+		//	ras.prepare();
+		//	rasterization += stopwatch(counter);
+		//	renderer r(target, blenderx(i->second));
+		//	ras.render<scanline>(r);
+		//	rendition += stopwatch(counter);
+		//}
+
 		{
 			typedef agg::pixfmt_alpha_blend_rgba<agg::blender_bgra32, bitmap_rendering_buffer> pixfmt;
 			typedef agg::rgba8 color_type;
@@ -224,8 +239,23 @@ int main()
 			//ras_aa.sort();
 			//rasterization += stopwatch(counter);
 			//ren_aa.color(agg::rgba(0.4, 0.3, 0.1, 140.0 / 255));
-			//agg::render_scanlines(ras_aa, sl, ren_aa);
+			agg::render_scanlines(ras_aa, sl, ren_aa);
 			//rendition += stopwatch(counter);
+
+			//for (auto i = ellipses.begin(); i != ellipses.end(); ++i)
+			//{
+			//	aggx::ellipse e(i->first.x1, i->first.y1, i->first.x2, i->first.y2);
+
+			//	ras_aa.reset();
+
+			//	stopwatch(counter);
+			//	ras_aa.add_path(e);
+			//	ras_aa.sort();
+			//	rasterization += stopwatch(counter);
+			//	ren_aa.color(agg::rgba(0.4, 0.3, 0.1, 140.0 / 255));
+			//	agg::render_scanlines(ras_aa, sl, ren_aa);
+			//	rendition += stopwatch(counter);
+			//}
 		}
 	});
 

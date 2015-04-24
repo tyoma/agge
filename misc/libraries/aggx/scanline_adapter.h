@@ -16,7 +16,6 @@ namespace aggx
 			: m_renderer(renderer), m_covers(covers)
 		{
 			m_covers.resize(max_x - min_x + 16);
-			reset_spans();
 		}
 
 		void add_cell(int x, unsigned cover)
@@ -48,15 +47,11 @@ namespace aggx
 			m_cover = start;
 		}
 
-		void reset_spans()
+		void begin(int y)
 		{
 			m_length = 0;
 			m_start_x = 0x7FFFFFF0;
 			m_cover = &m_covers[4];
-		}
-
-		void set_y(unsigned y)
-		{
 			m_current_y = y;
 		}
 

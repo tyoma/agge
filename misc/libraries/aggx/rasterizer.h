@@ -76,10 +76,6 @@ namespace aggx
 		int max_x() const { return m_outline.hrange().second; }
 		int max_y() const { return m_outline.vrange().second; }
 
-		void sort();
-
-		unsigned calculate_alpha(int area) const;
-
 		void prepare();
 
 		template <typename ScanlineAdapter, typename Renderer>
@@ -94,6 +90,8 @@ namespace aggx
 			status_closed
 		};
 
+		struct calculate_alpha;
+
 	private:
 		agge::vector_rasterizer m_outline;
 		clip_type m_clipper;
@@ -107,10 +105,17 @@ namespace aggx
 	};
 
 
+	template<class Clip>
+	struct rasterizer_scanline_aa<Clip>::calculate_alpha
+	{
+		unsigned int operator ()(int area) const;
+	};
 
-	template<class Clip> 
+
+
+	template<class Clip>
 	inline void rasterizer_scanline_aa<Clip>::reset() 
-	{ 
+	{
 		m_outline.reset(); 
 		m_status = status_initial;
 	}
@@ -201,23 +206,23 @@ namespace aggx
 			add_vertex(x, y, cmd);
 	}
 
-	template<class Clip>
-	inline unsigned rasterizer_scanline_aa<Clip>::calculate_alpha(int area) const
-	{
-		int cover = area >> (poly_subpixel_shift*2 + 1 - aa_shift);
+	//template<class Clip>
+	//inline unsigned rasterizer_scanline_aa<Clip>::calculate_alpha(int area) const
+	//{
+	//	int cover = area >> (poly_subpixel_shift*2 + 1 - aa_shift);
 
-		if(cover < 0) cover = -cover;
-		if(m_filling_rule == fill_even_odd)
-		{
-			cover &= aa_mask2;
-			if(cover > aa_scale)
-			{
-				cover = aa_scale2 - cover;
-			}
-		}
-		if(cover > aa_mask) cover = aa_mask;
-		return m_gamma[cover];
-	}
+	//	if(cover < 0) cover = -cover;
+	//	if(m_filling_rule == fill_even_odd)
+	//	{
+	//		cover &= aa_mask2;
+	//		if(cover > aa_scale)
+	//		{
+	//			cover = aa_scale2 - cover;
+	//		}
+	//	}
+	//	if(cover > aa_mask) cover = aa_mask;
+	//	return m_gamma[cover];
+	//}
 
 	template<class Clip> 
 	inline void rasterizer_scanline_aa<Clip>::prepare()
@@ -231,35 +236,21 @@ namespace aggx
 	template <typename ScanlineAdapter, typename Renderer>
 	inline void rasterizer_scanline_aa<Clip>::render(Renderer &r)
 	{
-		using namespace agge;
-
-		struct calculate_alpha
-		{
-			unsigned int operator ()(int area) const
-			{
-				area >>= 9;
-				if (area < 0)
-					area = -area;
-				if (area > 255)
-					area = 255;
-				return area;
-			}
-		};
-
 		ScanlineAdapter sl(r, m_covers_buffer, min_x(), max_x());
 
 		prepare();
-		for (int y = min_y(); y <= max_y(); ++y)
-		{
-			vector_rasterizer::scanline_cells cells = m_outline.get_scanline_cells(y);
+		agge::render(sl, m_outline, calculate_alpha(), 0, 1);
+	}
 
-			if (cells.second)
-			{
-				sl.set_y(y);
-				sl.reset_spans();
-				sweep_scanline<vector_rasterizer::_1_shift>(cells.first, cells.first + cells.second, sl, calculate_alpha());
-				sl.commit();
-			}
-		}
+
+	template<class Clip>
+	inline unsigned int rasterizer_scanline_aa<Clip>::calculate_alpha::operator ()(int area) const
+	{
+		area >>= agge::vector_rasterizer::_1_shift + 1;
+		if (area < 0)
+			area = -area;
+		if (area > 255)
+			area = 255;
+		return area;
 	}
 }
