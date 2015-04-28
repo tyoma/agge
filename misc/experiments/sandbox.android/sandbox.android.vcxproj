@@ -23,12 +23,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
-    <OutDir>$(SolutionDir)_bin/$(Configuration)_$(PlatformShortName)/</OutDir>
-    <IntDir>$(SolutionDir)_obj/$(Configuration)_$(PlatformShortName)/</IntDir>
+    <OutDir>$(SolutionDir)_bin\$(Configuration)_$(PlatformShortName)\</OutDir>
+    <IntDir>$(SolutionDir)_obj\$(Configuration)_$(PlatformShortName)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
-    <OutDir>$(SolutionDir)_bin/$(Configuration)_$(PlatformShortName)/</OutDir>
-    <IntDir>$(SolutionDir)_obj/$(Configuration)_$(PlatformShortName)/</IntDir>
+    <OutDir>$(SolutionDir)_bin\$(Configuration)_$(PlatformShortName)\</OutDir>
+    <IntDir>$(SolutionDir)_obj\$(Configuration)_$(PlatformShortName)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <AntBuild>

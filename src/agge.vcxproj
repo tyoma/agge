@@ -72,20 +72,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>$(SolutionDir)_obj/$(Configuration)_$(PlatformShortName)/$(ProjectName)/</IntDir>
-    <OutDir>$(SolutionDir)_lib/$(Configuration)_$(PlatformShortName)/</OutDir>
+    <IntDir>$(SolutionDir)_obj\$(Configuration)_$(PlatformShortName)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_lib\$(Configuration)_$(PlatformShortName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>$(SolutionDir)_obj/$(Configuration)_$(PlatformShortName)/$(ProjectName)/</IntDir>
-    <OutDir>$(SolutionDir)_lib/$(Configuration)_$(PlatformShortName)/</OutDir>
+    <IntDir>$(SolutionDir)_obj\$(Configuration)_$(PlatformShortName)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_lib\$(Configuration)_$(PlatformShortName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IntDir>$(SolutionDir)_obj/$(Configuration)_$(PlatformShortName)/$(ProjectName)/</IntDir>
-    <OutDir>$(SolutionDir)_lib/$(Configuration)_$(PlatformShortName)/</OutDir>
+    <IntDir>$(SolutionDir)_obj\$(Configuration)_$(PlatformShortName)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_lib\$(Configuration)_$(PlatformShortName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IntDir>$(SolutionDir)_obj/$(Configuration)_$(PlatformShortName)/$(ProjectName)/</IntDir>
-    <OutDir>$(SolutionDir)_lib/$(Configuration)_$(PlatformShortName)/</OutDir>
+    <IntDir>$(SolutionDir)_obj\$(Configuration)_$(PlatformShortName)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_lib\$(Configuration)_$(PlatformShortName)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -6,10 +6,39 @@
 #include "basics.h"
 
 #include <algorithm>
+#include <functional>
 #include <vector>
 
 namespace aggx
 {
+	class parallel
+	{
+	public:
+		typedef std::function<void(size_t threadid)> kernel_func;
+
+	public:
+		parallel(size_t n);
+		~parallel();
+
+		void call(const kernel_func &kernel);
+
+	private:
+		struct worker_data;
+		typedef std::shared_ptr<void> handle;
+		typedef std::pair<handle, worker_data> thread_data;
+		typedef std::vector<thread_data> threads;
+
+	private:
+		static unsigned int __stdcall thread_proc(void *exit);
+
+	private:
+		bool _exit;
+		handle _run;
+		handle _controller_thread;
+		threads _threads;
+		volatile long _semaphore;
+	};
+
 	template<class Clip>
 	class rasterizer_scanline_aa
 	{
@@ -34,7 +63,9 @@ namespace aggx
 			m_auto_close(true),
 			m_start_x(0),
 			m_start_y(0),
-			m_status(status_initial)
+			m_status(status_initial),
+			m_cover_buffers(4),
+			m_parallel(4)
 		{
 			for(int i = 0; i < aa_scale; i++)
 				m_gamma[i] = i;
@@ -101,7 +132,8 @@ namespace aggx
 		coord_type m_start_x;
 		coord_type m_start_y;
 		unsigned m_status;
-		std::vector<cover_type> m_covers_buffer;
+		std::vector< std::vector<cover_type> > m_cover_buffers;
+		parallel m_parallel;
 	};
 
 
@@ -236,10 +268,15 @@ namespace aggx
 	template <typename ScanlineAdapter, typename Renderer>
 	inline void rasterizer_scanline_aa<Clip>::render(Renderer &r)
 	{
-		ScanlineAdapter sl(r, m_covers_buffer, min_x(), max_x());
-
 		prepare();
-		agge::render(sl, m_outline, calculate_alpha(), 0, 1);
+		m_parallel.call([this, &r] (size_t threadid) {
+			ScanlineAdapter sl(r, m_cover_buffers[threadid], min_x(), max_x());
+
+			agge::render(sl, m_outline, rasterizer_scanline_aa<Clip>::calculate_alpha(), threadid, 4);
+		});
+		//ScanlineAdapter sl(r, m_cover_buffers[0], min_x(), max_x());
+
+		//agge::render(sl, m_outline, rasterizer_scanline_aa<Clip>::calculate_alpha(), 0, 1);
 	}
 
 
