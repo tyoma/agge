@@ -149,11 +149,11 @@ int main()
 
 	vector< pair<rect_r, rgba8> > ellipses;
 
-	for (int n = 400; n; --n)
+	for (int n = 4000; n; --n)
 	{
-		rect_r r(random(1620), random(1080), 0, 0);
+		rect_r r(random(2420) + 70, random(1385) + 70, 0, 0);
 		
-		r.x2 = random(200), r.y2 = random(200);
+		r.x2 = random(70) + 1, r.y2 = random(70) + 1;
 		
 		rgba8 c(random(255), random(255), random(255), 200);
 
@@ -195,28 +195,28 @@ int main()
 		rasterization = 0;
 		rendition = 0;
 
-		stopwatch(counter);
-		ras.add_path(agg_path_adaptor(spiral_flatten));
-		ras.prepare();
-		rasterization += stopwatch(counter);
-		renderer r(target, blenderx(rgba8(0, 154, 255, 240)));
-		ras.render<scanline>(r);
-		rendition += stopwatch(counter);
+		//stopwatch(counter);
+		//ras.add_path(agg_path_adaptor(spiral_flatten));
+		//ras.prepare();
+		//rasterization += stopwatch(counter);
+		//renderer r(target, blenderx(rgba8(0, 154, 255, 240)));
+		//ras.render<scanline>(r);
+		//rendition += stopwatch(counter);
 
-		//for (auto i = ellipses.begin(); i != ellipses.end(); ++i)
-		//{
-		//	aggx::ellipse e(i->first.x1, i->first.y1, i->first.x2, i->first.y2);
+		for (auto i = ellipses.begin(); i != ellipses.end(); ++i)
+		{
+			aggx::ellipse e(i->first.x1, i->first.y1, i->first.x2, i->first.y2);
 
-		//	ras.reset();
+			ras.reset();
 
-		//	stopwatch(counter);
-		//	ras.add_path(e);
-		//	ras.prepare();
-		//	rasterization += stopwatch(counter);
-		//	renderer r(target, blenderx(i->second));
-		//	ras.render<scanline>(r);
-		//	rendition += stopwatch(counter);
-		//}
+			stopwatch(counter);
+			ras.add_path(e);
+			ras.prepare();
+			rasterization += stopwatch(counter);
+			renderer r(target, blenderx(i->second));
+			ras.render<scanline>(r);
+			rendition += stopwatch(counter);
+		}
 
 		{
 			typedef agg::pixfmt_alpha_blend_rgba<agg::blender_bgra32, bitmap_rendering_buffer> pixfmt;

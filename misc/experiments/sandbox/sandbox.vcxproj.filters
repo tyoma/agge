@@ -12,6 +12,9 @@
     <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp">
       <Filter>aggx</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libraries\aggx\parallel.cpp">
+      <Filter>aggx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainDialog.h" />
@@ -64,6 +67,9 @@
       <Filter>aggx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libraries\aggx\pixel_formats.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\parallel.h">
       <Filter>aggx</Filter>
     </ClInclude>
   </ItemGroup>

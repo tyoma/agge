@@ -2,5 +2,18 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\..\libraries\aggx\parallel.cpp">
+      <Filter>aggx</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="aggx">
+      <UniqueIdentifier>{1852beaa-f383-460b-becb-50fbb1841c47}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\libraries\aggx\parallel.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

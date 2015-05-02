@@ -4,6 +4,7 @@
 #include <agge/vector_rasterizer.h>
 
 #include "basics.h"
+#include "parallel.h"
 
 #include <algorithm>
 #include <functional>
@@ -11,34 +12,6 @@
 
 namespace aggx
 {
-	class parallel
-	{
-	public:
-		typedef std::function<void(size_t threadid)> kernel_func;
-
-	public:
-		parallel(size_t n);
-		~parallel();
-
-		void call(const kernel_func &kernel);
-
-	private:
-		struct worker_data;
-		typedef std::shared_ptr<void> handle;
-		typedef std::pair<handle, worker_data> thread_data;
-		typedef std::vector<thread_data> threads;
-
-	private:
-		static unsigned int __stdcall thread_proc(void *exit);
-
-	private:
-		bool _exit;
-		handle _run;
-		handle _controller_thread;
-		threads _threads;
-		volatile long _semaphore;
-	};
-
 	template<class Clip>
 	class rasterizer_scanline_aa
 	{
@@ -56,6 +29,11 @@ namespace aggx
 			aa_mask2 = aa_scale2 - 1
 		};
 
+		enum
+		{
+			thread_count = 1
+		};
+
 		rasterizer_scanline_aa() : 
 			m_outline(),
 			m_clipper(),
@@ -64,8 +42,8 @@ namespace aggx
 			m_start_x(0),
 			m_start_y(0),
 			m_status(status_initial),
-			m_cover_buffers(4),
-			m_parallel(4)
+			m_cover_buffers(thread_count),
+			m_parallel(thread_count)
 		{
 			for(int i = 0; i < aa_scale; i++)
 				m_gamma[i] = i;
@@ -272,7 +250,7 @@ namespace aggx
 		m_parallel.call([this, &r] (size_t threadid) {
 			ScanlineAdapter sl(r, m_cover_buffers[threadid], min_x(), max_x());
 
-			agge::render(sl, m_outline, rasterizer_scanline_aa<Clip>::calculate_alpha(), threadid, 4);
+			agge::render(sl, m_outline, rasterizer_scanline_aa<Clip>::calculate_alpha(), threadid, thread_count);
 		});
 		//ScanlineAdapter sl(r, m_cover_buffers[0], min_x(), max_x());
 
