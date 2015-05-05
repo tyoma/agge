@@ -11,21 +11,37 @@ namespace aggx
 	{
 	public:
 		event()
-			: _native(::CreateEvent(nullptr, FALSE, FALSE, nullptr), &::CloseHandle)
+			: _native(::CreateSemaphore(nullptr, 0, 1, nullptr), &::CloseHandle), _lock_state(0)
 		{	}
 
 		event(const event &other)
-			: _native(::CreateEvent(nullptr, FALSE, FALSE, nullptr), &::CloseHandle)
+			: _native(::CreateSemaphore(nullptr, 0, 1, nullptr), &::CloseHandle), _lock_state(0)
 		{	}
 
 		void set()
-		{	::SetEvent(_native.get());	}
+		{
+			if (_InterlockedCompareExchange(&_lock_state, 1 /*flag if...*/, 0 /*... was not locked*/) == 2 /*was locked*/)
+				::ReleaseSemaphore(_native.get(), 1, nullptr);
+		}
 
 		void wait()
-		{	::WaitForSingleObject(_native.get(), INFINITE);	}
+		{
+			for (bool ready = false; !ready; )
+			{
+				for (long i = 20000; !ready && i; --i)
+				{
+					ready = !!_InterlockedExchange(&_lock_state, 0);
+					if (!ready)
+						_mm_pause();
+				}
+				if (!ready && _InterlockedCompareExchange(&_lock_state, 2 /*lock if...*/, 0 /*... was not flagged*/) == 0 /*was not flagged*/)
+					::WaitForSingleObject(_native.get(), INFINITE);
+			}
+		}
 
 	private:
 		shared_ptr<void> _native;
+		volatile long _lock_state;
 	};
 
 	struct parallel::worker_data
@@ -56,6 +72,7 @@ namespace aggx
 			thread_data &td = _threads.back();
 
 			td.first = shared_ptr<void>((HANDLE)_beginthreadex(nullptr, 0, &thread_proc, &td.second, 0, nullptr), &::CloseHandle);
+			::SetThreadPriority(td.first.get(), THREAD_PRIORITY_HIGHEST);
 		}
 	}
 

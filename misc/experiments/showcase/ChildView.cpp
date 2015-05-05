@@ -211,11 +211,11 @@ CChildView::CChildView()
 			_bars[bucket].push_back(b = generate(b.c));
 	}
 
-	for (int n = 400; n; --n)
+	for (int n = 1500; n; --n)
 	{
-		RECT r = { random(1620), random(1080), 0, 0 };
+		RECT r = { random(1780), random(890), 0, 0 };
 		
-		r.right = r.left + random(300), r.bottom = r.top + random(200);
+		r.right = r.left + random(140) + 1, r.bottom = r.top + random(140) + 1;
 		
 		COLORREF c = RGB(random(255), random(255), random(255));
 

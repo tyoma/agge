@@ -91,14 +91,14 @@ namespace aggx
 	template<class T>
 	void vertex_sequence<T>::add(const T& val)
 	{
-		if(base_type::size() > 1)
+		if(this->size() > 1)
 		{
-			if(!(*this)[base_type::size() - 2]((*this)[base_type::size() - 1])) 
+			if(!(*this)[this->size() - 2]((*this)[this->size() - 1])) 
 			{
-				base_type::pop_back();
+				this->pop_back();
 			}
 		}
-		base_type::push_back(val);
+		this->push_back(val);
 	}
 
 
@@ -106,10 +106,10 @@ namespace aggx
 	template<class T>
 	void vertex_sequence<T>::modify_last(const T& val)
 	{
-		if (!empty())
-			back() = val;
+		if (!this->empty())
+			this->back() = val;
 		else
-			push_back(val);
+			this->push_back(val);
 	}
 
 
@@ -118,20 +118,20 @@ namespace aggx
 	template<class T>
 	void vertex_sequence<T>::close(bool closed)
 	{
-		while(base_type::size() > 1)
+		while(this->size() > 1)
 		{
-			if((*this)[base_type::size() - 2]((*this)[base_type::size() - 1])) break;
-			T t = (*this)[base_type::size() - 1];
-			base_type::pop_back();
+			if((*this)[this->size() - 2]((*this)[this->size() - 1])) break;
+			T t = (*this)[this->size() - 1];
+			this->pop_back();
 			modify_last(t);
 		}
 
 		if(closed)
 		{
-			while(base_type::size() > 1)
+			while(this->size() > 1)
 			{
-				if((*this)[base_type::size() - 1]((*this)[0])) break;
-				base_type::pop_back();
+				if((*this)[this->size() - 1]((*this)[0])) break;
+				this->pop_back();
 			}
 		}
 	}
@@ -143,11 +143,11 @@ namespace aggx
 
 	template<class T>
 	inline const T& vertex_sequence<T>::prev(unsigned i) const
-	{	return (*this)[(i - 1) % size()];	}
+	{	return (*this)[(i - 1) % this->size()];	}
 
 	template<class T>
 	inline const T& vertex_sequence<T>::next(unsigned i) const
-	{	return (*this)[(i + 1) % size()];	}
+	{	return (*this)[(i + 1) % this->size()];	}
 
 	//-------------------------------------------------------------vertex_dist
 	// Vertex (x, y) with the distance to the next one. The last vertex has 

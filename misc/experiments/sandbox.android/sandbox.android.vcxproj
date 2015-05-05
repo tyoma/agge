@@ -17,6 +17,12 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <AndroidAPILevel>android-9</AndroidAPILevel>
+    <PlatformToolset>arm-linux-androideabi-4.8</PlatformToolset>
+    <AndroidStlType>gnustl_static</AndroidStlType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
+    <PlatformToolset>arm-linux-androideabi-4.8</PlatformToolset>
+    <AndroidStlType>gnustl_static</AndroidStlType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -36,9 +42,10 @@
     </AntBuild>
     <Link>
       <AdditionalOptions>-ljnigraphics %(AdditionalOptions)</AdditionalOptions>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <ClCompile>
-      <AdditionalOptions>-fpermissive -ffast-math %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-fpermissive -ffast-math -std=c++11</AdditionalOptions>
       <GccExceptionHandling>true</GccExceptionHandling>
       <OptimizationLevel>O3</OptimizationLevel>
       <AdditionalIncludeDirectories>./../../libraries;./../../..</AdditionalIncludeDirectories>
@@ -48,13 +55,14 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
     <Link>
       <AdditionalOptions>-ljnigraphics %(AdditionalOptions)</AdditionalOptions>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <AntBuild>
       <AntBuildPath>$(ProjectDir)\AndroidApk</AntBuildPath>
       <AntBuildType>Debug</AntBuildType>
     </AntBuild>
     <ClCompile>
-      <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-fpermissive -ffast-math -std=c++11</AdditionalOptions>
       <AdditionalIncludeDirectories>./../../libraries;./../../..</AdditionalIncludeDirectories>
       <GccExceptionHandling>true</GccExceptionHandling>
       <StrictAliasing>true</StrictAliasing>
@@ -75,11 +83,14 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\src\vector_rasterizer.cpp" />
     <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp" />
+    <ClCompile Include="..\..\libraries\aggx\parallel_linux.cpp" />
     <ClCompile Include="..\..\libraries\aggx\rasterizer.cpp" />
     <ClCompile Include="sandbox_view.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\agge\vector_rasterizer.h" />
+    <ClInclude Include="..\..\libraries\aggx\parallel.h" />
+    <ClInclude Include="..\..\libraries\aggx\rasterizer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

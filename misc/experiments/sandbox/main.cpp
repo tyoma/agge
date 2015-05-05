@@ -149,11 +149,13 @@ int main()
 
 	vector< pair<rect_r, rgba8> > ellipses;
 
-	for (int n = 4000; n; --n)
+	const int max_radius = 50;
+
+	for (int n = 10000; n; --n)
 	{
-		rect_r r(random(2420) + 70, random(1385) + 70, 0, 0);
+		rect_r r(random(1920 - 2 * max_radius) + max_radius, random(1080 - 2 * max_radius) + max_radius, 0, 0);
 		
-		r.x2 = random(70) + 1, r.y2 = random(70) + 1;
+		r.x2 = random(max_radius) + 1, r.y2 = random(max_radius) + 1;
 		
 		rgba8 c(random(255), random(255), random(255), 200);
 

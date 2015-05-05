@@ -31,7 +31,7 @@ namespace aggx
 
 		enum
 		{
-			thread_count = 1
+			thread_count = 4
 		};
 
 		rasterizer_scanline_aa() : 
@@ -248,7 +248,7 @@ namespace aggx
 	{
 		prepare();
 		m_parallel.call([this, &r] (size_t threadid) {
-			ScanlineAdapter sl(r, m_cover_buffers[threadid], min_x(), max_x());
+			ScanlineAdapter sl(r, m_cover_buffers[threadid], this->min_x(), this->max_x());
 
 			agge::render(sl, m_outline, rasterizer_scanline_aa<Clip>::calculate_alpha(), threadid, thread_count);
 		});
