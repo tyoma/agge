@@ -4,5 +4,6 @@
     <ClCompile Include="VectorRasterizerTests.cpp" />
     <ClCompile Include="ScanlineRasterizerTests.cpp" />
     <ClCompile Include="RendererTests.cpp" />
+    <ClCompile Include="BlenderTests.cpp" />
   </ItemGroup>
 </Project>
