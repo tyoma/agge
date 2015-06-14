@@ -81,8 +81,8 @@ namespace aggx
 							source10 = _mm_unpacklo_epi8(source10, zero);
 
 				// source -= ((source - color) << 1) * alpha >> 16;
-				source32 = _mm_sub_epi16(source32, _mm_mulhi_epi16(/*_mm_slli_epi16*/(_mm_sub_epi16(source32, color_u16)/*, 1*/), _mm_unpackhi_epi32(alpha, alpha)));
-				source10 = _mm_sub_epi16(source10, _mm_mulhi_epi16(/*_mm_slli_epi16*/(_mm_sub_epi16(source10, color_u16)/*, 1*/), _mm_unpacklo_epi32(alpha, alpha)));
+				source32 = _mm_sub_epi16(source32, _mm_mulhi_epi16(_mm_slli_epi16(_mm_sub_epi16(source32, color_u16), 1), _mm_unpackhi_epi32(alpha, alpha)));
+				source10 = _mm_sub_epi16(source10, _mm_mulhi_epi16(_mm_slli_epi16(_mm_sub_epi16(source10, color_u16), 1), _mm_unpacklo_epi32(alpha, alpha)));
 
 				_mm_store_si128(p, _mm_packus_epi16(source10, source32));
 			}
