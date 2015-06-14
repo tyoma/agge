@@ -58,6 +58,7 @@ namespace aggx
 
 		for (; data->run.wait(), data->kernel; data->kernel = nullptr, data->done.set())
 			(*data->kernel)(data->threadid);
+		return 0;
 	}
 
 	parallel::parallel(unsigned int threads)

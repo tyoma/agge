@@ -6,7 +6,7 @@ namespace agge
 
 	struct rgba
 	{
-		rgba(uint8_t r, uint8_t g, uint8_t b);
+		rgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 0xFF);
 
 		uint8_t r, g, b, a;
 	};
@@ -33,21 +33,23 @@ namespace agge
 		inline blender_solid_color::blender_solid_color(rgba color)
 			: _color(color)
 		{	}
-
+#pragma warning(disable: 4244)
 		inline void blender_solid_color::operator ()(pixel *pixels, unsigned int /*x*/, unsigned int /*y*/, unsigned int n,
 			const cover_type *covers)
 		{
 			for (; n; ++pixels, --n, ++covers)
 			{
-				(*pixels)[0] += (_color.r - (*pixels)[0]) * (1 + *covers) >> 8;
-				(*pixels)[1] += (_color.g - (*pixels)[1]) * (1 + *covers) >> 8;
-				(*pixels)[2] += (_color.b - (*pixels)[2]) * (1 + *covers) >> 8;
+				int alpha = (*covers) * (_color.a);
+				(*pixels)[0] += ((_color.r - (*pixels)[0]) * alpha) / (0xff * 0xff);
+				(*pixels)[1] += ((_color.g - (*pixels)[1]) * alpha) / (0xff * 0xff);
+				(*pixels)[2] += ((_color.b - (*pixels)[2]) * alpha) / (0xff * 0xff);
 			}
 		}
+#pragma warning(default: 4244)
 	}
 
-	inline rgba::rgba(uint8_t r_, uint8_t g_, uint8_t b_)
-		: r(r_), g(g_), b(b_)
+	inline rgba::rgba(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_)
+		: r(r_), g(g_), b(b_), a(a_)
 	{
 	}
 }

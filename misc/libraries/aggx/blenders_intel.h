@@ -40,6 +40,7 @@ namespace aggx
 			_alpha_u16 = _mm_cvtsi32_si128(_alpha);
 			_alpha_u16 = _mm_unpacklo_epi32(_alpha_u16, _alpha_u16);
 			_alpha_u16 = _mm_unpacklo_epi64(_alpha_u16, _alpha_u16);
+			_alpha_u16 = _mm_slli_epi16(_alpha_u16, 7);
 			_color_u16 = _mm_cvtsi32_si128(_color);
 			_color_u16 = _mm_unpacklo_epi8(_color_u16, zero);
 			_color_u16 = _mm_unpacklo_epi64(_color_u16, _color_u16);
@@ -71,19 +72,19 @@ namespace aggx
 
 			for (__m128i *p = reinterpret_cast<__m128i *>(pixels); n_quads; --n_quads, ++p, covers += 4)
 			{
-				__m128i x32 = _mm_unpacklo_epi8(_mm_loadl_epi64(reinterpret_cast<const __m128i*>(covers)), zero);
+				__m128i alpha = _mm_mulhi_epu16(_mm_unpacklo_epi8(zero, _mm_loadl_epi64(reinterpret_cast<const __m128i*>(covers))), alpha_u16);
 
-				x32 = _mm_srli_epi16(_mm_mullo_epi16(x32, alpha_u16), 8);
-				x32 = _mm_unpacklo_epi16(x32, x32);
+				alpha = _mm_unpacklo_epi16(alpha, alpha);
 
-				const __m128i source = _mm_load_si128(p);
+				__m128i source10 = _mm_load_si128(p);
+				__m128i	source32 = _mm_unpackhi_epi8(source10, zero);
+							source10 = _mm_unpacklo_epi8(source10, zero);
 
-				// X = (Source - Color) * alpha >> 8;
-				const __m128i x10 = _mm_srai_epi16(_mm_mullo_epi16(_mm_sub_epi16(_mm_unpacklo_epi8(source, zero), color_u16), _mm_unpacklo_epi32(x32, x32)), 8);
-				x32 = _mm_srai_epi16(_mm_mullo_epi16(_mm_sub_epi16(_mm_unpackhi_epi8(source, zero), color_u16), _mm_unpackhi_epi32(x32, x32)), 8);
+				// source -= ((source - color) << 1) * alpha >> 16;
+				source32 = _mm_sub_epi16(source32, _mm_mulhi_epi16(/*_mm_slli_epi16*/(_mm_sub_epi16(source32, color_u16)/*, 1*/), _mm_unpackhi_epi32(alpha, alpha)));
+				source10 = _mm_sub_epi16(source10, _mm_mulhi_epi16(/*_mm_slli_epi16*/(_mm_sub_epi16(source10, color_u16)/*, 1*/), _mm_unpacklo_epi32(alpha, alpha)));
 
-				// Destination = Source - X;
-				_mm_store_si128(p, _mm_sub_epi8(source, _mm_packs_epi16(x10, x32)));
+				_mm_store_si128(p, _mm_packus_epi16(source10, source32));
 			}
 		}
 	}
