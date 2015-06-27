@@ -15,5 +15,6 @@
     <ClInclude Include="..\agge\rasterizer.h" />
     <ClInclude Include="..\agge\renderer.h" />
     <ClInclude Include="..\agge\blenders_simd.h" />
+    <ClInclude Include="..\agge\types.h" />
   </ItemGroup>
 </Project>

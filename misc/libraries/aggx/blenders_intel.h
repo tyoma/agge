@@ -3,6 +3,8 @@
 #include "basics.h"
 #include "pixel_formats.h"
 
+#include <agge/types.h>
+
 #include <emmintrin.h>
 
 namespace aggx
@@ -12,7 +14,7 @@ namespace aggx
 		class blender_solid_color
 		{
 		public:
-			typedef pixel_format::bgra32 pixel;
+			typedef agge::pixel32 pixel;
 
 		public:
 			explicit blender_solid_color(const rgba8 &color);

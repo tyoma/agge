@@ -3,6 +3,8 @@
 #include "basics.h"
 #include "pixel_formats.h"
 
+#include <agge/types.h>
+
 struct HBITMAP__;
 typedef struct HBITMAP__ *HBITMAP;
 
@@ -14,7 +16,7 @@ namespace aggx
 	class bitmap
 	{
 	public:
-		typedef pixel_format::bgra32 pixel;
+		typedef agge::pixel32 pixel;
 
 	public:
 		bitmap(unsigned width, unsigned height);

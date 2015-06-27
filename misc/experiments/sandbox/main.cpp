@@ -1,5 +1,7 @@
 #include "MainDialog.h"
 
+#include <agge/blenders_simd.h>
+
 #include <aggx/scanline.h>
 #include <aggx/scanline_adapter.h>
 #include <aggx/rasterizer.h>
@@ -29,6 +31,20 @@ using namespace std;
 
 namespace
 {
+	agge::simd::blender_solid_color::pixel make_pixel(rgba8 color)
+	{
+		agge::simd::blender_solid_color::pixel p = { color.b, color.g, color.r, 0 };
+		return p;
+	}
+
+	class simd_blender : public agge::simd::blender_solid_color
+	{
+	public:
+		simd_blender(rgba8 color)
+			: blender_solid_color(make_pixel(color), color.a)
+		{	}
+	};
+
 	typedef std::vector< std::pair<std::pair<aggx::real, aggx::real>, unsigned> > AggPath;
 
 	class bitmap_rendering_buffer
@@ -151,23 +167,23 @@ int main()
 
 	const int max_radius = 50;
 
-	for (int n = 10000; n; --n)
-	{
-		rect_r r(random(1920 - 2 * max_radius) + max_radius, random(1080 - 2 * max_radius) + max_radius, 0, 0);
-		
-		r.x2 = random(max_radius) + 1, r.y2 = random(max_radius) + 1;
-		
-		rgba8 c(random(255), random(255), random(255), 200);
+	//for (int n = 10000; n; --n)
+	//{
+	//	rect_r r(random(1920 - 2 * max_radius) + max_radius, random(1080 - 2 * max_radius) + max_radius, 0, 0);
+	//	
+	//	r.x2 = random(max_radius) + 1, r.y2 = random(max_radius) + 1;
+	//	
+	//	rgba8 c(random(255), random(255), random(255), 200);
 
-		ellipses.push_back(make_pair(r, c));
-	}
+	//	ellipses.push_back(make_pair(r, c));
+	//}
 
 	//ellipses.push_back(make_pair(rect_r(20, 30, 20, 30), rgba8(23, 190, 250, 224)));
 	//ellipses.push_back(make_pair(rect_r(10, 10, 1900, 1000), rgba8(23, 23, 250, 100)));
 	//ellipses.push_back(make_pair(rect_r(600, 400, 1900, 1000), rgba8(255, 30, 10, 224)));
 	//ellipses.push_back(make_pair(rect_r(600, 400, 1900, 1000), rgba8(255, 30, 10, 224)));
 	//ellipses.push_back(make_pair(rect_r(600, 400, 1900, 1000), rgba8(255, 30, 10, 224)));
-	//ellipses.push_back(make_pair(rect_r(600, 400, 1900, 1000), rgba8(255, 30, 10, 224)));
+	//ellipses.push_back(make_pair(rect_r(900, 500, 900, 500), rgba8(255, 30, 10, 255)));
 
 	MSG msg;
 	rasterizer_scanline ras;
@@ -176,7 +192,8 @@ int main()
 
 	MainDialog dlg([&](bitmap &target, double &rasterization, double &rendition) {
 //		typedef blender_solid_color<bitmap::pixel> blenderx;
-		typedef intel::blender_solid_color blenderx;
+//		typedef intel::blender_solid_color blenderx;
+		typedef simd_blender blenderx;
 		typedef rendition_adapter<bitmap, blenderx> renderer;
 		typedef scanline_adapter<renderer> scanline;
 
@@ -197,13 +214,13 @@ int main()
 		rasterization = 0;
 		rendition = 0;
 
-		//stopwatch(counter);
-		//ras.add_path(agg_path_adaptor(spiral_flatten));
-		//ras.prepare();
-		//rasterization += stopwatch(counter);
-		//renderer r(target, blenderx(rgba8(0, 154, 255, 240)));
-		//ras.render<scanline>(r);
-		//rendition += stopwatch(counter);
+		stopwatch(counter);
+		ras.add_path(agg_path_adaptor(spiral_flatten));
+		ras.prepare();
+		rasterization += stopwatch(counter);
+		renderer r(target, blenderx(rgba8(0, 154, 255, 240)));
+		ras.render<scanline>(r);
+		rendition += stopwatch(counter);
 
 		for (auto i = ellipses.begin(); i != ellipses.end(); ++i)
 		{
