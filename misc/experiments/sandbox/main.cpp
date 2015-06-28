@@ -8,7 +8,6 @@
 #include <aggx/renderer.h>
 #include <aggx/rendition_adapter.h>
 #include <aggx/blenders.h>
-#include <aggx/blenders_intel.h>
 
 #include <aggx/win32_bitmap.h>
 
@@ -192,7 +191,6 @@ int main()
 
 	MainDialog dlg([&](bitmap &target, double &rasterization, double &rendition) {
 //		typedef blender_solid_color<bitmap::pixel> blenderx;
-//		typedef intel::blender_solid_color blenderx;
 		typedef simd_blender blenderx;
 		typedef rendition_adapter<bitmap, blenderx> renderer;
 		typedef scanline_adapter<renderer> scanline;

@@ -160,7 +160,21 @@ namespace
 		while (!is_stop(cmd = source.vertex(&x, &y)))
 			destination.push_back(make_pair(make_pair(x, y), cmd));
 	}
+
+	agge::simd::blender_solid_color::pixel make_pixel(rgba8 color)
+	{
+		agge::simd::blender_solid_color::pixel p = { color.b, color.g, color.r, 0 };
+		return p;
+	}
 }
+
+class CChildView::blender : public agge::simd::blender_solid_color
+{
+public:
+	blender(rgba8 color)
+		: blender_solid_color(make_pixel(color), color.a)
+	{	}
+};
 
 CChildView::CChildView()
 	: _drawLines(false), _drawBars(true), _drawEllipses(false), _drawSpiral(false),

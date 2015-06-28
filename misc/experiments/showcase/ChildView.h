@@ -1,6 +1,5 @@
 #pragma once
 
-#include <aggx/blenders_intel.h>
 #include <aggx/blenders.h>
 #include <aggx/rasterizer.h>
 #include <aggx/win32_bitmap.h>
@@ -8,6 +7,8 @@
 #include <aggx/scanline_adapter.h>
 
 #include <agg/include/agg_rasterizer_sl_clip.h>
+
+#include <agge/blenders_simd.h>
 
 #include <atlbase.h>
 #include <vector>
@@ -29,7 +30,8 @@ typedef std::vector< std::pair<std::pair<aggx::real, aggx::real>, unsigned> > Ag
 
 class CChildView : public CWnd
 {
-	typedef aggx::intel::blender_solid_color blender;
+	class blender;
+
 	typedef aggx::rendition_adapter<aggx::bitmap, blender> renderer;
 	typedef aggx::scanline_adapter<renderer> scanline;
 	typedef std::pair<RECT, COLORREF> ellipse_t;

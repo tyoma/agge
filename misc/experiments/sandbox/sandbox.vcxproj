@@ -188,7 +188,6 @@
     <ClInclude Include="..\..\libraries\aggx\agg_vertex_sequence.h" />
     <ClInclude Include="..\..\libraries\aggx\basics.h" />
     <ClInclude Include="..\..\libraries\aggx\blenders.h" />
-    <ClInclude Include="..\..\libraries\aggx\blenders_intel.h" />
     <ClInclude Include="..\..\libraries\aggx\parallel.h" />
     <ClInclude Include="..\..\libraries\aggx\pixel_formats.h" />
     <ClInclude Include="..\..\libraries\aggx\rasterizer.h" />
