@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="blenders_simd_intel.cpp" />
+    <ClCompile Include="blenders_intel.cpp" />
     <ClCompile Include="vector_rasterizer.cpp" />
   </ItemGroup>
   <ItemGroup>

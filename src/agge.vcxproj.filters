@@ -9,7 +9,7 @@
     <ClCompile Include="vector_rasterizer.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="blenders_simd_intel.cpp">
+    <ClCompile Include="blenders_intel.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

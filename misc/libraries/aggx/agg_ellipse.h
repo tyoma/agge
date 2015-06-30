@@ -22,8 +22,8 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_ELLIPSE_INCLUDED
-#define AGG_ELLIPSE_INCLUDED
+#ifndef AGGX_ELLIPSE_INCLUDED
+#define AGGX_ELLIPSE_INCLUDED
 
 #include "basics.h"
 

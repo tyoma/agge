@@ -16,6 +16,7 @@
 
 #include <agg_rasterizer_sl_clip.h>
 
+#include <agg_ellipse.h>
 #include <agg_pixfmt_rgba.h>
 #include <agg_renderer_base.h>
 #include <agg_scanline_u.h>
@@ -25,8 +26,13 @@
 #include <time.h>
 #include <windows.h>
 
+using namespace agge;
 using namespace aggx;
 using namespace std;
+
+const bool c_use_original_agg = false;
+const int c_ellipses_number = 0;//2000;
+typedef simd::blender_solid_color blender_used;
 
 namespace
 {
@@ -36,11 +42,12 @@ namespace
 		return p;
 	}
 
-	class simd_blender : public agge::simd::blender_solid_color
+	template <typename BlenderT>
+	class blender : public BlenderT
 	{
 	public:
-		simd_blender(rgba8 color)
-			: blender_solid_color(make_pixel(color), color.a)
+		blender(rgba8 color)
+			: BlenderT(make_pixel(color), color.a)
 		{	}
 	};
 
@@ -95,7 +102,15 @@ namespace
 			_position = _path.begin();
 		}
 
-		unsigned vertex(real* x, real* y)
+		unsigned vertex(float* x, float* y)
+		{
+			if (_position == _path.end())
+				return path_cmd_stop;
+			else
+				return *x = _position->first.first, *y = _position->first.second, _position++->second;
+		}
+
+		unsigned vertex(double* x, double* y)
 		{
 			if (_position == _path.end())
 				return path_cmd_stop;
@@ -158,7 +173,7 @@ namespace
 
 int main()
 {
-	typedef rasterizer_scanline_aa<agg::rasterizer_sl_no_clip/*agg::rasterizer_sl_clip_int*/> rasterizer_scanline;
+	typedef rasterizer_scanline_aa<agg::rasterizer_sl_no_clip> rasterizer_scanline;
 
 	srand((unsigned)time(0));
 
@@ -166,23 +181,16 @@ int main()
 
 	const int max_radius = 50;
 
-	//for (int n = 10000; n; --n)
-	//{
-	//	rect_r r(random(1920 - 2 * max_radius) + max_radius, random(1080 - 2 * max_radius) + max_radius, 0, 0);
-	//	
-	//	r.x2 = random(max_radius) + 1, r.y2 = random(max_radius) + 1;
-	//	
-	//	rgba8 c(random(255), random(255), random(255), 200);
+	for (int n = c_ellipses_number; n; --n)
+	{
+		rect_r r(random(1920 - 2 * max_radius) + max_radius, random(1080 - 2 * max_radius) + max_radius, 0, 0);
+		
+		r.x2 = random(max_radius) + 1, r.y2 = random(max_radius) + 1;
+		
+		rgba8 c(random(255), random(255), random(255), 200);
 
-	//	ellipses.push_back(make_pair(r, c));
-	//}
-
-	//ellipses.push_back(make_pair(rect_r(20, 30, 20, 30), rgba8(23, 190, 250, 224)));
-	//ellipses.push_back(make_pair(rect_r(10, 10, 1900, 1000), rgba8(23, 23, 250, 100)));
-	//ellipses.push_back(make_pair(rect_r(600, 400, 1900, 1000), rgba8(255, 30, 10, 224)));
-	//ellipses.push_back(make_pair(rect_r(600, 400, 1900, 1000), rgba8(255, 30, 10, 224)));
-	//ellipses.push_back(make_pair(rect_r(600, 400, 1900, 1000), rgba8(255, 30, 10, 224)));
-	//ellipses.push_back(make_pair(rect_r(900, 500, 900, 500), rgba8(255, 30, 10, 255)));
+		ellipses.push_back(make_pair(r, c));
+	}
 
 	MSG msg;
 	rasterizer_scanline ras;
@@ -190,8 +198,7 @@ int main()
 	AggPath spiral_line, spiral_flatten;
 
 	MainDialog dlg([&](bitmap &target, double &rasterization, double &rendition) {
-//		typedef blender_solid_color<bitmap::pixel> blenderx;
-		typedef simd_blender blenderx;
+		typedef blender<blender_used> blenderx;
 		typedef rendition_adapter<bitmap, blenderx> renderer;
 		typedef scanline_adapter<renderer> scanline;
 
@@ -212,36 +219,42 @@ int main()
 		rasterization = 0;
 		rendition = 0;
 
-		stopwatch(counter);
-		ras.add_path(agg_path_adaptor(spiral_flatten));
-		ras.prepare();
-		rasterization += stopwatch(counter);
-		renderer r(target, blenderx(rgba8(0, 154, 255, 240)));
-		ras.render<scanline>(r);
-		rendition += stopwatch(counter);
-
-		for (auto i = ellipses.begin(); i != ellipses.end(); ++i)
+		if (!c_use_original_agg)
 		{
-			aggx::ellipse e(i->first.x1, i->first.y1, i->first.x2, i->first.y2);
+			if (!c_ellipses_number)
+			{
+				stopwatch(counter);
+				ras.add_path(agg_path_adaptor(spiral_flatten));
+				ras.prepare();
+				rasterization += stopwatch(counter);
+				renderer r(target, blenderx(rgba8(0, 154, 255, 255)));
+				ras.render<scanline>(r);
+				rendition += stopwatch(counter);
+			}
 
-			ras.reset();
+			for (auto i = ellipses.begin(); i != ellipses.end(); ++i)
+			{
+				aggx::ellipse e(i->first.x1, i->first.y1, i->first.x2, i->first.y2);
 
-			stopwatch(counter);
-			ras.add_path(e);
-			ras.prepare();
-			rasterization += stopwatch(counter);
-			renderer r(target, blenderx(i->second));
-			ras.render<scanline>(r);
-			rendition += stopwatch(counter);
+				ras.reset();
+
+				stopwatch(counter);
+				ras.add_path(e);
+				ras.prepare();
+				rasterization += stopwatch(counter);
+				renderer r(target, blenderx(i->second));
+				ras.render<scanline>(r);
+				rendition += stopwatch(counter);
+			}
 		}
-
+		else
 		{
 			typedef agg::pixfmt_alpha_blend_rgba<agg::blender_bgra32, bitmap_rendering_buffer> pixfmt;
 			typedef agg::rgba8 color_type;
 			typedef agg::order_bgra component_order;
 			typedef agg::renderer_base<pixfmt> renderer_base;
 			typedef agg::renderer_scanline_aa_solid<renderer_base> renderer_aa;
-			typedef agg::rasterizer_scanline_aa<> rasterizer_scanline;
+			typedef agg::rasterizer_scanline_aa<agg::rasterizer_sl_no_clip> rasterizer_scanline;
 			typedef agg::scanline_u8 scanline;
 
 			bitmap_rendering_buffer rbuf(target);
@@ -251,28 +264,31 @@ int main()
 			rasterizer_scanline ras_aa;
 			scanline sl;
 
-			//stopwatch(counter);
-			//ras_aa.add_path(agg_path_adaptor(spiral_flatten));
-			//ras_aa.sort();
-			//rasterization += stopwatch(counter);
-			//ren_aa.color(agg::rgba(0.4, 0.3, 0.1, 140.0 / 255));
-			agg::render_scanlines(ras_aa, sl, ren_aa);
-			//rendition += stopwatch(counter);
+			if (!c_ellipses_number)
+			{
+				stopwatch(counter);
+				ras_aa.add_path(agg_path_adaptor(spiral_flatten));
+				ras_aa.sort();
+				rasterization += stopwatch(counter);
+				ren_aa.color(agg::rgba8(0, 154, 255, 255));
+				agg::render_scanlines(ras_aa, sl, ren_aa);
+				rendition += stopwatch(counter);
+			}
 
-			//for (auto i = ellipses.begin(); i != ellipses.end(); ++i)
-			//{
-			//	aggx::ellipse e(i->first.x1, i->first.y1, i->first.x2, i->first.y2);
+			for (auto i = ellipses.begin(); i != ellipses.end(); ++i)
+			{
+				agg::ellipse e(i->first.x1, i->first.y1, i->first.x2, i->first.y2);
 
-			//	ras_aa.reset();
+				ras_aa.reset();
 
-			//	stopwatch(counter);
-			//	ras_aa.add_path(e);
-			//	ras_aa.sort();
-			//	rasterization += stopwatch(counter);
-			//	ren_aa.color(agg::rgba(0.4, 0.3, 0.1, 140.0 / 255));
-			//	agg::render_scanlines(ras_aa, sl, ren_aa);
-			//	rendition += stopwatch(counter);
-			//}
+				stopwatch(counter);
+				ras_aa.add_path(e);
+				ras_aa.sort();
+				rasterization += stopwatch(counter);
+				ren_aa.color(agg::rgba8(i->second.r, i->second.g, i->second.b, i->second.a));
+				agg::render_scanlines(ras_aa, sl, ren_aa);
+				rendition += stopwatch(counter);
+			}
 		}
 	});
 

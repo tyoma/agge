@@ -32,8 +32,10 @@ namespace agge
 			if (i == end)
 				break;
 
-			if (cover_m)
-				scanline.add_span(x, i->x - x, alpha(cover_m));
+			int len = i->x - x;
+
+			if (len && cover_m)
+				scanline.add_span(x, len, alpha(cover_m));
 		}
 	}
 

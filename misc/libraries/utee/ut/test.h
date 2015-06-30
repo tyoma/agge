@@ -116,6 +116,9 @@ namespace ut
    ut::test_case_registrar<this_suite_class, &this_suite_class::__##__test##_meta>  __##__test##_registrar;\
    void __test()
 
+#define ignore( __test )\
+   void __test()
+
 #define obsolete_test( __test )
 
 #define end_test_suite\

@@ -77,5 +77,8 @@
     <ClInclude Include="..\..\libraries\aggx\rasterizer.h">
       <Filter>aggx</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\blenders.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

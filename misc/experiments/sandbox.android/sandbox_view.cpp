@@ -31,10 +31,25 @@ using namespace aggx;
 
 namespace
 {
+	agge::pixel32 make_pixel(rgba8 color)
+	{
+		agge::pixel32 p = { color.r, color.g, color.b, 0 };
+		return p;
+	}
+
+	template <typename BlenderT>
+	class blenderx : public BlenderT
+	{
+	public:
+		blenderx(rgba8 color)
+			: BlenderT(make_pixel(color), color.a)
+		{	}
+	};
+
 	class bitmap_proxy
 	{
 	public:
-		typedef pixel_format::rgba32 pixel;
+		typedef agge::pixel32 pixel;
 
 	public:
 		bitmap_proxy(JNIEnv *env, jobject bitmap)
@@ -134,7 +149,7 @@ namespace
 
 extern "C" JNIEXPORT void JNICALL Java_impression_sandbox_SandboxView_render(JNIEnv *env, jobject obj, jobject bitmap)
 {
-	typedef blender_solid_color<bitmap_proxy::pixel> blender;
+	typedef blenderx<blender_solid_color> blender;
 	typedef rendition_adapter<bitmap_proxy, blender> renderer;
 	typedef rasterizer_scanline_aa<agg::rasterizer_sl_no_clip/*agg::rasterizer_sl_clip_int*/> rasterizer_scanline;
 	typedef scanline_adapter<renderer> scanline;

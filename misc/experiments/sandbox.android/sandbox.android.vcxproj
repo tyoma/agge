@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\agge\vector_rasterizer.h" />
+    <ClInclude Include="..\..\libraries\aggx\blenders.h" />
     <ClInclude Include="..\..\libraries\aggx\parallel.h" />
     <ClInclude Include="..\..\libraries\aggx\rasterizer.h" />
   </ItemGroup>

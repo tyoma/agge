@@ -68,6 +68,7 @@ namespace agge
 				void add_span(int x, int length, int cover)
 				{
 					assert_is_true(_inprogress);
+					assert_not_equal(0, length);
 
 					span s = { _current_y, x, length, cover };
 
@@ -304,7 +305,28 @@ namespace agge
 			}
 
 
-			test( EmptyRangeProducesEmptySpans )
+			test( RenderingTwoNeighborCellsDoesNotProduceInterimEmptySpan )
+			{
+				// INIT
+				scanline_mockup sl;
+				cell cells[] = { { 7, 0, 17 }, { 9, 3 * 512, 0 }, { 10, 2 * 512, 0 }, { 12, 0, -17 } };
+
+				// ACT
+				sweep_scanline<8>(begin(cells), end(cells), sl, bypass_alpha());
+
+				// ASSERT
+				span reference[] = {
+					{ 0x7fffffff, 7, 2, 17 * 512 },
+					{ 0x7fffffff, 9, 0, 14 * 512 },
+					{ 0x7fffffff, 10, 0, 15 * 512 },
+					{ 0x7fffffff, 11, 1, 17 * 512 },
+				};
+
+				assert_equal(reference, sl.spans_log);
+			}
+
+
+			test( EmptyRangeProducesNoSpans )
 			{
 				// INIT
 				scanline_mockup sl;

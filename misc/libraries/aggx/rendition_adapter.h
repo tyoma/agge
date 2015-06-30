@@ -11,7 +11,6 @@ namespace aggx
 		explicit rendition_adapter(Bitmap &target, const Blender &blender);
 
 		void clear() const;
-		void operator ()(int x, int y, int n, int8u cover) const;
 		void operator ()(int x, int y, int n, const aggx::cover_type *covers) const;
 
 	private:
@@ -35,22 +34,6 @@ namespace aggx
 	}
 
 	template <class Bitmap, class Blender>
-	void rendition_adapter<Bitmap, Blender>::operator ()(int x, int y, int n, int8u cover) const
-	{
-		if (y < 0 || _height <= y)
-			return;
-		if (x < 0)
-		{
-			n += x;
-			x = 0;
-		}
-		if (x + n >= _width)
-			n = _width() - x;
-		if (n > 0)
-			_blender(_target.access(x, y), x, y, n, cover);
-	}
-
-	template <class Bitmap, class Blender>
 	inline void rendition_adapter<Bitmap, Blender>::operator ()(int x, int y, int n, const aggx::cover_type *covers) const
 	{
 		if (y < 0 || _height <= y)
@@ -58,7 +41,7 @@ namespace aggx
 		if (x < 0)
 		{
 			n += x;
-			covers += -x;
+			covers -= x;
 			x = 0;
 		}
 		if (x + n >= _width)
