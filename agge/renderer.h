@@ -1,9 +1,11 @@
 #pragma once
 
+#include "config.h"
+
 namespace agge
 {
 	template <unsigned _1_shift, typename CellsIteratorT, typename ScanlineT, typename CalculateAlphaFn>
-	/*__force*/inline void sweep_scanline(CellsIteratorT begin, CellsIteratorT end, ScanlineT &scanline, const CalculateAlphaFn &alpha)
+	AGGE_INLINE void sweep_scanline(CellsIteratorT begin, CellsIteratorT end, ScanlineT &scanline, const CalculateAlphaFn &alpha)
 	{
 		int cover = 0;
 

@@ -1,4 +1,6 @@
-#include "agge/vector_rasterizer.h"
+#include <agge/vector_rasterizer.h>
+
+#include <agge/config.h>
 
 using namespace std;
 
@@ -200,7 +202,7 @@ namespace agge
 	}
 
 
-	/*__force*/inline void vector_rasterizer::hline(int tg, int ey, int x1, int x2, int dy)
+	AGGE_INLINE void vector_rasterizer::hline(int tg, int ey, int x1, int x2, int dy)
 	{
 		const int ex2 = x2 >> _1_shift;
 

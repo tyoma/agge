@@ -19,5 +19,6 @@
     <ClInclude Include="..\agge\renderer.h" />
     <ClInclude Include="..\agge\blenders_simd.h" />
     <ClInclude Include="..\agge\types.h" />
+    <ClInclude Include="..\agge\config.h" />
   </ItemGroup>
 </Project>

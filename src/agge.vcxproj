@@ -23,6 +23,7 @@
     <ClCompile Include="vector_rasterizer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\agge\config.h" />
     <ClInclude Include="..\agge\types.h" />
     <ClInclude Include="..\agge\blenders_simd.h" />
     <ClInclude Include="..\agge\rasterizer.h" />
