@@ -197,12 +197,16 @@ int main()
 
 	AggPath spiral_line, spiral_flatten;
 
-	MainDialog dlg([&](bitmap &target, double &rasterization, double &rendition) {
+	MainDialog dlg([&](bitmap &target, double &clearing, double &rasterization, double &rendition) {
 		typedef blender<blender_used> blenderx;
 		typedef rendition_adapter<bitmap, blenderx> renderer;
 		typedef scanline_adapter<renderer> scanline;
 
+		LARGE_INTEGER counter;
+
+		stopwatch(counter);
 		renderer(target, blenderx(rgba8(255, 255, 255))).clear();
+		clearing += stopwatch(counter);
 
 		spiral_line.clear();
 		spiral(spiral_line, target.width() / 2, target.height() / 2, 5, (std::min)(target.width(), target.height()) / 2 - 10, 1, 0);
@@ -215,7 +219,6 @@ int main()
 		spiral_flatten.clear();
 		flatten(spiral_flatten, stroke);
 
-		LARGE_INTEGER counter;
 		rasterization = 0;
 		rendition = 0;
 

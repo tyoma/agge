@@ -37,7 +37,7 @@ namespace
 
 MainDialog::MainDialog(const render_method &render)
 	: _window(::CreateWindow(_T("#32770"), NULL, WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, c_initial_width, c_initial_height, NULL, NULL, NULL, NULL)),
-		_render(render), _cycles(0), _total_rasterization(0), _total_rendition(0)
+		_render(render), _cycles(0), _total_clearing(0), _total_rasterization(0), _total_rendition(0)
 {
 	if (!_window)
 		throw std::runtime_error("Cannot create window!");
@@ -129,14 +129,14 @@ uintptr_t MainDialog::windowProc(unsigned int message, uintptr_t wparam, uintptr
 
 void MainDialog::Update()
 {
-	double rasterization = 0, rendition = 0;
+	double clearing = 0, rasterization = 0, rendition = 0;
 
 	if (_bitmap.get())
 	{
-		_render(ref(*_bitmap), ref(rasterization), ref(rendition));
+		_render(ref(*_bitmap), ref(clearing), ref(rasterization), ref(rendition));
 	}
 
-	_total_rasterization += rasterization, _total_rendition += rendition;
+	_total_clearing += clearing, _total_rasterization += rasterization, _total_rendition += rendition;
 
 	if (0 == (++_cycles & 0x3F))
 	{
@@ -145,9 +145,10 @@ void MainDialog::Update()
 
 		::GetClientRect(_window, &rc);
 
-		_stprintf(caption, _T("Total (%dx%d): %gms, rasterization: %gms, rendition: %gms"), rc.right, rc.bottom,
-			(_total_rasterization + _total_rendition) / _cycles, _total_rasterization / _cycles, _total_rendition / _cycles);
+		_stprintf(caption, _T("Total (%dx%d): %gms, clear: %gms, raster: %gms, render : %gms"), rc.right, rc.bottom,
+			(_total_clearing + _total_rasterization + _total_rendition) / _cycles, _total_clearing / _cycles, _total_rasterization / _cycles, _total_rendition / _cycles);
 		_cycles = 0;
+		_total_clearing = 0;
 		_total_rasterization = 0;
 		_total_rendition = 0;
 		::SetWindowText(_window, caption);

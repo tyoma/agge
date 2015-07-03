@@ -22,6 +22,7 @@ namespace agge
 
 		private:
 			__m128i _color_u16, _alpha_u16;
+			pixel _components;
 		};
 	}
 }

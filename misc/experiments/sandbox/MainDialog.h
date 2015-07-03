@@ -34,7 +34,7 @@ namespace aggx
 class MainDialog
 {
 public:
-	typedef std::function<void(aggx::bitmap &target, double &rasterization, double &rendition)> render_method;
+	typedef std::function<void(aggx::bitmap &target, double &clearing, double &rasterization, double &rendition)> render_method;
 
 public:
 	MainDialog(const render_method &render);
@@ -57,5 +57,5 @@ private:
 	const render_method _render;
 
 	int _cycles;
-	double _total_rasterization, _total_rendition;
+	double _total_clearing, _total_rasterization, _total_rendition;
 };

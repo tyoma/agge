@@ -22,18 +22,15 @@ namespace agge
 			}
 		}
 
+
 		blender_solid_color::blender_solid_color(pixel components, uint8_t alpha)
-			: _color_u16(make_color_u16(components)), _alpha_u16(make_alpha_u16(alpha))
+			: _color_u16(make_color_u16(components)), _alpha_u16(make_alpha_u16(alpha)), _components(components)
 		{	}
 
 		void blender_solid_color::operator ()(pixel *pixels, unsigned int /*x*/, unsigned int /*y*/, unsigned int n) const
 		{
-			// UNTESTED !!!
-			__m128i color_u8 = _mm_packus_epi16(_color_u16, _color_u16);
-			__m128i *p;
-
-			for (n = (n + 3) >> 2, p = reinterpret_cast<__m128i *>(pixels); n; --n, ++p)
-				_mm_store_si128(p, color_u8);
+			for (; n; --n, ++pixels)
+				*pixels = _components;
 		}
 
 		void blender_solid_color::operator ()(pixel *pixels, unsigned int /*x*/, unsigned int /*y*/, unsigned int n,
