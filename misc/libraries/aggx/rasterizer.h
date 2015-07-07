@@ -31,7 +31,7 @@ namespace aggx
 
 		enum
 		{
-			thread_count = 1
+			thread_count = 4
 		};
 
 		rasterizer_scanline_aa() : 

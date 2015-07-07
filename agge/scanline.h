@@ -1,5 +1,7 @@
 #pragma once
 
+#include "config.h"
+
 #include <algorithm>
 #include <vector>
 
@@ -52,7 +54,7 @@ namespace agge
 	}
 
 	template <typename RendererT>
-	inline void scanline_adapter<RendererT>::add_cell(unsigned int x, cover_type cover)
+	AGGE_INLINE void scanline_adapter<RendererT>::add_cell(unsigned int x, cover_type cover)
 	{
 		if (x != _x)
 			commit(x);
@@ -61,7 +63,7 @@ namespace agge
 	}
 
 	template <typename RendererT>
-	inline void scanline_adapter<RendererT>::add_span(unsigned int x, unsigned int length, cover_type cover)
+	AGGE_INLINE void scanline_adapter<RendererT>::add_span(unsigned int x, unsigned int length, cover_type cover)
 	{
 		if (x != _x)
 			commit(x);
@@ -75,7 +77,7 @@ namespace agge
 	}
 
 	template <typename RendererT>
-	inline void scanline_adapter<RendererT>::commit(unsigned int next_x)
+	AGGE_INLINE void scanline_adapter<RendererT>::commit(unsigned int next_x)
 	{
 		*reinterpret_cast<int *>(_cover) = 0;
 		_renderer(_start_x, _y, _x - _start_x, _start_cover);
