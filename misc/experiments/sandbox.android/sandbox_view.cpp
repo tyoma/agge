@@ -15,13 +15,12 @@
  */
 
 #include <aggx/rasterizer.h>
-#include <aggx/pixel_formats.h>
 #include <aggx/rendition_adapter.h>
-#include <aggx/scanline_adapter.h>
 #include <aggx/blenders.h>
 
 #include <aggx/agg_conv_stroke.h>
 
+#include <agge/scanline.h>
 #include <agg/include/agg_rasterizer_sl_clip.h>
 
 #include <jni.h>
@@ -40,6 +39,9 @@ namespace
 	template <typename BlenderT>
 	class blenderx : public BlenderT
 	{
+	public:
+		typedef typename BlenderT::cover_type cover_type;
+
 	public:
 		blenderx(rgba8 color)
 			: BlenderT(make_pixel(color), color.a)
@@ -152,7 +154,7 @@ extern "C" JNIEXPORT void JNICALL Java_impression_sandbox_SandboxView_render(JNI
 	typedef blenderx<blender_solid_color> blender;
 	typedef rendition_adapter<bitmap_proxy, blender> renderer;
 	typedef rasterizer_scanline_aa<agg::rasterizer_sl_no_clip/*agg::rasterizer_sl_clip_int*/> rasterizer_scanline;
-	typedef scanline_adapter<renderer> scanline;
+	typedef agge::scanline_adapter<renderer> scanline;
 
 	try
 	{
@@ -173,7 +175,7 @@ extern "C" JNIEXPORT void JNICALL Java_impression_sandbox_SandboxView_render(JNI
 
 		renderer r(bm, blender(rgba8(0, 154, 255, 255)));
 
-		ras.render< scanline_adapter<renderer> >(r);
+		ras.render<scanline>(r);
 
 	}
 	catch (...)

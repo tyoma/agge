@@ -8,6 +8,9 @@ namespace aggx
 	class rendition_adapter
 	{
 	public:
+		typedef typename Blender::cover_type cover_type;
+
+	public:
 		explicit rendition_adapter(Bitmap &target, const Blender &blender);
 
 		void clear() const;

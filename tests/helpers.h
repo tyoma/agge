@@ -69,14 +69,17 @@ namespace agge
 		{	return lhs.size() == n && std::equal(lhs.begin(), lhs.end(), rhs.data());	}
 
 
-
-		pixel32 make_pixel(uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c3)
+		inline pixel32 make_pixel(uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c3)
 		{
 			pixel32 p = { c0, c1, c2, c3 };
 			return p;
 		}
+
+		template <typename T, size_t N>
+		inline std::vector<T> mkvector(T (&p)[N])
+		{	return std::vector<T>(p, p + N);	}
 	}
 
-	bool operator ==(const pixel32 &lhs, const pixel32 &rhs)
+	inline bool operator ==(const pixel32 &lhs, const pixel32 &rhs)
 	{	return lhs.c0 == rhs.c0 && lhs.c1 == rhs.c1 && lhs.c2 == rhs.c2 && lhs.c3 == rhs.c3;	}
 }

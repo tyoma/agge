@@ -1,11 +1,9 @@
 #include "MainDialog.h"
 
+#include <agge/scanline.h>
 #include <agge/blenders_simd.h>
 
-#include <aggx/scanline.h>
-#include <aggx/scanline_adapter.h>
 #include <aggx/rasterizer.h>
-#include <aggx/renderer.h>
 #include <aggx/rendition_adapter.h>
 #include <aggx/blenders.h>
 

@@ -1,5 +1,7 @@
 #include <agge/rasterizer.h>
 
+#include "helpers.h"
+
 #include <utee/ut/assert.h>
 #include <utee/ut/test.h>
 #include <utility>
@@ -14,10 +16,6 @@ namespace agge
 	{
 		namespace
 		{
-			template <typename T, size_t N>
-			vector<T> mkvector(T (&p)[N])
-			{	return vector<T>(p, p + N);	}
-
 			struct cell
 			{
 				int x, y, area, cover;

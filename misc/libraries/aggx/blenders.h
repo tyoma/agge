@@ -10,6 +10,7 @@ namespace aggx
 	class blender_solid_color
 	{
 	public:
+		typedef agge::uint8_t cover_type;
 		typedef agge::pixel32 pixel;
 
 	public:
@@ -38,14 +39,9 @@ namespace aggx
 		{
 			const int alpha = _alpha * *covers;
 
-			if (0x003FFFC0 == alpha)
-				*pixels = _components;
-			else
-			{
-				pixels->c0 += (_components.c0 - pixels->c0) * alpha >> 22;
-				pixels->c1 += (_components.c1 - pixels->c1) * alpha >> 22;
-				pixels->c2 += (_components.c2 - pixels->c2) * alpha >> 22;
-			}
+			pixels->c0 += (_components.c0 - pixels->c0) * alpha >> 22;
+			pixels->c1 += (_components.c1 - pixels->c1) * alpha >> 22;
+			pixels->c2 += (_components.c2 - pixels->c2) * alpha >> 22;
 		}
 	}
 }

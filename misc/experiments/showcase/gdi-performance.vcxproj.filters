@@ -83,9 +83,6 @@
     <ClInclude Include="..\..\libraries\aggx\renderer.h">
       <Filter>aggx</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\scanline.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libraries\aggx\win32_bitmap.h">
       <Filter>aggx</Filter>
     </ClInclude>
@@ -96,9 +93,6 @@
       <Filter>aggx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libraries\aggx\rendition_adapter.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\scanline_adapter.h">
       <Filter>aggx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libraries\aggx\parallel.h">

@@ -5,6 +5,7 @@
     <ClCompile Include="ScanlineRasterizerTests.cpp" />
     <ClCompile Include="RendererTests.cpp" />
     <ClCompile Include="BlenderTests.cpp" />
+    <ClCompile Include="ScanlineAdapterTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />

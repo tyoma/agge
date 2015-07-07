@@ -1,7 +1,6 @@
 #pragma once
 
 #include "basics.h"
-#include "pixel_formats.h"
 
 #include <agge/types.h>
 

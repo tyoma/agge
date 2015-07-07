@@ -4,11 +4,11 @@
 #include <aggx/rasterizer.h>
 #include <aggx/win32_bitmap.h>
 #include <aggx/rendition_adapter.h>
-#include <aggx/scanline_adapter.h>
 
 #include <agg/include/agg_rasterizer_sl_clip.h>
 
 #include <agge/blenders_simd.h>
+#include <agge/scanline.h>
 
 #include <atlbase.h>
 #include <vector>
@@ -33,7 +33,7 @@ class CChildView : public CWnd
 	class blender;
 
 	typedef aggx::rendition_adapter<aggx::bitmap, blender> renderer;
-	typedef aggx::scanline_adapter<renderer> scanline;
+	typedef agge::scanline_adapter<renderer> scanline;
 	typedef std::pair<RECT, COLORREF> ellipse_t;
 
 	enum BufferType {	bufferNone, bufferDIB, bufferDDB	};
