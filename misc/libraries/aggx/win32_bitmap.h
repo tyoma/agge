@@ -22,7 +22,7 @@ namespace aggx
 		~bitmap();
 
 		void blit(HDC hdc, int x, int y, int w, int h);
-		pixel *access(unsigned x, unsigned y);
+		pixel *row_ptr(unsigned y);
 
 		unsigned width() const;
 		unsigned height() const;
@@ -39,8 +39,8 @@ namespace aggx
 
 
 
-	inline bitmap::pixel *bitmap::access(unsigned x, unsigned y)
-	{	return reinterpret_cast<pixel *>(_memory) + y * _stride + x;	}
+	inline bitmap::pixel *bitmap::row_ptr(unsigned y)
+	{	return reinterpret_cast<pixel *>(_memory) + y * _stride;	}
 
 	inline unsigned bitmap::width() const
 	{	return _width;	}

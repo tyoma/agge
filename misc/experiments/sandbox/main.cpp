@@ -4,7 +4,6 @@
 #include <agge/blenders_simd.h>
 
 #include <aggx/rasterizer.h>
-#include <aggx/rendition_adapter.h>
 #include <aggx/blenders.h>
 
 #include <aggx/win32_bitmap.h>
@@ -29,7 +28,7 @@ using namespace aggx;
 using namespace std;
 
 const bool c_use_original_agg = false;
-const int c_ellipses_number = 0;//2000;
+const int c_ellipses_number = 2000;
 typedef simd::blender_solid_color blender_used;
 
 namespace
@@ -63,7 +62,7 @@ namespace
 		{	}
 
 		pixel_type *row_ptr(int, int y, int)
-		{	return reinterpret_cast<pixel_type *>(_target.access(0, y));	}
+		{	return reinterpret_cast<pixel_type *>(_target.row_ptr(y));	}
 
 		unsigned int width() const
 		{	return _target.width();	}
@@ -197,13 +196,13 @@ int main()
 
 	MainDialog dlg([&](bitmap &target, double &clearing, double &rasterization, double &rendition) {
 		typedef blender<blender_used> blenderx;
-		typedef rendition_adapter<bitmap, blenderx> renderer;
+		typedef renderer<bitmap, blenderx> renderer;
 		typedef scanline_adapter<renderer> scanline;
 
 		LARGE_INTEGER counter;
 
 		stopwatch(counter);
-		renderer(target, blenderx(rgba8(255, 255, 255))).clear();
+		fill(target, blenderx(rgba8(255, 255, 255)));
 		clearing += stopwatch(counter);
 
 		spiral_line.clear();
@@ -228,8 +227,8 @@ int main()
 				ras.add_path(agg_path_adaptor(spiral_flatten));
 				ras.prepare();
 				rasterization += stopwatch(counter);
-				renderer r(target, blenderx(rgba8(0, 154, 255, 255)));
-				ras.render<scanline>(r);
+				blenderx b(rgba8(0, 154, 255, 255));
+				ras.render<scanline>(renderer(target, b));
 				rendition += stopwatch(counter);
 			}
 
@@ -243,8 +242,8 @@ int main()
 				ras.add_path(e);
 				ras.prepare();
 				rasterization += stopwatch(counter);
-				renderer r(target, blenderx(i->second));
-				ras.render<scanline>(r);
+				blenderx b(i->second);
+				ras.render<scanline>(renderer(target, b));
 				rendition += stopwatch(counter);
 			}
 		}

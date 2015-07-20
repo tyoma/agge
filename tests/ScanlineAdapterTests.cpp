@@ -20,26 +20,34 @@ namespace agge
 
 			struct render_log_entry
 			{
-				unsigned int x, y;
+				int x;
 				vector<cover_type> covers;
 			};
 
 		public:
-			void operator ()(unsigned int x, unsigned int y, unsigned int length, const cover_type *covers)
+			bool set_y(int y)
 			{
-				render_log_entry e = { x, y, vector<cover_type>(covers, covers + length) };
+				current_y = y;
+				return set_y_result;
+			}
+
+			void operator ()(int x, unsigned int length, const cover_type *covers)
+			{
+				render_log_entry e = { x, vector<cover_type>(covers, covers + length) };
 				render_log.push_back(e);
 				raw_render_log.push_back(make_pair(covers, length));
 			}
 
 		public:
+			int current_y;
+			bool set_y_result;
 			vector<render_log_entry> render_log;
 			vector< pair<const cover_type *, unsigned int> > raw_render_log;
 		};
 
 		template <typename CoverT>
 		bool operator ==(const struct renderer_mockup<CoverT>::render_log_entry &lhs, const struct renderer_mockup<CoverT>::render_log_entry &rhs)
-		{	return lhs.x == rhs.x && lhs.y == rhs.y && lhs.covers == rhs.covers;	}
+		{	return lhs.x == rhs.x && lhs.covers == rhs.covers;	}
 
 
 		begin_test_suite( ScanlineAdapterTests )
@@ -96,49 +104,16 @@ namespace agge
 				scanline_adapter<renderer> sl(r, b, 11);
 
 				// ACT
-				sl.begin(177);
 				sl.commit();
 
 				// ASSERT
-				renderer_mockup<>::render_log_entry reference1[] = { { 0, 177, vector<uint8_t>() } };
-
-				assert_equal(reference1, r.render_log);
-
-				// INIT
-				r.render_log.clear();
-
-				// ACT
-				sl.begin(2157);
-				sl.commit();
-
-				// ASSERT
-				renderer_mockup<>::render_log_entry reference2[] = { { 0, 2157, vector<uint8_t>() } };
-
-				assert_equal(reference2, r.render_log);
-			}
-
-
-			test( AddingCellToFlushedScanlineMakesNoCommit )
-			{
-				// INIT
-				typedef renderer_mockup<uint8_t> renderer;
-
-				renderer r;
-				vector<renderer::cover_type> b;
-				scanline_adapter<renderer> sl(r, b, 11);
-
-				// ACT
-				sl.begin(1);
-				sl.add_cell(20001, 3);
-
-				// ASSERT
-				renderer_mockup<>::render_log_entry reference[] = { { 0, 1, vector<uint8_t>() } };
+				renderer_mockup<>::render_log_entry reference[] = { { 0, vector<uint8_t>() } };
 
 				assert_equal(reference, r.render_log);
 			}
 
 
-			test( AddingSpanToFlushedScanlineMakesNoCommit )
+			test( ScanlineIsPositionedAtZeroOnCreation )
 			{
 				// INIT
 				typedef renderer_mockup<uint8_t> renderer;
@@ -148,11 +123,56 @@ namespace agge
 				scanline_adapter<renderer> sl(r, b, 11);
 
 				// ACT
-				sl.begin(1);
+				sl.add_cell(0, 3);
+
+				// ASSERT
+				assert_is_empty(r.render_log);
+
+				// ACT
+				sl.add_span(1, 2, 4);
+				sl.commit();
+
+				// ASSERT
+				uint8_t covers[] = { 3, 4, 4, };
+				renderer_mockup<>::render_log_entry reference[] = { { 0, mkvector(covers) } };
+
+				assert_equal(reference, r.render_log);
+			}
+
+
+			test( AddingCellToCleanScanlineMakesNoCommit )
+			{
+				// INIT
+				typedef renderer_mockup<uint8_t> renderer;
+
+				renderer r;
+				vector<renderer::cover_type> b;
+				scanline_adapter<renderer> sl(r, b, 11);
+
+				// ACT
+				sl.add_cell(20001, 3);
+
+				// ASSERT
+				renderer_mockup<>::render_log_entry reference[] = { { 0, vector<uint8_t>() } };
+
+				assert_equal(reference, r.render_log);
+			}
+
+
+			test( AddingSpanToCleanScanlineMakesNoCommit )
+			{
+				// INIT
+				typedef renderer_mockup<uint8_t> renderer;
+
+				renderer r;
+				vector<renderer::cover_type> b;
+				scanline_adapter<renderer> sl(r, b, 11);
+
+				// ACT
 				sl.add_span(20001, 20, 3);
 
 				// ASSERT
-				renderer_mockup<>::render_log_entry reference[] = { { 0, 1, vector<uint8_t>() } };
+				renderer_mockup<>::render_log_entry reference[] = { { 0, vector<uint8_t>() } };
 
 				assert_equal(reference, r.render_log);
 			}
@@ -167,7 +187,6 @@ namespace agge
 				vector<renderer::cover_type> b;
 				scanline_adapter<renderer> sl(r, b, 36);
 
-				sl.begin(1);
 				sl.add_span(1511, 27, 3);
 
 				r.render_log.clear();
@@ -192,7 +211,6 @@ namespace agge
 				scanline_adapter<renderer> sl(r, b, 50);
 
 				// ACT
-				sl.begin(13);
 				sl.add_span(1531, 7, 3);
 				sl.add_span(1538, 3, 70);
 				sl.add_cell(1541, 170);
@@ -203,7 +221,7 @@ namespace agge
 
 				// ASSERT
 				uint8_t covers1[] = { 3, 3, 3, 3, 3, 3, 3, 70, 70, 70, 170, 73, 73, 73, 73, 73, };
-				renderer_mockup<>::render_log_entry reference1[] = { { 1531, 13, mkvector(covers1) } };
+				renderer_mockup<>::render_log_entry reference1[] = { { 1531, mkvector(covers1) } };
 
 				assert_equal(reference1, r.render_log);
 
@@ -217,13 +235,13 @@ namespace agge
 
 				// ASSERT
 				uint8_t covers2[] = { 1, 177, 255, 255, 255, };
-				renderer_mockup<>::render_log_entry reference2[] = { { 1550, 13, mkvector(covers2) } };
+				renderer_mockup<>::render_log_entry reference2[] = { { 1550, mkvector(covers2) } };
 
 				assert_equal(reference2, r.render_log);
 			}
 
 
-			test( BeginAddCommitCycleMakesRenditionCalls )
+			test( AddCommitCycleMakesRenditionCalls )
 			{
 				// INIT
 				typedef renderer_mockup<uint16_t> renderer;
@@ -233,7 +251,6 @@ namespace agge
 				scanline_adapter<renderer> sl(r, b, 16);
 
 				// ACT
-				sl.begin(131);
 				sl.add_cell(3, 13);
 				sl.add_span(4, 2, 17);
 				sl.add_cell(6, 11);
@@ -243,12 +260,11 @@ namespace agge
 
 				// ASSERT
 				uint16_t covers1[] = { 13, 17, 17, 11, };
-				renderer::render_log_entry reference1[] = { { 3, 131, mkvector(covers1) } };
+				renderer::render_log_entry reference1[] = { { 3, mkvector(covers1) } };
 
 				assert_equal(reference1, r.render_log);
 
 				// ACT
-				sl.begin(200);
 				sl.add_span(471, 2, 17);
 				sl.add_cell(473, 110);
 
@@ -257,7 +273,7 @@ namespace agge
 
 				// ASSERT
 				uint16_t covers2[] = { 17, 17, 110, };
-				renderer::render_log_entry reference2[] = { { 471, 200, mkvector(covers2) } };
+				renderer::render_log_entry reference2[] = { { 471, mkvector(covers2) } };
 
 				assert_equal(reference2, r.render_log);
 			}
@@ -273,7 +289,6 @@ namespace agge
 				scanline_adapter<renderer> sl(r, b, 16);
 
 				// ACT
-				sl.begin(10);
 				sl.add_span(4, 7, 17);
 				sl.commit();
 
@@ -291,7 +306,6 @@ namespace agge
 				assert_equal(0, *end++);
 
 				// ACT
-				sl.begin(10);
 				sl.add_span(4, 2, 3);
 				r.raw_render_log.clear();
 				sl.commit();
@@ -307,6 +321,26 @@ namespace agge
 				assert_equal(0, *end++);
 				assert_equal(0, *end++);
 				assert_equal(0, *end++);
+			}
+
+
+			test( BeginScanlineDelegatesToSetY )
+			{
+				// INIT
+				typedef renderer_mockup<uint8_t> renderer;
+
+				renderer r;
+				vector<renderer::cover_type> b;
+				scanline_adapter<renderer> sl(r, b, 16);
+
+				// ACT / ASSERT
+				r.set_y_result = false;
+				assert_is_false(sl.begin(7));
+				assert_equal(7, r.current_y);
+
+				r.set_y_result = true;
+				assert_is_true(sl.begin(-113317));
+				assert_equal(-113317, r.current_y);
 			}
 		end_test_suite
 	}

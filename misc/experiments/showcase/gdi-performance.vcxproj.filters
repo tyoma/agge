@@ -92,9 +92,6 @@
     <ClInclude Include="..\..\libraries\aggx\blenders.h">
       <Filter>aggx</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\rendition_adapter.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libraries\aggx\parallel.h">
       <Filter>aggx</Filter>
     </ClInclude>

@@ -4,8 +4,64 @@
 
 namespace agge
 {
-	template <unsigned _1_shift, typename CellsIteratorT, typename ScanlineT, typename CalculateAlphaFn>
-	AGGE_INLINE void sweep_scanline(CellsIteratorT begin, CellsIteratorT end, ScanlineT &scanline, const CalculateAlphaFn &alpha)
+	template <typename BitmapT, typename BlenderT>
+	class renderer
+	{
+	public:
+		typedef typename BlenderT::cover_type cover_type;
+
+	public:
+		renderer(BitmapT &bitmap, const BlenderT &blender);
+
+		bool set_y(int y);
+		void operator ()(int x, int length, const cover_type *covers);
+
+	private:
+		const renderer &operator =(const renderer &rhs);
+
+	private:
+		BitmapT &_bitmap;
+		const BlenderT &_blender;
+		int _y;
+		const int _width;
+		typename BitmapT::pixel *_row;
+	};
+
+
+
+	template <typename BitmapT, typename BlenderT>
+	inline renderer<BitmapT, BlenderT>::renderer(BitmapT &bitmap, const BlenderT &blender)
+		: _bitmap(bitmap), _blender(blender), _width(bitmap.width())
+	{	}
+
+	template <typename BitmapT, typename BlenderT>
+	inline bool renderer<BitmapT, BlenderT>::set_y(int y)
+	{
+		if (y < 0 || static_cast<int>(_bitmap.height()) <= y)
+			return false;
+		_y = y;
+		_row = _bitmap.row_ptr(y);
+		return true;
+	}
+
+	template <typename BitmapT, typename BlenderT>
+	inline void renderer<BitmapT, BlenderT>::operator ()(int x, int length, const cover_type *covers)
+	{
+		if (x < 0)
+		{
+			length += x;
+			covers -= x;
+			x = 0;
+		}
+		if (x + length >= _width)
+			length = _width - x;
+		if (length > 0)
+			_blender(_row + x, x, _y, length, covers);
+	}
+
+
+	template <unsigned _1_shift, typename ScanlineT, typename CellsIteratorT, typename AlphaFn>
+	AGGE_INLINE void sweep_scanline(ScanlineT &scanline, CellsIteratorT begin, CellsIteratorT end, const AlphaFn &alpha)
 	{
 		int cover = 0;
 
@@ -42,19 +98,31 @@ namespace agge
 	}
 
 
-	template <typename RendererT, typename RasterSourceT, typename CalculateAlphaFn>
-	inline void render(RendererT &renderer, const RasterSourceT &raster, const CalculateAlphaFn &alpha,
-		int start, int step)
+	template <typename ScanlineT, typename RasterSourceT, typename AlphaFn>
+	inline void render(ScanlineT &scanline, const RasterSourceT &raster, const AlphaFn &alpha, int offset, int step)
 	{
 		typename RasterSourceT::range vrange = raster.vrange();
 
-		for (int y = vrange.first + start; y <= vrange.second; y += step)
-		{
+		for (int y = vrange.first + offset; y <= vrange.second; y += step)
+		{			
 			typename RasterSourceT::scanline_cells cells = raster.get_scanline_cells(y);
-			
-			renderer.begin(y);
-			sweep_scanline<RasterSourceT::_1_shift>(cells.first, cells.second, renderer, alpha);
-			renderer.commit();
+
+			if (scanline.begin(y))
+			{
+				sweep_scanline<RasterSourceT::_1_shift>(scanline, cells.first, cells.second, alpha);
+				scanline.commit();
+			}
 		}
+	}
+
+
+	template <typename BitmapT, typename BlenderT>
+	inline void fill(BitmapT &bitmap, const BlenderT &blender)
+	{
+		const int width = bitmap.width();
+		const int height = bitmap.height();
+
+		for (int y = 0; y != height; ++y)
+			blender(bitmap.row_ptr(y), 0, y, width);
 	}
 }

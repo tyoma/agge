@@ -564,7 +564,7 @@ void CChildView::OnPaint()
 	{
 		{
 			CPerformance p3(_fill_timing);
-	        renderer(*_agg_bitmap, blender(rgba8(240, 255, 255))).clear();
+			agge::fill(*_agg_bitmap, blender(rgba8(240, 255, 255)));
 		}
 
 		{

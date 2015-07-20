@@ -3,7 +3,6 @@
 #include <aggx/blenders.h>
 #include <aggx/rasterizer.h>
 #include <aggx/win32_bitmap.h>
-#include <aggx/rendition_adapter.h>
 
 #include <agg/include/agg_rasterizer_sl_clip.h>
 
@@ -32,7 +31,7 @@ class CChildView : public CWnd
 {
 	class blender;
 
-	typedef aggx::rendition_adapter<aggx::bitmap, blender> renderer;
+	typedef agge::renderer<aggx::bitmap, blender> renderer;
 	typedef agge::scanline_adapter<renderer> scanline;
 	typedef std::pair<RECT, COLORREF> ellipse_t;
 

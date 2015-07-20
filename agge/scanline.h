@@ -2,7 +2,6 @@
 
 #include "config.h"
 
-#include <algorithm>
 #include <vector>
 
 namespace agge
@@ -17,10 +16,10 @@ namespace agge
 	public:
 		scanline_adapter(RendererT &renderer, covers_buffer_type &covers, size_t max_length);
 
-		void begin(unsigned int y);
-		void add_cell(unsigned int x, cover_type cover);
-		void add_span(unsigned int x, unsigned int length, cover_type cover);
-		void commit(unsigned int next_x = 0);
+		bool begin(int y);
+		void add_cell(int x, cover_type cover);
+		void add_span(int x, unsigned int length, cover_type cover);
+		void commit(int next_x = 0);
 
 	private:
 		scanline_adapter(const scanline_adapter &other);
@@ -28,33 +27,28 @@ namespace agge
 
 	private:
 		RendererT &_renderer;
-		covers_buffer_type &_covers;
 		cover_type *_cover, *_start_cover;
-		unsigned int _y, _x, _start_x;
+		int _x, _start_x;
 	};
 
 
 
 	template <typename RendererT>
 	inline scanline_adapter<RendererT>::scanline_adapter(RendererT &renderer, covers_buffer_type &covers, size_t max_length)
-		: _renderer(renderer), _covers(covers)
+		: _renderer(renderer), _x(0), _start_x(0)
 	{
 		max_length += 16;
-		if (max_length > _covers.size())
-			_covers.resize(max_length);
-		_start_cover = &_covers[3];
+		if (max_length > covers.size())
+			covers.resize(max_length);
+		_cover = _start_cover = &covers[3];
 	}
 
 	template <typename RendererT>
-	inline void scanline_adapter<RendererT>::begin(unsigned int y)
-	{
-		_y = y;
-		_start_x = _x = 0;
-		_cover = _start_cover;
-	}
+	inline bool scanline_adapter<RendererT>::begin(int y)
+	{	return _renderer.set_y(y);	}
 
 	template <typename RendererT>
-	AGGE_INLINE void scanline_adapter<RendererT>::add_cell(unsigned int x, cover_type cover)
+	AGGE_INLINE void scanline_adapter<RendererT>::add_cell(int x, cover_type cover)
 	{
 		if (x != _x)
 			commit(x);
@@ -63,7 +57,7 @@ namespace agge
 	}
 
 	template <typename RendererT>
-	AGGE_INLINE void scanline_adapter<RendererT>::add_span(unsigned int x, unsigned int length, cover_type cover)
+	AGGE_INLINE void scanline_adapter<RendererT>::add_span(int x, unsigned int length, cover_type cover)
 	{
 		if (x != _x)
 			commit(x);
@@ -73,14 +67,15 @@ namespace agge
 		_x += length;
 		_cover += length;
 
-		std::fill_n(p, length, cover);
+		while (length--)
+			*p++ = cover;
 	}
 
 	template <typename RendererT>
-	AGGE_INLINE void scanline_adapter<RendererT>::commit(unsigned int next_x)
+	AGGE_INLINE void scanline_adapter<RendererT>::commit(int next_x)
 	{
 		*reinterpret_cast<int *>(_cover) = 0;
-		_renderer(_start_x, _y, _x - _start_x, _start_cover);
+		_renderer(_start_x, _x - _start_x, _start_cover);
 		_start_x = _x = next_x;
 		_cover = _start_cover;
 	}

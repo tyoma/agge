@@ -248,7 +248,8 @@ namespace aggx
 	{
 		prepare();
 		m_parallel.call([this, &r] (unsigned int threadid) {
-			ScanlineAdapter sl(r, m_cover_buffers[threadid], this->max_x() - this->min_x() + 1);
+			Renderer r_thread(r);
+			ScanlineAdapter sl(r_thread, m_cover_buffers[threadid], this->max_x() - this->min_x() + 1);
 
 			agge::render(sl, m_outline, rasterizer_scanline_aa<Clip>::calculate_alpha(), threadid, thread_count);
 		});

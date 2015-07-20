@@ -1,5 +1,7 @@
 #include <agge/renderer.h>
 
+#include <agge/types.h>
+
 #include <utee/ut/assert.h>
 #include <utee/ut/test.h>
 
@@ -38,22 +40,19 @@ namespace agge
 			{
 			public:
 				scanline_mockup(bool inprogress = true)
-					: _inprogress(inprogress), _current_y(0x7fffffff)
+					: excepted_y(-1000000), _inprogress(inprogress), _current_y(0x7fffffff)
 				{	}
 
-				void begin(int y)
+				bool begin(int y)
 				{
+					if (y == excepted_y)
+						return false;
+
 					assert_is_false(_inprogress);
 
 					_inprogress = true;
 					_current_y = y;
-				}
-
-				void commit()
-				{
-					assert_is_true(_inprogress);
-
-					_inprogress = false;
+					return true;
 				}
 
 				void add_cell(int x, int cover)
@@ -75,6 +74,14 @@ namespace agge
 					spans_log.push_back(s);
 				}
 
+				void commit()
+				{
+					assert_is_true(_inprogress);
+
+					_inprogress = false;
+				}
+
+				int excepted_y;
 				vector<span> spans_log;
 
 			private:
@@ -110,6 +117,88 @@ namespace agge
 				range _vrange;
 				vector<scanline_cells> _cells;
 			};
+
+			template <typename PixelT, typename CoverT>
+			class mock_blender
+			{
+			public:
+				typedef PixelT pixel;
+				typedef CoverT cover_type;
+
+				struct fill_log_entry;
+				struct blend_log_entry;
+
+			public:
+				void operator ()(PixelT *pixels, unsigned int x, unsigned int y, unsigned int length) const
+				{
+					fill_log_entry entry = { pixels, x, y, length };
+
+					filling_log.push_back(entry);
+				}
+
+				void operator ()(PixelT *pixels, unsigned int x, unsigned int y, unsigned int length, const cover_type *covers) const
+				{
+					blend_log_entry entry = { pixels, x, y, length, covers };
+
+					blending_log.push_back(entry);
+				}
+
+				mutable vector<fill_log_entry> filling_log;
+				mutable vector<blend_log_entry> blending_log;
+			};
+
+
+			template <typename PixelT, typename CoverT>
+			struct mock_blender<PixelT, CoverT>::blend_log_entry
+			{
+				pixel *pixels;
+				unsigned int x;
+				unsigned int y;
+				unsigned int length;
+				const cover_type *covers;
+
+				bool operator ==(const blend_log_entry &rhs) const
+				{	return pixels == rhs.pixels && x == rhs.x && y == rhs.y && length == rhs.length && covers == rhs.covers;	}
+			};
+
+
+			template <typename PixelT, typename CoverT>
+			struct mock_blender<PixelT, CoverT>::fill_log_entry
+			{
+				pixel *pixels;
+				unsigned int x;
+				unsigned int y;
+				unsigned int length;
+
+				bool operator ==(const fill_log_entry &rhs) const
+				{	return pixels == rhs.pixels && x == rhs.x && y == rhs.y && length == rhs.length;	}
+			};
+
+
+			template <typename PixelT>
+			class mock_bitmap
+			{
+			public:
+				typedef PixelT pixel;
+
+			public:
+				mock_bitmap(unsigned int width, unsigned int height)
+					: _width(width), _height(height), _data(width * height)
+				{	}
+
+				pixel *row_ptr(unsigned int y)
+				{	return &_data[y * _width];	}
+
+				unsigned int width() const
+				{	return _width;	}
+
+				unsigned int height() const
+				{	return _height;	}
+
+			private:
+				unsigned int _width, _height;
+				vector<pixel> _data;
+			};
 		}
 
 		begin_test_suite( RendererTests )
@@ -120,7 +209,7 @@ namespace agge
 				cell cells1[] = { { 7, 10 * 512, 0 }, }, cells2[] = { { 1300011, 11 * 512, 0 }, };
 
 				// ACT
-				sweep_scanline<8>(begin(cells1), end(cells1), sl1, bypass_alpha());
+				sweep_scanline<8>(sl1, begin(cells1), end(cells1), bypass_alpha());
 
 				// ASSERT
 				span reference1[] = { { 0x7fffffff, 7, 0, -10 * 512 }, };
@@ -128,7 +217,7 @@ namespace agge
 				assert_equal(reference1, sl1.spans_log);
 
 				// ACT
-				sweep_scanline<8>(begin(cells2), end(cells2), sl2, bypass_alpha());
+				sweep_scanline<8>(sl2, begin(cells2), end(cells2), bypass_alpha());
 
 				// ASSERT
 				span reference2[] = { { 0x7fffffff, 1300011, 0, -11 * 512 }, };
@@ -144,7 +233,7 @@ namespace agge
 				cell cells[] = { { 7, 129 * 512, 0 }, { 17, 71 * 512, 0 }, { 18, 19 * 512, 0 }, };
 
 				// ACT
-				sweep_scanline<8>(begin(cells), end(cells), sl, bypass_alpha());
+				sweep_scanline<8>(sl, begin(cells), end(cells), bypass_alpha());
 
 				// ASSERT
 				span reference[] = {
@@ -167,7 +256,7 @@ namespace agge
 				};
 
 				// ACT
-				sweep_scanline<8>(begin(cells), end(cells), sl, bypass_alpha());
+				sweep_scanline<8>(sl, begin(cells), end(cells), bypass_alpha());
 
 				// ASSERT
 				span reference[] = {
@@ -189,7 +278,7 @@ namespace agge
 				};
 
 				// ACT
-				sweep_scanline<8>(begin(cells), end(cells), sl, bypass_alpha());
+				sweep_scanline<8>(sl, begin(cells), end(cells), bypass_alpha());
 
 				// ASSERT
 				span reference[] = {
@@ -211,7 +300,7 @@ namespace agge
 				cell cells3[] = { { 1300011, 0, -100 }, { 1302010, 0, 100 }, };
 
 				// ACT
-				sweep_scanline<8>(begin(cells1), end(cells1), sl1, bypass_alpha());
+				sweep_scanline<8>(sl1, begin(cells1), end(cells1), bypass_alpha());
 
 				// ASSERT
 				span reference1[] = {
@@ -221,8 +310,8 @@ namespace agge
 				assert_equal(reference1, sl1.spans_log);
 
 				// ACT
-				sweep_scanline<8>(begin(cells2), end(cells2), sl2, bypass_alpha());
-				sweep_scanline<8>(begin(cells3), end(cells3), sl2, bypass_alpha());
+				sweep_scanline<8>(sl2, begin(cells2), end(cells2), bypass_alpha());
+				sweep_scanline<8>(sl2, begin(cells3), end(cells3), bypass_alpha());
 
 				// ASSERT
 				span reference2[] = {
@@ -243,7 +332,7 @@ namespace agge
 				cell cells3[] = { { 1300011, 0, -100 }, { 1302010, 0, 89 }, { 1302017, 0, 11 }, };
 
 				// ACT
-				sweep_scanline<8>(begin(cells1), end(cells1), sl, bypass_alpha());
+				sweep_scanline<8>(sl, begin(cells1), end(cells1), bypass_alpha());
 
 				// ASSERT
 				span reference1[] = {
@@ -254,8 +343,8 @@ namespace agge
 				assert_equal(reference1, sl.spans_log);
 
 				// ACT
-				sweep_scanline<8>(begin(cells2), end(cells2), sl, bypass_alpha());
-				sweep_scanline<8>(begin(cells3), end(cells3), sl, bypass_alpha());
+				sweep_scanline<8>(sl, begin(cells2), end(cells2), bypass_alpha());
+				sweep_scanline<8>(sl, begin(cells3), end(cells3), bypass_alpha());
 
 				// ASSERT
 				span reference2[] = {
@@ -276,7 +365,7 @@ namespace agge
 				cell cells2[] = { { 0, 0, 17 }, { 11, 14 * 512, 0 }, { 13, 0, -17 }, };
 
 				// ACT
-				sweep_scanline<8>(begin(cells1), end(cells1), sl, bypass_alpha());
+				sweep_scanline<8>(sl, begin(cells1), end(cells1), bypass_alpha());
 
 				// ASSERT
 				span reference1[] = {
@@ -292,7 +381,7 @@ namespace agge
 				sl.spans_log.clear();
 
 				// ACT
-				sweep_scanline<8>(begin(cells2), end(cells2), sl, bypass_alpha());
+				sweep_scanline<8>(sl, begin(cells2), end(cells2), bypass_alpha());
 
 				// ASSERT
 				span reference2[] = {
@@ -312,7 +401,7 @@ namespace agge
 				cell cells[] = { { 7, 0, 17 }, { 9, 3 * 512, 0 }, { 10, 2 * 512, 0 }, { 12, 0, -17 } };
 
 				// ACT
-				sweep_scanline<8>(begin(cells), end(cells), sl, bypass_alpha());
+				sweep_scanline<8>(sl, begin(cells), end(cells), bypass_alpha());
 
 				// ASSERT
 				span reference[] = {
@@ -333,7 +422,7 @@ namespace agge
 				cell cells;
 
 				// ACT
-				sweep_scanline<8>(&cells, &cells, sl, bypass_alpha());
+				sweep_scanline<8>(sl, &cells, &cells, bypass_alpha());
 
 				// ASSERT
 				assert_is_empty(sl.spans_log);
@@ -347,7 +436,7 @@ namespace agge
 				cell cells[] = { { 0, 0, 17 }, { 11, 14 * 512, 0 }, { 13, 0, -17 }, };
 
 				// ACT
-				sweep_scanline<7>(begin(cells), end(cells), sl, bypass_alpha());
+				sweep_scanline<7>(sl, begin(cells), end(cells), bypass_alpha());
 
 				// ASSERT
 				span reference1[] = {
@@ -362,7 +451,7 @@ namespace agge
 				sl.spans_log.clear();
 
 				// ACT
-				sweep_scanline<10>(begin(cells), end(cells), sl, bypass_alpha());
+				sweep_scanline<10>(sl, begin(cells), end(cells), bypass_alpha());
 
 				// ASSERT
 				span reference2[] = {
@@ -590,6 +679,151 @@ namespace agge
 				};
 
 				assert_equal(reference2, target.spans_log);
+			}
+
+			test( ScanlineIsOmittedIfCannotBegin )
+			{
+				// INIT
+				scanline_mockup target(false);
+				const cell cells1[] = { { 0, 0, 17 }, { 11, 0, -3 }, { 13, 0, -14 }, };
+				const cell cells2[] = { { -1, 0, 170 }, { 7, 0, -3 }, { 17, 0, -167 }, };
+				const cell cells3[] = { { 0, 0, 117 }, { 13, 0, -117 }, };
+				raster_source_mockup<8>::scanline_cells cells[] = {
+					make_pair(begin(cells1), end(cells1)),
+					make_pair(begin(cells2), end(cells2)),
+					make_pair(begin(cells3), end(cells3)),
+				};
+				raster_source_mockup<8> raster(cells, 31);
+
+				// ACT
+				target.excepted_y = 32;
+				render(target, raster, bypass_alpha(), 0, 1);
+
+				// ASSERT
+				span reference1[] = {
+					{ 31, 0, 11, 17 * 512 }, { 31, 11, 2, 14 * 512 },
+					{ 33, 0, 13, 117 * 512 },
+				};
+
+				assert_equal(reference1, target.spans_log);
+
+				// INIT
+				target.spans_log.clear();
+
+				// ACT
+				target.excepted_y = 33;
+				render(target, raster, bypass_alpha(), 0, 1);
+
+				// ASSERT
+				span reference2[] = {
+					{ 31, 0, 11, 17 * 512 }, { 31, 11, 2, 14 * 512 },
+					{ 32, -1, 8, 170 * 512 }, { 32, 7, 10, 167 * 512 },
+				};
+
+				assert_equal(reference2, target.spans_log);
+			}
+
+
+			test( RendererBlendsAllowedPixelRegionsWithNoLimitations )
+			{
+				// INIT
+				short covers1[10];
+				mock_blender<int, short> blender1;
+				mock_bitmap<int> bitmap1(10, 1000);
+				renderer< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, blender1);
+
+				uint8_t covers2[10];
+				mock_blender<uint8_t, uint8_t> blender2;
+				mock_bitmap<uint8_t> bitmap2(15, 1000);
+				renderer< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap2, blender2);
+
+				// ACT
+				r1.set_y(0); r1(0, 3, covers1);
+				r1.set_y(7); r1(0, 2, covers1);
+				r1.set_y(171); r1(3, 4, covers1);
+
+				r2.set_y(3); r2(14, 1, covers2);
+				r2.set_y(171); r2(3, 5, covers2);
+
+				// ASSERT
+				mock_blender<int, short>::blend_log_entry reference1[] = {
+					{ bitmap1.row_ptr(0) + 0, 0, 0, 3, covers1 },
+					{ bitmap1.row_ptr(7) + 0, 0, 7, 2, covers1 },
+					{ bitmap1.row_ptr(171) + 3, 3, 171, 4, covers1 },
+				};
+				mock_blender<uint8_t, uint8_t>::blend_log_entry reference2[] = {
+					{ bitmap2.row_ptr(3) + 14, 14, 3, 1, covers2 },
+					{ bitmap2.row_ptr(171) + 3, 3, 171, 5, covers2 },
+				};
+
+				assert_equal(reference1, blender1.blending_log);
+				assert_equal(reference2, blender2.blending_log);
+			}
+
+
+			test( SetYRespectsBitmapHeight )
+			{
+				// INIT
+				mock_blender<int, short> blender;
+				mock_bitmap<int> bitmap1(10, 1000);
+				mock_bitmap<int> bitmap2(10, 123);
+				renderer< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, blender);
+				renderer< mock_bitmap<int>, mock_blender<int, short> > r2(bitmap2, blender);
+
+				// ACT / ASSERT
+				assert_is_false(r1.set_y(-1));
+				assert_is_true(r1.set_y(0));
+				assert_is_true(r1.set_y(1));
+				assert_is_true(r1.set_y(999));
+				assert_is_false(r1.set_y(1000));
+
+				assert_is_false(r2.set_y(-1));
+				assert_is_true(r2.set_y(0));
+				assert_is_true(r2.set_y(1));
+				assert_is_true(r2.set_y(122));
+				assert_is_false(r2.set_y(123));
+			}
+
+
+			test( BitmapFillInvokesBlenderCopyForAllPixels )
+			{
+				// INIT
+				mock_bitmap<int> bitmap1(3, 5);
+				mock_bitmap<int> bitmap2(4, 7);
+				mock_blender<int, uint8_t> blender;
+
+				// ACT
+				fill(bitmap1, blender);
+
+				// ASSERT
+				mock_blender<int, uint8_t>::fill_log_entry reference1[] = {
+					{ bitmap1.row_ptr(0), 0, 0, 3 },
+					{ bitmap1.row_ptr(1), 0, 1, 3 },
+					{ bitmap1.row_ptr(2), 0, 2, 3 },
+					{ bitmap1.row_ptr(3), 0, 3, 3 },
+					{ bitmap1.row_ptr(4), 0, 4, 3 },
+				};
+
+				assert_equal(reference1, blender.filling_log);
+
+				// INIT
+				blender.filling_log.clear();
+
+				// ACT
+				fill(bitmap2, blender);
+
+				// ASSERT
+				mock_blender<int, uint8_t>::fill_log_entry reference2[] = {
+					{ bitmap2.row_ptr(0), 0, 0, 4 },
+					{ bitmap2.row_ptr(1), 0, 1, 4 },
+					{ bitmap2.row_ptr(2), 0, 2, 4 },
+					{ bitmap2.row_ptr(3), 0, 3, 4 },
+					{ bitmap2.row_ptr(4), 0, 4, 4 },
+					{ bitmap2.row_ptr(5), 0, 5, 4 },
+					{ bitmap2.row_ptr(6), 0, 6, 4 },
+				};
+
+				assert_equal(reference2, blender.filling_log);
 			}
 
 		end_test_suite
