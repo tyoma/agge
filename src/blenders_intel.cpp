@@ -27,13 +27,13 @@ namespace agge
 			: _color_u16(make_color_u16(components)), _alpha_u16(make_alpha_u16(alpha)), _components(components)
 		{	}
 
-		void blender_solid_color::operator ()(pixel *pixels, unsigned int /*x*/, unsigned int /*y*/, unsigned int n) const
+		void blender_solid_color::operator ()(pixel *pixels, int /*x*/, int /*y*/, unsigned int n) const
 		{
 			for (; n; --n, ++pixels)
 				*pixels = _components;
 		}
 
-		void blender_solid_color::operator ()(pixel *pixels, unsigned int /*x*/, unsigned int /*y*/, unsigned int n,
+		void blender_solid_color::operator ()(pixel *pixels, int /*x*/, int /*y*/, unsigned int n,
 			const cover_type *covers) const
 		{
 			n = (n + 3) >> 2;

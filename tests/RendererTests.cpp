@@ -161,7 +161,7 @@ namespace agge
 			};
 
 
-			template <typename PixelT>
+			template <typename PixelT, size_t guard_size = 0>
 			class mock_bitmap
 			{
 			public:
@@ -169,11 +169,11 @@ namespace agge
 
 			public:
 				mock_bitmap(unsigned int width, unsigned int height)
-					: _width(width), _height(height), data(width * height)
+					: _width(width), _height(height), data((width + guard_size) * height)
 				{	}
 
 				pixel *row_ptr(unsigned int y)
-				{	return &data[y * _width];	}
+				{	return &data[y * (_width + guard_size)];	}
 
 				unsigned int width() const
 				{	return _width;	}
@@ -712,7 +712,7 @@ namespace agge
 			}
 
 
-			test( RendererBlendsAllowedPixelRegionsWithNoLimitations )
+			test( RenditionAdapterBlendsAllowedPixelRegionsWithNoLimitations )
 			{
 				// INIT
 				short covers1[] = { 0x1001, 0x0002, 0x4003, 0x00E2, };
@@ -726,12 +726,21 @@ namespace agge
 				rendition_adapter< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap2, blender2);
 
 				// ACT
-				r1.set_y(0); r1(0, 3, covers1);
-				r1.set_y(1); r1(0, 2, covers1);
-				r1.set_y(4); r1(3, 4, covers1);
+				r1.set_y(0);
+				r1(0, 3, covers1);
+				
+				r1.set_y(1);
+				r1(0, 2, covers1);
+				
+				r1.set_y(4);
+				r1(3, 4, covers1);
 
-				r2.set_y(2); r2(4, 1, covers2);
-				r2.set_y(3); r2(2, 3, covers2);
+				r2.set_y(2);
+				r2(4, 1, covers2);
+				r2(1, 3, covers2);
+				
+				r2.set_y(3);
+				r2(2, 3, covers2);
 
 				// ASSERT
 				int reference1[] = {
@@ -744,12 +753,44 @@ namespace agge
 				uint8_t reference2[] = {
 					0x00, 0x00, 0x00, 0x00, 0x00,
 					0x00, 0x00, 0x00, 0x00, 0x00,
-					0x00, 0x00, 0x00, 0x00, 0xED,
+					0x00, 0xED, 0x08, 0x91, 0xED,
 					0x00, 0x00, 0xED, 0x08, 0x91,
 				};
 
 				assert_equal(reference1, bitmap1.data);
 				assert_equal(reference2, bitmap2.data);
+			}
+
+
+			test( RenditionAdapterObeysHorizontalLimits )
+			{
+				// INIT
+				uint8_t covers[] = { 0x51, 0xFF, 0x13, 0x90, 0xE1, };
+				mock_blender<uint8_t, uint8_t> blender;
+				mock_bitmap<uint8_t, 2> bitmap(8, 3);
+				rendition_adapter< mock_bitmap<uint8_t, 2>, mock_blender<uint8_t, uint8_t> > r(bitmap, blender);
+
+				// ACT
+				r.set_y(0);
+				r(-2, 3, covers);
+				r(5, 5, covers);
+				
+				r.set_y(1);
+				r(-5, 5, covers);
+				r(8, 5, covers);
+				
+				r.set_y(2);
+				r(-3, 5, covers);
+				r(7, 4, covers);
+
+				// ASSERT
+				uint8_t reference[] = {
+					0x13, 0x00, 0x00, 0x00, 0x00, 0x51, 0xFF, 0x13, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00,
+					0x90, 0xE1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x51, 0x00, 0x00,
+				};
+
+				assert_equal(reference, bitmap.data);
 			}
 
 

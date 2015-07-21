@@ -20,11 +20,11 @@ namespace agge
 		const rendition_adapter &operator =(const rendition_adapter &rhs);
 
 	private:
-		BitmapT &_bitmap;
 		const BlenderT _blender;
-		int _y;
-		const int _width;
 		typename BitmapT::pixel *_row;
+		int _y;
+		BitmapT &_bitmap;
+		const int _width;
 	};
 
 
