@@ -28,7 +28,7 @@ using namespace aggx;
 using namespace std;
 
 const bool c_use_original_agg = false;
-const int c_ellipses_number = 2000;
+const int c_ellipses_number = 0;//2000;
 typedef simd::blender_solid_color blender_used;
 
 namespace
@@ -196,7 +196,7 @@ int main()
 
 	MainDialog dlg([&](bitmap &target, double &clearing, double &rasterization, double &rendition) {
 		typedef blender<blender_used> blenderx;
-		typedef renderer<bitmap, blenderx> renderer;
+		typedef rendition_adapter<bitmap, blenderx> renderer;
 		typedef scanline_adapter<renderer> scanline;
 
 		LARGE_INTEGER counter;

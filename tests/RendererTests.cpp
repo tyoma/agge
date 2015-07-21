@@ -67,7 +67,6 @@ namespace agge
 				void add_span(int x, int length, int cover)
 				{
 					assert_is_true(_inprogress);
-					assert_not_equal(0, length);
 
 					span s = { _current_y, x, length, cover };
 
@@ -126,7 +125,6 @@ namespace agge
 				typedef CoverT cover_type;
 
 				struct fill_log_entry;
-				struct blend_log_entry;
 
 			public:
 				void operator ()(PixelT *pixels, unsigned int x, unsigned int y, unsigned int length) const
@@ -138,27 +136,15 @@ namespace agge
 
 				void operator ()(PixelT *pixels, unsigned int x, unsigned int y, unsigned int length, const cover_type *covers) const
 				{
-					blend_log_entry entry = { pixels, x, y, length, covers };
+					assert_not_equal(0u, length);
 
-					blending_log.push_back(entry);
+					int offset = sizeof(cover_type) * 8;
+
+					for (; length; --length, ++pixels, ++covers)
+						*pixels = static_cast<pixel>(static_cast<int>(*covers) + (x << offset) + (y << (offset + 8)));
 				}
 
 				mutable vector<fill_log_entry> filling_log;
-				mutable vector<blend_log_entry> blending_log;
-			};
-
-
-			template <typename PixelT, typename CoverT>
-			struct mock_blender<PixelT, CoverT>::blend_log_entry
-			{
-				pixel *pixels;
-				unsigned int x;
-				unsigned int y;
-				unsigned int length;
-				const cover_type *covers;
-
-				bool operator ==(const blend_log_entry &rhs) const
-				{	return pixels == rhs.pixels && x == rhs.x && y == rhs.y && length == rhs.length && covers == rhs.covers;	}
 			};
 
 
@@ -183,11 +169,11 @@ namespace agge
 
 			public:
 				mock_bitmap(unsigned int width, unsigned int height)
-					: _width(width), _height(height), _data(width * height)
+					: _width(width), _height(height), data(width * height)
 				{	}
 
 				pixel *row_ptr(unsigned int y)
-				{	return &_data[y * _width];	}
+				{	return &data[y * _width];	}
 
 				unsigned int width() const
 				{	return _width;	}
@@ -195,9 +181,11 @@ namespace agge
 				unsigned int height() const
 				{	return _height;	}
 
+			public:
+				vector<pixel> data;
+
 			private:
 				unsigned int _width, _height;
-				vector<pixel> _data;
 			};
 		}
 
@@ -727,37 +715,41 @@ namespace agge
 			test( RendererBlendsAllowedPixelRegionsWithNoLimitations )
 			{
 				// INIT
-				short covers1[10];
+				short covers1[] = { 0x1001, 0x0002, 0x4003, 0x00E2, };
 				mock_blender<int, short> blender1;
-				mock_bitmap<int> bitmap1(10, 1000);
-				renderer< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, blender1);
+				mock_bitmap<int> bitmap1(7, 5);
+				rendition_adapter< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, blender1);
 
-				uint8_t covers2[10];
+				uint8_t covers2[] = { 0xED, 0x08, 0x91, };
 				mock_blender<uint8_t, uint8_t> blender2;
-				mock_bitmap<uint8_t> bitmap2(15, 1000);
-				renderer< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap2, blender2);
+				mock_bitmap<uint8_t> bitmap2(5, 4);
+				rendition_adapter< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap2, blender2);
 
 				// ACT
 				r1.set_y(0); r1(0, 3, covers1);
-				r1.set_y(7); r1(0, 2, covers1);
-				r1.set_y(171); r1(3, 4, covers1);
+				r1.set_y(1); r1(0, 2, covers1);
+				r1.set_y(4); r1(3, 4, covers1);
 
-				r2.set_y(3); r2(14, 1, covers2);
-				r2.set_y(171); r2(3, 5, covers2);
+				r2.set_y(2); r2(4, 1, covers2);
+				r2.set_y(3); r2(2, 3, covers2);
 
 				// ASSERT
-				mock_blender<int, short>::blend_log_entry reference1[] = {
-					{ bitmap1.row_ptr(0) + 0, 0, 0, 3, covers1 },
-					{ bitmap1.row_ptr(7) + 0, 0, 7, 2, covers1 },
-					{ bitmap1.row_ptr(171) + 3, 3, 171, 4, covers1 },
+				int reference1[] = {
+					0x00001001, 0x00000002, 0x00004003, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+					0x01001001, 0x01000002, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+					0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+					0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+					0x00000000, 0x00000000, 0x00000000, 0x04031001, 0x04030002, 0x04034003, 0x040300E2,
 				};
-				mock_blender<uint8_t, uint8_t>::blend_log_entry reference2[] = {
-					{ bitmap2.row_ptr(3) + 14, 14, 3, 1, covers2 },
-					{ bitmap2.row_ptr(171) + 3, 3, 171, 5, covers2 },
+				uint8_t reference2[] = {
+					0x00, 0x00, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00, 0xED,
+					0x00, 0x00, 0xED, 0x08, 0x91,
 				};
 
-				assert_equal(reference1, blender1.blending_log);
-				assert_equal(reference2, blender2.blending_log);
+				assert_equal(reference1, bitmap1.data);
+				assert_equal(reference2, bitmap2.data);
 			}
 
 
@@ -767,8 +759,8 @@ namespace agge
 				mock_blender<int, short> blender;
 				mock_bitmap<int> bitmap1(10, 1000);
 				mock_bitmap<int> bitmap2(10, 123);
-				renderer< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, blender);
-				renderer< mock_bitmap<int>, mock_blender<int, short> > r2(bitmap2, blender);
+				rendition_adapter< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, blender);
+				rendition_adapter< mock_bitmap<int>, mock_blender<int, short> > r2(bitmap2, blender);
 
 				// ACT / ASSERT
 				assert_is_false(r1.set_y(-1));

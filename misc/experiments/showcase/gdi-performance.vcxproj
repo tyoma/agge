@@ -230,7 +230,6 @@
     <ClInclude Include="..\..\libraries\aggx\parallel.h" />
     <ClInclude Include="..\..\libraries\aggx\paths.h" />
     <ClInclude Include="..\..\libraries\aggx\rasterizer.h" />
-    <ClInclude Include="..\..\libraries\aggx\renderer.h" />
     <ClInclude Include="..\..\libraries\aggx\win32_bitmap.h" />
     <ClInclude Include="BarsModel.h" />
     <ClInclude Include="BarView.h" />
