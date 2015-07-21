@@ -20,26 +20,37 @@ import android.os.Bundle;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 public class Sandbox extends Activity
 {
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+	private SandboxView mSandboxView;
+	private CheckBox mUseAGGCheckBox;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
 		
-		SandboxView pv = (SandboxView)findViewById(R.id.sandboxView);
+		mSandboxView = (SandboxView)findViewById(R.id.sandboxView);
+		mUseAGGCheckBox = (CheckBox)findViewById(R.id.useAGG);
 
-		pv.setStatsView((TextView)findViewById(R.id.stats));
-    }
+		mSandboxView.setStatsView((TextView)findViewById(R.id.stats));
+		mSandboxView.setUseAGG(true);
+		mUseAGGCheckBox.setChecked(true);
+	}
 
-    /* load our native library */
-    static {
-        System.loadLibrary("sandbox.android");
-    }
+	public void onUseAGGChanged(View checkbox)
+	{
+		mSandboxView.setUseAGG(((CheckBox)checkbox).isChecked());
+	}
+
+	static
+	{
+		System.loadLibrary("sandbox.android");
+	}
 }

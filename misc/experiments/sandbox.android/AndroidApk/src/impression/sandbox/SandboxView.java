@@ -15,12 +15,14 @@ public class SandboxView extends View {
 	private Bitmap mBitmap;
 	private long mDuration;
 	private long mTimes;
+	private boolean mUseAGG;
 	TextView mStatsView;
 	Path mSpiral;
 
 	public SandboxView(Context context, AttributeSet attributes) {
 		super(context, attributes);
 
+		mUseAGG = true;
 		mDuration = 0;
 		mTimes = 0;
 		aggObject = 0;
@@ -29,6 +31,13 @@ public class SandboxView extends View {
 	public void setStatsView(TextView textview)
 	{
 		mStatsView = textview;
+	}
+
+	public void setUseAGG(boolean useAGG)
+	{
+		mUseAGG = useAGG;
+		mDuration = 0;
+		mTimes = 0;
 	}
 
 	private void updateSpiral(float x, float y, float r1, float r2, float step, float angle)
@@ -53,6 +62,7 @@ public class SandboxView extends View {
 		super.onSizeChanged(w, h, oldw, oldh);
 		mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 		updateSpiral(w / 2, h / 2, 5, (w < h ? w : h) / 2 - 10, 1, 0);
+		updateSize(w, h);
 	}
 
 	@Override protected void onAttachedToWindow()
@@ -80,18 +90,25 @@ public class SandboxView extends View {
 
 		long started = System.nanoTime();
 
-		render(mBitmap);
-		canvas.drawBitmap(mBitmap, 0, 0, null);
-		//canvas.drawPath(mSpiral, paint);
+		if (mUseAGG)
+		{
+			render(mBitmap);
+			canvas.drawBitmap(mBitmap, 0, 0, null);
+		}
+		else
+		{
+			canvas.drawPath(mSpiral, paint);
+		}
 
 		long ended = System.nanoTime();
 
 		mDuration += ended - started;
-		if (0 == (mTimes & 0x3F) && mStatsView != null)
+		if (32 == mTimes++ && mStatsView != null)
 		{
-			mDuration >>= 6;
+			mDuration /= 32;
 			mStatsView.setText(String.format("Rendition time: %fms", 1e-6 * (double)mDuration));
 			mDuration = 0;
+			mTimes = 0;
 		}
 
 		// force a redraw, with a different time-based pattern.
@@ -102,5 +119,6 @@ public class SandboxView extends View {
 
 	private native void constructAGG();
 	private native void render(Bitmap bitmap);
+	private native void updateSize(int width, int height);
 	private native void destroyAGG();
 }

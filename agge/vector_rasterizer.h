@@ -62,11 +62,11 @@ namespace agge
 		void extend_bounds(int x, int y);
 
 	private:
-		bool _sorted;
 		cell _current;
 		cells_container _cells, _x_sorted_cells;
 		sorted_bins_container _scanlines;
 		int _min_x, _min_y, _max_x, _max_y;
+		bool _sorted;
 	};
 
 	struct vector_rasterizer::sorted_bin

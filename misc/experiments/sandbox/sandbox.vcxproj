@@ -192,6 +192,7 @@
     <ClInclude Include="..\..\libraries\aggx\pixel_formats.h" />
     <ClInclude Include="..\..\libraries\aggx\rasterizer.h" />
     <ClInclude Include="..\..\libraries\aggx\win32_bitmap.h" />
+    <ClInclude Include="..\common\paths.h" />
     <ClInclude Include="MainDialog.h" />
   </ItemGroup>
   <ItemGroup>

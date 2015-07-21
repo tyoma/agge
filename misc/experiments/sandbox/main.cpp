@@ -1,5 +1,7 @@
 #include "MainDialog.h"
 
+#include "../common/paths.h"
+
 #include <agge/scanline.h>
 #include <agge/blenders_simd.h>
 
@@ -26,6 +28,7 @@
 using namespace agge;
 using namespace aggx;
 using namespace std;
+using namespace demo;
 
 const bool c_use_original_agg = false;
 const int c_ellipses_number = 0;//2000;
@@ -48,7 +51,6 @@ namespace
 		{	}
 	};
 
-	typedef std::vector< std::pair<std::pair<aggx::real, aggx::real>, unsigned> > AggPath;
 
 	class bitmap_rendering_buffer
 	{
@@ -84,84 +86,6 @@ namespace
 		value = 1000.0 * (current.QuadPart - counter.QuadPart) / f.QuadPart;
 		counter = current;
 		return value;
-	}
-
-	class agg_path_adaptor
-	{
-	public:
-		agg_path_adaptor(const AggPath &path)
-			: _path(path), _position(_path.begin())
-		{
-		}
-
-		void rewind(unsigned)
-		{
-			_position = _path.begin();
-		}
-
-		unsigned vertex(float* x, float* y)
-		{
-			if (_position == _path.end())
-				return path_cmd_stop;
-			else
-				return *x = _position->first.first, *y = _position->first.second, _position++->second;
-		}
-
-		unsigned vertex(double* x, double* y)
-		{
-			if (_position == _path.end())
-				return path_cmd_stop;
-			else
-				return *x = _position->first.first, *y = _position->first.second, _position++->second;
-		}
-
-	private:
-		const AggPath &_path;
-		AggPath::const_iterator _position;
-	};
-
-	void pathStart(AggPath &/*path*/)
-	{	}
-
-	void pathMoveTo(AggPath &path, real x, real y)
-	{	path.push_back(make_pair(make_pair(x, y), path_cmd_move_to));	}
-	
-	void pathLineTo(AggPath &path, real x, real y)
-	{	path.push_back(make_pair(make_pair(x, y), path_cmd_line_to));	}
-
-	void pathEnd(AggPath &path)
-	{	path.push_back(make_pair(make_pair(0.0f, 0.0f), path_cmd_stop));	}
-
-
-	template <typename TargetT>
-	void spiral(TargetT &target, real x, real y, real r1, real r2, real step, real start_angle)
-	{
-		const float k = 4.0f;
-
-		bool start = true;
-
-		pathStart(target);
-		for (real angle = start_angle, dr = k * step / 45.0f, da = k / 180.0f * pi; r1 < r2; r1 += dr, angle += da, start = false)
-		{
-			const real px = x + aggx::cos(angle) * r1, py = y + aggx::sin(angle) * r1;
-
-			if (start)
-				pathMoveTo(target, px, py);
-			else
-				pathLineTo(target, px, py);
-		}
-		pathEnd(target);
-	}
-
-	template <typename TargetT, typename PathT>
-	void flatten(TargetT &destination, PathT &source)
-	{
-		unsigned cmd;
-		real x, y;
-
-		source.rewind(0);
-		while (!is_stop(cmd = source.vertex(&x, &y)))
-			destination.push_back(make_pair(make_pair(x, y), cmd));
 	}
 
 	int random(unsigned __int64 upper_bound)

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include "../common/paths.h"
+
 #include <aggx/rasterizer.h>
 #include <aggx/blenders.h>
 
@@ -27,6 +29,7 @@
 #include <memory>
 
 using namespace aggx;
+using namespace demo;
 using namespace std;
 
 namespace
@@ -94,61 +97,6 @@ namespace
 		void *_memory;
 	};
 
-
-	class spiral
-	{
-	public:
-		spiral(real x, real y, real r1, real r2, real step, real start_angle) :
-		  m_x(x), 
-			  m_y(y), 
-			  m_r1(r1), 
-			  m_r2(r2), 
-			  m_step(step), 
-			  m_start_angle(start_angle),
-			  m_angle(start_angle),
-			  m_da(deg2rad(1.0)),
-			  m_dr(m_step / 45.0f)
-		  {
-		  }
-
-		  void rewind(unsigned) 
-		  { 
-			  m_angle = m_start_angle; 
-			  m_curr_r = m_r1; 
-			  m_start = true; 
-		  }
-
-		  unsigned vertex(real* x, real* y)
-		  {
-			  if(m_curr_r > m_r2) return path_cmd_stop;
-
-			  *x = m_x + aggx::cos(m_angle) * m_curr_r;
-			  *y = m_y + aggx::sin(m_angle) * m_curr_r;
-			  m_curr_r += m_dr;
-			  m_angle += m_da;
-			  if(m_start) 
-			  {
-				  m_start = false;
-				  return path_cmd_move_to;
-			  }
-			  return path_cmd_line_to;
-		  }
-
-	private:
-		real m_x;
-		real m_y;
-		real m_r1;
-		real m_r2;
-		real m_step;
-		real m_start_angle;
-
-		real m_angle;
-		real m_curr_r;
-		real m_da;
-		real m_dr;
-		bool   m_start;
-	};
-
 	typedef blenderx<blender_solid_color> blender;
 	typedef agge::rendition_adapter<bitmap_proxy, blender> renderer;
 	typedef rasterizer_scanline_aa<agg::rasterizer_sl_no_clip/*agg::rasterizer_sl_clip_int*/> rasterizer_scanline;
@@ -157,7 +105,25 @@ namespace
 	struct AGG
 	{
 	public:
+		void update_size(unsigned width, unsigned height)
+		{
+			//AggPath spiral_line;
+
+			spiral.clear();
+			demo::spiral(spiral, width / 2, height / 2, 5, (std::min)(width, height) / 2 - 10, 1, 0);
+
+			//agg_path_adaptor p(spiral_line);
+			//conv_stroke<agg_path_adaptor> stroke(p);
+
+			//stroke.width(3);
+
+			//spiral.clear();
+			//flatten(spiral, stroke);
+		}
+
+	public:
 		rasterizer_scanline rasterizer;
+		AggPath spiral;
 	};
 }
 
@@ -188,20 +154,30 @@ try
 	AGG* agg = reinterpret_cast<AGG*>(env->GetLongField(obj, fieldidAGG));
 
 	bitmap_proxy bm(env, bitmap);
-	rasterizer_scanline ras;
 
-	spiral s4(bm.width() / 2, bm.height() / 2, 5, (min)(bm.width(), bm.height()) / 2 - 10, 1, 0);
-	conv_stroke<spiral> stroke(s4);
+	agg_path_adaptor p(agg->spiral);
+	conv_stroke<agg_path_adaptor> stroke(p);
 
 	stroke.width(3);
-	stroke.line_cap(round_cap);
-	stroke.line_join(bevel_join);
+
 	agg->rasterizer.add_path(stroke);
 	agg->rasterizer.prepare();
 
 	renderer r(bm, blender(rgba8(0, 154, 255, 255)));
 
 	agg->rasterizer.render<scanline>(r);
+}
+catch (...)
+{
+}
+
+extern "C" JNIEXPORT void JNICALL Java_impression_sandbox_SandboxView_updateSize(JNIEnv *env, jobject obj, jint width, jint height)
+try
+{
+	jfieldID fieldidAGG = env->GetFieldID(env->GetObjectClass(obj), "aggObject", "J");
+	AGG* agg = reinterpret_cast<AGG*>(env->GetLongField(obj, fieldidAGG));
+
+	agg->update_size(width, height);
 }
 catch (...)
 {
