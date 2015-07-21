@@ -2,6 +2,8 @@
 #include "ChildView.h"
 #include "resource.h"
 
+#include "../common/paths.h"
+
 #include <aggx/agg_conv_stroke.h>
 #include <aggx/agg_ellipse.h>
 #include <aggx/paths.h>
@@ -21,48 +23,9 @@ using namespace std;
 using namespace Gdiplus;
 using namespace aggx;
 
-namespace
+namespace demo
 {
 	typedef std::pair< std::vector<Gdiplus::PointF>, std::vector<BYTE> > GdipPath;
-
-	class agg_path_adaptor
-	{
-	public:
-		agg_path_adaptor(const AggPath &path)
-			: _path(path), _position(_path.begin())
-		{
-		}
-
-		void rewind(unsigned)
-		{
-			_position = _path.begin();
-		}
-
-		unsigned vertex(real* x, real* y)
-		{
-			if (_position == _path.end())
-				return path_cmd_stop;
-			else
-				return *x = _position->first.first, *y = _position->first.second, _position++->second;
-		}
-
-	private:
-		const AggPath &_path;
-		AggPath::const_iterator _position;
-	};
-
-	int random(unsigned __int64 upper_bound)
-	{	return static_cast<unsigned>(upper_bound * rand() / RAND_MAX);}
-
-	bar generate(int previous_close)
-	{
-		bar b = {	previous_close + random(14) - 7	};
-
-		b.h = b.o + random(20);
-		b.l = b.o - random(20);
-		b.c = b.l + random(b.h - b.l);
-		return b;
-	};
 
 	void pathStart(HDC /*hdc*/)
 	{	}
@@ -115,51 +78,22 @@ namespace
 
 	void pathEnd(ID2D1GeometrySink &path)
 	{	path.EndFigure(D2D1_FIGURE_END_OPEN);	}
+}
 
+namespace
+{
+	int random(unsigned __int64 upper_bound)
+	{	return static_cast<unsigned>(upper_bound * rand() / RAND_MAX);}
 
-	void pathStart(AggPath &/*path*/)
-	{	}
-
-	void pathMoveTo(AggPath &path, real x, real y)
-	{	path.push_back(make_pair(make_pair(x, y), path_cmd_move_to));	}
-	
-	void pathLineTo(AggPath &path, real x, real y)
-	{	path.push_back(make_pair(make_pair(x, y), path_cmd_line_to));	}
-
-	void pathEnd(AggPath &path)
-	{	path.push_back(make_pair(make_pair(0.0f, 0.0f), path_cmd_stop));	}
-
-
-	template <typename TargetT>
-	void spiral(TargetT &target, real x, real y, real r1, real r2, real step, real start_angle)
+	bar generate(int previous_close)
 	{
-		const float k = 4.0f;
+		bar b = {	previous_close + random(14) - 7	};
 
-		bool start = true;
-
-		pathStart(target);
-		for (real angle = start_angle, dr = k * step / 45.0f, da = k / 180.0f * pi; r1 < r2; r1 += dr, angle += da, start = false)
-		{
-			const real px = x + aggx::cos(angle) * r1, py = y + aggx::sin(angle) * r1;
-
-			if (start)
-				pathMoveTo(target, px, py);
-			else
-				pathLineTo(target, px, py);
-		}
-		pathEnd(target);
-	}
-
-	template <typename TargetT, typename PathT>
-	void flatten(TargetT &destination, PathT &source)
-	{
-		unsigned cmd;
-		real x, y;
-
-		source.rewind(0);
-		while (!is_stop(cmd = source.vertex(&x, &y)))
-			destination.push_back(make_pair(make_pair(x, y), cmd));
-	}
+		b.h = b.o + random(20);
+		b.l = b.o - random(20);
+		b.c = b.l + random(b.h - b.l);
+		return b;
+	};
 
 	agge::simd::blender_solid_color::pixel make_pixel(rgba8 color)
 	{
@@ -515,7 +449,7 @@ void CChildView::OnPaint()
 
 				CPen *previousPen = target.SelectObject(&pen);
 
-				spiral(target, client.Width() / 2, client.Height() / 2, 5, (std::min)(client.Width(), client.Height()) / 2 - 10, 1, 0);
+				demo::spiral(target, client.Width() / 2, client.Height() / 2, 5, (std::min)(client.Width(), client.Height()) / 2 - 10, 1, 0);
 				dc.SelectObject(previousPen);
 			}
 		}
@@ -587,7 +521,7 @@ void CChildView::OnPaint()
 
 				//stroke.width(3);
 				//_agg_rasterizer.add_path(stroke);
-				_agg_rasterizer.add_path(agg_path_adaptor(_agg_path_flatten));
+				_agg_rasterizer.add_path(demo::agg_path_adaptor(_agg_path_flatten));
 
 				_agg_rasterizer.render<scanline>(renderer(*_agg_bitmap, blender(rgba8(0, 150, 255))));
 			}
@@ -611,9 +545,9 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 			_agg_bitmap.reset(new bitmap(maxw, maxh));
 		}
 
-		GdipPath spiralGdip;
+		demo::GdipPath spiralGdip;
 
-		spiral(spiralGdip, cx / 2, cy / 2, 5, (std::min)(cx, cy) / 2 - 10, 1, 0);
+		demo::spiral(spiralGdip, cx / 2, cy / 2, 5, (std::min)(cx, cy) / 2 - 10, 1, 0);
 		_gdip_path.reset(new GraphicsPath(&spiralGdip.first[0], &spiralGdip.second[0], spiralGdip.first.size()));
 
 		_d2d_path.Release();
@@ -621,19 +555,19 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 
 		CComPtr<ID2D1GeometrySink> sink;
 		_d2d_path->Open(&sink);
-		spiral(*sink, cx / 2, cy / 2, 5, (std::min)(cx, cy) / 2 - 10, 1, 0);
+		demo::spiral(*sink, cx / 2, cy / 2, 5, (std::min)(cx, cy) / 2 - 10, 1, 0);
 		sink->Close();
 
 		_agg_path.clear();
-		spiral(_agg_path, cx / 2, cy / 2, 5, (std::min)(cx, cy) / 2 - 10, 1, 0);
+		demo::spiral(_agg_path, cx / 2, cy / 2, 5, (std::min)(cx, cy) / 2 - 10, 1, 0);
 
-		agg_path_adaptor p(_agg_path);
-		conv_stroke<agg_path_adaptor> stroke(p);
+		demo::agg_path_adaptor p(_agg_path);
+		conv_stroke<demo::agg_path_adaptor> stroke(p);
 
 		stroke.width(3);
 
 		_agg_path_flatten.clear();
-		flatten(_agg_path_flatten, stroke);
+		demo::flatten(_agg_path_flatten, stroke);
 	}
 
 	_buffer.DeleteObject();
