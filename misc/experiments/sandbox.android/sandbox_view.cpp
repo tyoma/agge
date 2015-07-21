@@ -15,7 +15,6 @@
  */
 
 #include <aggx/rasterizer.h>
-#include <aggx/rendition_adapter.h>
 #include <aggx/blenders.h>
 
 #include <aggx/agg_conv_stroke.h>
@@ -25,8 +24,10 @@
 
 #include <jni.h>
 #include <android/bitmap.h>
+#include <memory>
 
 using namespace aggx;
+using namespace std;
 
 namespace
 {
@@ -73,8 +74,8 @@ namespace
 			AndroidBitmap_unlockPixels(_env, _bitmap);
 		}
 
-		pixel *access(unsigned x, unsigned y)
-		{	return reinterpret_cast<pixel *>(_memory) + y * _stride + x;	}
+		pixel *row_ptr(unsigned y)
+		{	return reinterpret_cast<pixel *>(_memory) + y * _stride;	}
 
 		unsigned width() const
 		{	return _width;	}
@@ -147,38 +148,61 @@ namespace
 		real m_dr;
 		bool   m_start;
 	};
-}
 
-extern "C" JNIEXPORT void JNICALL Java_impression_sandbox_SandboxView_render(JNIEnv *env, jobject obj, jobject bitmap)
-{
 	typedef blenderx<blender_solid_color> blender;
-	typedef rendition_adapter<bitmap_proxy, blender> renderer;
+	typedef agge::rendition_adapter<bitmap_proxy, blender> renderer;
 	typedef rasterizer_scanline_aa<agg::rasterizer_sl_no_clip/*agg::rasterizer_sl_clip_int*/> rasterizer_scanline;
 	typedef agge::scanline_adapter<renderer> scanline;
 
-	try
+	struct AGG
 	{
-		bitmap_proxy bm(env, bitmap);
-		rasterizer_scanline ras;
+	public:
+		rasterizer_scanline rasterizer;
+	};
+}
 
-//		renderer(bm, blender(rgba8(255, 255, 255, 255))).clear();
 
 
-		spiral s4(bm.width() / 2, bm.height() / 2, 5, (std::min)(bm.width(), bm.height()) / 2 - 10, 1, 0);
-		conv_stroke<spiral> stroke(s4);
+extern "C" JNIEXPORT void JNICALL Java_impression_sandbox_SandboxView_constructAGG(JNIEnv *env, jobject obj)
+try
+{
+	AGG *ptr = new AGG;
+	jfieldID fieldidAGG = env->GetFieldID(env->GetObjectClass(obj), "aggObject", "J");
+	env->SetLongField(obj, fieldidAGG, reinterpret_cast<jlong>(ptr));
+}
+catch (...)
+{
+}
 
-		stroke.width(3);
-		stroke.line_cap(round_cap);
-		stroke.line_join(bevel_join);
-		ras.add_path(stroke);
-		ras.prepare();
+extern "C" JNIEXPORT void JNICALL Java_impression_sandbox_SandboxView_destroyAGG(JNIEnv *env, jobject obj)
+{
+	jfieldID fieldidAGG = env->GetFieldID(env->GetObjectClass(obj), "aggObject", "J");
+	delete reinterpret_cast<AGG*>(env->GetLongField(obj, fieldidAGG));
+	env->SetLongField(obj, fieldidAGG, 0);
+}
 
-		renderer r(bm, blender(rgba8(0, 154, 255, 255)));
+extern "C" JNIEXPORT void JNICALL Java_impression_sandbox_SandboxView_render(JNIEnv *env, jobject obj, jobject bitmap)
+try
+{
+	jfieldID fieldidAGG = env->GetFieldID(env->GetObjectClass(obj), "aggObject", "J");
+	AGG* agg = reinterpret_cast<AGG*>(env->GetLongField(obj, fieldidAGG));
 
-		ras.render<scanline>(r);
+	bitmap_proxy bm(env, bitmap);
+	rasterizer_scanline ras;
 
-	}
-	catch (...)
-	{
-	}
+	spiral s4(bm.width() / 2, bm.height() / 2, 5, (min)(bm.width(), bm.height()) / 2 - 10, 1, 0);
+	conv_stroke<spiral> stroke(s4);
+
+	stroke.width(3);
+	stroke.line_cap(round_cap);
+	stroke.line_join(bevel_join);
+	agg->rasterizer.add_path(stroke);
+	agg->rasterizer.prepare();
+
+	renderer r(bm, blender(rgba8(0, 154, 255, 255)));
+
+	agg->rasterizer.render<scanline>(r);
+}
+catch (...)
+{
 }

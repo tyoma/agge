@@ -12,21 +12,19 @@ import android.util.AttributeSet;
 import java.lang.Math;
 
 public class SandboxView extends View {
-    private Bitmap mBitmap;
-    private long mDuration;
+	private Bitmap mBitmap;
+	private long mDuration;
 	private long mTimes;
 	TextView mStatsView;
 	Path mSpiral;
 
-    /* implementend by libplasma.so */
-    private static native void render(Bitmap bitmap);
+	public SandboxView(Context context, AttributeSet attributes) {
+		super(context, attributes);
 
-    public SandboxView(Context context, AttributeSet attributes) {
-        super(context, attributes);
-
-        mDuration = 0;
+		mDuration = 0;
 		mTimes = 0;
-    }
+		aggObject = 0;
+	}
 
 	public void setStatsView(TextView textview)
 	{
@@ -40,7 +38,7 @@ public class SandboxView extends View {
 		float da = 3.1415926f / 180.0f;
 
 		mSpiral = new Path();
-        mSpiral.moveTo(x + (float)Math.cos(angle) * r, y + (float)Math.sin(angle) * r);
+		mSpiral.moveTo(x + (float)Math.cos(angle) * r, y + (float)Math.sin(angle) * r);
 
 		while (r <= r2)
 		{
@@ -57,8 +55,18 @@ public class SandboxView extends View {
 		updateSpiral(w / 2, h / 2, 5, (w < h ? w : h) / 2 - 10, 1, 0);
 	}
 
-    @Override protected void onDraw(Canvas canvas)
-	 {
+	@Override protected void onAttachedToWindow()
+	{
+		constructAGG();
+	}
+
+	@Override protected void onDetachedFromWindow()
+	{
+		destroyAGG();
+	}
+
+	@Override protected void onDraw(Canvas canvas)
+	{
 		Paint paint = new Paint();
 
 		canvas.drawColor(Color.WHITE);
@@ -72,9 +80,9 @@ public class SandboxView extends View {
 
 		long started = System.nanoTime();
 
-        render(mBitmap);
-        canvas.drawBitmap(mBitmap, 0, 0, null);
-//		canvas.drawPath(mSpiral, paint);
+		render(mBitmap);
+		canvas.drawBitmap(mBitmap, 0, 0, null);
+		//canvas.drawPath(mSpiral, paint);
 
 		long ended = System.nanoTime();
 
@@ -86,8 +94,13 @@ public class SandboxView extends View {
 			mDuration = 0;
 		}
 
+		// force a redraw, with a different time-based pattern.
+		invalidate();
+	}
 
-        // force a redraw, with a different time-based pattern.
-        invalidate();
-    }
+	private long aggObject;
+
+	private native void constructAGG();
+	private native void render(Bitmap bitmap);
+	private native void destroyAGG();
 }

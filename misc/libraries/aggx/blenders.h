@@ -16,11 +16,11 @@ namespace aggx
 	public:
 		explicit blender_solid_color(const pixel &components, int alpha);
 
-		void operator ()(pixel *pixels, unsigned int x, unsigned int y, unsigned int n) const;
-		void operator ()(pixel *pixels, unsigned int x, unsigned int y, unsigned int n, const cover_type *covers) const;
+		void operator ()(pixel *pixels, int x, int y, unsigned int n) const;
+		void operator ()(pixel *pixels, int x, int y, unsigned int n, const cover_type *covers) const;
 
 	private:
-		const pixel _components;
+		pixel _components;
 		const int _alpha;
 	};
 
@@ -28,20 +28,25 @@ namespace aggx
 
 	inline blender_solid_color::blender_solid_color(const pixel &components, int alpha)
 		: _components(components), _alpha((alpha << 6) + 505 * alpha / 1000)
-	{	}
+	{	_components.c3 = 0xFF;	}
 
-	inline void blender_solid_color::operator ()(pixel *pixels, unsigned int /*x*/, unsigned int /*y*/, unsigned int n) const
+	inline void blender_solid_color::operator ()(pixel *pixels, int /*x*/, int /*y*/, unsigned int n) const
 	{	std::fill_n(pixels, n, _components);	}
 
-	inline void blender_solid_color::operator ()(pixel *pixels, unsigned int /*x*/, unsigned int /*y*/, unsigned int n, const cover_type *covers) const
+	inline void blender_solid_color::operator ()(pixel *pixels, int /*x*/, int /*y*/, unsigned int n, const cover_type *covers) const
 	{
 		for (; n; --n, ++pixels, ++covers)
 		{
 			const int alpha = _alpha * *covers;
 
-			pixels->c0 += (_components.c0 - pixels->c0) * alpha >> 22;
-			pixels->c1 += (_components.c1 - pixels->c1) * alpha >> 22;
-			pixels->c2 += (_components.c2 - pixels->c2) * alpha >> 22;
+			if (0x3FFFC0 == alpha)
+				*pixels = _components;
+			else
+			{
+				pixels->c0 += (_components.c0 - pixels->c0) * alpha >> 22;
+				pixels->c1 += (_components.c1 - pixels->c1) * alpha >> 22;
+				pixels->c2 += (_components.c2 - pixels->c2) * alpha >> 22;
+			}
 		}
 	}
 }
