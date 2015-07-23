@@ -12,4 +12,21 @@ namespace agge
 		uint8_t c0, c1, c2, c3;
 	};
 #pragma pack(pop)
+
+	template <typename CoordT>
+	struct rect
+	{
+		CoordT x1, y1, x2, y2;
+	};
+
+	typedef rect<int> rect_i;
+
+
+	template <typename CoordT>
+	inline CoordT width(const rect<CoordT> &rc)
+	{	return rc.x2 - rc.x1;	}
+
+	template <typename CoordT>
+	inline CoordT height(const rect<CoordT> &rc)
+	{	return rc.y2 - rc.y1;	}
 }

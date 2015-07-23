@@ -1,6 +1,7 @@
 #pragma once
 
 #include "config.h"
+#include "types.h"
 
 namespace agge
 {
@@ -11,8 +12,8 @@ namespace agge
 		class adapter;
 
 	public:
-		template <typename BitmapT, typename RasterSourceT, typename AlphaFn>
-		void render(BitmapT &bitmap, const RasterSourceT &raster, const AlphaFn &alpha);
+		template <typename BitmapT, typename RasterSourceT, typename BlenderT, typename AlphaFn>
+		void render(BitmapT &bitmap, const RasterSourceT &raster, const BlenderT &blender, const AlphaFn &alpha);
 	};
 
 
@@ -23,7 +24,7 @@ namespace agge
 		typedef typename BlenderT::cover_type cover_type;
 
 	public:
-		adapter(BitmapT &bitmap, const BlenderT &blender);
+		adapter(BitmapT &bitmap, const rect_i *window, const BlenderT &blender);
 
 		bool set_y(int y);
 		void operator ()(int x, int length, const cover_type *covers);
@@ -32,41 +33,48 @@ namespace agge
 		const adapter &operator =(const adapter &rhs);
 
 	private:
-		const BlenderT _blender;
+		const int _offset_x, _limit_x;
 		typename BitmapT::pixel *_row;
 		int _y;
+		const BlenderT _blender;
 		BitmapT &_bitmap;
-		const int _width;
+		const int _offset_y, _limit_y;
 	};
 
 
 
 	template <typename BitmapT, typename BlenderT>
-	inline renderer::adapter<BitmapT, BlenderT>::adapter(BitmapT &bitmap, const BlenderT &blender)
-		: _bitmap(bitmap), _blender(blender), _width(bitmap.width())
+	inline renderer::adapter<BitmapT, BlenderT>::adapter(BitmapT &bitmap, const rect_i *window, const BlenderT &blender)
+		: _offset_x(window ? window->x1 : 0),
+			_limit_x((!window || static_cast<int>(bitmap.width()) < width(*window) ? bitmap.width() : width(*window)) + _offset_x), 
+			_blender(blender), _bitmap(bitmap),
+			_offset_y(window ? window->y1 : 0),
+			_limit_y((!window || static_cast<int>(bitmap.height()) < height(*window) ? bitmap.height() : height(*window)) + _offset_y)
 	{	}
 
 	template <typename BitmapT, typename BlenderT>
 	inline bool renderer::adapter<BitmapT, BlenderT>::set_y(int y)
 	{
-		if (y < 0 || static_cast<int>(_bitmap.height()) <= y)
+		if (y < _offset_y || _limit_y <= y)
 			return false;
 		_y = y;
-		_row = _bitmap.row_ptr(y);
+		_row = _bitmap.row_ptr(y - _offset_y) - _offset_x;
 		return true;
 	}
 
 	template <typename BitmapT, typename BlenderT>
 	inline void renderer::adapter<BitmapT, BlenderT>::operator ()(int x, int length, const cover_type *covers)
 	{
-		if (x < 0)
+		if (x < _offset_x)
 		{
-			length += x;
-			covers -= x;
-			x = 0;
+			const int dx = x - _offset_x;
+
+			x = _offset_x;
+			length += dx;
+			covers -= dx;
 		}
-		if (x + length >= _width)
-			length = _width - x;
+		if (x + length > _limit_x)
+			length = _limit_x - x;
 		if (length > 0)
 			_blender(_row + x, x, _y, length, covers);
 	}

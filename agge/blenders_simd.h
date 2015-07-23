@@ -17,8 +17,8 @@ namespace agge
 		public:
 			blender_solid_color(pixel components, uint8_t alpha);
 
-			void operator ()(pixel *pixels, int x, int y, unsigned int n) const;
-			void operator ()(pixel *pixels, int x, int y, unsigned int n, const cover_type *covers) const;
+			void operator ()(pixel *pixels, int x, int y, count_t n) const;
+			void operator ()(pixel *pixels, int x, int y, count_t n, const cover_type *covers) const;
 
 		private:
 			__m128i _color_u16, _alpha_u16;

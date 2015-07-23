@@ -523,7 +523,7 @@ void CChildView::OnPaint()
 				//_agg_rasterizer.add_path(stroke);
 				_agg_rasterizer.add_path(demo::agg_path_adaptor(_agg_path_flatten));
 
-				_agg_rasterizer.render<scanline>(renderer(*_agg_bitmap, blender(rgba8(0, 150, 255))));
+				_agg_rasterizer.render<scanline>(renderer(*_agg_bitmap, 0, blender(rgba8(0, 150, 255))));
 			}
 		}
 
@@ -776,7 +776,7 @@ void CChildView::drawLines(bitmap &b, const CSize &client, const std::vector<bar
 		x += 2 * d + 1;
 	});
 
-	_agg_rasterizer.render<scanline>(renderer(b, blender(rgba8(0, 0, 0))));
+	_agg_rasterizer.render<scanline>(renderer(b, 0, blender(rgba8(0, 0, 0))));
 }
 
 void CChildView::drawBars(bitmap &b, const CSize &client, const vector<bar> &bars)
@@ -810,7 +810,7 @@ void CChildView::drawBars(bitmap &b, const CSize &client, const vector<bar> &bar
 		x += 2 * d + 1;
 	});
 
-	_agg_rasterizer.render<scanline>(renderer(b, blender(rgba8(0, 0, 0, 96))));
+	_agg_rasterizer.render<scanline>(renderer(b, 0, blender(rgba8(0, 0, 0, 96))));
 }
 
 void CChildView::drawEllipses(bitmap &b, const CSize &client, const vector<ellipse_t> &ellipses)
@@ -824,7 +824,7 @@ void CChildView::drawEllipses(bitmap &b, const CSize &client, const vector<ellip
 
 		_agg_rasterizer.add_path(ellipse);
 				
-		_agg_rasterizer.render<scanline>(renderer(b, blender(rgba8(GetRValue(e.second), GetGValue(e.second), GetBValue(e.second), 224))));
+		_agg_rasterizer.render<scanline>(renderer(b, 0, blender(rgba8(GetRValue(e.second), GetGValue(e.second), GetBValue(e.second), 224))));
 	});
 }
 

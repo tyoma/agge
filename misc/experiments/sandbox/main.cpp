@@ -99,8 +99,6 @@ namespace
 
 int main()
 {
-	_CrtSetReportMode();
-
 	//for (int count = 2000; count; --count)
 	//{
 	//	cout << fixed << "ball("
@@ -121,8 +119,12 @@ int main()
 	MSG msg;
 	rasterizer_scanline ras;
 
+	::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
+
 	AggPath spiral_line, spiral_flatten;
-	int t = ::GetTickCount();
+	LARGE_INTEGER timer;
+
+	stopwatch(timer);
 
 	MainDialog dlg([&](bitmap &target, double &clearing, double &rasterization, double &rendition) {
 		typedef blender<blender_used> blenderx;
@@ -149,10 +151,7 @@ int main()
 		rasterization = 0;
 		rendition = 0;
 
-		const int new_t = ::GetTickCount();
-		const float dt = 0.1f * (new_t - t);
-
-		t = new_t;
+		const float dt = 0.3f * (float)stopwatch(timer);
 
 		if (!c_use_original_agg)
 		{
@@ -163,7 +162,7 @@ int main()
 				ras.prepare();
 				rasterization += stopwatch(counter);
 				blenderx b(rgba8(0, 154, 255, 255));
-				ras.render<scanline>(renderer(target, b));
+				ras.render<scanline>(renderer(target, 0, b));
 				rendition += stopwatch(counter);
 			}
 
@@ -181,7 +180,7 @@ int main()
 				ras.prepare();
 				rasterization += stopwatch(counter);
 				blenderx brush(b.color);
-				ras.render<scanline>(renderer(target, brush));
+				ras.render<scanline>(renderer(target, 0, brush));
 				rendition += stopwatch(counter);
 			});
 		}

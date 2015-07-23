@@ -78,6 +78,13 @@ namespace agge
 		template <typename T, size_t N>
 		inline std::vector<T> mkvector(T (&p)[N])
 		{	return std::vector<T>(p, p + N);	}
+
+		template <typename CoordT>
+		inline rect<CoordT> mkrect_sized(CoordT left, CoordT top, CoordT width, CoordT height)
+		{
+			rect<CoordT> rc = { left, top, left + width, top + height };
+			return rc;
+		}
 	}
 
 	inline bool operator ==(const pixel32 &lhs, const pixel32 &rhs)

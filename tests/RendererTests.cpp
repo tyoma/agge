@@ -1,6 +1,6 @@
 #include <agge/renderer.h>
 
-#include <agge/types.h>
+#include "helpers.h"
 
 #include <utee/ut/assert.h>
 #include <utee/ut/test.h>
@@ -127,21 +127,25 @@ namespace agge
 				struct fill_log_entry;
 
 			public:
-				void operator ()(PixelT *pixels, unsigned int x, unsigned int y, unsigned int length) const
+				void operator ()(PixelT *pixels, int x, int y, unsigned int length) const
 				{
 					fill_log_entry entry = { pixels, x, y, length };
 
 					filling_log.push_back(entry);
 				}
 
-				void operator ()(PixelT *pixels, unsigned int x, unsigned int y, unsigned int length, const cover_type *covers) const
+				void operator ()(PixelT *pixels, int x, int y, unsigned int length, const cover_type *covers) const
 				{
 					assert_not_equal(0u, length);
 
 					int offset = sizeof(cover_type) * 8;
+					int mask_x = 0x000000FF << offset;
+					int mask_y = 0x0000FF00 << offset;
 
 					for (; length; --length, ++pixels, ++covers)
-						*pixels = static_cast<pixel>(static_cast<int>(*covers) + (x << offset) + (y << (offset + 8)));
+						*pixels = static_cast<pixel>(static_cast<int>(*covers)
+							+ ((x << offset) & mask_x)
+							+ ((y << (offset + 8)) & mask_y));
 				}
 
 				mutable vector<fill_log_entry> filling_log;
@@ -718,12 +722,12 @@ namespace agge
 				short covers1[] = { 0x1001, 0x0002, 0x4003, 0x00E2, };
 				mock_blender<int, short> blender1;
 				mock_bitmap<int> bitmap1(7, 5);
-				renderer::adapter< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, blender1);
+				renderer::adapter< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, 0, blender1);
 
 				uint8_t covers2[] = { 0xED, 0x08, 0x91, };
 				mock_blender<uint8_t, uint8_t> blender2;
 				mock_bitmap<uint8_t> bitmap2(5, 4);
-				renderer::adapter< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap2, blender2);
+				renderer::adapter< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap2, 0, blender2);
 
 				// ACT
 				r1.set_y(0);
@@ -768,7 +772,7 @@ namespace agge
 				uint8_t covers[] = { 0x51, 0xFF, 0x13, 0x90, 0xE1, };
 				mock_blender<uint8_t, uint8_t> blender;
 				mock_bitmap<uint8_t, 2> bitmap(8, 3);
-				renderer::adapter< mock_bitmap<uint8_t, 2>, mock_blender<uint8_t, uint8_t> > r(bitmap, blender);
+				renderer::adapter< mock_bitmap<uint8_t, 2>, mock_blender<uint8_t, uint8_t> > r(bitmap, 0, blender);
 
 				// ACT
 				r.set_y(0);
@@ -800,8 +804,8 @@ namespace agge
 				mock_blender<int, short> blender;
 				mock_bitmap<int> bitmap1(10, 1000);
 				mock_bitmap<int> bitmap2(10, 123);
-				renderer::adapter< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, blender);
-				renderer::adapter< mock_bitmap<int>, mock_blender<int, short> > r2(bitmap2, blender);
+				renderer::adapter< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, 0, blender);
+				renderer::adapter< mock_bitmap<int>, mock_blender<int, short> > r2(bitmap2, 0, blender);
 
 				// ACT / ASSERT
 				assert_is_false(r1.set_y(-1));
@@ -815,6 +819,219 @@ namespace agge
 				assert_is_true(r2.set_y(1));
 				assert_is_true(r2.set_y(122));
 				assert_is_false(r2.set_y(123));
+			}
+
+
+			test( RendererAdapterShiftsPixelsCoordinatesAccordingToTheWindow )
+			{
+				// INIT
+				uint8_t covers[] = { 0x10, 0x19, 0xF7, 0xE3, 0x79, };
+				mock_blender<int, uint8_t> blender;
+				mock_bitmap<int> bitmap(7, 5);
+
+				typedef renderer::adapter< mock_bitmap<int>, mock_blender<int, uint8_t> > renderer_adapter;
+
+				// INIT / ACT
+				rect_i window1 = mkrect_sized(-3, -2, 1000, 1000);
+				renderer_adapter r1(bitmap, &window1, blender);
+
+				// ACT
+				r1.set_y(-1);
+				r1(-2, 3, covers);
+				
+				r1.set_y(1);
+				r1(0, 2, covers);
+				
+				r1.set_y(2);
+				r1(1, 3, covers);
+
+				// ASSERT
+				int reference1[] = {
+					0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+					0x00000000, 0x00FFFE10, 0x00FFFE19, 0x00FFFEF7, 0x00000000, 0x00000000, 0x00000000,
+					0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+					0x00000000, 0x00000000, 0x00000000, 0x00010010, 0x00010019, 0x00000000, 0x00000000,
+					0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00020110, 0x00020119, 0x000201F7,
+				};
+
+				assert_equal(reference1, bitmap.data);
+
+				// INIT
+				bitmap.data.assign(bitmap.data.size(), 0);
+
+				// INIT / ACT
+				rect_i window2 = mkrect_sized(0x50, 0x30, 1000, 1000);
+				renderer_adapter r2(bitmap, &window2, blender);
+
+				// ACT
+				r2.set_y(0x30);
+				r2(0x50, 4, covers);
+
+				// ASSERT
+				int reference2[] = {
+					0x00305010, 0x00305019, 0x003050F7, 0x003050E3, 0x00000000, 0x00000000, 0x00000000,
+					0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+					0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+					0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+					0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+				};
+
+				assert_equal(reference2, bitmap.data);
+			}
+
+
+			test( RendererAdapterTruncatesShiftedPixelsOnTheNearBound )
+			{
+				// INIT
+				uint8_t covers[] = { 0x10, 0x19, 0xF7, 0xE3, 0x79, };
+				mock_blender<int, uint8_t> blender;
+				mock_bitmap<int> bitmap(5, 2);
+
+				typedef renderer::adapter< mock_bitmap<int>, mock_blender<int, uint8_t> > renderer_adapter;
+
+				// INIT / ACT
+				rect_i window1 = mkrect_sized(2, 0, 1000, 1000);
+				renderer_adapter r1(bitmap, &window1, blender);
+
+				// ACT
+				r1.set_y(0);
+				r1(0, 5, covers);
+				
+				r1.set_y(1);
+				r1(-1, 5, covers);
+
+				// ASSERT
+				int reference1[] = {
+					0x000002F7, 0x000002E3, 0x00000279, 0x00000000, 0x00000000,
+					0x000102E3, 0x00010279, 0x00000000, 0x00000000, 0x00000000,
+				};
+
+				assert_equal(reference1, bitmap.data);
+
+				// INIT
+				bitmap.data.assign(bitmap.data.size(), 0);
+
+				// INIT / ACT
+				rect_i window2 = mkrect_sized(3, 0, 1000, 1000);
+				renderer_adapter r2(bitmap, &window2, blender);
+
+				// ACT
+				r2.set_y(0);
+				r2(0, 5, covers);
+
+				// ASSERT
+				int reference2[] = {
+					0x000003E3, 0x00000379, 0x00000000, 0x00000000, 0x00000000,
+					0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+				};
+
+				assert_equal(reference2, bitmap.data);
+			}
+
+
+			test( RenditionAdapterWithOffsetObeysHorizontalLimitsOfBitmap )
+			{
+				// INIT
+				uint8_t covers[] = { 0x51, 0xFF, 0x13, 0x90, 0xE1, };
+				mock_blender<uint8_t, uint8_t> blender;
+				mock_bitmap<uint8_t, 3> bitmap(6, 2);
+				rect_i window1 = mkrect_sized(-3, 0, 1000, 1000);
+				renderer::adapter< mock_bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
+				rect_i window2 = mkrect_sized(-2, 0, 1000, 1000);
+				renderer::adapter< mock_bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
+
+				// ACT
+				r1.set_y(0);
+				r1(1, 5, covers);
+				
+				r2.set_y(1);
+				r2(3, 2, covers);
+
+				// ASSERT
+				uint8_t reference[] = {
+					0x00, 0x00, 0x00, 0x00, 0x51, 0xFF, 0x00,	0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x51, 0x00,	0x00, 0x00,
+				};
+
+				assert_equal(reference, bitmap.data);
+			}
+
+
+			test( RenditionAdapterWithOffsetObeysHorizontalLimitsOfWindow )
+			{
+				// INIT
+				uint8_t covers[] = { 0x51, 0xFF, 0x13, 0x90, 0xE1, };
+				mock_blender<uint8_t, uint8_t> blender;
+				mock_bitmap<uint8_t, 3> bitmap(6, 2);
+				rect_i window1 = mkrect_sized(-3, 0, 5, 1000);
+				renderer::adapter< mock_bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
+				rect_i window2 = mkrect_sized(-1, 0, 4, 1000);
+				renderer::adapter< mock_bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
+
+				// ACT
+				r1.set_y(0);
+				r1(1, 5, covers);
+				
+				r2.set_y(1);
+				r2(0, 5, covers);
+
+				// ASSERT
+				uint8_t reference[] = {
+					0x00, 0x00, 0x00, 0x00, 0x51, 0x00, 0x00,	0x00, 0x00,
+					0x00, 0x51, 0xFF, 0x13, 0x00, 0x00, 0x00,	0x00, 0x00,
+				};
+
+				assert_equal(reference, bitmap.data);
+			}
+
+
+			test( RenditionAdapterWithOffsetObeysVerticalLimitsOfBitmap )
+			{
+				// INIT
+				mock_blender<uint8_t, uint8_t> blender;
+				mock_bitmap<uint8_t> bitmap(6, 11);
+				rect_i window1 = mkrect_sized(0, 2, 5, 1000);
+				renderer::adapter< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
+				rect_i window2 = mkrect_sized(0, -3, 4, 1000);
+				renderer::adapter< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
+
+				// ACT / ASSERT
+				assert_is_false(r1.set_y(1));
+				assert_is_true(r1.set_y(2));
+				assert_is_true(r1.set_y(5));
+				assert_is_true(r1.set_y(12));
+				assert_is_false(r1.set_y(13));
+
+				assert_is_false(r2.set_y(-4));
+				assert_is_true(r2.set_y(-3));
+				assert_is_true(r2.set_y(0));
+				assert_is_true(r2.set_y(7));
+				assert_is_false(r2.set_y(8));
+			}
+
+
+			test( RenditionAdapterWithOffsetObeysVerticalLimitsOfWindow )
+			{
+				// INIT
+				mock_blender<uint8_t, uint8_t> blender;
+				mock_bitmap<uint8_t> bitmap(6, 110);
+				rect_i window1 = mkrect_sized(0, 3, 5, 10);
+				renderer::adapter< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
+				rect_i window2 = mkrect_sized(0, -4, 4, 17);
+				renderer::adapter< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
+
+				// ACT / ASSERT
+				assert_is_false(r1.set_y(2));
+				assert_is_true(r1.set_y(3));
+				assert_is_true(r1.set_y(5));
+				assert_is_true(r1.set_y(12));
+				assert_is_false(r1.set_y(13));
+
+				assert_is_false(r2.set_y(-5));
+				assert_is_true(r2.set_y(-4));
+				assert_is_true(r2.set_y(0));
+				assert_is_true(r2.set_y(12));
+				assert_is_false(r2.set_y(13));
 			}
 
 

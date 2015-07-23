@@ -27,14 +27,13 @@ namespace agge
 			: _color_u16(make_color_u16(components)), _alpha_u16(make_alpha_u16(alpha)), _components(components)
 		{	}
 
-		void blender_solid_color::operator ()(pixel *pixels, int /*x*/, int /*y*/, unsigned int n) const
+		void blender_solid_color::operator ()(pixel *pixels, int /*x*/, int /*y*/, count_t n) const
 		{
 			for (; n; --n, ++pixels)
 				*pixels = _components;
 		}
 
-		void blender_solid_color::operator ()(pixel *pixels, int /*x*/, int /*y*/, unsigned int n,
-			const cover_type *covers) const
+		void blender_solid_color::operator ()(pixel *pixels, int /*x*/, int /*y*/, count_t n, const cover_type *covers) const
 		{
 			n = (n + 3) >> 2;
 
@@ -44,7 +43,7 @@ namespace agge
 
 			for (__m128i *p = reinterpret_cast<__m128i *>(pixels); n; --n, ++p, covers += 4)
 			{
-				__m128i alpha = _mm_mulhi_epu16(_mm_unpacklo_epi8(zero, _mm_loadl_epi64(reinterpret_cast<const __m128i*>(covers))), alpha_u16);
+				__m128i alpha = _mm_mulhi_epu16(_mm_unpacklo_epi8(zero, _mm_cvtsi32_si128(*reinterpret_cast<const int *>(covers))), alpha_u16);
 				
 				alpha = _mm_unpacklo_epi16(alpha, alpha);
 				

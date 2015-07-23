@@ -163,7 +163,7 @@ try
 	agg->rasterizer.add_path(stroke);
 	agg->rasterizer.prepare();
 
-	renderer r(bm, blender(rgba8(0, 154, 255, 255)));
+	renderer r(bm, 0, blender(rgba8(0, 154, 255, 255)));
 
 	agg->rasterizer.render<scanline>(r);
 }
