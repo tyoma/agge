@@ -1,5 +1,6 @@
 #include "MainDialog.h"
 
+#include "../common/bouncing.h"
 #include "../common/paths.h"
 
 #include <agge/scanline.h>
@@ -24,6 +25,7 @@
 
 #include <time.h>
 #include <windows.h>
+#include <iostream>
 
 using namespace agge;
 using namespace aggx;
@@ -31,7 +33,7 @@ using namespace std;
 using namespace demo;
 
 const bool c_use_original_agg = false;
-const int c_ellipses_number = 0;//2000;
+const int c_balls_number = 0;//2000;
 typedef simd::blender_solid_color blender_used;
 
 namespace
@@ -90,33 +92,35 @@ namespace
 
 	int random(unsigned __int64 upper_bound)
 	{	return static_cast<unsigned>(upper_bound * rand() / RAND_MAX);}
+
+	float frandom()
+	{	return static_cast<float>(1.0 * rand() / RAND_MAX);	}
 }
 
 int main()
 {
+	//for (int count = 2000; count; --count)
+	//{
+	//	cout << fixed << "ball("
+	//		<< 70.0f * frandom() << "f, "
+	//		<< "rgba8(" << random(255) << ", " << random(255) << ", " << random(255) << ", " << 10 + random(245) << "), "
+	//		<< frandom() << "f, " << frandom() << "f, "
+	//		<< "0.0f, 0.0f)," << endl;
+	//}
+
 	typedef rasterizer_scanline_aa<agg::rasterizer_sl_no_clip> rasterizer_scanline;
 
 	srand((unsigned)time(0));
 
-	vector< pair<rect_r, rgba8> > ellipses;
+	vector<demo::ball> balls(c_balls);
 
-	const int max_radius = 50;
-
-	for (int n = c_ellipses_number; n; --n)
-	{
-		rect_r r(random(1920 - 2 * max_radius) + max_radius, random(1080 - 2 * max_radius) + max_radius, 0, 0);
-		
-		r.x2 = random(max_radius) + 1, r.y2 = random(max_radius) + 1;
-		
-		rgba8 c(random(255), random(255), random(255), 200);
-
-		ellipses.push_back(make_pair(r, c));
-	}
+	balls.resize(c_balls_number);
 
 	MSG msg;
 	rasterizer_scanline ras;
 
 	AggPath spiral_line, spiral_flatten;
+	int t = ::GetTickCount();
 
 	MainDialog dlg([&](bitmap &target, double &clearing, double &rasterization, double &rendition) {
 		typedef blender<blender_used> blenderx;
@@ -143,9 +147,14 @@ int main()
 		rasterization = 0;
 		rendition = 0;
 
+		const int new_t = ::GetTickCount();
+		const float dt = 0.1f * (new_t - t);
+
+		t = new_t;
+
 		if (!c_use_original_agg)
 		{
-			if (!c_ellipses_number)
+			if (!c_balls_number)
 			{
 				stopwatch(counter);
 				ras.add_path(agg_path_adaptor(spiral_flatten));
@@ -156,9 +165,12 @@ int main()
 				rendition += stopwatch(counter);
 			}
 
-			for (auto i = ellipses.begin(); i != ellipses.end(); ++i)
-			{
-				aggx::ellipse e(i->first.x1, i->first.y1, i->first.x2, i->first.y2);
+			for_each(balls.begin(), balls.end(), [&] (ball &b) {
+				demo::move_and_bounce(b, dt, target.width(), target.height());
+			});
+
+			for_each(balls.begin(), balls.end(), [&] (ball &b) {
+				aggx::ellipse e(b.x, b.y, b.radius, b.radius);
 
 				ras.reset();
 
@@ -166,10 +178,10 @@ int main()
 				ras.add_path(e);
 				ras.prepare();
 				rasterization += stopwatch(counter);
-				blenderx b(i->second);
-				ras.render<scanline>(renderer(target, b));
+				blenderx brush(b.color);
+				ras.render<scanline>(renderer(target, brush));
 				rendition += stopwatch(counter);
-			}
+			});
 		}
 		else
 		{
@@ -188,7 +200,7 @@ int main()
 			rasterizer_scanline ras_aa;
 			scanline sl;
 
-			if (!c_ellipses_number)
+			if (!c_balls_number)
 			{
 				stopwatch(counter);
 				ras_aa.add_path(agg_path_adaptor(spiral_flatten));
@@ -199,9 +211,12 @@ int main()
 				rendition += stopwatch(counter);
 			}
 
-			for (auto i = ellipses.begin(); i != ellipses.end(); ++i)
-			{
-				agg::ellipse e(i->first.x1, i->first.y1, i->first.x2, i->first.y2);
+			for_each(balls.begin(), balls.end(), [&] (ball &b) {
+				demo::move_and_bounce(b, dt, target.width(), target.height());
+			});
+
+			for_each(balls.begin(), balls.end(), [&] (ball &b) {
+				agg::ellipse e(b.x, b.y, b.radius, b.radius);
 
 				ras_aa.reset();
 
@@ -209,10 +224,10 @@ int main()
 				ras_aa.add_path(e);
 				ras_aa.sort();
 				rasterization += stopwatch(counter);
-				ren_aa.color(agg::rgba8(i->second.r, i->second.g, i->second.b, i->second.a));
+				ren_aa.color(agg::rgba8(b.color.r, b.color.g, b.color.b, b.color.a));
 				agg::render_scanlines(ras_aa, sl, ren_aa);
 				rendition += stopwatch(counter);
-			}
+			});
 		}
 	});
 

@@ -175,6 +175,7 @@
     <ClCompile Include="..\..\libraries\aggx\parallel.cpp" />
     <ClCompile Include="..\..\libraries\aggx\rasterizer.cpp" />
     <ClCompile Include="..\..\libraries\aggx\win32_bitmap.cpp" />
+    <ClCompile Include="..\common\balls.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainDialog.cpp" />
   </ItemGroup>
@@ -192,6 +193,7 @@
     <ClInclude Include="..\..\libraries\aggx\pixel_formats.h" />
     <ClInclude Include="..\..\libraries\aggx\rasterizer.h" />
     <ClInclude Include="..\..\libraries\aggx\win32_bitmap.h" />
+    <ClInclude Include="..\common\bouncing.h" />
     <ClInclude Include="..\common\paths.h" />
     <ClInclude Include="MainDialog.h" />
   </ItemGroup>

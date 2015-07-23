@@ -15,6 +15,9 @@
     <ClCompile Include="..\..\libraries\aggx\parallel.cpp">
       <Filter>aggx</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\balls.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainDialog.h" />
@@ -58,6 +61,9 @@
       <Filter>aggx</Filter>
     </ClInclude>
     <ClInclude Include="..\common\paths.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\bouncing.h">
       <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>

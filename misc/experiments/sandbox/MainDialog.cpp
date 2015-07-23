@@ -119,6 +119,7 @@ uintptr_t MainDialog::windowProc(unsigned int message, uintptr_t wparam, uintptr
 
 	case WM_TIMER:
 		Update();
+		::InvalidateRect(_window, NULL, TRUE);
 		return 0;
 
 	default:
