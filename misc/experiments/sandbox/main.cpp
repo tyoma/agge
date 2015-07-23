@@ -99,6 +99,8 @@ namespace
 
 int main()
 {
+	_CrtSetReportMode();
+
 	//for (int count = 2000; count; --count)
 	//{
 	//	cout << fixed << "ball("
@@ -124,7 +126,7 @@ int main()
 
 	MainDialog dlg([&](bitmap &target, double &clearing, double &rasterization, double &rendition) {
 		typedef blender<blender_used> blenderx;
-		typedef rendition_adapter<bitmap, blenderx> renderer;
+		typedef renderer::adapter<bitmap, blenderx> renderer;
 		typedef scanline_adapter<renderer> scanline;
 
 		LARGE_INTEGER counter;

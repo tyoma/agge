@@ -98,7 +98,7 @@ namespace
 	};
 
 	typedef blenderx<blender_solid_color> blender;
-	typedef agge::rendition_adapter<bitmap_proxy, blender> renderer;
+	typedef agge::renderer::adapter<bitmap_proxy, blender> renderer;
 	typedef rasterizer_scanline_aa<agg::rasterizer_sl_no_clip/*agg::rasterizer_sl_clip_int*/> rasterizer_scanline;
 	typedef agge::scanline_adapter<renderer> scanline;
 

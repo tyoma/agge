@@ -1,20 +1,37 @@
 #pragma once
 
 #include "config.h"
-
-#include <vector>
+#include "types.h"
 
 namespace agge
 {
+	class raw_memory_object
+	{
+	public:
+		raw_memory_object();
+		~raw_memory_object();
+
+		template <typename T>
+		T *get(count_t size);
+
+	private:
+		raw_memory_object(const raw_memory_object &other);
+		const raw_memory_object &operator =(const raw_memory_object &rhs);
+
+	private:
+		uint8_t *_buffer;
+		count_t _size;
+	};
+
+
 	template <typename RendererT>
 	class scanline_adapter
 	{
 	public:
 		typedef typename RendererT::cover_type cover_type;
-		typedef std::vector<cover_type> covers_buffer_type;
 
 	public:
-		scanline_adapter(RendererT &renderer, covers_buffer_type &covers, size_t max_length);
+		scanline_adapter(RendererT &renderer, raw_memory_object &covers_buffer, count_t max_length);
 
 		bool begin(int y);
 		void add_cell(int x, cover_type cover);
@@ -33,14 +50,37 @@ namespace agge
 
 
 
+	inline raw_memory_object::raw_memory_object()
+		: _buffer(0), _size(0)
+	{	}
+
+	inline raw_memory_object::~raw_memory_object()
+	{	delete []_buffer;	}
+
+	template <typename T>
+	inline T *raw_memory_object::get(count_t size)
+	{
+		size *= sizeof(T);
+		size /= sizeof(uint8_t);
+		if (size > _size)
+		{
+			uint8_t *buffer = new uint8_t[size];
+
+			delete []_buffer;
+			_buffer = buffer;
+			_size = size;
+			while (size--)
+				*buffer++ = 0;
+		}
+		return reinterpret_cast<T *>(_buffer);
+	}
+
+
 	template <typename RendererT>
-	inline scanline_adapter<RendererT>::scanline_adapter(RendererT &renderer, covers_buffer_type &covers, size_t max_length)
+	inline scanline_adapter<RendererT>::scanline_adapter(RendererT &renderer, raw_memory_object &covers, count_t max_length)
 		: _renderer(renderer), _x(0), _start_x(0)
 	{
-		max_length += 16;
-		if (max_length > covers.size())
-			covers.resize(max_length);
-		_cover = _start_cover = &covers[3];
+		_cover = _start_cover = covers.get<cover_type>(max_length + 16) + 4;
 	}
 
 	template <typename RendererT>

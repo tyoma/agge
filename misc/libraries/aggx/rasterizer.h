@@ -1,6 +1,7 @@
 #pragma once
 
 #include <agge/renderer.h>
+#include <agge/scanline.h>
 #include <agge/vector_rasterizer.h>
 
 #include "basics.h"
@@ -8,7 +9,6 @@
 
 #include <algorithm>
 #include <functional>
-#include <vector>
 
 namespace aggx
 {
@@ -31,7 +31,7 @@ namespace aggx
 
 		enum
 		{
-			thread_count = 4
+			thread_count = 1
 		};
 
 		rasterizer_scanline_aa() : 
@@ -42,7 +42,6 @@ namespace aggx
 			m_start_x(0),
 			m_start_y(0),
 			m_status(status_initial),
-			m_cover_buffers(thread_count),
 			m_parallel(thread_count)
 		{
 			for(int i = 0; i < aa_scale; i++)
@@ -110,7 +109,7 @@ namespace aggx
 		coord_type m_start_x;
 		coord_type m_start_y;
 		unsigned m_status;
-		std::vector< std::vector<cover_type> > m_cover_buffers;
+		agge::raw_memory_object m_cover_buffers[thread_count];
 		parallel m_parallel;
 	};
 

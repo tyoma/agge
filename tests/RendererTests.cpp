@@ -718,12 +718,12 @@ namespace agge
 				short covers1[] = { 0x1001, 0x0002, 0x4003, 0x00E2, };
 				mock_blender<int, short> blender1;
 				mock_bitmap<int> bitmap1(7, 5);
-				rendition_adapter< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, blender1);
+				renderer::adapter< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, blender1);
 
 				uint8_t covers2[] = { 0xED, 0x08, 0x91, };
 				mock_blender<uint8_t, uint8_t> blender2;
 				mock_bitmap<uint8_t> bitmap2(5, 4);
-				rendition_adapter< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap2, blender2);
+				renderer::adapter< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap2, blender2);
 
 				// ACT
 				r1.set_y(0);
@@ -768,7 +768,7 @@ namespace agge
 				uint8_t covers[] = { 0x51, 0xFF, 0x13, 0x90, 0xE1, };
 				mock_blender<uint8_t, uint8_t> blender;
 				mock_bitmap<uint8_t, 2> bitmap(8, 3);
-				rendition_adapter< mock_bitmap<uint8_t, 2>, mock_blender<uint8_t, uint8_t> > r(bitmap, blender);
+				renderer::adapter< mock_bitmap<uint8_t, 2>, mock_blender<uint8_t, uint8_t> > r(bitmap, blender);
 
 				// ACT
 				r.set_y(0);
@@ -800,8 +800,8 @@ namespace agge
 				mock_blender<int, short> blender;
 				mock_bitmap<int> bitmap1(10, 1000);
 				mock_bitmap<int> bitmap2(10, 123);
-				rendition_adapter< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, blender);
-				rendition_adapter< mock_bitmap<int>, mock_blender<int, short> > r2(bitmap2, blender);
+				renderer::adapter< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, blender);
+				renderer::adapter< mock_bitmap<int>, mock_blender<int, short> > r2(bitmap2, blender);
 
 				// ACT / ASSERT
 				assert_is_false(r1.set_y(-1));

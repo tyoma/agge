@@ -31,7 +31,7 @@ class CChildView : public CWnd
 {
 	class blender;
 
-	typedef agge::rendition_adapter<aggx::bitmap, blender> renderer;
+	typedef agge::renderer::adapter<aggx::bitmap, blender> renderer;
 	typedef agge::scanline_adapter<renderer> scanline;
 	typedef std::pair<RECT, COLORREF> ellipse_t;
 

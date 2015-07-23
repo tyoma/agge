@@ -4,20 +4,32 @@
 
 namespace agge
 {
+	class renderer
+	{
+	public:
+		template <typename BitmapT, typename BlenderT>
+		class adapter;
+
+	public:
+		template <typename BitmapT, typename RasterSourceT, typename AlphaFn>
+		void render(BitmapT &bitmap, const RasterSourceT &raster, const AlphaFn &alpha);
+	};
+
+
 	template <typename BitmapT, typename BlenderT>
-	class rendition_adapter
+	class renderer::adapter
 	{
 	public:
 		typedef typename BlenderT::cover_type cover_type;
 
 	public:
-		rendition_adapter(BitmapT &bitmap, const BlenderT &blender);
+		adapter(BitmapT &bitmap, const BlenderT &blender);
 
 		bool set_y(int y);
 		void operator ()(int x, int length, const cover_type *covers);
 
 	private:
-		const rendition_adapter &operator =(const rendition_adapter &rhs);
+		const adapter &operator =(const adapter &rhs);
 
 	private:
 		const BlenderT _blender;
@@ -30,12 +42,12 @@ namespace agge
 
 
 	template <typename BitmapT, typename BlenderT>
-	inline rendition_adapter<BitmapT, BlenderT>::rendition_adapter(BitmapT &bitmap, const BlenderT &blender)
+	inline renderer::adapter<BitmapT, BlenderT>::adapter(BitmapT &bitmap, const BlenderT &blender)
 		: _bitmap(bitmap), _blender(blender), _width(bitmap.width())
 	{	}
 
 	template <typename BitmapT, typename BlenderT>
-	inline bool rendition_adapter<BitmapT, BlenderT>::set_y(int y)
+	inline bool renderer::adapter<BitmapT, BlenderT>::set_y(int y)
 	{
 		if (y < 0 || static_cast<int>(_bitmap.height()) <= y)
 			return false;
@@ -45,7 +57,7 @@ namespace agge
 	}
 
 	template <typename BitmapT, typename BlenderT>
-	inline void rendition_adapter<BitmapT, BlenderT>::operator ()(int x, int length, const cover_type *covers)
+	inline void renderer::adapter<BitmapT, BlenderT>::operator ()(int x, int length, const cover_type *covers)
 	{
 		if (x < 0)
 		{

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "types.h"
+
 #include <utility>
 #include <vector>
 
@@ -29,7 +31,6 @@ namespace agge
 
 		typedef std::vector<cell> cells_container;
 		typedef cells_container::const_iterator const_cells_iterator;
-		typedef unsigned int count_t;
 		typedef std::pair<int, int> range;
 		typedef std::pair<const_cells_iterator /*begin*/, const_cells_iterator /*end*/> scanline_cells;
 
@@ -71,8 +72,8 @@ namespace agge
 
 	struct vector_rasterizer::sorted_bin
 	{
-		vector_rasterizer::count_t start;
-		vector_rasterizer::count_t length;
+		count_t start;
+		count_t length;
 	};
 
 

@@ -12,85 +12,183 @@ namespace agge
 {
 	namespace tests
 	{
-		template <typename CoverT = uint8_t>
-		class renderer_mockup
+		namespace
 		{
-		public:
-			typedef CoverT cover_type;
-
-			struct render_log_entry
+			template <typename CoverT = uint8_t>
+			class renderer_mockup
 			{
-				int x;
-				vector<cover_type> covers;
+			public:
+				typedef CoverT cover_type;
+
+				struct render_log_entry
+				{
+					int x;
+					vector<cover_type> covers;
+				};
+
+			public:
+				bool set_y(int y)
+				{
+					current_y = y;
+					return set_y_result;
+				}
+
+				void operator ()(int x, unsigned int length, const cover_type *covers)
+				{
+					render_log_entry e = { x, vector<cover_type>(covers, covers + length) };
+					render_log.push_back(e);
+					raw_render_log.push_back(make_pair(covers, length));
+				}
+
+			public:
+				int current_y;
+				bool set_y_result;
+				vector<render_log_entry> render_log;
+				vector< pair<const cover_type *, unsigned int> > raw_render_log;
 			};
 
-		public:
-			bool set_y(int y)
+			template <typename CoverT>
+			bool operator ==(const struct renderer_mockup<CoverT>::render_log_entry &lhs, const struct renderer_mockup<CoverT>::render_log_entry &rhs)
+			{	return lhs.x == rhs.x && lhs.covers == rhs.covers;	}
+
+			template <typename T>
+			bool enough_capacity(raw_memory_object &rmo, count_t size)
 			{
-				current_y = y;
-				return set_y_result;
+				T *p1 = rmo.get<T>(1); // We have to make this call first.
+
+				return p1 == rmo.get<T>(size);
 			}
-
-			void operator ()(int x, unsigned int length, const cover_type *covers)
-			{
-				render_log_entry e = { x, vector<cover_type>(covers, covers + length) };
-				render_log.push_back(e);
-				raw_render_log.push_back(make_pair(covers, length));
-			}
-
-		public:
-			int current_y;
-			bool set_y_result;
-			vector<render_log_entry> render_log;
-			vector< pair<const cover_type *, unsigned int> > raw_render_log;
-		};
-
-		template <typename CoverT>
-		bool operator ==(const struct renderer_mockup<CoverT>::render_log_entry &lhs, const struct renderer_mockup<CoverT>::render_log_entry &rhs)
-		{	return lhs.x == rhs.x && lhs.covers == rhs.covers;	}
+		}
 
 
 		begin_test_suite( ScanlineAdapterTests )
+
+			test( RawMemoryObjectReturnsNonNullAddress )
+			{
+				// INIT / ACT
+				raw_memory_object rmo;
+
+				// ACT / ASSERT
+				assert_not_null(rmo.get<int>(1));
+				assert_not_null(rmo.get<double>(5));
+			}
+
+
+			test( RawMemoryObjectReturnsTheSameBlockForTheSameSize )
+			{
+				// INIT / ACT
+				raw_memory_object rmo1, rmo2;
+
+				// ACT
+				assert_equal(rmo1.get<int>(103), rmo1.get<int>(103));
+				assert_equal(rmo2.get<uint8_t>(721), rmo2.get<uint8_t>(721));
+			}
+
+
+			test( RawMemoryObjectAllocatesNewChunkForALargerSize )
+			{
+				// INIT
+				raw_memory_object rmo;
+
+				// ACT
+				char *bufferChars = rmo.get<char>(100);
+				double *bufferDoubles1 = rmo.get<double>(100);
+
+				// ASSERT
+				assert_not_equal(reinterpret_cast<void *>(bufferChars), reinterpret_cast<void *>(bufferDoubles1));
+
+				// ACT
+				double *bufferDoubles2 = rmo.get<double>(150);
+
+				// ASSERT
+				assert_not_equal(bufferDoubles1, bufferDoubles2);
+
+				// ACT
+				double *bufferDoubles3 = rmo.get<double>(151);
+
+				// ASSERT
+				assert_not_equal(bufferDoubles2, bufferDoubles3);
+			}
+
+
+			test( MemoryIsZeroedAfterReallocation )
+			{
+				// INIT
+				raw_memory_object rmo;
+
+				*(rmo.get<uint8_t>(100) + 5) = 33;
+
+				// ACT
+				uint8_t *p = rmo.get<uint8_t>(101);
+
+				// ASSERT
+				assert_equal(0, *p);
+				assert_equal(p, max_element(p, p + 101));
+			}
+
+
+			test( RawMemoryObjectReturnsTheSameBufferForSmallerSize )
+			{
+				// INIT
+				raw_memory_object rmo;
+
+				// ACT
+				double *bufferDoubles1 = rmo.get<double>(100);
+				char *bufferChars = rmo.get<char>(100);
+
+				// ASSERT
+				assert_equal(reinterpret_cast<void *>(bufferDoubles1), reinterpret_cast<void *>(bufferChars));
+
+				// ACT
+				double *bufferDoubles2 = rmo.get<double>(90);
+
+				// ASSERT
+				assert_equal(bufferDoubles1, bufferDoubles2);
+			}
+
+
 			test( ScanlineAllocatesTheNecessaryAmountOfCoversOnConstruction )
 			{
 				// INIT
 				renderer_mockup<> r1;
-				vector<uint8_t> b1;
+				raw_memory_object b1;
 
 				renderer_mockup<uint16_t> r2;
-				vector<uint16_t> b2;
+				raw_memory_object b2;
 
 				// INIT / ACT
 				scanline_adapter< renderer_mockup<> > sl1(r1, b1, 11);
 				scanline_adapter< renderer_mockup<uint16_t> > sl2(r2, b2, 17);
 
 				// ASSERT
-				assert_equal(11u + 16u, b1.size());
-				assert_equal(17u + 16u, b2.size());
+				assert_is_true(enough_capacity<uint8_t>(b1, 11 + 16));
+				assert_is_true(enough_capacity<uint16_t>(b2, 17 + 16));
 
 				// INIT / ACT
 				scanline_adapter< renderer_mockup<> > sl3(r1, b1, 1311);
 
 				// ASSERT
-				assert_equal(1311u + 16u, b1.size());
+				assert_is_true(enough_capacity<uint8_t>(b1, 1311 + 16));
 			}
 
 
-			test( CoversArrayCanOnlyBeEnlarged )
+			test( CoversArrayIsOnlyBeEnlarged )
 			{
 				// INIT
 				typedef renderer_mockup<uint8_t> renderer;
 
 				renderer r;
-				vector<renderer::cover_type> b;
+				raw_memory_object b;
 
 				scanline_adapter<renderer> sl1(r, b, 11);
+
+				uint8_t *p1 = b.get<uint8_t>(1);
 
 				// INIT / ACT
 				scanline_adapter<renderer> sl2(r, b, 10);
 
 				// ASSERT
-				assert_equal(11u + 16u, b.size());
+				assert_equal(p1, b.get<uint8_t>(10 + 16));
 			}
 
 
@@ -100,7 +198,7 @@ namespace agge
 				typedef renderer_mockup<uint8_t> renderer;
 
 				renderer r;
-				vector<renderer::cover_type> b;
+				raw_memory_object b;
 				scanline_adapter<renderer> sl(r, b, 11);
 
 				// ACT
@@ -119,7 +217,7 @@ namespace agge
 				typedef renderer_mockup<uint8_t> renderer;
 
 				renderer r;
-				vector<renderer::cover_type> b;
+				raw_memory_object b;
 				scanline_adapter<renderer> sl(r, b, 11);
 
 				// ACT
@@ -146,7 +244,7 @@ namespace agge
 				typedef renderer_mockup<uint8_t> renderer;
 
 				renderer r;
-				vector<renderer::cover_type> b;
+				raw_memory_object b;
 				scanline_adapter<renderer> sl(r, b, 11);
 
 				// ACT
@@ -165,7 +263,7 @@ namespace agge
 				typedef renderer_mockup<uint8_t> renderer;
 
 				renderer r;
-				vector<renderer::cover_type> b;
+				raw_memory_object b;
 				scanline_adapter<renderer> sl(r, b, 11);
 
 				// ACT
@@ -184,7 +282,7 @@ namespace agge
 				typedef renderer_mockup<uint8_t> renderer;
 
 				renderer r;
-				vector<renderer::cover_type> b;
+				raw_memory_object b;
 				scanline_adapter<renderer> sl(r, b, 36);
 
 				sl.add_span(1511, 27, 3);
@@ -207,7 +305,7 @@ namespace agge
 				typedef renderer_mockup<uint8_t> renderer;
 
 				renderer r;
-				vector<renderer::cover_type> b;
+				raw_memory_object b;
 				scanline_adapter<renderer> sl(r, b, 50);
 
 				// ACT
@@ -247,7 +345,7 @@ namespace agge
 				typedef renderer_mockup<uint16_t> renderer;
 
 				renderer r;
-				vector<renderer::cover_type> b;
+				raw_memory_object b;
 				scanline_adapter<renderer> sl(r, b, 16);
 
 				// ACT
@@ -285,16 +383,17 @@ namespace agge
 				typedef renderer_mockup<uint8_t> renderer;
 
 				renderer r;
-				vector<renderer::cover_type> b;
-				scanline_adapter<renderer> sl(r, b, 16);
+				raw_memory_object rmo;
+				scanline_adapter<renderer> sl(r, rmo, 16);
+				uint8_t *b = rmo.get<uint8_t>(1);
 
 				// ACT
 				sl.add_span(4, 7, 17);
 				sl.commit();
 
 				// ASSERT
-				assert_equal(&b[3], r.raw_render_log[0].first);
-				assert_equal(&b[3], r.raw_render_log[1].first);
+				assert_equal(&b[4], r.raw_render_log[0].first);
+				assert_equal(&b[4], r.raw_render_log[1].first);
 				assert_equal(0, b[0]);
 				assert_equal(0, b[1]);
 				assert_equal(0, b[2]);
@@ -311,7 +410,7 @@ namespace agge
 				sl.commit();
 
 				// ASSERT
-				assert_equal(&b[3], r.raw_render_log[0].first);
+				assert_equal(&b[4], r.raw_render_log[0].first);
 				assert_equal(0, b[0]);
 				assert_equal(0, b[1]);
 				assert_equal(0, b[2]);
@@ -330,7 +429,7 @@ namespace agge
 				typedef renderer_mockup<uint8_t> renderer;
 
 				renderer r;
-				vector<renderer::cover_type> b;
+				raw_memory_object b;
 				scanline_adapter<renderer> sl(r, b, 16);
 
 				// ACT / ASSERT
