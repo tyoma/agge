@@ -8,6 +8,14 @@
 #include <string>
 #include <vector>
 
+#if defined(_MSC_VER) && _MSC_VER==1500
+	namespace std
+	{
+		using tr1::shared_ptr;
+		using tr1::static_pointer_cast;
+	}
+#endif
+
 namespace ut
 {
    ///   @brief This interface is just a handle to init/term methods that are depending on a specific fixture type.

@@ -227,7 +227,6 @@
     <ClInclude Include="..\..\libraries\aggx\agg_vertex_sequence.h" />
     <ClInclude Include="..\..\libraries\aggx\basics.h" />
     <ClInclude Include="..\..\libraries\aggx\blenders.h" />
-    <ClInclude Include="..\..\libraries\aggx\parallel.h" />
     <ClInclude Include="..\..\libraries\aggx\paths.h" />
     <ClInclude Include="..\..\libraries\aggx\rasterizer.h" />
     <ClInclude Include="..\..\libraries\aggx\win32_bitmap.h" />
@@ -242,18 +241,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\..\libraries\aggx\parallel.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\..\libraries\aggx\rasterizer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

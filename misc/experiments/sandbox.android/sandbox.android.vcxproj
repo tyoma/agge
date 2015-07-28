@@ -19,10 +19,12 @@
     <AndroidAPILevel>android-9</AndroidAPILevel>
     <PlatformToolset>arm-linux-androideabi-4.8</PlatformToolset>
     <AndroidStlType>gnustl_static</AndroidStlType>
+    <AndroidArch>armv7-a</AndroidArch>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
     <PlatformToolset>arm-linux-androideabi-4.8</PlatformToolset>
     <AndroidStlType>gnustl_static</AndroidStlType>
+    <AndroidArch>armv7-a</AndroidArch>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -47,9 +49,9 @@
     <ClCompile>
       <AdditionalOptions>-fpermissive -ffast-math -std=c++11</AdditionalOptions>
       <GccExceptionHandling>true</GccExceptionHandling>
-      <OptimizationLevel>O3</OptimizationLevel>
+      <OptimizationLevel>O0</OptimizationLevel>
       <AdditionalIncludeDirectories>./../../libraries;./../../..</AdditionalIncludeDirectories>
-      <StrictAliasing>true</StrictAliasing>
+      <OmitFramePointer>false</OmitFramePointer>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
@@ -83,14 +85,12 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\src\vector_rasterizer.cpp" />
     <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp" />
-    <ClCompile Include="..\..\libraries\aggx\parallel_linux.cpp" />
-    <ClCompile Include="..\..\libraries\aggx\rasterizer.cpp" />
+    <ClCompile Include="parallel_linux.cpp" />
     <ClCompile Include="sandbox_view.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\agge\vector_rasterizer.h" />
     <ClInclude Include="..\..\libraries\aggx\blenders.h" />
-    <ClInclude Include="..\..\libraries\aggx\parallel.h" />
     <ClInclude Include="..\..\libraries\aggx\rasterizer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

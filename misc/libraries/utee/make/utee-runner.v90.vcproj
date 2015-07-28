@@ -17,11 +17,10 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="Release Client|Win32"
-			OutputDirectory="..\..\..\commonexe\"
-			IntermediateDirectory="..\..\..\commonobj\Release\$(ProjectName)\"
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)_bin/$(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)_obj/$(ConfigurationName)_$(PlatformName)\"
 			ConfigurationType="1"
-			InheritedPropertySheets="..\..\vsprops\client\Release.vsprops;..\..\vsprops\client\Boost.vsprops"
 			UseOfATL="1"
 			CharacterSet="0"
 			>

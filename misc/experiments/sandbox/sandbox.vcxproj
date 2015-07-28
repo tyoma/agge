@@ -172,8 +172,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp" />
-    <ClCompile Include="..\..\libraries\aggx\parallel.cpp" />
-    <ClCompile Include="..\..\libraries\aggx\rasterizer.cpp" />
     <ClCompile Include="..\..\libraries\aggx\win32_bitmap.cpp" />
     <ClCompile Include="..\common\balls.cpp" />
     <ClCompile Include="main.cpp" />
@@ -189,7 +187,6 @@
     <ClInclude Include="..\..\libraries\aggx\agg_vertex_sequence.h" />
     <ClInclude Include="..\..\libraries\aggx\basics.h" />
     <ClInclude Include="..\..\libraries\aggx\blenders.h" />
-    <ClInclude Include="..\..\libraries\aggx\parallel.h" />
     <ClInclude Include="..\..\libraries\aggx\pixel_formats.h" />
     <ClInclude Include="..\..\libraries\aggx\rasterizer.h" />
     <ClInclude Include="..\..\libraries\aggx\win32_bitmap.h" />

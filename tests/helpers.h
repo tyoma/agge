@@ -79,6 +79,14 @@ namespace agge
 		inline std::vector<T> mkvector(T (&p)[N])
 		{	return std::vector<T>(p, p + N);	}
 
+		template <typename T, size_t N>
+		inline T *begin(T (&p)[N])
+		{	return p;	}
+
+		template <typename T, size_t N>
+		inline T *end(T (&p)[N])
+		{	return p + N;	}
+
 		template <typename CoordT>
 		inline rect<CoordT> mkrect_sized(CoordT left, CoordT top, CoordT width, CoordT height)
 		{

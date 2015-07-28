@@ -17,11 +17,10 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="Debug Client|Win32"
-			OutputDirectory="..\..\..\commonexe\Debug\"
-			IntermediateDirectory="..\..\..\commonobj\Debug\$(ProjectName)\"
+			Name="Debug|Win32"
+			OutputDirectory="$(SolutionDir)_lib/$(ConfigurationName)_$(PlatformName)/"
+			IntermediateDirectory="$(SolutionDir)_obj/$(ConfigurationName)_$(PlatformName)/"
 			ConfigurationType="4"
-			InheritedPropertySheets="..\..\vsprops\client\Debug.vsprops;..\..\vsprops\client\Boost.vsprops"
 			CharacterSet="2"
 			>
 			<Tool
@@ -43,12 +42,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".."
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
+				RuntimeLibrary="1"
 				DisableLanguageExtensions="true"
 				WarningLevel="4"
-				WarnAsError="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -81,11 +80,10 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release Client|Win32"
-			OutputDirectory="..\..\..\commonexe\Release\"
-			IntermediateDirectory="..\..\..\commonobj\Release\$(ProjectName)\"
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)_lib/$(ConfigurationName)_$(PlatformName)/"
+			IntermediateDirectory="$(SolutionDir)_obj/$(ConfigurationName)_$(PlatformName)/"
 			ConfigurationType="4"
-			InheritedPropertySheets="..\..\vsprops\client\Release.vsprops;..\..\vsprops\client\Boost.vsprops"
 			CharacterSet="2"
 			>
 			<Tool
@@ -107,10 +105,10 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				AdditionalIncludeDirectories=".."
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				RuntimeLibrary="0"
 				DisableLanguageExtensions="true"
 				WarningLevel="4"
-				WarnAsError="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool

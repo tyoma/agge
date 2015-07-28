@@ -175,6 +175,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BlenderTests.cpp" />
+    <ClCompile Include="mt.cpp">
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DisableLanguageExtensions>
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</DisableLanguageExtensions>
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DisableLanguageExtensions>
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DisableLanguageExtensions>
+    </ClCompile>
+    <ClCompile Include="ParallelExecutionTests.cpp" />
     <ClCompile Include="RendererTests.cpp" />
     <ClCompile Include="ScanlineAdapterTests.cpp" />
     <ClCompile Include="ScanlineRasterizerTests.cpp" />
@@ -190,6 +197,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />
+    <ClInclude Include="mt.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

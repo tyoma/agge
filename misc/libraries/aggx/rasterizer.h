@@ -3,9 +3,9 @@
 #include <agge/renderer.h>
 #include <agge/scanline.h>
 #include <agge/vector_rasterizer.h>
+#include <agge/parallel.h>
 
 #include "basics.h"
-#include "parallel.h"
 
 #include <algorithm>
 #include <functional>
@@ -110,7 +110,7 @@ namespace aggx
 		coord_type m_start_y;
 		unsigned m_status;
 		agge::raw_memory_object m_cover_buffers[thread_count];
-		parallel m_parallel;
+		agge::parallel m_parallel;
 	};
 
 

@@ -33,7 +33,7 @@ using namespace std;
 using namespace demo;
 
 const bool c_use_original_agg = false;
-const int c_balls_number = 0;//2000;
+const int c_balls_number = 2000;
 typedef simd::blender_solid_color blender_used;
 
 namespace

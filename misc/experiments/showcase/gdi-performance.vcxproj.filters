@@ -89,9 +89,6 @@
     <ClInclude Include="..\..\libraries\aggx\blenders.h">
       <Filter>aggx</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\parallel.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gdi-performance.cpp">
@@ -115,13 +112,7 @@
     <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp">
       <Filter>aggx</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libraries\aggx\rasterizer.cpp">
-      <Filter>aggx</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\libraries\aggx\win32_bitmap.cpp">
-      <Filter>aggx</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libraries\aggx\parallel.cpp">
       <Filter>aggx</Filter>
     </ClCompile>
   </ItemGroup>

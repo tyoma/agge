@@ -6,8 +6,11 @@
     <ClCompile Include="RendererTests.cpp" />
     <ClCompile Include="BlenderTests.cpp" />
     <ClCompile Include="ScanlineAdapterTests.cpp" />
+    <ClCompile Include="ParallelExecutionTests.cpp" />
+    <ClCompile Include="mt.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />
+    <ClInclude Include="mt.h" />
   </ItemGroup>
 </Project>
