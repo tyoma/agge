@@ -31,7 +31,7 @@ namespace agge
 		typedef typename RendererT::cover_type cover_type;
 
 	public:
-		scanline_adapter(RendererT &renderer, raw_memory_object &covers_buffer, count_t max_length);
+		scanline_adapter(RendererT &renderer_, raw_memory_object &covers_buffer, count_t max_length);
 
 		bool begin(int y);
 		void add_cell(int x, cover_type cover);
@@ -77,8 +77,8 @@ namespace agge
 
 
 	template <typename RendererT>
-	inline scanline_adapter<RendererT>::scanline_adapter(RendererT &renderer, raw_memory_object &covers, count_t max_length)
-		: _renderer(renderer), _x(0), _start_x(0)
+	inline scanline_adapter<RendererT>::scanline_adapter(RendererT &renderer_, raw_memory_object &covers, count_t max_length)
+		: _renderer(renderer_), _x(0), _start_x(0)
 	{
 		_cover = _start_cover = covers.get<cover_type>(max_length + 16) + 4;
 	}

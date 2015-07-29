@@ -1,7 +1,6 @@
 #pragma once
 
-#include "config.h"
-#include "types.h"
+#include "scanline.h"
 
 namespace agge
 {
@@ -13,7 +12,10 @@ namespace agge
 
 	public:
 		template <typename BitmapT, typename MaskT, typename BlenderT, typename AlphaFn>
-		void render(BitmapT &bitmap, const MaskT &raster, const BlenderT &blender, const AlphaFn &alpha);
+		void operator ()(BitmapT &bitmap, const rect_i *window, const MaskT &mask, const BlenderT &blender, const AlphaFn &alpha);
+
+	private:
+		raw_memory_object _scanline_cache;
 	};
 
 
@@ -144,5 +146,19 @@ namespace agge
 
 		for (int y = 0; y != height; ++y)
 			blender(bitmap.row_ptr(y), 0, y, width);
+	}
+
+
+	template <typename BitmapT, typename MaskT, typename BlenderT, typename AlphaFn>
+	void renderer::operator ()(BitmapT &bitmap, const rect_i *window, const MaskT &mask, const BlenderT &blender,
+		const AlphaFn &alpha)
+	{
+		typedef adapter<BitmapT, BlenderT> rendition_adapter;
+
+		rendition_adapter ra(bitmap, window, blender);
+		typename MaskT::range hrange = mask.hrange();
+		scanline_adapter<rendition_adapter> scanline(ra, _scanline_cache, hrange.second - hrange.first + 1);
+
+		render(scanline, mask, alpha, 0, 1);
 	}
 }

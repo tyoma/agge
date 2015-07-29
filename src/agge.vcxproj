@@ -31,6 +31,7 @@
   <ItemGroup>
     <ClInclude Include="..\agge\config.h" />
     <ClInclude Include="..\agge\parallel.h" />
+    <ClInclude Include="..\agge\renderer_parallel.h" />
     <ClInclude Include="..\agge\scanline.h" />
     <ClInclude Include="..\agge\types.h" />
     <ClInclude Include="..\agge\blenders_simd.h" />

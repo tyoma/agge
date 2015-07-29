@@ -20,6 +20,7 @@ namespace agge
 				int cover;
 			};
 
+
 			struct span
 			{
 				int y;
@@ -30,11 +31,20 @@ namespace agge
 				{	return y == rhs.y && x == rhs.x && length == rhs.length && cover == rhs.cover;	}
 			};
 
+
 			struct bypass_alpha
 			{
 				unsigned int operator ()(int area) const
 				{	return area;	}
 			};
+
+			template <typename T, size_t precision>
+			struct bypass_alpha2
+			{
+				T operator ()(int area) const
+				{	return static_cast<T>(area >> (precision + 1));	}
+			};
+
 
 			class scanline_mockup
 			{
@@ -88,6 +98,7 @@ namespace agge
 				int _current_y;
 			};
 
+
 			template <size_t precision>
 			class mask_mockup
 			{
@@ -116,6 +127,27 @@ namespace agge
 				range _vrange;
 				vector<scanline_cells> _cells;
 			};
+
+
+			template <size_t precision>
+			class mask_mockup_full : public mask_mockup<precision>
+			{
+			public:
+				using mask_mockup<precision>::range;
+
+			public:
+				template <typename T, int n>
+				mask_mockup_full(const T (&cells)[n], int y0, int x0, int xlimit)
+					: mask_mockup<precision>(cells, y0), _hrange(x0, xlimit)
+				{	}
+
+				range hrange() const
+				{	return _hrange;	}
+
+			private:
+				range _hrange;
+			};
+
 
 			template <typename PixelT, typename CoverT>
 			class mock_blender
@@ -1074,6 +1106,92 @@ namespace agge
 				};
 
 				assert_equal(reference2, blender.filling_log);
+			}
+
+
+			test( RendererPopulatesBitmapWithMaskData )
+			{
+				// INIT
+				const cell cells1[] = { { 0, 0, 0x11 }, { 3, 0, -0x03 }, { 7, 0, -0x0E }, };
+				const cell cells2[] = { { 6, 0, 0xAB }, { 9, 0, -0x1E }, { 10, 0, -0x8D }, };
+				const cell cells3[] = { { 1, 0, 0xA0 }, { 9, 0, -0xA0 }, };
+				mask_mockup<8>::scanline_cells cells[] = {
+					make_pair(begin(cells1), end(cells1)),
+					make_pair(begin(cells2), end(cells2)),
+					make_pair(begin(cells3), end(cells3)),
+				};
+				mask_mockup_full<8> mask1(cells, 3, 0, 10);
+				mock_bitmap<uint8_t> bitmap1(11, 7);
+				mock_blender<uint8_t, uint8_t> blender1;
+
+				renderer r;
+
+				// ACT
+				r(bitmap1, 0, mask1, blender1, bypass_alpha2<uint8_t, 8>());
+
+				// ASSERT
+				uint8_t reference1[] = {
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+					0x11, 0x11, 0x11, 0x0E, 0x0E, 0x0E, 0x0E, 0x00, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xAB, 0xAB, 0xAB, 0x8D, 0x00,
+					0x00, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				};
+
+				assert_equal(reference1, bitmap1.data);
+
+				// INIT
+				mask_mockup_full<8> mask2(cells, 1, 0, 10);
+				mock_bitmap<uint16_t> bitmap2(7, 4);
+				mock_blender<uint16_t, uint8_t> blender2;
+
+				// ACT
+				r(bitmap2, 0, mask2, blender2, bypass_alpha2<uint8_t, 8>());
+
+				// ASSERT
+				uint16_t reference2[] = {
+					0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+					0x0011, 0x0011, 0x0011, 0x000E, 0x000E, 0x000E, 0x000E,
+					0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x06AB,
+					0x0000, 0x01A0, 0x01A0, 0x01A0, 0x01A0, 0x01A0, 0x01A0,
+				};
+
+				assert_equal(reference2, bitmap2.data);
+			}
+
+
+			test( RendererPopulatesBitmapWithMaskDataAccordingToWindow )
+			{
+				// INIT
+				const cell cells1[] = { { 0, 0, 0x11 }, { 3, 0, -0x03 }, { 7, 0, -0x0E }, };
+				const cell cells2[] = { { 6, 0, 0xAB }, { 9, 0, -0x1E }, { 10, 0, -0x8D }, };
+				const cell cells3[] = { { 1, 0, 0xA0 }, { 9, 0, -0xA0 }, };
+				const mask_mockup<8>::scanline_cells cells[] = {
+					make_pair(begin(cells1), end(cells1)),
+					make_pair(begin(cells2), end(cells2)),
+					make_pair(begin(cells3), end(cells3)),
+				};
+				const mask_mockup_full<8> mask1(cells, 3, 0, 10);
+				mock_bitmap<uint8_t> bitmap1(11, 4);
+				const mock_blender<uint8_t, uint8_t> blender1;
+				const rect_i window = mkrect_sized(-1, 3, 11, 100);
+
+				renderer r;
+
+				// ACT
+				r(bitmap1, &window, mask1, blender1, bypass_alpha2<uint8_t, 8>());
+
+				// ASSERT
+				uint8_t reference1[] = {
+					0x00, 0x11, 0x11, 0x11, 0x0E, 0x0E, 0x0E, 0x0E, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xAB, 0xAB, 0xAB, 0x8D,
+					0x00, 0x00, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0x00,
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				};
+
+				assert_equal(reference1, bitmap1.data);
 			}
 
 		end_test_suite
