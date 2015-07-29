@@ -12,8 +12,8 @@ namespace agge
 		class adapter;
 
 	public:
-		template <typename BitmapT, typename RasterSourceT, typename BlenderT, typename AlphaFn>
-		void render(BitmapT &bitmap, const RasterSourceT &raster, const BlenderT &blender, const AlphaFn &alpha);
+		template <typename BitmapT, typename MaskT, typename BlenderT, typename AlphaFn>
+		void render(BitmapT &bitmap, const MaskT &raster, const BlenderT &blender, const AlphaFn &alpha);
 	};
 
 
@@ -118,18 +118,18 @@ namespace agge
 	}
 
 
-	template <typename ScanlineT, typename RasterSourceT, typename AlphaFn>
-	inline void render(ScanlineT &scanline, const RasterSourceT &raster, const AlphaFn &alpha, int offset, int step)
+	template <typename ScanlineT, typename MaskT, typename AlphaFn>
+	inline void render(ScanlineT &scanline, const MaskT &mask, const AlphaFn &alpha, int offset, int step)
 	{
-		typename RasterSourceT::range vrange = raster.vrange();
+		typename MaskT::range vrange = mask.vrange();
 
 		for (int y = vrange.first + offset; y <= vrange.second; y += step)
 		{			
-			typename RasterSourceT::scanline_cells cells = raster.get_scanline_cells(y);
+			typename MaskT::scanline_cells cells = mask[y];
 
 			if (scanline.begin(y))
 			{
-				sweep_scanline<RasterSourceT::_1_shift>(scanline, cells.first, cells.second, alpha);
+				sweep_scanline<MaskT::_1_shift>(scanline, cells.first, cells.second, alpha);
 				scanline.commit();
 			}
 		}

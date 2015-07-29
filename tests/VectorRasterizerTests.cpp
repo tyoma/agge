@@ -19,7 +19,7 @@ namespace agge
 
 		vector<vector_rasterizer::cell> get_scanline_cells(const vector_rasterizer &r, short y)
 		{
-			vector_rasterizer::scanline_cells row = r.get_scanline_cells(y);
+			vector_rasterizer::scanline_cells row = r[y];
 
 			return vector<vector_rasterizer::cell>(row.first, row.second);
 		}

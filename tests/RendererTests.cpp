@@ -89,7 +89,7 @@ namespace agge
 			};
 
 			template <size_t precision>
-			class raster_source_mockup
+			class mask_mockup
 			{
 			public:
 				typedef pair<const cell * /*begin*/, const cell * /*end*/> scanline_cells;
@@ -99,14 +99,14 @@ namespace agge
 
 			public:
 				template <typename T, int n>
-				raster_source_mockup(const T (&cells)[n], int y0)
+				mask_mockup(const T (&cells)[n], int y0)
 					: _vrange(y0, y0 + n - 1)
 				{
 					for (int i = 0; i != n; ++i)
 						_cells.push_back(cells[i]);
 				}
 
-				scanline_cells get_scanline_cells(int y) const
+				scanline_cells operator [](int y) const
 				{	return _cells.at(y - _vrange.first);	}
 
 				range vrange() const
@@ -461,11 +461,11 @@ namespace agge
 				// INIT
 				scanline_mockup target(false);
 				const cell cells11[] = { { 0, 0, 17 }, { 11, 0, -3 }, { 13, 0, -14 }, };
-				raster_source_mockup<8>::scanline_cells cells1[] = { make_pair(begin(cells11), end(cells11)), };
-				raster_source_mockup<8> raster1(cells1, 13);
+				mask_mockup<8>::scanline_cells cells1[] = { make_pair(begin(cells11), end(cells11)), };
+				mask_mockup<8> mask1(cells1, 13);
 
 				// ACT
-				render(target, raster1, bypass_alpha(), 0, 1);
+				render(target, mask1, bypass_alpha(), 0, 1);
 
 				// ASSERT
 				span reference1[] = {
@@ -477,13 +477,13 @@ namespace agge
 
 				// INIT
 				const cell cells21[] = { { 2, 0, 17 }, { 10, 0, -3 }, { 11, 0, -14 }, };
-				raster_source_mockup<8>::scanline_cells cells2[] = { make_pair(begin(cells21), end(cells21)), };
-				raster_source_mockup<8> raster2(cells2, -131);
+				mask_mockup<8>::scanline_cells cells2[] = { make_pair(begin(cells21), end(cells21)), };
+				mask_mockup<8> mask2(cells2, -131);
 
 				target.spans_log.clear();
 
 				// ACT
-				render(target, raster2, bypass_alpha(), 0, 1);
+				render(target, mask2, bypass_alpha(), 0, 1);
 
 				// ASSERT
 				span reference2[] = {
@@ -500,11 +500,11 @@ namespace agge
 				// INIT
 				scanline_mockup target(false);
 				const cell cells11[] = { { 0, 0, 17 }, { 11, 0, -17 }, };
-				raster_source_mockup<7>::scanline_cells cells1[] = { make_pair(begin(cells11), end(cells11)), };
-				raster_source_mockup<7> raster1(cells1, 13);
+				mask_mockup<7>::scanline_cells cells1[] = { make_pair(begin(cells11), end(cells11)), };
+				mask_mockup<7> mask1(cells1, 13);
 
 				// ACT
-				render(target, raster1, bypass_alpha(), 0, 1);
+				render(target, mask1, bypass_alpha(), 0, 1);
 
 				// ASSERT
 				span reference1[] = {
@@ -515,13 +515,13 @@ namespace agge
 
 				// INIT
 				const cell cells21[] = { { 2, 0, 17 }, { 10, 0, -17 }, };
-				raster_source_mockup<11>::scanline_cells cells2[] = { make_pair(begin(cells21), end(cells21)), };
-				raster_source_mockup<11> raster2(cells2, 23);
+				mask_mockup<11>::scanline_cells cells2[] = { make_pair(begin(cells21), end(cells21)), };
+				mask_mockup<11> mask2(cells2, 23);
 
 				target.spans_log.clear();
 
 				// ACT
-				render(target, raster2, bypass_alpha(), 0, 1);
+				render(target, mask2, bypass_alpha(), 0, 1);
 
 				// ASSERT
 				span reference2[] = {
@@ -539,15 +539,15 @@ namespace agge
 				const cell cells11[] = { { 0, 0, 17 }, { 11, 0, -3 }, { 13, 0, -14 }, };
 				const cell cells12[] = { { -1, 0, 170 }, { 7, 0, -3 }, { 17, 0, -167 }, };
 				const cell cells13[] = { { 0, 0, 117 }, { 13, 0, -117 }, };
-				raster_source_mockup<8>::scanline_cells cells1[] = {
+				mask_mockup<8>::scanline_cells cells1[] = {
 					make_pair(begin(cells11), end(cells11)),
 					make_pair(begin(cells12), end(cells12)),
 					make_pair(begin(cells13), end(cells13)),
 				};
-				raster_source_mockup<8> raster1(cells1, 31);
+				mask_mockup<8> mask1(cells1, 31);
 
 				// ACT
-				render(target, raster1, bypass_alpha(), 0, 1);
+				render(target, mask1, bypass_alpha(), 0, 1);
 
 				// ASSERT
 				span reference1[] = {
@@ -561,16 +561,16 @@ namespace agge
 				// INIT
 				const cell cells21[] = { { 2, 0, 255 }, { 3, 0, -100 }, { 5, 0, -155 }, };
 				const cell cells22[] = { { 5, 0, 101 }, { 8, 0, -3 }, { 13, 0, -98 }, };
-				raster_source_mockup<8>::scanline_cells cells2[] = {
+				mask_mockup<8>::scanline_cells cells2[] = {
 					make_pair(begin(cells21), end(cells21)),
 					make_pair(begin(cells22), end(cells22)),
 				};
-				raster_source_mockup<8> raster2(cells2, 59);
+				mask_mockup<8> mask2(cells2, 59);
 
 				target.spans_log.clear();
 
 				// ACT
-				render(target, raster2, bypass_alpha(), 0, 1);
+				render(target, mask2, bypass_alpha(), 0, 1);
 
 				// ASSERT
 				span reference2[] = {
@@ -591,17 +591,17 @@ namespace agge
 				const cell cells3[] = { { 0, 0, 117 }, { 13, 0, -117 }, };
 				const cell cells4[] = { { 2, 0, 255 }, { 3, 0, -100 }, { 5, 0, -155 }, };
 				const cell cells5[] = { { 5, 0, 101 }, { 8, 0, -3 }, { 13, 0, -98 }, };
-				raster_source_mockup<8>::scanline_cells cells[] = {
+				mask_mockup<8>::scanline_cells cells[] = {
 					make_pair(begin(cells1), end(cells1)),
 					make_pair(begin(cells2), end(cells2)),
 					make_pair(begin(cells3), end(cells3)),
 					make_pair(begin(cells4), end(cells4)),
 					make_pair(begin(cells5), end(cells5)),
 				};
-				raster_source_mockup<8> raster(cells, 79);
+				mask_mockup<8> mask(cells, 79);
 
 				// ACT
-				render(target, raster, bypass_alpha(), 0, 2);
+				render(target, mask, bypass_alpha(), 0, 2);
 
 				// ASSERT
 				span reference1[] = {
@@ -616,7 +616,7 @@ namespace agge
 				target.spans_log.clear();
 
 				// ACT
-				render(target, raster, bypass_alpha(), 0, 3);
+				render(target, mask, bypass_alpha(), 0, 3);
 
 				// ASSERT
 				span reference2[] = {
@@ -637,17 +637,17 @@ namespace agge
 				const cell cells3[] = { { 0, 0, 117 }, { 13, 0, -117 }, };
 				const cell cells4[] = { { 2, 0, 255 }, { 3, 0, -100 }, { 5, 0, -155 }, };
 				const cell cells5[] = { { 5, 0, 101 }, { 8, 0, -3 }, { 13, 0, -98 }, };
-				raster_source_mockup<8>::scanline_cells cells[] = {
+				mask_mockup<8>::scanline_cells cells[] = {
 					make_pair(begin(cells1), end(cells1)),
 					make_pair(begin(cells2), end(cells2)),
 					make_pair(begin(cells3), end(cells3)),
 					make_pair(begin(cells4), end(cells4)),
 					make_pair(begin(cells5), end(cells5)),
 				};
-				raster_source_mockup<8> raster(cells, 1300);
+				mask_mockup<8> mask(cells, 1300);
 
 				// ACT
-				render(target, raster, bypass_alpha(), 1, 1);
+				render(target, mask, bypass_alpha(), 1, 1);
 
 				// ASSERT
 				span reference1[] = {
@@ -663,7 +663,7 @@ namespace agge
 				target.spans_log.clear();
 
 				// ACT
-				render(target, raster, bypass_alpha(), 3, 2);
+				render(target, mask, bypass_alpha(), 3, 2);
 
 				// ASSERT
 				span reference2[] = {
@@ -680,16 +680,16 @@ namespace agge
 				const cell cells1[] = { { 0, 0, 17 }, { 11, 0, -3 }, { 13, 0, -14 }, };
 				const cell cells2[] = { { -1, 0, 170 }, { 7, 0, -3 }, { 17, 0, -167 }, };
 				const cell cells3[] = { { 0, 0, 117 }, { 13, 0, -117 }, };
-				raster_source_mockup<8>::scanline_cells cells[] = {
+				mask_mockup<8>::scanline_cells cells[] = {
 					make_pair(begin(cells1), end(cells1)),
 					make_pair(begin(cells2), end(cells2)),
 					make_pair(begin(cells3), end(cells3)),
 				};
-				raster_source_mockup<8> raster(cells, 31);
+				mask_mockup<8> mask(cells, 31);
 
 				// ACT
 				target.excepted_y = 32;
-				render(target, raster, bypass_alpha(), 0, 1);
+				render(target, mask, bypass_alpha(), 0, 1);
 
 				// ASSERT
 				span reference1[] = {
@@ -704,7 +704,7 @@ namespace agge
 
 				// ACT
 				target.excepted_y = 33;
-				render(target, raster, bypass_alpha(), 0, 1);
+				render(target, mask, bypass_alpha(), 0, 1);
 
 				// ASSERT
 				span reference2[] = {
