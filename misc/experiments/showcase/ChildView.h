@@ -1,13 +1,12 @@
 #pragma once
 
+#include <agge/renderer_parallel.h>
+
 #include <aggx/blenders.h>
 #include <aggx/rasterizer.h>
 #include <aggx/win32_bitmap.h>
 
 #include <agg/include/agg_rasterizer_sl_clip.h>
-
-#include <agge/blenders_simd.h>
-#include <agge/scanline.h>
 
 #include <atlbase.h>
 #include <vector>
@@ -31,8 +30,6 @@ class CChildView : public CWnd
 {
 	class blender;
 
-	typedef agge::renderer::adapter<aggx::bitmap, blender> renderer;
-	typedef agge::scanline_adapter<renderer> scanline;
 	typedef std::pair<RECT, COLORREF> ellipse_t;
 
 	enum BufferType {	bufferNone, bufferDIB, bufferDDB	};
@@ -45,6 +42,7 @@ class CChildView : public CWnd
 
 	std::auto_ptr<aggx::bitmap> _agg_bitmap;
 	aggx::rasterizer_scanline_aa<agg::rasterizer_sl_no_clip> _agg_rasterizer;
+	agge::renderer_parallel _renderer;
 
 	DrawMode _drawMode;
 	bool _drawLines, _drawBars, _drawEllipses, _drawSpiral;

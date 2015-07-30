@@ -6,7 +6,7 @@
 namespace agge
 {
 	template <typename RendererT>
-	class scanline_adapter
+	class scanline_adapter : noncopyable
 	{
 	public:
 		typedef typename RendererT::cover_type cover_type;
@@ -18,10 +18,6 @@ namespace agge
 		void add_cell(int x, cover_type cover);
 		void add_span(int x, unsigned int length, cover_type cover);
 		void commit(int next_x = 0);
-
-	private:
-		scanline_adapter(const scanline_adapter &other);
-		const scanline_adapter &operator =(const scanline_adapter &rhs);
 
 	private:
 		RendererT &_renderer;

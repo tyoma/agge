@@ -3,7 +3,7 @@
 #include "../common/bouncing.h"
 #include "../common/paths.h"
 
-#include <agge/scanline.h>
+#include <agge/renderer_parallel.h>
 #include <agge/blenders_simd.h>
 
 #include <aggx/rasterizer.h>
@@ -32,8 +32,9 @@ using namespace aggx;
 using namespace std;
 using namespace demo;
 
+const int c_thread_count = 1;
 const bool c_use_original_agg = false;
-const int c_balls_number = 2000;
+const int c_balls_number = 0;//2000;
 typedef simd::blender_solid_color blender_used;
 
 namespace
@@ -118,6 +119,7 @@ int main()
 
 	MSG msg;
 	rasterizer_scanline ras;
+	agge::renderer_parallel myrenderer(c_thread_count);
 
 	::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 
@@ -128,8 +130,6 @@ int main()
 
 	MainDialog dlg([&](bitmap &target, double &clearing, double &rasterization, double &rendition) {
 		typedef blender<blender_used> blenderx;
-		typedef renderer::adapter<bitmap, blenderx> renderer;
-		typedef scanline_adapter<renderer> scanline;
 
 		LARGE_INTEGER counter;
 
@@ -157,12 +157,13 @@ int main()
 		{
 			if (!c_balls_number)
 			{
+				blenderx brush(rgba8(0, 154, 255, 230));
+
 				stopwatch(counter);
 				ras.add_path(agg_path_adaptor(spiral_flatten));
 				ras.prepare();
 				rasterization += stopwatch(counter);
-				blenderx b(rgba8(0, 154, 255, 255));
-				ras.render<scanline>(renderer(target, 0, b));
+				myrenderer(target, 0, ras.get_mask(), brush, calculate_alpha<8>());
 				rendition += stopwatch(counter);
 			}
 
@@ -179,8 +180,7 @@ int main()
 				ras.add_path(e);
 				ras.prepare();
 				rasterization += stopwatch(counter);
-				blenderx brush(b.color);
-				ras.render<scanline>(renderer(target, 0, brush));
+				myrenderer(target, 0, ras.get_mask(), blenderx(b.color), calculate_alpha<8>());
 				rendition += stopwatch(counter);
 			});
 		}

@@ -4,7 +4,7 @@
 
 namespace agge
 {
-	class raw_memory_object
+	class raw_memory_object : noncopyable
 	{
 	public:
 		raw_memory_object();
@@ -12,10 +12,6 @@ namespace agge
 
 		template <typename T>
 		T *get(count_t size);
-
-	private:
-		raw_memory_object(const raw_memory_object &other);
-		const raw_memory_object &operator =(const raw_memory_object &rhs);
 
 	private:
 		uint8_t *_buffer;

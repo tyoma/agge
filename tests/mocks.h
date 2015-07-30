@@ -2,6 +2,7 @@
 
 #include <agge/types.h>
 
+#include <utee/ut/assert.h>
 #include <utility>
 #include <vector>
 
@@ -131,6 +132,62 @@ namespace agge
 
 			private:
 				count_t _width, _height;
+			};
+
+
+			template <typename PixelT, typename CoverT>
+			class blender
+			{
+			public:
+				typedef PixelT pixel;
+				typedef CoverT cover_type;
+
+				struct fill_log_entry;
+
+			public:
+				void operator ()(PixelT *pixels, int x, int y, unsigned int length) const
+				{
+					fill_log_entry entry = { pixels, x, y, length };
+
+					filling_log.push_back(entry);
+				}
+
+				void operator ()(PixelT *pixels, int x, int y, unsigned int length, const cover_type *covers) const
+				{
+					assert_not_equal(0u, length);
+
+					int offset = sizeof(cover_type) * 8;
+					int mask_x = 0x000000FF << offset;
+					int mask_y = 0x0000FF00 << offset;
+
+					for (; length; --length, ++pixels, ++covers)
+						*pixels = static_cast<pixel>(static_cast<int>(*covers)
+							+ ((x << offset) & mask_x)
+							+ ((y << (offset + 8)) & mask_y));
+				}
+
+				mutable std::vector<fill_log_entry> filling_log;
+			};
+
+
+			template <typename PixelT, typename CoverT>
+			struct blender<PixelT, CoverT>::fill_log_entry
+			{
+				pixel *pixels;
+				unsigned int x;
+				unsigned int y;
+				unsigned int length;
+
+				bool operator ==(const fill_log_entry &rhs) const
+				{	return pixels == rhs.pixels && x == rhs.x && y == rhs.y && length == rhs.length;	}
+			};
+
+
+			template <typename T, size_t precision>
+			struct simple_alpha
+			{
+				T operator ()(int area) const
+				{	return static_cast<T>(area >> (precision + 1));	}
 			};
 		}
 	}

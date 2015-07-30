@@ -1,9 +1,6 @@
 #pragma once
 
-#include <agge/renderer.h>
-#include <agge/scanline.h>
 #include <agge/vector_rasterizer.h>
-#include <agge/parallel.h>
 
 #include "basics.h"
 
@@ -29,23 +26,14 @@ namespace aggx
 			aa_mask2 = aa_scale2 - 1
 		};
 
-		enum
-		{
-			thread_count = 1
-		};
-
 		rasterizer_scanline_aa() : 
 			m_outline(),
 			m_clipper(),
-			m_filling_rule(fill_non_zero),
 			m_auto_close(true),
 			m_start_x(0),
 			m_start_y(0),
-			m_status(status_initial),
-			m_parallel(thread_count)
+			m_status(status_initial)
 		{
-			for(int i = 0; i < aa_scale; i++)
-				m_gamma[i] = i;
 		}
 
 		void reset(); 
@@ -85,9 +73,7 @@ namespace aggx
 		int max_y() const { return m_outline.vrange().second; }
 
 		void prepare();
-
-		template <typename ScanlineAdapter, typename Renderer>
-		void render(Renderer &r);
+		const agge::vector_rasterizer &get_mask();
 
 	private:
 		enum status
@@ -103,21 +89,25 @@ namespace aggx
 	private:
 		agge::vector_rasterizer m_outline;
 		clip_type m_clipper;
-		int m_gamma[aa_scale];
-		filling_rule_e m_filling_rule;
 		bool m_auto_close;
 		coord_type m_start_x;
 		coord_type m_start_y;
 		unsigned m_status;
-		agge::raw_memory_object m_cover_buffers[thread_count];
-		agge::parallel m_parallel;
 	};
 
 
-	template<class Clip>
-	struct rasterizer_scanline_aa<Clip>::calculate_alpha
+	template <int precision>
+	struct calculate_alpha
 	{
-		unsigned int operator ()(int area) const;
+		unsigned int operator ()(int area) const
+		{
+			area >>= precision + 1;
+			if (area < 0)
+				area = -area;
+			if (area > 255)
+				area = 255;
+			return area;
+		}
 	};
 
 
@@ -215,24 +205,6 @@ namespace aggx
 			add_vertex(x, y, cmd);
 	}
 
-	//template<class Clip>
-	//inline unsigned rasterizer_scanline_aa<Clip>::calculate_alpha(int area) const
-	//{
-	//	int cover = area >> (poly_subpixel_shift*2 + 1 - aa_shift);
-
-	//	if(cover < 0) cover = -cover;
-	//	if(m_filling_rule == fill_even_odd)
-	//	{
-	//		cover &= aa_mask2;
-	//		if(cover > aa_scale)
-	//		{
-	//			cover = aa_scale2 - cover;
-	//		}
-	//	}
-	//	if(cover > aa_mask) cover = aa_mask;
-	//	return m_gamma[cover];
-	//}
-
 	template<class Clip> 
 	inline void rasterizer_scanline_aa<Clip>::prepare()
 	{
@@ -241,31 +213,10 @@ namespace aggx
 		m_outline.sort();
 	}
 
-	template<class Clip>
-	template <typename ScanlineAdapter, typename Renderer>
-	inline void rasterizer_scanline_aa<Clip>::render(Renderer &r)
+	template<class Clip> 
+	inline const agge::vector_rasterizer &rasterizer_scanline_aa<Clip>::get_mask()
 	{
 		prepare();
-		m_parallel.call([this, &r] (unsigned int threadid) {
-			Renderer r_thread(r);
-			ScanlineAdapter sl(r_thread, m_cover_buffers[threadid], this->max_x() - this->min_x() + 1);
-
-			agge::render(sl, m_outline, rasterizer_scanline_aa<Clip>::calculate_alpha(), threadid, thread_count);
-		});
-		//ScanlineAdapter sl(r, m_cover_buffers[0], min_x(), max_x());
-
-		//agge::render(sl, m_outline, rasterizer_scanline_aa<Clip>::calculate_alpha(), 0, 1);
-	}
-
-
-	template<class Clip>
-	inline unsigned int rasterizer_scanline_aa<Clip>::calculate_alpha::operator ()(int area) const
-	{
-		area >>= agge::vector_rasterizer::_1_shift + 1;
-		if (area < 0)
-			area = -area;
-		if (area > 255)
-			area = 255;
-		return area;
+		return m_outline;
 	}
 }

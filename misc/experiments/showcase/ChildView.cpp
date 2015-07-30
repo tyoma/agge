@@ -4,6 +4,9 @@
 
 #include "../common/paths.h"
 
+#include <agge/blenders_simd.h>
+#include <agge/renderer.h>
+
 #include <aggx/agg_conv_stroke.h>
 #include <aggx/agg_ellipse.h>
 #include <aggx/paths.h>
@@ -113,7 +116,8 @@ public:
 CChildView::CChildView()
 	: _drawLines(false), _drawBars(true), _drawEllipses(false), _drawSpiral(false),
 		_mode(bufferDIB), _status_bar(0), _drawMode(dmodeGDI), _onpaint_timing(0),
-		_fill_timing(0), _drawing_timing(0), _blit_timing(0), _averaging_index(0)		
+		_fill_timing(0), _drawing_timing(0), _blit_timing(0), _averaging_index(0),
+		_renderer(4)
 {
 	::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &_factory);
 	const D2D1_RENDER_TARGET_PROPERTIES properties = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
@@ -523,7 +527,8 @@ void CChildView::OnPaint()
 				//_agg_rasterizer.add_path(stroke);
 				_agg_rasterizer.add_path(demo::agg_path_adaptor(_agg_path_flatten));
 
-				_agg_rasterizer.render<scanline>(renderer(*_agg_bitmap, 0, blender(rgba8(0, 150, 255))));
+				_renderer(*_agg_bitmap, 0, _agg_rasterizer.get_mask(), blender(rgba8(0, 150, 255)),
+					aggx::calculate_alpha<8>());
 			}
 		}
 
@@ -776,7 +781,8 @@ void CChildView::drawLines(bitmap &b, const CSize &client, const std::vector<bar
 		x += 2 * d + 1;
 	});
 
-	_agg_rasterizer.render<scanline>(renderer(b, 0, blender(rgba8(0, 0, 0))));
+	_renderer(*_agg_bitmap, 0, _agg_rasterizer.get_mask(), blender(rgba8(0, 0, 0)),
+		aggx::calculate_alpha<8>());
 }
 
 void CChildView::drawBars(bitmap &b, const CSize &client, const vector<bar> &bars)
@@ -810,21 +816,21 @@ void CChildView::drawBars(bitmap &b, const CSize &client, const vector<bar> &bar
 		x += 2 * d + 1;
 	});
 
-	_agg_rasterizer.render<scanline>(renderer(b, 0, blender(rgba8(0, 0, 0, 96))));
+	_renderer(*_agg_bitmap, 0, _agg_rasterizer.get_mask(), blender(rgba8(0, 0, 0, 96)),
+		aggx::calculate_alpha<8>());
 }
 
 void CChildView::drawEllipses(bitmap &b, const CSize &client, const vector<ellipse_t> &ellipses)
 {
 	for_each(ellipses.begin(), ellipses.end(), [&] (const ellipse_t &e) {
-		typedef CChildView::blender blender;
-		typedef CChildView::renderer renderer;
 
 		ellipse ellipse(0.5 * (e.first.left + e.first.right), 0.5 * (e.first.top + e.first.bottom),
 			0.5 * (e.first.right - e.first.left), 0.5 * (e.first.bottom - e.first.top));
 
 		_agg_rasterizer.add_path(ellipse);
-				
-		_agg_rasterizer.render<scanline>(renderer(b, 0, blender(rgba8(GetRValue(e.second), GetGValue(e.second), GetBValue(e.second), 224))));
+
+		_renderer(*_agg_bitmap, 0, _agg_rasterizer.get_mask(), CChildView::blender(rgba8(GetRValue(e.second),
+			GetGValue(e.second), GetBValue(e.second), 224)), aggx::calculate_alpha<8>());
 	});
 }
 

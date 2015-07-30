@@ -32,14 +32,6 @@ namespace agge
 			};
 
 
-			template <typename T, size_t precision>
-			struct bypass_alpha2
-			{
-				T operator ()(int area) const
-				{	return static_cast<T>(area >> (precision + 1));	}
-			};
-
-
 			class scanline_mockup
 			{
 			public:
@@ -90,54 +82,6 @@ namespace agge
 			private:
 				bool _inprogress;
 				int _current_y;
-			};
-
-
-			template <typename PixelT, typename CoverT>
-			class mock_blender
-			{
-			public:
-				typedef PixelT pixel;
-				typedef CoverT cover_type;
-
-				struct fill_log_entry;
-
-			public:
-				void operator ()(PixelT *pixels, int x, int y, unsigned int length) const
-				{
-					fill_log_entry entry = { pixels, x, y, length };
-
-					filling_log.push_back(entry);
-				}
-
-				void operator ()(PixelT *pixels, int x, int y, unsigned int length, const cover_type *covers) const
-				{
-					assert_not_equal(0u, length);
-
-					int offset = sizeof(cover_type) * 8;
-					int mask_x = 0x000000FF << offset;
-					int mask_y = 0x0000FF00 << offset;
-
-					for (; length; --length, ++pixels, ++covers)
-						*pixels = static_cast<pixel>(static_cast<int>(*covers)
-							+ ((x << offset) & mask_x)
-							+ ((y << (offset + 8)) & mask_y));
-				}
-
-				mutable vector<fill_log_entry> filling_log;
-			};
-
-
-			template <typename PixelT, typename CoverT>
-			struct mock_blender<PixelT, CoverT>::fill_log_entry
-			{
-				pixel *pixels;
-				unsigned int x;
-				unsigned int y;
-				unsigned int length;
-
-				bool operator ==(const fill_log_entry &rhs) const
-				{	return pixels == rhs.pixels && x == rhs.x && y == rhs.y && length == rhs.length;	}
 			};
 		}
 
@@ -668,14 +612,14 @@ namespace agge
 			{
 				// INIT
 				short covers1[] = { 0x1001, 0x0002, 0x4003, 0x00E2, };
-				mock_blender<int, short> blender1;
+				mocks::blender<int, short> blender1;
 				mocks::bitmap<int> bitmap1(7, 5);
-				renderer::adapter< mocks::bitmap<int>, mock_blender<int, short> > r1(bitmap1, 0, blender1);
+				renderer::adapter< mocks::bitmap<int>, mocks::blender<int, short> > r1(bitmap1, 0, blender1);
 
 				uint8_t covers2[] = { 0xED, 0x08, 0x91, };
-				mock_blender<uint8_t, uint8_t> blender2;
+				mocks::blender<uint8_t, uint8_t> blender2;
 				mocks::bitmap<uint8_t> bitmap2(5, 4);
-				renderer::adapter< mocks::bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap2, 0, blender2);
+				renderer::adapter< mocks::bitmap<uint8_t>, mocks::blender<uint8_t, uint8_t> > r2(bitmap2, 0, blender2);
 
 				// ACT
 				r1.set_y(0);
@@ -718,9 +662,9 @@ namespace agge
 			{
 				// INIT
 				uint8_t covers[] = { 0x51, 0xFF, 0x13, 0x90, 0xE1, };
-				mock_blender<uint8_t, uint8_t> blender;
+				mocks::blender<uint8_t, uint8_t> blender;
 				mocks::bitmap<uint8_t, 2> bitmap(8, 3);
-				renderer::adapter< mocks::bitmap<uint8_t, 2>, mock_blender<uint8_t, uint8_t> > r(bitmap, 0, blender);
+				renderer::adapter< mocks::bitmap<uint8_t, 2>, mocks::blender<uint8_t, uint8_t> > r(bitmap, 0, blender);
 
 				// ACT
 				r.set_y(0);
@@ -749,11 +693,11 @@ namespace agge
 			test( SetYRespectsBitmapHeight )
 			{
 				// INIT
-				mock_blender<int, short> blender;
+				mocks::blender<int, short> blender;
 				mocks::bitmap<int> bitmap1(10, 1000);
 				mocks::bitmap<int> bitmap2(10, 123);
-				renderer::adapter< mocks::bitmap<int>, mock_blender<int, short> > r1(bitmap1, 0, blender);
-				renderer::adapter< mocks::bitmap<int>, mock_blender<int, short> > r2(bitmap2, 0, blender);
+				renderer::adapter< mocks::bitmap<int>, mocks::blender<int, short> > r1(bitmap1, 0, blender);
+				renderer::adapter< mocks::bitmap<int>, mocks::blender<int, short> > r2(bitmap2, 0, blender);
 
 				// ACT / ASSERT
 				assert_is_false(r1.set_y(-1));
@@ -774,10 +718,10 @@ namespace agge
 			{
 				// INIT
 				uint8_t covers[] = { 0x10, 0x19, 0xF7, 0xE3, 0x79, };
-				mock_blender<int, uint8_t> blender;
+				mocks::blender<int, uint8_t> blender;
 				mocks::bitmap<int> bitmap(7, 5);
 
-				typedef renderer::adapter< mocks::bitmap<int>, mock_blender<int, uint8_t> > renderer_adapter;
+				typedef renderer::adapter< mocks::bitmap<int>, mocks::blender<int, uint8_t> > renderer_adapter;
 
 				// INIT / ACT
 				rect_i window1 = mkrect_sized(-3, -2, 1000, 1000);
@@ -832,10 +776,10 @@ namespace agge
 			{
 				// INIT
 				uint8_t covers[] = { 0x10, 0x19, 0xF7, 0xE3, 0x79, };
-				mock_blender<int, uint8_t> blender;
+				mocks::blender<int, uint8_t> blender;
 				mocks::bitmap<int> bitmap(5, 2);
 
-				typedef renderer::adapter< mocks::bitmap<int>, mock_blender<int, uint8_t> > renderer_adapter;
+				typedef renderer::adapter< mocks::bitmap<int>, mocks::blender<int, uint8_t> > renderer_adapter;
 
 				// INIT / ACT
 				rect_i window1 = mkrect_sized(2, 0, 1000, 1000);
@@ -881,12 +825,12 @@ namespace agge
 			{
 				// INIT
 				uint8_t covers[] = { 0x51, 0xFF, 0x13, 0x90, 0xE1, };
-				mock_blender<uint8_t, uint8_t> blender;
+				mocks::blender<uint8_t, uint8_t> blender;
 				mocks::bitmap<uint8_t, 3> bitmap(6, 2);
 				rect_i window1 = mkrect_sized(-3, 0, 1000, 1000);
-				renderer::adapter< mocks::bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
+				renderer::adapter< mocks::bitmap<uint8_t, 3>, mocks::blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
 				rect_i window2 = mkrect_sized(-2, 0, 1000, 1000);
-				renderer::adapter< mocks::bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
+				renderer::adapter< mocks::bitmap<uint8_t, 3>, mocks::blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
 
 				// ACT
 				r1.set_y(0);
@@ -909,12 +853,12 @@ namespace agge
 			{
 				// INIT
 				uint8_t covers[] = { 0x51, 0xFF, 0x13, 0x90, 0xE1, };
-				mock_blender<uint8_t, uint8_t> blender;
+				mocks::blender<uint8_t, uint8_t> blender;
 				mocks::bitmap<uint8_t, 3> bitmap(6, 2);
 				rect_i window1 = mkrect_sized(-3, 0, 5, 1000);
-				renderer::adapter< mocks::bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
+				renderer::adapter< mocks::bitmap<uint8_t, 3>, mocks::blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
 				rect_i window2 = mkrect_sized(-1, 0, 4, 1000);
-				renderer::adapter< mocks::bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
+				renderer::adapter< mocks::bitmap<uint8_t, 3>, mocks::blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
 
 				// ACT
 				r1.set_y(0);
@@ -936,12 +880,12 @@ namespace agge
 			test( RenditionAdapterWithOffsetObeysVerticalLimitsOfBitmap )
 			{
 				// INIT
-				mock_blender<uint8_t, uint8_t> blender;
+				mocks::blender<uint8_t, uint8_t> blender;
 				mocks::bitmap<uint8_t> bitmap(6, 11);
 				rect_i window1 = mkrect_sized(0, 2, 5, 1000);
-				renderer::adapter< mocks::bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
+				renderer::adapter< mocks::bitmap<uint8_t>, mocks::blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
 				rect_i window2 = mkrect_sized(0, -3, 4, 1000);
-				renderer::adapter< mocks::bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
+				renderer::adapter< mocks::bitmap<uint8_t>, mocks::blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
 
 				// ACT / ASSERT
 				assert_is_false(r1.set_y(1));
@@ -961,12 +905,12 @@ namespace agge
 			test( RenditionAdapterWithOffsetObeysVerticalLimitsOfWindow )
 			{
 				// INIT
-				mock_blender<uint8_t, uint8_t> blender;
+				mocks::blender<uint8_t, uint8_t> blender;
 				mocks::bitmap<uint8_t> bitmap(6, 110);
 				rect_i window1 = mkrect_sized(0, 3, 5, 10);
-				renderer::adapter< mocks::bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
+				renderer::adapter< mocks::bitmap<uint8_t>, mocks::blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
 				rect_i window2 = mkrect_sized(0, -4, 4, 17);
-				renderer::adapter< mocks::bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
+				renderer::adapter< mocks::bitmap<uint8_t>, mocks::blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
 
 				// ACT / ASSERT
 				assert_is_false(r1.set_y(2));
@@ -988,13 +932,13 @@ namespace agge
 				// INIT
 				mocks::bitmap<int> bitmap1(3, 5);
 				mocks::bitmap<int> bitmap2(4, 7);
-				mock_blender<int, uint8_t> blender;
+				mocks::blender<int, uint8_t> blender;
 
 				// ACT
 				fill(bitmap1, blender);
 
 				// ASSERT
-				mock_blender<int, uint8_t>::fill_log_entry reference1[] = {
+				mocks::blender<int, uint8_t>::fill_log_entry reference1[] = {
 					{ bitmap1.row_ptr(0), 0, 0, 3 },
 					{ bitmap1.row_ptr(1), 0, 1, 3 },
 					{ bitmap1.row_ptr(2), 0, 2, 3 },
@@ -1011,7 +955,7 @@ namespace agge
 				fill(bitmap2, blender);
 
 				// ASSERT
-				mock_blender<int, uint8_t>::fill_log_entry reference2[] = {
+				mocks::blender<int, uint8_t>::fill_log_entry reference2[] = {
 					{ bitmap2.row_ptr(0), 0, 0, 4 },
 					{ bitmap2.row_ptr(1), 0, 1, 4 },
 					{ bitmap2.row_ptr(2), 0, 2, 4 },
@@ -1038,12 +982,12 @@ namespace agge
 				};
 				mocks::mask_full<8> mask1(cells, 3, 0, 10);
 				mocks::bitmap<uint8_t> bitmap1(11, 7);
-				mock_blender<uint8_t, uint8_t> blender1;
+				mocks::blender<uint8_t, uint8_t> blender1;
 
 				renderer r;
 
 				// ACT
-				r(bitmap1, 0, mask1, blender1, bypass_alpha2<uint8_t, 8>());
+				r(bitmap1, 0, mask1, blender1, mocks::simple_alpha<uint8_t, 8>());
 
 				// ASSERT
 				uint8_t reference1[] = {
@@ -1061,10 +1005,10 @@ namespace agge
 				// INIT
 				mocks::mask_full<8> mask2(cells, 1, 0, 10);
 				mocks::bitmap<uint16_t> bitmap2(7, 4);
-				mock_blender<uint16_t, uint8_t> blender2;
+				mocks::blender<uint16_t, uint8_t> blender2;
 
 				// ACT
-				r(bitmap2, 0, mask2, blender2, bypass_alpha2<uint8_t, 8>());
+				r(bitmap2, 0, mask2, blender2, mocks::simple_alpha<uint8_t, 8>());
 
 				// ASSERT
 				uint16_t reference2[] = {
@@ -1091,13 +1035,13 @@ namespace agge
 				};
 				const mocks::mask_full<8> mask1(cells, 3, 0, 10);
 				mocks::bitmap<uint8_t> bitmap1(11, 4);
-				const mock_blender<uint8_t, uint8_t> blender1;
+				const mocks::blender<uint8_t, uint8_t> blender1;
 				const rect_i window = mkrect_sized(-1, 3, 11, 100);
 
 				renderer r;
 
 				// ACT
-				r(bitmap1, &window, mask1, blender1, bypass_alpha2<uint8_t, 8>());
+				r(bitmap1, &window, mask1, blender1, mocks::simple_alpha<uint8_t, 8>());
 
 				// ASSERT
 				uint8_t reference1[] = {

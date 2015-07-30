@@ -13,7 +13,7 @@
 
 namespace agge
 {
-	class parallel
+	class parallel : noncopyable
 	{
 	public:
 		typedef std::function<void(count_t threadid)> kernel_function;
@@ -28,9 +28,6 @@ namespace agge
 		struct thread;
 
 	private:
-		parallel(const parallel &other);
-		const parallel &operator =(const parallel &rhs);
-
 		void destroy_threads();
 
 	private:

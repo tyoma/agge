@@ -56,7 +56,7 @@ namespace agge
 		};
 	}
 
-	struct parallel::thread
+	struct parallel::thread : noncopyable
 	{
 	public:
 		explicit thread(count_t id);
@@ -69,9 +69,6 @@ namespace agge
 		const parallel::kernel_function *kernel;
 
 	private:
-		thread(const thread &other);
-		const thread &operator =(const thread &rhs);
-
 		static unsigned int __stdcall thread_proc(void *data);
 
 	private:

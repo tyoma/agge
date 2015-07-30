@@ -29,4 +29,14 @@ namespace agge
 	template <typename CoordT>
 	inline CoordT height(const rect<CoordT> &rc)
 	{	return rc.y2 - rc.y1;	}
+
+	class noncopyable
+	{
+	public:
+		noncopyable() throw() { }
+
+	private:
+		noncopyable(const noncopyable &other);
+		const noncopyable &operator =(const noncopyable &rhs);
+	};
 }

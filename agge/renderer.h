@@ -35,10 +35,10 @@ namespace agge
 		const adapter &operator =(const adapter &rhs);
 
 	private:
+		const BlenderT &_blender;
 		const int _offset_x, _limit_x;
 		typename BitmapT::pixel *_row;
 		int _y;
-		const BlenderT _blender;
 		BitmapT &_bitmap;
 		const int _offset_y, _limit_y;
 	};
@@ -47,9 +47,10 @@ namespace agge
 
 	template <typename BitmapT, typename BlenderT>
 	inline renderer::adapter<BitmapT, BlenderT>::adapter(BitmapT &bitmap, const rect_i *window, const BlenderT &blender)
-		: _offset_x(window ? window->x1 : 0),
+		: _blender(blender),
+			_offset_x(window ? window->x1 : 0),
 			_limit_x((!window || static_cast<int>(bitmap.width()) < width(*window) ? bitmap.width() : width(*window)) + _offset_x), 
-			_blender(blender), _bitmap(bitmap),
+			_bitmap(bitmap),
 			_offset_y(window ? window->y1 : 0),
 			_limit_y((!window || static_cast<int>(bitmap.height()) < height(*window) ? bitmap.height() : height(*window)) + _offset_y)
 	{	}
