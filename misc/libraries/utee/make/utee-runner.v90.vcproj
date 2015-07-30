@@ -12,14 +12,17 @@
 		<Platform
 			Name="Win32"
 		/>
+		<Platform
+			Name="x64"
+		/>
 	</Platforms>
 	<ToolFiles>
 	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)_bin/$(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)_obj/$(ConfigurationName)_$(PlatformName)\"
+			OutputDirectory="$(SolutionDir)_bin\$(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)_obj\$(ConfigurationName)_$(PlatformName)\$(ProjectName)\"
 			ConfigurationType="1"
 			UseOfATL="1"
 			CharacterSet="0"
@@ -45,7 +48,7 @@
 				FavorSizeOrSpeed="2"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories=".."
-				PreprocessorDefinitions="WIN32;NDEBUG;_SECURE_SCL=0"
+				PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
 				RuntimeLibrary="0"
 				WarningLevel="4"
 				WarnAsError="true"
@@ -66,6 +69,81 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|x64"
+			OutputDirectory="$(SolutionDir)_bin\$(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)_obj\$(ConfigurationName)_$(PlatformName)\$(ProjectName)\"
+			ConfigurationType="1"
+			UseOfATL="1"
+			CharacterSet="0"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="1"
+				FavorSizeOrSpeed="2"
+				OmitFramePointers="true"
+				AdditionalIncludeDirectories=".."
+				PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
+				RuntimeLibrary="0"
+				WarningLevel="4"
+				WarnAsError="true"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"

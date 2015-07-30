@@ -89,23 +89,42 @@ namespace agge
 
 
 	parallel::parallel(count_t parallelism)
+	try
+		: _thread_allocated(0)
 	{
-		for (count_t i = 1; i < parallelism; ++i)
-			_threads.push_back(thread_ptr(new thread(i)));
+		thread *p = _threads.get<thread>(parallelism - 1);
+
+		for (count_t i = 1; i != parallelism; ++i, ++_thread_allocated, ++p)
+			new (p) thread(i);
+	}
+	catch (...)
+	{
+		destroy_threads();
+		throw;
 	}
 
 	parallel::~parallel()
-	{	}
+	{	destroy_threads();	}
 
 	void parallel::call(const kernel_function &kernel)
 	{
-		for (threads::iterator i = _threads.begin(); i != _threads.end(); ++i)
+		thread * const threads = _threads.get<thread>(0);
+
+		for (count_t i = 0; i != _thread_allocated; ++i)
 		{
-			(*i)->kernel = &kernel;
-			(*i)->ready.set();
+			threads[i].kernel = &kernel;
+			threads[i].ready.set();
 		}
 		kernel(0);
-		for (threads::iterator i = _threads.begin(); i != _threads.end(); ++i)
-			(*i)->done.wait();
+		for (count_t i = 0; i != _thread_allocated; ++i)
+			threads[i].done.wait();
+	}
+
+	void parallel::destroy_threads()
+	{
+		thread * const threads = _threads.get<thread>(0);
+
+		for (count_t i = 0; i != _thread_allocated; ++i)
+			threads[i].~thread();
 	}
 }

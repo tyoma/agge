@@ -9,9 +9,11 @@
     <ClCompile Include="ParallelExecutionTests.cpp" />
     <ClCompile Include="mt.cpp" />
     <ClCompile Include="RendererParallelTests.cpp" />
+    <ClCompile Include="MiscTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />
     <ClInclude Include="mt.h" />
+    <ClInclude Include="mocks.h" />
   </ItemGroup>
 </Project>

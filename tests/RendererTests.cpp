@@ -1,6 +1,7 @@
 #include <agge/renderer.h>
 
 #include "helpers.h"
+#include "mocks.h"
 
 #include <utee/ut/assert.h>
 #include <utee/ut/test.h>
@@ -13,14 +14,6 @@ namespace agge
 	{
 		namespace
 		{
-			struct cell
-			{
-				int x;
-				int area;
-				int cover;
-			};
-
-
 			struct span
 			{
 				int y;
@@ -37,6 +30,7 @@ namespace agge
 				unsigned int operator ()(int area) const
 				{	return area;	}
 			};
+
 
 			template <typename T, size_t precision>
 			struct bypass_alpha2
@@ -99,56 +93,6 @@ namespace agge
 			};
 
 
-			template <size_t precision>
-			class mask_mockup
-			{
-			public:
-				typedef pair<const cell * /*begin*/, const cell * /*end*/> scanline_cells;
-				typedef pair<int, int> range;
-
-				enum { _1_shift = precision };
-
-			public:
-				template <typename T, int n>
-				mask_mockup(const T (&cells)[n], int y0)
-					: _vrange(y0, y0 + n - 1)
-				{
-					for (int i = 0; i != n; ++i)
-						_cells.push_back(cells[i]);
-				}
-
-				scanline_cells operator [](int y) const
-				{	return _cells.at(y - _vrange.first);	}
-
-				range vrange() const
-				{	return _vrange;	}
-
-			private:
-				range _vrange;
-				vector<scanline_cells> _cells;
-			};
-
-
-			template <size_t precision>
-			class mask_mockup_full : public mask_mockup<precision>
-			{
-			public:
-				using mask_mockup<precision>::range;
-
-			public:
-				template <typename T, int n>
-				mask_mockup_full(const T (&cells)[n], int y0, int x0, int xlimit)
-					: mask_mockup<precision>(cells, y0), _hrange(x0, xlimit)
-				{	}
-
-				range hrange() const
-				{	return _hrange;	}
-
-			private:
-				range _hrange;
-			};
-
-
 			template <typename PixelT, typename CoverT>
 			class mock_blender
 			{
@@ -195,34 +139,6 @@ namespace agge
 				bool operator ==(const fill_log_entry &rhs) const
 				{	return pixels == rhs.pixels && x == rhs.x && y == rhs.y && length == rhs.length;	}
 			};
-
-
-			template <typename PixelT, size_t guard_size = 0>
-			class mock_bitmap
-			{
-			public:
-				typedef PixelT pixel;
-
-			public:
-				mock_bitmap(unsigned int width, unsigned int height)
-					: _width(width), _height(height), data((width + guard_size) * height)
-				{	}
-
-				pixel *row_ptr(unsigned int y)
-				{	return &data[y * (_width + guard_size)];	}
-
-				unsigned int width() const
-				{	return _width;	}
-
-				unsigned int height() const
-				{	return _height;	}
-
-			public:
-				vector<pixel> data;
-
-			private:
-				unsigned int _width, _height;
-			};
 		}
 
 		begin_test_suite( RendererTests )
@@ -230,7 +146,7 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup sl1, sl2;
-				cell cells1[] = { { 7, 10 * 512, 0 }, }, cells2[] = { { 1300011, 11 * 512, 0 }, };
+				mocks::cell cells1[] = { { 7, 10 * 512, 0 }, }, cells2[] = { { 1300011, 11 * 512, 0 }, };
 
 				// ACT
 				sweep_scanline<8>(sl1, begin(cells1), end(cells1), bypass_alpha());
@@ -254,7 +170,7 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup sl;
-				cell cells[] = { { 7, 129 * 512, 0 }, { 17, 71 * 512, 0 }, { 18, 19 * 512, 0 }, };
+				mocks::cell cells[] = { { 7, 129 * 512, 0 }, { 17, 71 * 512, 0 }, { 18, 19 * 512, 0 }, };
 
 				// ACT
 				sweep_scanline<8>(sl, begin(cells), end(cells), bypass_alpha());
@@ -274,7 +190,7 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup sl;
-				cell cells[] = {
+				mocks::cell cells[] = {
 					{ 7, 129 * 512, 0 }, { 7, 71 * 512, 0 },
 					{ 1911, 199 * 512, 0 }, { 1911, 19 * 512, 0 }, { 1911, -1 * 512, 0 },
 				};
@@ -296,7 +212,7 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup sl;
-				cell cells[] = {
+				mocks::cell cells[] = {
 					{ 7, 0, 10 }, { 7, 0, 3 }, { 10, 0, -10 }, { 10, 0, -3 },
 					{ 1911, 0, 17 }, { 1931, 0, -13 }, { 1940, 0, -4 },
 				};
@@ -319,9 +235,9 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup sl1, sl2;
-				cell cells1[] = { { 8, 0, 17 }, { 13, 0, -17 }, };
-				cell cells2[] = { { 11, 0, 255 }, { 199, 0, -255 }, };
-				cell cells3[] = { { 1300011, 0, -100 }, { 1302010, 0, 100 }, };
+				mocks::cell cells1[] = { { 8, 0, 17 }, { 13, 0, -17 }, };
+				mocks::cell cells2[] = { { 11, 0, 255 }, { 199, 0, -255 }, };
+				mocks::cell cells3[] = { { 1300011, 0, -100 }, { 1302010, 0, 100 }, };
 
 				// ACT
 				sweep_scanline<8>(sl1, begin(cells1), end(cells1), bypass_alpha());
@@ -351,9 +267,9 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup sl;
-				cell cells1[] = { { -8, 0, 17 }, { 13, 0, -4 }, { 31, 0, -13 }, };
-				cell cells2[] = { { 11, 0, 255 }, { 109, 0, -200 }, { 199, 0, -50 }, { 255, 0, -5 }, };
-				cell cells3[] = { { 1300011, 0, -100 }, { 1302010, 0, 89 }, { 1302017, 0, 11 }, };
+				mocks::cell cells1[] = { { -8, 0, 17 }, { 13, 0, -4 }, { 31, 0, -13 }, };
+				mocks::cell cells2[] = { { 11, 0, 255 }, { 109, 0, -200 }, { 199, 0, -50 }, { 255, 0, -5 }, };
+				mocks::cell cells3[] = { { 1300011, 0, -100 }, { 1302010, 0, 89 }, { 1302017, 0, 11 }, };
 
 				// ACT
 				sweep_scanline<8>(sl, begin(cells1), end(cells1), bypass_alpha());
@@ -385,8 +301,8 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup sl;
-				cell cells1[] = { { -8, 0, 17 }, { -8, 14 * 512, 0 }, { 13, 0, -4 }, { 13, 11 * 512, 0 }, { 31, 0, -13 }, };
-				cell cells2[] = { { 0, 0, 17 }, { 11, 14 * 512, 0 }, { 13, 0, -17 }, };
+				mocks::cell cells1[] = { { -8, 0, 17 }, { -8, 14 * 512, 0 }, { 13, 0, -4 }, { 13, 11 * 512, 0 }, { 31, 0, -13 }, };
+				mocks::cell cells2[] = { { 0, 0, 17 }, { 11, 14 * 512, 0 }, { 13, 0, -17 }, };
 
 				// ACT
 				sweep_scanline<8>(sl, begin(cells1), end(cells1), bypass_alpha());
@@ -422,7 +338,7 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup sl;
-				cell cells[] = { { 7, 0, 17 }, { 9, 3 * 512, 0 }, { 10, 2 * 512, 0 }, { 12, 0, -17 } };
+				mocks::cell cells[] = { { 7, 0, 17 }, { 9, 3 * 512, 0 }, { 10, 2 * 512, 0 }, { 12, 0, -17 } };
 
 				// ACT
 				sweep_scanline<8>(sl, begin(cells), end(cells), bypass_alpha());
@@ -443,7 +359,7 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup sl;
-				cell cells;
+				mocks::cell cells;
 
 				// ACT
 				sweep_scanline<8>(sl, &cells, &cells, bypass_alpha());
@@ -457,7 +373,7 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup sl;
-				cell cells[] = { { 0, 0, 17 }, { 11, 14 * 512, 0 }, { 13, 0, -17 }, };
+				mocks::cell cells[] = { { 0, 0, 17 }, { 11, 14 * 512, 0 }, { 13, 0, -17 }, };
 
 				// ACT
 				sweep_scanline<7>(sl, begin(cells), end(cells), bypass_alpha());
@@ -492,9 +408,9 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup target(false);
-				const cell cells11[] = { { 0, 0, 17 }, { 11, 0, -3 }, { 13, 0, -14 }, };
-				mask_mockup<8>::scanline_cells cells1[] = { make_pair(begin(cells11), end(cells11)), };
-				mask_mockup<8> mask1(cells1, 13);
+				const mocks::cell cells11[] = { { 0, 0, 17 }, { 11, 0, -3 }, { 13, 0, -14 }, };
+				mocks::mask<8>::scanline_cells cells1[] = { make_pair(begin(cells11), end(cells11)), };
+				mocks::mask<8> mask1(cells1, 13);
 
 				// ACT
 				render(target, mask1, bypass_alpha(), 0, 1);
@@ -508,9 +424,9 @@ namespace agge
 				assert_equal(reference1, target.spans_log);
 
 				// INIT
-				const cell cells21[] = { { 2, 0, 17 }, { 10, 0, -3 }, { 11, 0, -14 }, };
-				mask_mockup<8>::scanline_cells cells2[] = { make_pair(begin(cells21), end(cells21)), };
-				mask_mockup<8> mask2(cells2, -131);
+				const mocks::cell cells21[] = { { 2, 0, 17 }, { 10, 0, -3 }, { 11, 0, -14 }, };
+				mocks::mask<8>::scanline_cells cells2[] = { make_pair(begin(cells21), end(cells21)), };
+				mocks::mask<8> mask2(cells2, -131);
 
 				target.spans_log.clear();
 
@@ -531,9 +447,9 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup target(false);
-				const cell cells11[] = { { 0, 0, 17 }, { 11, 0, -17 }, };
-				mask_mockup<7>::scanline_cells cells1[] = { make_pair(begin(cells11), end(cells11)), };
-				mask_mockup<7> mask1(cells1, 13);
+				const mocks::cell cells11[] = { { 0, 0, 17 }, { 11, 0, -17 }, };
+				mocks::mask<7>::scanline_cells cells1[] = { make_pair(begin(cells11), end(cells11)), };
+				mocks::mask<7> mask1(cells1, 13);
 
 				// ACT
 				render(target, mask1, bypass_alpha(), 0, 1);
@@ -546,9 +462,9 @@ namespace agge
 				assert_equal(reference1, target.spans_log);
 
 				// INIT
-				const cell cells21[] = { { 2, 0, 17 }, { 10, 0, -17 }, };
-				mask_mockup<11>::scanline_cells cells2[] = { make_pair(begin(cells21), end(cells21)), };
-				mask_mockup<11> mask2(cells2, 23);
+				const mocks::cell cells21[] = { { 2, 0, 17 }, { 10, 0, -17 }, };
+				mocks::mask<11>::scanline_cells cells2[] = { make_pair(begin(cells21), end(cells21)), };
+				mocks::mask<11> mask2(cells2, 23);
 
 				target.spans_log.clear();
 
@@ -568,15 +484,15 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup target(false);
-				const cell cells11[] = { { 0, 0, 17 }, { 11, 0, -3 }, { 13, 0, -14 }, };
-				const cell cells12[] = { { -1, 0, 170 }, { 7, 0, -3 }, { 17, 0, -167 }, };
-				const cell cells13[] = { { 0, 0, 117 }, { 13, 0, -117 }, };
-				mask_mockup<8>::scanline_cells cells1[] = {
+				const mocks::cell cells11[] = { { 0, 0, 17 }, { 11, 0, -3 }, { 13, 0, -14 }, };
+				const mocks::cell cells12[] = { { -1, 0, 170 }, { 7, 0, -3 }, { 17, 0, -167 }, };
+				const mocks::cell cells13[] = { { 0, 0, 117 }, { 13, 0, -117 }, };
+				mocks::mask<8>::scanline_cells cells1[] = {
 					make_pair(begin(cells11), end(cells11)),
 					make_pair(begin(cells12), end(cells12)),
 					make_pair(begin(cells13), end(cells13)),
 				};
-				mask_mockup<8> mask1(cells1, 31);
+				mocks::mask<8> mask1(cells1, 31);
 
 				// ACT
 				render(target, mask1, bypass_alpha(), 0, 1);
@@ -591,13 +507,13 @@ namespace agge
 				assert_equal(reference1, target.spans_log);
 
 				// INIT
-				const cell cells21[] = { { 2, 0, 255 }, { 3, 0, -100 }, { 5, 0, -155 }, };
-				const cell cells22[] = { { 5, 0, 101 }, { 8, 0, -3 }, { 13, 0, -98 }, };
-				mask_mockup<8>::scanline_cells cells2[] = {
+				const mocks::cell cells21[] = { { 2, 0, 255 }, { 3, 0, -100 }, { 5, 0, -155 }, };
+				const mocks::cell cells22[] = { { 5, 0, 101 }, { 8, 0, -3 }, { 13, 0, -98 }, };
+				mocks::mask<8>::scanline_cells cells2[] = {
 					make_pair(begin(cells21), end(cells21)),
 					make_pair(begin(cells22), end(cells22)),
 				};
-				mask_mockup<8> mask2(cells2, 59);
+				mocks::mask<8> mask2(cells2, 59);
 
 				target.spans_log.clear();
 
@@ -618,19 +534,19 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup target(false);
-				const cell cells1[] = { { 0, 0, 17 }, { 11, 0, -3 }, { 13, 0, -14 }, };
-				const cell cells2[] = { { -1, 0, 170 }, { 7, 0, -3 }, { 17, 0, -167 }, };
-				const cell cells3[] = { { 0, 0, 117 }, { 13, 0, -117 }, };
-				const cell cells4[] = { { 2, 0, 255 }, { 3, 0, -100 }, { 5, 0, -155 }, };
-				const cell cells5[] = { { 5, 0, 101 }, { 8, 0, -3 }, { 13, 0, -98 }, };
-				mask_mockup<8>::scanline_cells cells[] = {
+				const mocks::cell cells1[] = { { 0, 0, 17 }, { 11, 0, -3 }, { 13, 0, -14 }, };
+				const mocks::cell cells2[] = { { -1, 0, 170 }, { 7, 0, -3 }, { 17, 0, -167 }, };
+				const mocks::cell cells3[] = { { 0, 0, 117 }, { 13, 0, -117 }, };
+				const mocks::cell cells4[] = { { 2, 0, 255 }, { 3, 0, -100 }, { 5, 0, -155 }, };
+				const mocks::cell cells5[] = { { 5, 0, 101 }, { 8, 0, -3 }, { 13, 0, -98 }, };
+				mocks::mask<8>::scanline_cells cells[] = {
 					make_pair(begin(cells1), end(cells1)),
 					make_pair(begin(cells2), end(cells2)),
 					make_pair(begin(cells3), end(cells3)),
 					make_pair(begin(cells4), end(cells4)),
 					make_pair(begin(cells5), end(cells5)),
 				};
-				mask_mockup<8> mask(cells, 79);
+				mocks::mask<8> mask(cells, 79);
 
 				// ACT
 				render(target, mask, bypass_alpha(), 0, 2);
@@ -664,19 +580,19 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup target(false);
-				const cell cells1[] = { { 0, 0, 17 }, { 11, 0, -3 }, { 13, 0, -14 }, };
-				const cell cells2[] = { { -1, 0, 170 }, { 7, 0, -3 }, { 17, 0, -167 }, };
-				const cell cells3[] = { { 0, 0, 117 }, { 13, 0, -117 }, };
-				const cell cells4[] = { { 2, 0, 255 }, { 3, 0, -100 }, { 5, 0, -155 }, };
-				const cell cells5[] = { { 5, 0, 101 }, { 8, 0, -3 }, { 13, 0, -98 }, };
-				mask_mockup<8>::scanline_cells cells[] = {
+				const mocks::cell cells1[] = { { 0, 0, 17 }, { 11, 0, -3 }, { 13, 0, -14 }, };
+				const mocks::cell cells2[] = { { -1, 0, 170 }, { 7, 0, -3 }, { 17, 0, -167 }, };
+				const mocks::cell cells3[] = { { 0, 0, 117 }, { 13, 0, -117 }, };
+				const mocks::cell cells4[] = { { 2, 0, 255 }, { 3, 0, -100 }, { 5, 0, -155 }, };
+				const mocks::cell cells5[] = { { 5, 0, 101 }, { 8, 0, -3 }, { 13, 0, -98 }, };
+				mocks::mask<8>::scanline_cells cells[] = {
 					make_pair(begin(cells1), end(cells1)),
 					make_pair(begin(cells2), end(cells2)),
 					make_pair(begin(cells3), end(cells3)),
 					make_pair(begin(cells4), end(cells4)),
 					make_pair(begin(cells5), end(cells5)),
 				};
-				mask_mockup<8> mask(cells, 1300);
+				mocks::mask<8> mask(cells, 1300);
 
 				// ACT
 				render(target, mask, bypass_alpha(), 1, 1);
@@ -709,15 +625,15 @@ namespace agge
 			{
 				// INIT
 				scanline_mockup target(false);
-				const cell cells1[] = { { 0, 0, 17 }, { 11, 0, -3 }, { 13, 0, -14 }, };
-				const cell cells2[] = { { -1, 0, 170 }, { 7, 0, -3 }, { 17, 0, -167 }, };
-				const cell cells3[] = { { 0, 0, 117 }, { 13, 0, -117 }, };
-				mask_mockup<8>::scanline_cells cells[] = {
+				const mocks::cell cells1[] = { { 0, 0, 17 }, { 11, 0, -3 }, { 13, 0, -14 }, };
+				const mocks::cell cells2[] = { { -1, 0, 170 }, { 7, 0, -3 }, { 17, 0, -167 }, };
+				const mocks::cell cells3[] = { { 0, 0, 117 }, { 13, 0, -117 }, };
+				mocks::mask<8>::scanline_cells cells[] = {
 					make_pair(begin(cells1), end(cells1)),
 					make_pair(begin(cells2), end(cells2)),
 					make_pair(begin(cells3), end(cells3)),
 				};
-				mask_mockup<8> mask(cells, 31);
+				mocks::mask<8> mask(cells, 31);
 
 				// ACT
 				target.excepted_y = 32;
@@ -753,13 +669,13 @@ namespace agge
 				// INIT
 				short covers1[] = { 0x1001, 0x0002, 0x4003, 0x00E2, };
 				mock_blender<int, short> blender1;
-				mock_bitmap<int> bitmap1(7, 5);
-				renderer::adapter< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, 0, blender1);
+				mocks::bitmap<int> bitmap1(7, 5);
+				renderer::adapter< mocks::bitmap<int>, mock_blender<int, short> > r1(bitmap1, 0, blender1);
 
 				uint8_t covers2[] = { 0xED, 0x08, 0x91, };
 				mock_blender<uint8_t, uint8_t> blender2;
-				mock_bitmap<uint8_t> bitmap2(5, 4);
-				renderer::adapter< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap2, 0, blender2);
+				mocks::bitmap<uint8_t> bitmap2(5, 4);
+				renderer::adapter< mocks::bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap2, 0, blender2);
 
 				// ACT
 				r1.set_y(0);
@@ -803,8 +719,8 @@ namespace agge
 				// INIT
 				uint8_t covers[] = { 0x51, 0xFF, 0x13, 0x90, 0xE1, };
 				mock_blender<uint8_t, uint8_t> blender;
-				mock_bitmap<uint8_t, 2> bitmap(8, 3);
-				renderer::adapter< mock_bitmap<uint8_t, 2>, mock_blender<uint8_t, uint8_t> > r(bitmap, 0, blender);
+				mocks::bitmap<uint8_t, 2> bitmap(8, 3);
+				renderer::adapter< mocks::bitmap<uint8_t, 2>, mock_blender<uint8_t, uint8_t> > r(bitmap, 0, blender);
 
 				// ACT
 				r.set_y(0);
@@ -834,10 +750,10 @@ namespace agge
 			{
 				// INIT
 				mock_blender<int, short> blender;
-				mock_bitmap<int> bitmap1(10, 1000);
-				mock_bitmap<int> bitmap2(10, 123);
-				renderer::adapter< mock_bitmap<int>, mock_blender<int, short> > r1(bitmap1, 0, blender);
-				renderer::adapter< mock_bitmap<int>, mock_blender<int, short> > r2(bitmap2, 0, blender);
+				mocks::bitmap<int> bitmap1(10, 1000);
+				mocks::bitmap<int> bitmap2(10, 123);
+				renderer::adapter< mocks::bitmap<int>, mock_blender<int, short> > r1(bitmap1, 0, blender);
+				renderer::adapter< mocks::bitmap<int>, mock_blender<int, short> > r2(bitmap2, 0, blender);
 
 				// ACT / ASSERT
 				assert_is_false(r1.set_y(-1));
@@ -859,9 +775,9 @@ namespace agge
 				// INIT
 				uint8_t covers[] = { 0x10, 0x19, 0xF7, 0xE3, 0x79, };
 				mock_blender<int, uint8_t> blender;
-				mock_bitmap<int> bitmap(7, 5);
+				mocks::bitmap<int> bitmap(7, 5);
 
-				typedef renderer::adapter< mock_bitmap<int>, mock_blender<int, uint8_t> > renderer_adapter;
+				typedef renderer::adapter< mocks::bitmap<int>, mock_blender<int, uint8_t> > renderer_adapter;
 
 				// INIT / ACT
 				rect_i window1 = mkrect_sized(-3, -2, 1000, 1000);
@@ -917,9 +833,9 @@ namespace agge
 				// INIT
 				uint8_t covers[] = { 0x10, 0x19, 0xF7, 0xE3, 0x79, };
 				mock_blender<int, uint8_t> blender;
-				mock_bitmap<int> bitmap(5, 2);
+				mocks::bitmap<int> bitmap(5, 2);
 
-				typedef renderer::adapter< mock_bitmap<int>, mock_blender<int, uint8_t> > renderer_adapter;
+				typedef renderer::adapter< mocks::bitmap<int>, mock_blender<int, uint8_t> > renderer_adapter;
 
 				// INIT / ACT
 				rect_i window1 = mkrect_sized(2, 0, 1000, 1000);
@@ -966,11 +882,11 @@ namespace agge
 				// INIT
 				uint8_t covers[] = { 0x51, 0xFF, 0x13, 0x90, 0xE1, };
 				mock_blender<uint8_t, uint8_t> blender;
-				mock_bitmap<uint8_t, 3> bitmap(6, 2);
+				mocks::bitmap<uint8_t, 3> bitmap(6, 2);
 				rect_i window1 = mkrect_sized(-3, 0, 1000, 1000);
-				renderer::adapter< mock_bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
+				renderer::adapter< mocks::bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
 				rect_i window2 = mkrect_sized(-2, 0, 1000, 1000);
-				renderer::adapter< mock_bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
+				renderer::adapter< mocks::bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
 
 				// ACT
 				r1.set_y(0);
@@ -994,11 +910,11 @@ namespace agge
 				// INIT
 				uint8_t covers[] = { 0x51, 0xFF, 0x13, 0x90, 0xE1, };
 				mock_blender<uint8_t, uint8_t> blender;
-				mock_bitmap<uint8_t, 3> bitmap(6, 2);
+				mocks::bitmap<uint8_t, 3> bitmap(6, 2);
 				rect_i window1 = mkrect_sized(-3, 0, 5, 1000);
-				renderer::adapter< mock_bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
+				renderer::adapter< mocks::bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
 				rect_i window2 = mkrect_sized(-1, 0, 4, 1000);
-				renderer::adapter< mock_bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
+				renderer::adapter< mocks::bitmap<uint8_t, 3>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
 
 				// ACT
 				r1.set_y(0);
@@ -1021,11 +937,11 @@ namespace agge
 			{
 				// INIT
 				mock_blender<uint8_t, uint8_t> blender;
-				mock_bitmap<uint8_t> bitmap(6, 11);
+				mocks::bitmap<uint8_t> bitmap(6, 11);
 				rect_i window1 = mkrect_sized(0, 2, 5, 1000);
-				renderer::adapter< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
+				renderer::adapter< mocks::bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
 				rect_i window2 = mkrect_sized(0, -3, 4, 1000);
-				renderer::adapter< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
+				renderer::adapter< mocks::bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
 
 				// ACT / ASSERT
 				assert_is_false(r1.set_y(1));
@@ -1046,11 +962,11 @@ namespace agge
 			{
 				// INIT
 				mock_blender<uint8_t, uint8_t> blender;
-				mock_bitmap<uint8_t> bitmap(6, 110);
+				mocks::bitmap<uint8_t> bitmap(6, 110);
 				rect_i window1 = mkrect_sized(0, 3, 5, 10);
-				renderer::adapter< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
+				renderer::adapter< mocks::bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r1(bitmap, &window1, blender);
 				rect_i window2 = mkrect_sized(0, -4, 4, 17);
-				renderer::adapter< mock_bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
+				renderer::adapter< mocks::bitmap<uint8_t>, mock_blender<uint8_t, uint8_t> > r2(bitmap, &window2, blender);
 
 				// ACT / ASSERT
 				assert_is_false(r1.set_y(2));
@@ -1070,8 +986,8 @@ namespace agge
 			test( BitmapFillInvokesBlenderCopyForAllPixels )
 			{
 				// INIT
-				mock_bitmap<int> bitmap1(3, 5);
-				mock_bitmap<int> bitmap2(4, 7);
+				mocks::bitmap<int> bitmap1(3, 5);
+				mocks::bitmap<int> bitmap2(4, 7);
 				mock_blender<int, uint8_t> blender;
 
 				// ACT
@@ -1112,16 +1028,16 @@ namespace agge
 			test( RendererPopulatesBitmapWithMaskData )
 			{
 				// INIT
-				const cell cells1[] = { { 0, 0, 0x11 }, { 3, 0, -0x03 }, { 7, 0, -0x0E }, };
-				const cell cells2[] = { { 6, 0, 0xAB }, { 9, 0, -0x1E }, { 10, 0, -0x8D }, };
-				const cell cells3[] = { { 1, 0, 0xA0 }, { 9, 0, -0xA0 }, };
-				mask_mockup<8>::scanline_cells cells[] = {
+				const mocks::cell cells1[] = { { 0, 0, 0x11 }, { 3, 0, -0x03 }, { 7, 0, -0x0E }, };
+				const mocks::cell cells2[] = { { 6, 0, 0xAB }, { 9, 0, -0x1E }, { 10, 0, -0x8D }, };
+				const mocks::cell cells3[] = { { 1, 0, 0xA0 }, { 9, 0, -0xA0 }, };
+				mocks::mask<8>::scanline_cells cells[] = {
 					make_pair(begin(cells1), end(cells1)),
 					make_pair(begin(cells2), end(cells2)),
 					make_pair(begin(cells3), end(cells3)),
 				};
-				mask_mockup_full<8> mask1(cells, 3, 0, 10);
-				mock_bitmap<uint8_t> bitmap1(11, 7);
+				mocks::mask_full<8> mask1(cells, 3, 0, 10);
+				mocks::bitmap<uint8_t> bitmap1(11, 7);
 				mock_blender<uint8_t, uint8_t> blender1;
 
 				renderer r;
@@ -1143,8 +1059,8 @@ namespace agge
 				assert_equal(reference1, bitmap1.data);
 
 				// INIT
-				mask_mockup_full<8> mask2(cells, 1, 0, 10);
-				mock_bitmap<uint16_t> bitmap2(7, 4);
+				mocks::mask_full<8> mask2(cells, 1, 0, 10);
+				mocks::bitmap<uint16_t> bitmap2(7, 4);
 				mock_blender<uint16_t, uint8_t> blender2;
 
 				// ACT
@@ -1165,16 +1081,16 @@ namespace agge
 			test( RendererPopulatesBitmapWithMaskDataAccordingToWindow )
 			{
 				// INIT
-				const cell cells1[] = { { 0, 0, 0x11 }, { 3, 0, -0x03 }, { 7, 0, -0x0E }, };
-				const cell cells2[] = { { 6, 0, 0xAB }, { 9, 0, -0x1E }, { 10, 0, -0x8D }, };
-				const cell cells3[] = { { 1, 0, 0xA0 }, { 9, 0, -0xA0 }, };
-				const mask_mockup<8>::scanline_cells cells[] = {
+				const mocks::cell cells1[] = { { 0, 0, 0x11 }, { 3, 0, -0x03 }, { 7, 0, -0x0E }, };
+				const mocks::cell cells2[] = { { 6, 0, 0xAB }, { 9, 0, -0x1E }, { 10, 0, -0x8D }, };
+				const mocks::cell cells3[] = { { 1, 0, 0xA0 }, { 9, 0, -0xA0 }, };
+				const mocks::mask<8>::scanline_cells cells[] = {
 					make_pair(begin(cells1), end(cells1)),
 					make_pair(begin(cells2), end(cells2)),
 					make_pair(begin(cells3), end(cells3)),
 				};
-				const mask_mockup_full<8> mask1(cells, 3, 0, 10);
-				mock_bitmap<uint8_t> bitmap1(11, 4);
+				const mocks::mask_full<8> mask1(cells, 3, 0, 10);
+				mocks::bitmap<uint8_t> bitmap1(11, 4);
 				const mock_blender<uint8_t, uint8_t> blender1;
 				const rect_i window = mkrect_sized(-1, 3, 11, 100);
 
