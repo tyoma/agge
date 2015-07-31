@@ -21,22 +21,23 @@
 
 #include <aggx/agg_conv_stroke.h>
 
-#include <agge/scanline.h>
+#include <agge/renderer_parallel.h>
 #include <agg/include/agg_rasterizer_sl_clip.h>
 
 #include <jni.h>
 #include <android/bitmap.h>
 #include <memory>
 
+using namespace agge;
 using namespace aggx;
 using namespace demo;
 using namespace std;
 
 namespace
 {
-	agge::pixel32 make_pixel(rgba8 color)
+	pixel32 make_pixel(rgba8 color)
 	{
-		agge::pixel32 p = { color.r, color.g, color.b, 0 };
+		pixel32 p = { color.r, color.g, color.b, 0 };
 		return p;
 	}
 
@@ -55,7 +56,7 @@ namespace
 	class bitmap_proxy
 	{
 	public:
-		typedef agge::pixel32 pixel;
+		typedef pixel32 pixel;
 
 	public:
 		bitmap_proxy(JNIEnv *env, jobject bitmap)
@@ -98,13 +99,15 @@ namespace
 	};
 
 	typedef blenderx<blender_solid_color> blender;
-	typedef agge::renderer::adapter<bitmap_proxy, blender> renderer;
 	typedef rasterizer_scanline_aa<agg::rasterizer_sl_no_clip/*agg::rasterizer_sl_clip_int*/> rasterizer_scanline;
-	typedef agge::scanline_adapter<renderer> scanline;
 
-	struct AGG
+	struct AGG : noncopyable
 	{
 	public:
+		AGG(count_t parallelism)
+			: renderer(parallelism)
+		{	}
+
 		void update_size(unsigned width, unsigned height)
 		{
 			//AggPath spiral_line;
@@ -123,6 +126,7 @@ namespace
 
 	public:
 		rasterizer_scanline rasterizer;
+		renderer_parallel renderer;
 		AggPath spiral;
 	};
 }
@@ -132,7 +136,7 @@ namespace
 extern "C" JNIEXPORT void JNICALL Java_impression_sandbox_SandboxView_constructAGG(JNIEnv *env, jobject obj)
 try
 {
-	AGG *ptr = new AGG;
+	AGG *ptr = new AGG(1);
 	jfieldID fieldidAGG = env->GetFieldID(env->GetObjectClass(obj), "aggObject", "J");
 	env->SetLongField(obj, fieldidAGG, reinterpret_cast<jlong>(ptr));
 }
@@ -161,11 +165,7 @@ try
 	stroke.width(3);
 
 	agg->rasterizer.add_path(stroke);
-	agg->rasterizer.prepare();
-
-	renderer r(bm, 0, blender(rgba8(0, 154, 255, 255)));
-
-	agg->rasterizer.render<scanline>(r);
+	agg->renderer(bm, 0, agg->rasterizer.get_mask(), blender(rgba8(0, 154, 255, 255)), calculate_alpha<8>());
 }
 catch (...)
 {

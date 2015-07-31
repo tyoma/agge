@@ -17,15 +17,6 @@ namespace aggx
 		typedef typename Clip::conv_type conv_type;
 		typedef typename Clip::coord_type coord_type;
 
-		enum aa_scale_e
-		{
-			aa_shift = 8,
-			aa_scale = 1 << aa_shift,
-			aa_mask = aa_scale - 1,
-			aa_scale2 = aa_scale * 2,
-			aa_mask2 = aa_scale2 - 1
-		};
-
 		rasterizer_scanline_aa() : 
 			m_outline(),
 			m_clipper(),
@@ -39,23 +30,7 @@ namespace aggx
 		void reset(); 
 		void reset_clipping();
 		void clip_box(real x1, real y1, real x2, real y2);
-		void filling_rule(filling_rule_e filling_rule);
 		void auto_close(bool flag) { m_auto_close = flag; }
-
-		template<class GammaF>
-		void gamma(const GammaF& gamma_function)
-		{ 
-			int i;
-			for(i = 0; i < aa_scale; i++)
-			{
-				m_gamma[i] = uround(gamma_function(real(i) / aa_mask) * aa_mask);
-			}
-		}
-
-		unsigned apply_gamma(unsigned cover) const 
-		{ 
-			return m_gamma[cover]; 
-		}
 
 		void move_to(int x, int y);
 		void line_to(int x, int y);
