@@ -1,50 +1,20 @@
 #pragma once
 
-#include "basics.h"
-
-#include <agge/types.h>
-
-struct HBITMAP__;
-typedef struct HBITMAP__ *HBITMAP;
-
-struct HDC__;
-typedef struct HDC__ *HDC;
+#include <agge/platform/win32/bitmap.h>
 
 namespace aggx
 {
-	class bitmap
+	class bitmap : public agge::platform::raw_bitmap
 	{
 	public:
 		typedef agge::pixel32 pixel;
 
 	public:
-		bitmap(unsigned width, unsigned height);
-		~bitmap();
+		bitmap(unsigned w, unsigned h)
+			: raw_bitmap(w, h, agge::bpp32)
+		{	}
 
-		void blit(HDC hdc, int x, int y, int w, int h);
-		pixel *row_ptr(unsigned y);
-
-		unsigned width() const;
-		unsigned height() const;
-
-	private:
-		bitmap(const bitmap &other);
-		const bitmap &operator =(const bitmap &other);
-
-	private:
-		const unsigned _width, _height, _stride;
-		HBITMAP _handle;
-		void *_memory;
+		pixel *row_ptr(unsigned y)
+		{	return static_cast<pixel *>(raw_bitmap::row_ptr(y));	}
 	};
-
-
-
-	inline bitmap::pixel *bitmap::row_ptr(unsigned y)
-	{	return reinterpret_cast<pixel *>(_memory) + y * _stride;	}
-
-	inline unsigned bitmap::width() const
-	{	return _width;	}
-
-	inline unsigned bitmap::height() const
-	{	return _height;	}
 }

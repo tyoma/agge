@@ -2,6 +2,7 @@
 
 #include "../common/bouncing.h"
 #include "../common/paths.h"
+#include "../common/timing.h"
 
 #include <agge/renderer_parallel.h>
 #include <agge/blenders_simd.h>
@@ -79,24 +80,86 @@ namespace
 		bitmap &_target;
 	};
 
-	double stopwatch(LARGE_INTEGER &counter)
-	{
-		double value;
-		LARGE_INTEGER current, f;
-
-		::QueryPerformanceCounter(&current);
-		::QueryPerformanceFrequency(&f);
-		value = 1000.0 * (current.QuadPart - counter.QuadPart) / f.QuadPart;
-		counter = current;
-		return value;
-	}
-
 	int random(unsigned __int64 upper_bound)
 	{	return static_cast<unsigned>(upper_bound * rand() / RAND_MAX);}
 
 	float frandom()
 	{	return static_cast<float>(1.0 * rand() / RAND_MAX);	}
+
+	class agge_drawer : public Drawer
+	{
+	public:
+		typedef blender<blender_used> solid_color_brush;
+
+	public:
+		agge_drawer()
+			: _renderer(c_thread_count), _balls(c_balls)
+		{ _balls.resize(c_balls_number);	}
+
+	private:
+		virtual void draw(aggx::bitmap &surface, Timings &timings)
+		{
+			LARGE_INTEGER counter;
+			const float dt = 0.1f * (float)stopwatch(_balls_timer);
+
+			stopwatch(counter);
+			fill(surface, solid_color_brush(rgba8(255, 255, 255)));
+			timings.clearing += stopwatch(counter);
+
+			if (!c_balls_number)
+			{
+				solid_color_brush brush(rgba8(0, 154, 255, 230));
+
+				stopwatch(counter);
+				_rasterizer.add_path(agg_path_adaptor(_spiral_flattened));
+				_rasterizer.prepare();
+				timings.rasterization += stopwatch(counter);
+				_renderer(surface, 0, _rasterizer.get_mask(), brush, calculate_alpha<8>());
+				timings.rendition += stopwatch(counter);
+			}
+
+			for_each(_balls.begin(), _balls.end(), [&] (ball &b) {
+				demo::move_and_bounce(b, dt, surface.width(), surface.height());
+			});
+
+			for_each(_balls.begin(), _balls.end(), [&] (ball &b) {
+				aggx::ellipse e(b.x, b.y, b.radius, b.radius);
+
+				_rasterizer.reset();
+
+				stopwatch(counter);
+				_rasterizer.add_path(e);
+				_rasterizer.prepare();
+				timings.rasterization += stopwatch(counter);
+				_renderer(surface, 0, _rasterizer.get_mask(), agge_drawer::solid_color_brush(b.color), calculate_alpha<8>());
+				timings.rendition += stopwatch(counter);
+			});
+		}
+
+		virtual void resize(int width, int height)
+		{
+			_spiral.clear();
+			spiral(_spiral, width / 2, height / 2, 5, (std::min)(width, height) / 2 - 10, 1, 0);
+
+			agg_path_adaptor p(_spiral);
+			conv_stroke<agg_path_adaptor> stroke(p);
+
+			stroke.width(3);
+
+			_spiral_flattened.clear();
+			flatten(_spiral_flattened, stroke);
+
+		}
+
+	private:
+		rasterizer_scanline_aa<agg::rasterizer_sl_no_clip> _rasterizer;
+		agge::renderer_parallel _renderer;
+		AggPath _spiral, _spiral_flattened;
+		LARGE_INTEGER _balls_timer;
+		vector<demo::ball> _balls;
+	};
 }
+
 
 int main()
 {
@@ -110,6 +173,8 @@ int main()
 	//}
 
 	typedef rasterizer_scanline_aa<agg::rasterizer_sl_no_clip> rasterizer_scanline;
+
+	delete new int[100];
 
 	srand((unsigned)time(0));
 
@@ -128,109 +193,109 @@ int main()
 
 	stopwatch(timer);
 
-	MainDialog dlg([&](bitmap &target, double &clearing, double &rasterization, double &rendition) {
-		typedef blender<blender_used> blenderx;
+	agge_drawer d1;
 
-		LARGE_INTEGER counter;
+	MainDialog dlg(d1);
+	//[&](bitmap &target, double &clearing, double &rasterization, double &rendition) {
+	//	typedef blender<blender_used> blenderx;
 
-		stopwatch(counter);
-		fill(target, blenderx(rgba8(255, 255, 255)));
-		clearing += stopwatch(counter);
+	//	LARGE_INTEGER counter;
 
-		spiral_line.clear();
-		spiral(spiral_line, target.width() / 2, target.height() / 2, 5, (std::min)(target.width(), target.height()) / 2 - 10, 1, 0);
+	//	stopwatch(counter);
+	//	fill(target, blenderx(rgba8(255, 255, 255)));
+	//	clearing += stopwatch(counter);
 
-		agg_path_adaptor p(spiral_line);
-		conv_stroke<agg_path_adaptor> stroke(p);
+	//	spiral_line.clear();
+	//	spiral(spiral_line, target.width() / 2, target.height() / 2, 5, (std::min)(target.width(), target.height()) / 2 - 10, 1, 0);
 
-		stroke.width(3);
+	//	agg_path_adaptor p(spiral_line);
+	//	conv_stroke<agg_path_adaptor> stroke(p);
 
-		spiral_flatten.clear();
-		flatten(spiral_flatten, stroke);
+	//	stroke.width(3);
 
-		rasterization = 0;
-		rendition = 0;
+	//	spiral_flatten.clear();
+	//	flatten(spiral_flatten, stroke);
 
-		const float dt = 0.3f * (float)stopwatch(timer);
+	//	const float dt = 0.3f * (float)stopwatch(timer);
 
-		if (!c_use_original_agg)
-		{
-			if (!c_balls_number)
-			{
-				blenderx brush(rgba8(0, 154, 255, 230));
+	//	if (!c_use_original_agg)
+	//	{
+	//		if (!c_balls_number)
+	//		{
+	//			blenderx brush(rgba8(0, 154, 255, 230));
 
-				stopwatch(counter);
-				ras.add_path(agg_path_adaptor(spiral_flatten));
-				ras.prepare();
-				rasterization += stopwatch(counter);
-				myrenderer(target, 0, ras.get_mask(), brush, calculate_alpha<8>());
-				rendition += stopwatch(counter);
-			}
+	//			stopwatch(counter);
+	//			ras.add_path(agg_path_adaptor(spiral_flatten));
+	//			ras.prepare();
+	//			rasterization += stopwatch(counter);
+	//			myrenderer(target, 0, ras.get_mask(), brush, calculate_alpha<8>());
+	//			rendition += stopwatch(counter);
+	//		}
 
-			for_each(balls.begin(), balls.end(), [&] (ball &b) {
-				demo::move_and_bounce(b, dt, target.width(), target.height());
-			});
+	//		for_each(balls.begin(), balls.end(), [&] (ball &b) {
+	//			demo::move_and_bounce(b, dt, target.width(), target.height());
+	//		});
 
-			for_each(balls.begin(), balls.end(), [&] (ball &b) {
-				aggx::ellipse e(b.x, b.y, b.radius, b.radius);
+	//		for_each(balls.begin(), balls.end(), [&] (ball &b) {
+	//			aggx::ellipse e(b.x, b.y, b.radius, b.radius);
 
-				ras.reset();
+	//			ras.reset();
 
-				stopwatch(counter);
-				ras.add_path(e);
-				ras.prepare();
-				rasterization += stopwatch(counter);
-				myrenderer(target, 0, ras.get_mask(), blenderx(b.color), calculate_alpha<8>());
-				rendition += stopwatch(counter);
-			});
-		}
-		else
-		{
-			typedef agg::pixfmt_alpha_blend_rgba<agg::blender_bgra32, bitmap_rendering_buffer> pixfmt;
-			typedef agg::rgba8 color_type;
-			typedef agg::order_bgra component_order;
-			typedef agg::renderer_base<pixfmt> renderer_base;
-			typedef agg::renderer_scanline_aa_solid<renderer_base> renderer_aa;
-			typedef agg::rasterizer_scanline_aa<agg::rasterizer_sl_no_clip> rasterizer_scanline;
-			typedef agg::scanline_u8 scanline;
+	//			stopwatch(counter);
+	//			ras.add_path(e);
+	//			ras.prepare();
+	//			rasterization += stopwatch(counter);
+	//			myrenderer(target, 0, ras.get_mask(), blenderx(b.color), calculate_alpha<8>());
+	//			rendition += stopwatch(counter);
+	//		});
+	//	}
+	//	else
+	//	{
+	//		typedef agg::pixfmt_alpha_blend_rgba<agg::blender_bgra32, bitmap_rendering_buffer> pixfmt;
+	//		typedef agg::rgba8 color_type;
+	//		typedef agg::order_bgra component_order;
+	//		typedef agg::renderer_base<pixfmt> renderer_base;
+	//		typedef agg::renderer_scanline_aa_solid<renderer_base> renderer_aa;
+	//		typedef agg::rasterizer_scanline_aa<agg::rasterizer_sl_no_clip> rasterizer_scanline;
+	//		typedef agg::scanline_u8 scanline;
 
-			bitmap_rendering_buffer rbuf(target);
-			pixfmt pixf(rbuf);
-			renderer_base rb(pixf);
-			renderer_aa ren_aa(rb);
-			rasterizer_scanline ras_aa;
-			scanline sl;
+	//		bitmap_rendering_buffer rbuf(target);
+	//		pixfmt pixf(rbuf);
+	//		renderer_base rb(pixf);
+	//		renderer_aa ren_aa(rb);
+	//		rasterizer_scanline ras_aa;
+	//		scanline sl;
 
-			if (!c_balls_number)
-			{
-				stopwatch(counter);
-				ras_aa.add_path(agg_path_adaptor(spiral_flatten));
-				ras_aa.sort();
-				rasterization += stopwatch(counter);
-				ren_aa.color(agg::rgba8(0, 154, 255, 255));
-				agg::render_scanlines(ras_aa, sl, ren_aa);
-				rendition += stopwatch(counter);
-			}
+	//		if (!c_balls_number)
+	//		{
+	//			stopwatch(counter);
+	//			ras_aa.add_path(agg_path_adaptor(spiral_flatten));
+	//			ras_aa.sort();
+	//			rasterization += stopwatch(counter);
+	//			ren_aa.color(agg::rgba8(0, 154, 255, 255));
+	//			agg::render_scanlines(ras_aa, sl, ren_aa);
+	//			rendition += stopwatch(counter);
+	//		}
 
-			for_each(balls.begin(), balls.end(), [&] (ball &b) {
-				demo::move_and_bounce(b, dt, target.width(), target.height());
-			});
+	//		for_each(balls.begin(), balls.end(), [&] (ball &b) {
+	//			demo::move_and_bounce(b, dt, target.width(), target.height());
+	//		});
 
-			for_each(balls.begin(), balls.end(), [&] (ball &b) {
-				agg::ellipse e(b.x, b.y, b.radius, b.radius);
+	//		for_each(balls.begin(), balls.end(), [&] (ball &b) {
+	//			agg::ellipse e(b.x, b.y, b.radius, b.radius);
 
-				ras_aa.reset();
+	//			ras_aa.reset();
 
-				stopwatch(counter);
-				ras_aa.add_path(e);
-				ras_aa.sort();
-				rasterization += stopwatch(counter);
-				ren_aa.color(agg::rgba8(b.color.r, b.color.g, b.color.b, b.color.a));
-				agg::render_scanlines(ras_aa, sl, ren_aa);
-				rendition += stopwatch(counter);
-			});
-		}
-	});
+	//			stopwatch(counter);
+	//			ras_aa.add_path(e);
+	//			ras_aa.sort();
+	//			rasterization += stopwatch(counter);
+	//			ren_aa.color(agg::rgba8(b.color.r, b.color.g, b.color.b, b.color.a));
+	//			agg::render_scanlines(ras_aa, sl, ren_aa);
+	//			rendition += stopwatch(counter);
+	//		});
+	//	}
+	//});
 
 	while (::GetMessage(&msg, NULL, 0, 0))
 	{

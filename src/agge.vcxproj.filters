@@ -4,6 +4,18 @@
     <Filter Include="src">
       <UniqueIdentifier>{d0569dc8-c0fe-4eb8-9e86-2b32825b0d68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="platform">
+      <UniqueIdentifier>{1383fb75-4a60-4e18-b314-2df342541680}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\platform">
+      <UniqueIdentifier>{dd2df885-a4ae-4302-bf56-86f6d038f30a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\win32">
+      <UniqueIdentifier>{e17d7403-557c-42f8-93e9-80ee20eb0a90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\platform\win32">
+      <UniqueIdentifier>{04d19b1d-2bbd-494f-8851-c45c5b27c6b8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vector_rasterizer.cpp">
@@ -12,8 +24,11 @@
     <ClCompile Include="blenders_intel.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="parallel.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="platform\win32\bitmap.cpp">
+      <Filter>src\platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\win32\parallel.cpp">
+      <Filter>src\platform\win32</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -27,5 +42,8 @@
     <ClInclude Include="..\agge\parallel.h" />
     <ClInclude Include="..\agge\renderer_parallel.h" />
     <ClInclude Include="..\agge\memory.h" />
+    <ClInclude Include="..\agge\platform\win32\bitmap.h">
+      <Filter>platform\win32</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

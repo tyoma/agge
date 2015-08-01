@@ -31,16 +31,27 @@ namespace aggx
 	class bitmap;
 }
 
+struct Timings
+{
+	double clearing;
+	double rasterization;
+	double rendition;
+	double blitting;
+};
+
+struct Drawer
+{
+	virtual void draw(aggx::bitmap &surface, Timings &timings) = 0;
+	virtual void resize(int width, int height) = 0;
+};
+
 class MainDialog
 {
 public:
-	typedef std::function<void(aggx::bitmap &target, double &clearing, double &rasterization, double &rendition)> render_method;
-
-public:
-	MainDialog(const render_method &render);
+	MainDialog(Drawer &drawer);
 	~MainDialog();
 
-	void Update();
+	void UpdateText();
 
 private:
 	static uintptr_t __stdcall windowProcProxy(HWND hwnd, unsigned int message, uintptr_t wparam, uintptr_t lparam);
@@ -54,8 +65,8 @@ private:
 	HWND _window;
 	uintptr_t _previousWindowProc;
 	std::auto_ptr<aggx::bitmap> _bitmap;
-	const render_method _render;
+	Drawer &_drawer;
 
 	int _cycles;
-	double _total_clearing, _total_rasterization, _total_rendition;
+	Timings _timings;
 };

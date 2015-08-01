@@ -20,6 +20,8 @@
 
 #include "MainDialog.h"
 
+#include "../common/timing.h"
+
 #include <aggx/win32_bitmap.h>
 
 #include <stdexcept>
@@ -31,28 +33,30 @@ using namespace std;
 
 namespace
 {
+	const Timings c_zero_timings = { 0 };
 	const int c_initial_width = 736;
 	const int c_initial_height = 800;
 }
 
-MainDialog::MainDialog(const render_method &render)
+MainDialog::MainDialog(Drawer &drawer)
 	: _window(::CreateWindow(_T("#32770"), NULL, WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, c_initial_width, c_initial_height, NULL, NULL, NULL, NULL)),
-		_render(render), _cycles(0), _total_clearing(0), _total_rasterization(0), _total_rendition(0)
+		_drawer(drawer), _cycles(0), _timings(c_zero_timings)
 {
 	if (!_window)
 		throw std::runtime_error("Cannot create window!");
 	::SetProp(_window, _T("windowProc"), static_cast<HANDLE>(this));
 	_previousWindowProc = ::SetWindowLongPtr(_window, GWLP_WNDPROC, reinterpret_cast<uintptr_t>(&windowProcProxy));
 
-	::SetTimer(_window, 1, 10, NULL);
-
 	RECT rc;
 
 	::GetClientRect(_window, &rc);
 
 	_bitmap.reset(new aggx::bitmap(rc.right, rc.bottom));
+	_drawer.resize(rc.right, rc.bottom);
 
-	Update();
+	UpdateText();
+
+	::SetTimer(_window, 1, 1, 0);
 }
 
 MainDialog::~MainDialog()
@@ -90,7 +94,7 @@ uintptr_t MainDialog::windowProc(unsigned int message, uintptr_t wparam, uintptr
 			{
 				_bitmap.reset();
 				_bitmap.reset(new aggx::bitmap(LOWORD(lparam), HIWORD(lparam)));
-				Update();
+				_drawer.resize(LOWORD(lparam), HIWORD(lparam));
 				::InvalidateRect(_window, NULL, FALSE);
 			}
 		}
@@ -106,11 +110,19 @@ uintptr_t MainDialog::windowProc(unsigned int message, uintptr_t wparam, uintptr
 	case WM_PAINT:
 		{
 			PAINTSTRUCT ps;
+			LARGE_INTEGER counter;
 
+			_drawer.draw(*_bitmap, _timings);
+
+			stopwatch(counter);
 			::BeginPaint(_window, &ps);
 			if (_bitmap.get())
 				_bitmap->blit(ps.hdc, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right - ps.rcPaint.left, ps.rcPaint.bottom - ps.rcPaint.top);
 			::EndPaint(_window, &ps);
+			_timings.blitting += stopwatch(counter);
+			++_cycles;
+
+			UpdateText();
 		}
 		return 0;
 
@@ -118,9 +130,9 @@ uintptr_t MainDialog::windowProc(unsigned int message, uintptr_t wparam, uintptr
 		return TRUE;
 
 	case WM_TIMER:
-		Update();
+		UpdateText();
 		::InvalidateRect(_window, NULL, TRUE);
-		return 0;
+		return TRUE;
 
 	default:
 		return ::CallWindowProc(reinterpret_cast<WNDPROC>(_previousWindowProc), _window, message, wparam, lparam);
@@ -128,30 +140,23 @@ uintptr_t MainDialog::windowProc(unsigned int message, uintptr_t wparam, uintptr
 }
 
 
-void MainDialog::Update()
+void MainDialog::UpdateText()
 {
-	double clearing = 0, rasterization = 0, rendition = 0;
-
-	if (_bitmap.get())
-	{
-		_render(ref(*_bitmap), ref(clearing), ref(rasterization), ref(rendition));
-	}
-
-	_total_clearing += clearing, _total_rasterization += rasterization, _total_rendition += rendition;
-
-	if (0 == (++_cycles & 0x3F))
+	if (_cycles > 100)
 	{
 		TCHAR caption[1000] = { 0 };
 		RECT rc;
 
 		::GetClientRect(_window, &rc);
 
-		_stprintf(caption, _T("Total (%dx%d): %gms, clear: %gms, raster: %gms, render : %gms"), rc.right, rc.bottom,
-			(_total_clearing + _total_rasterization + _total_rendition) / _cycles, _total_clearing / _cycles, _total_rasterization / _cycles, _total_rendition / _cycles);
+		_stprintf_s(caption, _T("Total (%dx%d): %gms, clear: %gms, raster: %gms, render: %gms, blitting: %gms"), rc.right, rc.bottom,
+			(_timings.clearing + _timings.rasterization + _timings.rendition) / _cycles,
+			_timings.clearing / _cycles,
+			_timings.rasterization / _cycles,
+			_timings.rendition / _cycles,
+			_timings.blitting / _cycles);
 		_cycles = 0;
-		_total_clearing = 0;
-		_total_rasterization = 0;
-		_total_rendition = 0;
+		_timings = c_zero_timings;
 		::SetWindowText(_window, caption);
 
 		::InvalidateRect(_window, NULL, TRUE);

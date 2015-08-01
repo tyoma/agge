@@ -112,9 +112,6 @@
     <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp">
       <Filter>aggx</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libraries\aggx\win32_bitmap.cpp">
-      <Filter>aggx</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="gdi-performance.rc">

@@ -10,10 +10,27 @@
     <ClCompile Include="mt.cpp" />
     <ClCompile Include="RendererParallelTests.cpp" />
     <ClCompile Include="MiscTests.cpp" />
+    <ClCompile Include="platform\win32\BitmapTests.cpp">
+      <Filter>platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\win32\surface.cpp">
+      <Filter>platform\win32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />
     <ClInclude Include="mt.h" />
     <ClInclude Include="mocks.h" />
+    <ClInclude Include="platform\win32\surface.h">
+      <Filter>platform\win32</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="platform">
+      <UniqueIdentifier>{b2c447d0-9358-4114-a47f-7d3f1caa164e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\win32">
+      <UniqueIdentifier>{06dbc50d-ce5a-418d-9ea9-75615b7850fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

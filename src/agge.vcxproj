@@ -20,7 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="blenders_intel.cpp" />
-    <ClCompile Include="parallel.cpp">
+    <ClCompile Include="platform\win32\parallel.cpp">
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DisableLanguageExtensions>
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</DisableLanguageExtensions>
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DisableLanguageExtensions>
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DisableLanguageExtensions>
+    </ClCompile>
+    <ClCompile Include="platform\win32\bitmap.cpp">
       <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DisableLanguageExtensions>
       <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</DisableLanguageExtensions>
       <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DisableLanguageExtensions>
@@ -32,6 +38,7 @@
     <ClInclude Include="..\agge\config.h" />
     <ClInclude Include="..\agge\memory.h" />
     <ClInclude Include="..\agge\parallel.h" />
+    <ClInclude Include="..\agge\platform\win32\bitmap.h" />
     <ClInclude Include="..\agge\renderer_parallel.h" />
     <ClInclude Include="..\agge\scanline.h" />
     <ClInclude Include="..\agge\types.h" />

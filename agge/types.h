@@ -2,6 +2,8 @@
 
 namespace agge
 {
+	enum bits_per_pixel { bpp32 = 32, bpp24 = 24, bpp16 = 16 };
+
 	typedef unsigned int count_t;
 	typedef unsigned char uint8_t;
 	typedef unsigned short uint16_t;

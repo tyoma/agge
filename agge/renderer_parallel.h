@@ -16,15 +16,15 @@ namespace agge
 			const AlphaFn &alpha);
 
 	private:
-		parallel _parallel;
-		raw_memory_object * const _scanline_caches;
+		raw_memory_object * const _scanline_caches; // Not an exception safe, but faster to place this one here...
+		parallel _parallel;	// ... before this member, despite its constructor may throw.
 		const count_t _parallelism;
 	};
 
 
 
 	inline renderer_parallel::renderer_parallel(count_t parallelism)
-		: _parallel(parallelism), _scanline_caches(new raw_memory_object[parallelism]),
+		: _scanline_caches(new raw_memory_object[parallelism]), _parallel(parallelism),
 			_parallelism(parallelism)
 	{	}
 

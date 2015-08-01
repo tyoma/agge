@@ -3,9 +3,6 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainDialog.cpp" />
-    <ClCompile Include="..\..\libraries\aggx\win32_bitmap.cpp">
-      <Filter>aggx</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp">
       <Filter>aggx</Filter>
     </ClCompile>
@@ -48,13 +45,13 @@
     <ClInclude Include="..\..\libraries\aggx\blenders.h">
       <Filter>aggx</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\pixel_formats.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\paths.h">
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="..\common\bouncing.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\timing.h">
       <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
