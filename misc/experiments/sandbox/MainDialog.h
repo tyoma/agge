@@ -20,16 +20,16 @@
 
 #pragma once
 
+#include <agge/bitmap.h>
+#include <agge/platform/win32/bitmap.h>
+
 #include <functional>
 #include <memory>
 
 struct HWND__;
 typedef HWND__ *HWND;
 
-namespace aggx
-{
-	class bitmap;
-}
+typedef agge::bitmap<agge::pixel32, agge::platform::raw_bitmap> bitmap;
 
 struct Timings
 {
@@ -41,7 +41,7 @@ struct Timings
 
 struct Drawer
 {
-	virtual void draw(aggx::bitmap &surface, Timings &timings) = 0;
+	virtual void draw(bitmap &surface, Timings &timings) = 0;
 	virtual void resize(int width, int height) = 0;
 };
 
@@ -64,7 +64,7 @@ private:
 private:
 	HWND _window;
 	uintptr_t _previousWindowProc;
-	std::auto_ptr<aggx::bitmap> _bitmap;
+	bitmap _bitmap;
 	Drawer &_drawer;
 
 	int _cycles;

@@ -23,7 +23,7 @@ namespace agge
 				{	return reinterpret_cast<intptr_t>(b.row_ptr(1)) - reinterpret_cast<intptr_t>(b.row_ptr(0));	}
 			}
 
-			begin_test_suite( BitmapTests )
+			begin_test_suite( RawBitmapTests )
 				// Common Bitmap Interface
 				test( CreatedBitmapPreservesSizeAttributes )
 				{
@@ -55,6 +55,17 @@ namespace agge
 					// ACT / ASSERT (writing memory in the end must not crash)
 					memset(b1.row_ptr(999), 123, 1000);
 					memset(b2.row_ptr(1999), 123, 700);
+				}
+
+
+				test( ConstRowPtrIsTheSameToNonConst )
+				{
+					// INIT
+					raw_bitmap b(50, 80, bpp32);
+
+					// ACT / ASSERT
+					assert_equal(b.row_ptr(2), static_cast<const raw_bitmap &>(b).row_ptr(2));
+					assert_equal(b.row_ptr(17), static_cast<const raw_bitmap &>(b).row_ptr(17));
 				}
 
 

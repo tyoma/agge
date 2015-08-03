@@ -10,8 +10,6 @@
 #include <aggx/rasterizer.h>
 #include <aggx/blenders.h>
 
-#include <aggx/win32_bitmap.h>
-
 #include <aggx/agg_conv_stroke.h>
 #include <aggx/agg_ellipse.h>
 
@@ -63,7 +61,7 @@ namespace
 		typedef agg::const_row_info<pixel_type> row_data;
 
 	public:
-		bitmap_rendering_buffer(bitmap &target)
+		bitmap_rendering_buffer(::bitmap &target)
 			: _target(target)
 		{	}
 
@@ -77,7 +75,7 @@ namespace
 		{	return _target.height();	}
 
 	private:
-		bitmap &_target;
+		::bitmap &_target;
 	};
 
 	int random(unsigned __int64 upper_bound)
@@ -97,7 +95,7 @@ namespace
 		{ _balls.resize(c_balls_number);	}
 
 	private:
-		virtual void draw(aggx::bitmap &surface, Timings &timings)
+		virtual void draw(::bitmap &surface, Timings &timings)
 		{
 			LARGE_INTEGER counter;
 			const float dt = 0.1f * (float)stopwatch(_balls_timer);

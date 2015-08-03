@@ -22,8 +22,6 @@
 
 #include "../common/timing.h"
 
-#include <aggx/win32_bitmap.h>
-
 #include <stdexcept>
 #include <stdio.h>
 #include <tchar.h>
@@ -40,7 +38,7 @@ namespace
 
 MainDialog::MainDialog(Drawer &drawer)
 	: _window(::CreateWindow(_T("#32770"), NULL, WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, c_initial_width, c_initial_height, NULL, NULL, NULL, NULL)),
-		_drawer(drawer), _cycles(0), _timings(c_zero_timings)
+		_bitmap(1, 1), _drawer(drawer), _cycles(0), _timings(c_zero_timings)
 {
 	if (!_window)
 		throw std::runtime_error("Cannot create window!");
@@ -51,7 +49,7 @@ MainDialog::MainDialog(Drawer &drawer)
 
 	::GetClientRect(_window, &rc);
 
-	_bitmap.reset(new aggx::bitmap(rc.right, rc.bottom));
+	_bitmap.resize(rc.right, rc.bottom);
 	_drawer.resize(rc.right, rc.bottom);
 
 	UpdateText();
@@ -92,8 +90,7 @@ uintptr_t MainDialog::windowProc(unsigned int message, uintptr_t wparam, uintptr
 		{
 			if (LOWORD(lparam) && HIWORD(lparam))
 			{
-				_bitmap.reset();
-				_bitmap.reset(new aggx::bitmap(LOWORD(lparam), HIWORD(lparam)));
+				_bitmap.resize(LOWORD(lparam), HIWORD(lparam));
 				_drawer.resize(LOWORD(lparam), HIWORD(lparam));
 				::InvalidateRect(_window, NULL, FALSE);
 			}
@@ -112,12 +109,11 @@ uintptr_t MainDialog::windowProc(unsigned int message, uintptr_t wparam, uintptr
 			PAINTSTRUCT ps;
 			LARGE_INTEGER counter;
 
-			_drawer.draw(*_bitmap, _timings);
+			_drawer.draw(_bitmap, _timings);
 
 			stopwatch(counter);
 			::BeginPaint(_window, &ps);
-			if (_bitmap.get())
-				_bitmap->blit(ps.hdc, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right - ps.rcPaint.left, ps.rcPaint.bottom - ps.rcPaint.top);
+			_bitmap.blit(ps.hdc, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right - ps.rcPaint.left, ps.rcPaint.bottom - ps.rcPaint.top);
 			::EndPaint(_window, &ps);
 			_timings.blitting += stopwatch(counter);
 			++_cycles;

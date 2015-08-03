@@ -117,7 +117,7 @@ CChildView::CChildView()
 	: _drawLines(false), _drawBars(true), _drawEllipses(false), _drawSpiral(false),
 		_mode(bufferDIB), _status_bar(0), _drawMode(dmodeGDI), _onpaint_timing(0),
 		_fill_timing(0), _drawing_timing(0), _blit_timing(0), _averaging_index(0),
-		_renderer(4)
+		_agg_bitmap(1, 1), _renderer(4)
 {
 	::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &_factory);
 	const D2D1_RENDER_TARGET_PROPERTIES properties = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
@@ -502,21 +502,21 @@ void CChildView::OnPaint()
 	{
 		{
 			CPerformance p3(_fill_timing);
-			agge::fill(*_agg_bitmap, blender(rgba8(240, 255, 255)));
+			agge::fill(_agg_bitmap, blender(rgba8(240, 255, 255)));
 		}
 
 		{
 			CPerformance p2(_drawing_timing);
 
 			if (_drawEllipses)
-				drawEllipses(*_agg_bitmap, client.Size(), _ellipses);
+				drawEllipses(_agg_bitmap, client.Size(), _ellipses);
 			if (_drawLines)
 				for (int i = 0; i < 20; ++i)
-					drawLines(*_agg_bitmap, client.Size(), _bars[i]);
+					drawLines(_agg_bitmap, client.Size(), _bars[i]);
 			if (_drawBars)
 			{
 				for (int i = 0; i < 20; ++i)
-					drawBars(*_agg_bitmap, client.Size(), _bars[i]);
+					drawBars(_agg_bitmap, client.Size(), _bars[i]);
 			}
 			if (_drawSpiral)
 			{
@@ -527,13 +527,13 @@ void CChildView::OnPaint()
 				//_agg_rasterizer.add_path(stroke);
 				_agg_rasterizer.add_path(demo::agg_path_adaptor(_agg_path_flatten));
 
-				_renderer(*_agg_bitmap, 0, _agg_rasterizer.get_mask(), blender(rgba8(0, 150, 255)),
+				_renderer(_agg_bitmap, 0, _agg_rasterizer.get_mask(), blender(rgba8(0, 150, 255)),
 					aggx::calculate_alpha<8>());
 			}
 		}
 
 		CPerformance p4(_blit_timing);
-		_agg_bitmap->blit(dc, 0, 0, client.Width(), client.Height());
+		_agg_bitmap.blit(dc, 0, 0, client.Width(), client.Height());
 	}
 
 	PostMessage(WM_USER + 0x1234);
@@ -543,12 +543,7 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 {
 	if (cx && cy)
 	{
-		if (!_agg_bitmap.get() || cx > (int)_agg_bitmap->width() || cy > (int)_agg_bitmap->height())
-		{
-			const int maxw = _agg_bitmap.get() ? (max<int>)(cx, _agg_bitmap->width()) : cx;
-			const int maxh = _agg_bitmap.get() ? (max<int>)(cy, _agg_bitmap->height()) : cy;
-			_agg_bitmap.reset(new bitmap(maxw, maxh));
-		}
+		_agg_bitmap.resize(cx, cy);
 
 		demo::GdipPath spiralGdip;
 
@@ -781,7 +776,7 @@ void CChildView::drawLines(bitmap &b, const CSize &client, const std::vector<bar
 		x += 2 * d + 1;
 	});
 
-	_renderer(*_agg_bitmap, 0, _agg_rasterizer.get_mask(), blender(rgba8(0, 0, 0)),
+	_renderer(_agg_bitmap, 0, _agg_rasterizer.get_mask(), blender(rgba8(0, 0, 0)),
 		aggx::calculate_alpha<8>());
 }
 
@@ -816,7 +811,7 @@ void CChildView::drawBars(bitmap &b, const CSize &client, const vector<bar> &bar
 		x += 2 * d + 1;
 	});
 
-	_renderer(*_agg_bitmap, 0, _agg_rasterizer.get_mask(), blender(rgba8(0, 0, 0, 96)),
+	_renderer(_agg_bitmap, 0, _agg_rasterizer.get_mask(), blender(rgba8(0, 0, 0, 96)),
 		aggx::calculate_alpha<8>());
 }
 
@@ -829,7 +824,7 @@ void CChildView::drawEllipses(bitmap &b, const CSize &client, const vector<ellip
 
 		_agg_rasterizer.add_path(ellipse);
 
-		_renderer(*_agg_bitmap, 0, _agg_rasterizer.get_mask(), CChildView::blender(rgba8(GetRValue(e.second),
+		_renderer(_agg_bitmap, 0, _agg_rasterizer.get_mask(), CChildView::blender(rgba8(GetRValue(e.second),
 			GetGValue(e.second), GetBValue(e.second), 224)), aggx::calculate_alpha<8>());
 	});
 }

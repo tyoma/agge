@@ -35,6 +35,7 @@
     <ClCompile Include="vector_rasterizer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\agge\bitmap.h" />
     <ClInclude Include="..\agge\config.h" />
     <ClInclude Include="..\agge\memory.h" />
     <ClInclude Include="..\agge\parallel.h" />

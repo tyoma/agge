@@ -10,12 +10,13 @@
     <ClCompile Include="mt.cpp" />
     <ClCompile Include="RendererParallelTests.cpp" />
     <ClCompile Include="MiscTests.cpp" />
-    <ClCompile Include="platform\win32\BitmapTests.cpp">
-      <Filter>platform\win32</Filter>
-    </ClCompile>
     <ClCompile Include="platform\win32\surface.cpp">
       <Filter>platform\win32</Filter>
     </ClCompile>
+    <ClCompile Include="platform\win32\RawBitmapTests.cpp">
+      <Filter>platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="BitmapTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />

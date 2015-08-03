@@ -26,6 +26,7 @@ namespace agge
 			count_t height() const;
 
 			void *row_ptr(count_t y);
+			const void *row_ptr(count_t y) const;
 
 		public: // Win32
 			void blit(HDC hdc, int x, int y, count_t width, count_t height) const;
@@ -51,5 +52,8 @@ namespace agge
 
 		inline void *raw_bitmap::row_ptr(count_t y)
 		{	return reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(_memory) + y * _stride);	}
+
+		inline const void *raw_bitmap::row_ptr(count_t y) const
+		{	return reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(_memory) + y * _stride);	}
 	}
 }

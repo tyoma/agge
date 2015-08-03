@@ -1,10 +1,11 @@
 #pragma once
 
+#include <agge/bitmap.h>
 #include <agge/renderer_parallel.h>
+#include <agge/platform/win32/bitmap.h>
 
 #include <aggx/blenders.h>
 #include <aggx/rasterizer.h>
-#include <aggx/win32_bitmap.h>
 
 #include <agg/include/agg_rasterizer_sl_clip.h>
 
@@ -25,6 +26,7 @@ namespace Gdiplus
 }
 
 typedef std::vector< std::pair<std::pair<aggx::real, aggx::real>, unsigned> > AggPath;
+typedef agge::bitmap<agge::pixel32, agge::platform::raw_bitmap> bitmap;
 
 class CChildView : public CWnd
 {
@@ -40,7 +42,7 @@ class CChildView : public CWnd
 	CComPtr<ID2D1SolidColorBrush> _brush, _brushTick, _brushBackgroundSolid;
 	CComPtr<ID2D1BitmapBrush> _brushBackground;
 
-	std::auto_ptr<aggx::bitmap> _agg_bitmap;
+	bitmap _agg_bitmap;
 	aggx::rasterizer_scanline_aa<agg::rasterizer_sl_no_clip> _agg_rasterizer;
 	agge::renderer_parallel _renderer;
 
@@ -108,10 +110,10 @@ class CChildView : public CWnd
 	void drawEllipses(ID2D1RenderTarget *graphics, const CSize &client, const std::vector<ellipse_t> &ellipses);
 	void drawSpiral(ID2D1RenderTarget *graphics, const CSize &client);
 
-	void drawLines(aggx::bitmap &b, const CSize &client, const std::vector<bar> &bars);
-	void drawBars(aggx::bitmap &b, const CSize &client, const std::vector<bar> &bars);
-	void drawEllipses(aggx::bitmap &b, const CSize &client, const std::vector<ellipse_t> &ellipses);
-	void drawSpiral(aggx::bitmap &b, const CSize &client);
+	void drawLines(bitmap &b, const CSize &client, const std::vector<bar> &bars);
+	void drawBars(bitmap &b, const CSize &client, const std::vector<bar> &bars);
+	void drawEllipses(bitmap &b, const CSize &client, const std::vector<ellipse_t> &ellipses);
+	void drawSpiral(bitmap &b, const CSize &client);
 
 public:
 	CChildView();
