@@ -53,4 +53,19 @@ namespace agge
 	template <typename PixelT, typename RawBitmapT>
 	inline const typename bitmap<PixelT, RawBitmapT>::pixel *bitmap<PixelT, RawBitmapT>::row_ptr(count_t y) const
 	{	return static_cast<const pixel *>(RawBitmapT::row_ptr(y));	}
+
+
+	template <typename SrcBitmapT, typename DestBitmapT>
+	void copy(const SrcBitmapT &src, count_t /*src_x*/, count_t /*src_y*/, DestBitmapT &dest, count_t /*dest_x*/, count_t /*dest_y*/,
+		count_t width, count_t height)
+	{
+		for (count_t y = 0; y != height; ++y)
+		{
+			const typename SrcBitmapT::pixel *src_pixel = src.row_ptr(y);
+			typename DestBitmapT::pixel *dest_pixel = dest.row_ptr(y);
+
+			for (count_t i = 0; i != width; ++i, ++src_pixel, ++dest_pixel)
+				*dest_pixel = *src_pixel;
+		}
+	}
 }
