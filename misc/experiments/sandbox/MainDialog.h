@@ -53,6 +53,8 @@ public:
 
 	void UpdateText();
 
+	static void PumpMessages();
+
 private:
 	static uintptr_t __stdcall windowProcProxy(HWND hwnd, unsigned int message, uintptr_t wparam, uintptr_t lparam);
 	uintptr_t windowProc(unsigned int message, uintptr_t wparam, uintptr_t lparam);

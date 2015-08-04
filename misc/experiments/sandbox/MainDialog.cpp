@@ -158,3 +158,14 @@ void MainDialog::UpdateText()
 		::InvalidateRect(_window, NULL, TRUE);
 	}
 }
+
+void PumpMessages()
+{
+	MSG msg;
+
+	while (::GetMessage(&msg, NULL, 0, 0))
+	{
+		::TranslateMessage(&msg);
+		::DispatchMessage(&msg);
+	}
+}
