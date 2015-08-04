@@ -1,6 +1,6 @@
 #pragma once
 
-#include <aggx/agg_math.h>
+#include <aggx/aggx_math.h>
 #include <aggx/basics.h>
 
 #include <vector>
@@ -55,14 +55,14 @@ namespace demo
 	void pathEnd(AggPath &path)
 	{	path.push_back(std::make_pair(std::make_pair(0.0f, 0.0f), aggx::path_cmd_stop));	}
 
-	template <typename TargetT, typename PathT>
+	template <typename RealT, typename TargetT, typename PathT>
 	void flatten(TargetT &destination, PathT &source)
 	{
 		unsigned cmd;
-		aggx::real x, y;
+		RealT x, y;
 
 		source.rewind(0);
-		while (!is_stop(cmd = source.vertex(&x, &y)))
+		while (!aggx::is_stop(cmd = source.vertex(&x, &y)))
 			destination.push_back(std::make_pair(std::make_pair(x, y), cmd));
 	}
 

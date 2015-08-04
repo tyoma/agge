@@ -145,9 +145,10 @@ void MainDialog::UpdateText()
 
 		::GetClientRect(_window, &rc);
 
-		_stprintf_s(caption, _T("Total (%dx%d): %gms, clear: %gms, raster: %gms, render: %gms, blitting: %gms"), rc.right, rc.bottom,
+		_stprintf_s(caption, _T("Total (%dx%d): %gms, clear: %gms, stroking: %gms, raster: %gms, render: %gms, blitting: %gms"), rc.right, rc.bottom,
 			(_timings.clearing + _timings.rasterization + _timings.rendition) / _cycles,
 			_timings.clearing / _cycles,
+			_timings.stroking / _cycles,
 			_timings.rasterization / _cycles,
 			_timings.rendition / _cycles,
 			_timings.blitting / _cycles);
@@ -159,7 +160,7 @@ void MainDialog::UpdateText()
 	}
 }
 
-void PumpMessages()
+void MainDialog::PumpMessages()
 {
 	MSG msg;
 

@@ -19,7 +19,7 @@
 #include <aggx/rasterizer.h>
 #include <aggx/blenders.h>
 
-#include <aggx/agg_conv_stroke.h>
+#include <aggx/aggx_conv_stroke.h>
 
 #include <agge/renderer_parallel.h>
 #include <agg/include/agg_rasterizer_sl_clip.h>
@@ -128,6 +128,8 @@ namespace
 		rasterizer_scanline rasterizer;
 		renderer_parallel renderer;
 		AggPath spiral;
+		aggx::vertex_sequence<aggx::vertex_dist> vertex_storage;
+		vector<aggx::point_r> coord_storage;
 	};
 }
 
@@ -160,7 +162,7 @@ try
 	bitmap_proxy bm(env, bitmap);
 
 	agg_path_adaptor p(agg->spiral);
-	conv_stroke<agg_path_adaptor> stroke(p);
+	conv_stroke<agg_path_adaptor> stroke(p, agg->vertex_storage, agg->coord_storage);
 
 	stroke.width(3);
 

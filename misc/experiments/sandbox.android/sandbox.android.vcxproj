@@ -84,7 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\vector_rasterizer.cpp" />
-    <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp" />
+    <ClCompile Include="..\..\libraries\aggx\aggx_vcgen_stroke.cpp" />
     <ClCompile Include="parallel_linux.cpp" />
     <ClCompile Include="sandbox_view.cpp" />
   </ItemGroup>

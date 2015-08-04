@@ -34,6 +34,7 @@ typedef agge::bitmap<agge::pixel32, agge::platform::raw_bitmap> bitmap;
 struct Timings
 {
 	double clearing;
+	double stroking;
 	double rasterization;
 	double rendition;
 	double blitting;

@@ -10,11 +10,11 @@
 #include <aggx/rasterizer.h>
 #include <aggx/blenders.h>
 
-#include <aggx/agg_conv_stroke.h>
-#include <aggx/agg_ellipse.h>
+#include <aggx/aggx_conv_stroke.h>
+#include <aggx/aggx_ellipse.h>
 
+#include <agg_conv_stroke.h>
 #include <agg_rasterizer_sl_clip.h>
-
 #include <agg_ellipse.h>
 #include <agg_pixfmt_rgba.h>
 #include <agg_renderer_base.h>
@@ -22,19 +22,17 @@
 #include <agg_rasterizer_scanline_aa.h>
 #include <agg_renderer_scanline.h>
 
-using namespace agge;
-using namespace aggx;
 using namespace std;
 using namespace demo;
 
-const int c_thread_count = 2;
+const int c_thread_count = 1;
 const bool c_use_original_agg = false;
-const int c_balls_number = 700;
-typedef simd::blender_solid_color blender_used;
+const int c_balls_number = 0;//700;
+typedef agge::simd::blender_solid_color blender_used;
 
 namespace
 {
-	agge::simd::blender_solid_color::pixel make_pixel(rgba8 color)
+	agge::simd::blender_solid_color::pixel make_pixel(aggx::rgba8 color)
 	{
 		agge::simd::blender_solid_color::pixel p = { color.b, color.g, color.r, 0 };
 		return p;
@@ -44,7 +42,7 @@ namespace
 	class blender : public BlenderT
 	{
 	public:
-		blender(rgba8 color)
+		blender(aggx::rgba8 color)
 			: BlenderT(make_pixel(color), color.a)
 		{	}
 	};
@@ -98,8 +96,16 @@ namespace
 			const float dt = 0.3f * (float)stopwatch(_balls_timer);
 
 			stopwatch(counter);
-			fill(surface, solid_color_brush(rgba8(255, 255, 255)));
+				agge::fill(surface, solid_color_brush(aggx::rgba8(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
+
+			stopwatch(counter);
+				agg_path_adaptor p(_spiral);
+				agg::conv_stroke<agg_path_adaptor> stroke(p);
+				stroke.width(3);
+				_spiral_flattened.clear();
+				flatten<double>(_spiral_flattened, stroke);
+			timings.stroking += stopwatch(counter);
 
 			bitmap_rendering_buffer rbuf(surface);
 			pixfmt pixf(rbuf);
@@ -140,15 +146,6 @@ namespace
 		{
 			_spiral.clear();
 			spiral(_spiral, width / 2, height / 2, 5, (std::min)(width, height) / 2 - 10, 1, 0);
-
-			agg_path_adaptor p(_spiral);
-			conv_stroke<agg_path_adaptor> stroke(p);
-
-			stroke.width(3);
-
-			_spiral_flattened.clear();
-			flatten(_spiral_flattened, stroke);
-
 		}
 
 	private:
@@ -177,18 +174,26 @@ namespace
 			const float dt = 0.3f * (float)stopwatch(_balls_timer);
 
 			stopwatch(counter);
-			fill(surface, solid_color_brush(rgba8(255, 255, 255)));
+				agge::fill(surface, solid_color_brush(aggx::rgba8(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
+
+			stopwatch(counter);
+				agg_path_adaptor p(_spiral);
+				aggx::conv_stroke<agg_path_adaptor> stroke(p, _vertex_storage, _coord_storage);
+				stroke.width(3);
+				_spiral_flattened.clear();
+				flatten<aggx::real>(_spiral_flattened, stroke);
+			timings.stroking += stopwatch(counter);
 
 			if (_balls.empty())
 			{
-				solid_color_brush brush(rgba8(0, 154, 255, 230));
+				solid_color_brush brush(aggx::rgba8(0, 154, 255, 230));
 
 				stopwatch(counter);
 				_rasterizer.add_path(agg_path_adaptor(_spiral_flattened));
 				_rasterizer.prepare();
 				timings.rasterization += stopwatch(counter);
-				_renderer(surface, 0, _rasterizer.get_mask(), brush, calculate_alpha<8>());
+				_renderer(surface, 0, _rasterizer.get_mask(), brush, aggx::calculate_alpha<8>());
 				timings.rendition += stopwatch(counter);
 			}
 
@@ -205,7 +210,7 @@ namespace
 				_rasterizer.add_path(e);
 				_rasterizer.prepare();
 				timings.rasterization += stopwatch(counter);
-				_renderer(surface, 0, _rasterizer.get_mask(), agge_drawer::solid_color_brush(b.color), calculate_alpha<8>());
+				_renderer(surface, 0, _rasterizer.get_mask(), agge_drawer::solid_color_brush(b.color), aggx::calculate_alpha<8>());
 				timings.rendition += stopwatch(counter);
 			});
 		}
@@ -214,20 +219,13 @@ namespace
 		{
 			_spiral.clear();
 			spiral(_spiral, width / 2, height / 2, 5, (std::min)(width, height) / 2 - 10, 1, 0);
-
-			agg_path_adaptor p(_spiral);
-			conv_stroke<agg_path_adaptor> stroke(p);
-
-			stroke.width(3);
-
-			_spiral_flattened.clear();
-			flatten(_spiral_flattened, stroke);
-
 		}
 
 	private:
-		rasterizer_scanline_aa<agg::rasterizer_sl_no_clip> _rasterizer;
+		aggx::rasterizer_scanline_aa<agg::rasterizer_sl_no_clip> _rasterizer;
 		agge::renderer_parallel _renderer;
+		aggx::vertex_sequence<aggx::vertex_dist> _vertex_storage;
+		vector<aggx::point_r> _coord_storage;
 		AggPath _spiral, _spiral_flattened;
 		LARGE_INTEGER _balls_timer;
 		vector<demo::ball> _balls;
@@ -237,6 +235,8 @@ namespace
 
 int main()
 {
+	delete new int;
+
 	agg_drawer d1;
 	agge_drawer d2;
 

@@ -111,6 +111,8 @@
       <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>./../../..;./../../libraries;./../../libraries/agg/include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>
+      </AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -171,19 +173,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp" />
+    <ClCompile Include="..\..\libraries\aggx\aggx_vcgen_stroke.cpp" />
+    <ClCompile Include="..\..\libraries\agg\src\agg_vcgen_stroke.cpp" />
     <ClCompile Include="..\common\balls.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainDialog.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\libraries\aggx\agg_conv_adaptor_vcgen.h" />
-    <ClInclude Include="..\..\libraries\aggx\agg_conv_stroke.h" />
-    <ClInclude Include="..\..\libraries\aggx\agg_math.h" />
-    <ClInclude Include="..\..\libraries\aggx\agg_math_stroke.h" />
-    <ClInclude Include="..\..\libraries\aggx\agg_shorten_path.h" />
-    <ClInclude Include="..\..\libraries\aggx\agg_vcgen_stroke.h" />
-    <ClInclude Include="..\..\libraries\aggx\agg_vertex_sequence.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_conv_adaptor_vcgen.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_conv_stroke.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_ellipse.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_math.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_math_stroke.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_shorten_path.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_vcgen_stroke.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_vertex_sequence.h" />
     <ClInclude Include="..\..\libraries\aggx\basics.h" />
     <ClInclude Include="..\..\libraries\aggx\blenders.h" />
     <ClInclude Include="..\..\libraries\aggx\rasterizer.h" />

@@ -53,14 +53,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp">
-      <Filter>aggx</Filter>
-    </ClCompile>
     <ClCompile Include="sandbox_view.cpp" />
     <ClCompile Include="..\..\..\src\vector_rasterizer.cpp">
       <Filter>agge</Filter>
     </ClCompile>
     <ClCompile Include="parallel_linux.cpp" />
+    <ClCompile Include="..\..\libraries\aggx\aggx_vcgen_stroke.cpp">
+      <Filter>aggx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\agge\vector_rasterizer.h">

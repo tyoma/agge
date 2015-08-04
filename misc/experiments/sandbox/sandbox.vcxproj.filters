@@ -3,11 +3,14 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainDialog.cpp" />
-    <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp">
-      <Filter>aggx</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\balls.cpp">
       <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\agg\src\agg_vcgen_stroke.cpp">
+      <Filter>agg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\aggx\aggx_vcgen_stroke.cpp">
+      <Filter>aggx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -19,27 +22,6 @@
       <Filter>aggx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libraries\aggx\rasterizer.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\agg_conv_adaptor_vcgen.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\agg_conv_stroke.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\agg_math.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\agg_math_stroke.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\agg_vcgen_stroke.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\agg_vertex_sequence.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\agg_shorten_path.h">
       <Filter>aggx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libraries\aggx\blenders.h">
@@ -54,6 +36,30 @@
     <ClInclude Include="..\common\timing.h">
       <Filter>common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\aggx_vcgen_stroke.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\aggx_vertex_sequence.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\aggx_shorten_path.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\aggx_math_stroke.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\aggx_math.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\aggx_conv_stroke.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\aggx_conv_adaptor_vcgen.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\aggx\aggx_ellipse.h">
+      <Filter>aggx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="aggx">
@@ -61,6 +67,9 @@
     </Filter>
     <Filter Include="common">
       <UniqueIdentifier>{ae002ae0-404e-4727-ae0a-72585e494442}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="agg">
+      <UniqueIdentifier>{bcb50d93-cf3e-4b28-8cf5-5315bd71f5a5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
