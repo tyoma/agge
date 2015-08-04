@@ -1,5 +1,6 @@
 #pragma once
 
+#include "tools.h"
 #include "types.h"
 
 namespace agge
@@ -56,15 +57,18 @@ namespace agge
 
 
 	template <typename SrcBitmapT, typename DestBitmapT>
-	void copy(const SrcBitmapT &src, count_t /*src_x*/, count_t /*src_y*/, DestBitmapT &dest, count_t /*dest_x*/, count_t /*dest_y*/,
+	inline void copy(const SrcBitmapT &src, count_t src_x, count_t src_y, DestBitmapT &dest, count_t dest_x, count_t dest_y,
 		count_t width, count_t height)
 	{
-		for (count_t y = 0; y != height; ++y)
-		{
-			const typename SrcBitmapT::pixel *src_pixel = src.row_ptr(y);
-			typename DestBitmapT::pixel *dest_pixel = dest.row_ptr(y);
+		width = agge_min(width, agge_min(src.width() - src_x, dest.width() - dest_x));
+		height = agge_min(height, agge_min(src.height() - src_y, dest.height() - dest_y));
 
-			for (count_t i = 0; i != width; ++i, ++src_pixel, ++dest_pixel)
+		for (count_t y = 0; y < height; ++y)
+		{
+			const typename SrcBitmapT::pixel *src_pixel = src.row_ptr(y + src_y) + src_x;
+			typename DestBitmapT::pixel *dest_pixel = dest.row_ptr(y + dest_y) + dest_x;
+
+			for (count_t i = 0; i < width; ++i, ++src_pixel, ++dest_pixel)
 				*dest_pixel = *src_pixel;
 		}
 	}

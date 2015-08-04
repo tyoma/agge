@@ -203,7 +203,7 @@ namespace agge
 					assert_equal(w, b.width());
 					assert_equal(h, b.height());
 					assert_equal(p, b.row_ptr(0));
-					assert_equal(4 * w, get_stride(b));
+					assert_equal(static_cast<int>(4 * w), get_stride(b));
 				}
 
 
