@@ -1,8 +1,9 @@
 #include <agge/platform/win32/bitmap.h>
 
-#include <windows.h>
+#include <agge/tools.h>
 
 #include <memory>
+#include <windows.h>
 
 using namespace std;
 
@@ -43,8 +44,8 @@ namespace agge
 			{
 				dc memdc;
 
-				const count_t max_width = width > _max_width ? width : _max_width;
-				const count_t max_height = height > _max_height ? height : _max_height;
+				const count_t max_width = agge_max(width, _max_width);
+				const count_t max_height = agge_max(height, _max_height);
 				const count_t stride = calculate_stride(max_width, _bpp);
 				void *memory = 0;
 				BITMAPINFO bi = { 0 };
@@ -77,7 +78,7 @@ namespace agge
 			dc memdc;
 
 			HGDIOBJ prev = ::SelectObject(memdc, _native);
-			::BitBlt(hdc, x, y, w, h, memdc, x, y, SRCCOPY);
+			::BitBlt(hdc, x, y, w, h, memdc, 0, 0, SRCCOPY);
 			::SelectObject(memdc, prev);
 		}
 

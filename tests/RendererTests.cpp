@@ -980,7 +980,7 @@ namespace agge
 					make_pair(begin(cells2), end(cells2)),
 					make_pair(begin(cells3), end(cells3)),
 				};
-				mocks::mask_full<8> mask1(cells, 3, 0, 10);
+				mocks::mask_full<8> mask1(cells, 3);
 				mocks::bitmap<uint8_t> bitmap1(11, 7);
 				mocks::blender<uint8_t, uint8_t> blender1;
 
@@ -1003,7 +1003,7 @@ namespace agge
 				assert_equal(reference1, bitmap1.data);
 
 				// INIT
-				mocks::mask_full<8> mask2(cells, 1, 0, 10);
+				mocks::mask_full<8> mask2(cells, 1);
 				mocks::bitmap<uint16_t> bitmap2(7, 4);
 				mocks::blender<uint16_t, uint8_t> blender2;
 
@@ -1033,7 +1033,7 @@ namespace agge
 					make_pair(begin(cells2), end(cells2)),
 					make_pair(begin(cells3), end(cells3)),
 				};
-				const mocks::mask_full<8> mask1(cells, 3, 0, 10);
+				const mocks::mask_full<8> mask1(cells, 3);
 				mocks::bitmap<uint8_t> bitmap1(11, 4);
 				const mocks::blender<uint8_t, uint8_t> blender1;
 				const rect_i window = mkrect_sized(-1, 3, 11, 100);

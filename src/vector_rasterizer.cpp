@@ -1,6 +1,7 @@
 #include <agge/vector_rasterizer.h>
 
 #include <agge/config.h>
+#include <agge/tools.h>
 
 using namespace std;
 
@@ -165,7 +166,7 @@ namespace agge
 		if (_x_sorted_cells.empty())
 			return;
 
-		const int max_length = (max)(_max_x - _min_x + 1, _max_y - _min_y + 1);
+		const int max_length = agge_max(_max_x - _min_x + 1, _max_y - _min_y + 1);
 
 		_scanlines.assign(max_length, empty_bin);
 

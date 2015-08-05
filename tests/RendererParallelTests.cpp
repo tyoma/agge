@@ -99,7 +99,7 @@ namespace agge
 					make_pair(begin(cells2), end(cells2)),
 					make_pair(begin(cells3), end(cells3)),
 				};
-				mocks::mask_full<8> mask(cells, 1, 0, 10);
+				mocks::mask_full<8> mask(cells, 1);
 				mocks::bitmap<uint16_t> bitmap(5, 4);
 				thread_mapping mapping;
 				mutex mtx;
@@ -139,7 +139,7 @@ namespace agge
 					make_pair(begin(cells5), end(cells5)),
 					make_pair(begin(cells6), end(cells6)),
 				};
-				mocks::mask_full<8> mask(cells, 0, 0, 10);
+				mocks::mask_full<8> mask(cells, 0);
 				mocks::bitmap<uint16_t> bitmap(5, 6);
 				thread_mapping mapping;
 				mutex mtx;
@@ -192,7 +192,7 @@ namespace agge
 					make_pair(begin(cells2), end(cells2)),
 					make_pair(begin(cells3), end(cells3)),
 				};
-				const mocks::mask_full<8> mask1(cells, 3, 0, 10);
+				const mocks::mask_full<8> mask1(cells, 3);
 				mocks::bitmap<uint8_t> bitmap1(11, 4);
 				const mocks::blender<uint8_t, uint8_t> blender1;
 				const rect_i window = mkrect_sized(-1, 3, 11, 100);

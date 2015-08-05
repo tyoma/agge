@@ -38,8 +38,8 @@ namespace agge
 		const BlenderT &_blender;
 		const int _offset_x, _limit_x;
 		typename BitmapT::pixel *_row;
-		int _y;
 		BitmapT &_bitmap;
+		int _y;
 		const int _offset_y, _limit_y;
 	};
 
@@ -124,9 +124,7 @@ namespace agge
 	template <typename ScanlineT, typename MaskT, typename AlphaFn>
 	inline void render(ScanlineT &scanline, const MaskT &mask, const AlphaFn &alpha, int offset, int step)
 	{
-		typename MaskT::range vrange = mask.vrange();
-
-		for (int y = vrange.first + offset; y <= vrange.second; y += step)
+		for (int y = mask.min_y() + offset, limit_y = mask.min_y() + mask.height(); y < limit_y; y += step)
 		{			
 			typename MaskT::scanline_cells cells = mask[y];
 
@@ -157,8 +155,7 @@ namespace agge
 		typedef adapter<BitmapT, BlenderT> rendition_adapter;
 
 		rendition_adapter ra(bitmap, window, blender);
-		typename MaskT::range hrange = mask.hrange();
-		scanline_adapter<rendition_adapter> scanline(ra, _scanline_cache, hrange.second - hrange.first + 1);
+		scanline_adapter<rendition_adapter> scanline(ra, _scanline_cache, mask.width());
 
 		render(scanline, mask, alpha, 0, 1);
 	}

@@ -31,7 +31,6 @@ namespace agge
 
 		typedef std::vector<cell> cells_container;
 		typedef cells_container::const_iterator const_cells_iterator;
-		typedef std::pair<int, int> range;
 		typedef std::pair<const_cells_iterator /*begin*/, const_cells_iterator /*end*/> scanline_cells;
 
 	public:
@@ -46,16 +45,15 @@ namespace agge
 		bool sorted() const;
 
 		scanline_cells operator [](int y) const;
-		range vrange() const;
-		range hrange() const;
+		int width() const;
+		int min_y() const;
+		int height() const;
 
 	private:
 		struct sorted_bin;
 		typedef std::vector<sorted_bin> sorted_bins_container;
 
 	private:
-		const vector_rasterizer &operator =(const vector_rasterizer &);
-
 		void hline(int tg, int ey, int x1, int x2, int dy);
 		void jump_xy(int x, int y);
 		void jump_x(int x);
@@ -93,9 +91,12 @@ namespace agge
 		return std::make_pair(begin, end);
 	}
 
-	inline vector_rasterizer::range vector_rasterizer::vrange() const
-	{	return std::make_pair(_min_y, _max_y);	}
+	inline int vector_rasterizer::width() const
+	{	return _max_x >= _min_x ? _max_x - _min_x + 1 : 0;	}
 
-	inline vector_rasterizer::range vector_rasterizer::hrange() const
-	{	return std::make_pair(_min_x, _max_x);	}
+	inline int vector_rasterizer::min_y() const
+	{	return _min_y;	}
+
+	inline int vector_rasterizer::height() const
+	{	return _max_y >= _min_y ? _max_y - _min_y + 1 : 0;	}
 }

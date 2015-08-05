@@ -34,14 +34,8 @@ namespace agge
 				vector_rasterizer vr;
 
 				// ACT
-				vector_rasterizer::range vrange = vr.vrange();
-				vector_rasterizer::range hrange = vr.hrange();
-
-				// ASSERT
-				assert_equal(0x7FFF, vrange.first);
-				assert_equal(-0x7FFF, vrange.second);
-				assert_equal(0x7FFF, hrange.first);
-				assert_equal(-0x7FFF, hrange.second);
+				assert_equal(0, vr.width());
+				assert_equal(0, vr.height());
 			}
 
 
@@ -53,20 +47,15 @@ namespace agge
 				// ACT
 				vr1.line(fp(13.0), fp(17.0), fp(13.5), fp(17.7));
 				vr2.line(fp(-23.1), fp(-37.0), fp(-24.0), fp(-36.7));
-				vector_rasterizer::range hrange1 = vr1.hrange();
-				vector_rasterizer::range vrange1 = vr1.vrange();
-				vector_rasterizer::range hrange2 = vr2.hrange();
-				vector_rasterizer::range vrange2 = vr2.vrange();
 
-				// ASSERT
-				assert_equal(13, hrange1.first);
-				assert_equal(13, hrange1.second);
-				assert_equal(17, vrange1.first);
-				assert_equal(17, vrange1.second);
-				assert_equal(-24, hrange2.first);
-				assert_equal(-24, hrange2.second);
-				assert_equal(-37, vrange2.first);
-				assert_equal(-37, vrange2.second);
+				// ACT / ASSERT
+				assert_equal(1, vr1.width());
+				assert_equal(17, vr1.min_y());
+				assert_equal(1, vr1.height());
+
+				assert_equal(1, vr2.width());
+				assert_equal(-37, vr2.min_y());
+				assert_equal(1, vr2.height());
 			}
 
 
@@ -79,14 +68,10 @@ namespace agge
 
 				// ACT
 				vr.reset();
-				vector_rasterizer::range vrange = vr.vrange();
-				vector_rasterizer::range hrange = vr.hrange();
 
-				// ASSERT
-				assert_equal(0x7FFF, vrange.first);
-				assert_equal(-0x7FFF, vrange.second);
-				assert_equal(0x7FFF, hrange.first);
-				assert_equal(-0x7FFF, hrange.second);
+				// ACT / ASSERT
+				assert_equal(0, vr.width());
+				assert_equal(0, vr.height());
 			}
 
 
@@ -114,20 +99,15 @@ namespace agge
 				// ACT
 				vr1.line(fp(13.0), fp(17.0), fp(-133.5), fp(137.7));
 				vr2.line(fp(-253.1), fp(337.0), fp(214.0), fp(-336.0));
-				vector_rasterizer::range hrange1 = vr1.hrange();
-				vector_rasterizer::range vrange1 = vr1.vrange();
-				vector_rasterizer::range hrange2 = vr2.hrange();
-				vector_rasterizer::range vrange2 = vr2.vrange();
 
-				// ASSERT
-				assert_equal(-134, hrange1.first);
-				assert_equal(13, hrange1.second);
-				assert_equal(17, vrange1.first);
-				assert_equal(137, vrange1.second);
-				assert_equal(-254, hrange2.first);
-				assert_equal(214, hrange2.second);
-				assert_equal(-336, vrange2.first);
-				assert_equal(337, vrange2.second);
+				// ACT / ASSERT
+				assert_equal(148, vr1.width());
+				assert_equal(17, vr1.min_y());
+				assert_equal(121, vr1.height());
+
+				assert_equal(469, vr2.width());
+				assert_equal(-336, vr2.min_y());
+				assert_equal(674, vr2.height());
 			}
 
 

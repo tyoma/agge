@@ -37,12 +37,11 @@ namespace agge
 	{
 		typedef renderer::adapter<BitmapT, BlenderT> rendition_adapter;
 
-		const typename MaskT::range hrange = mask.hrange();
 		const rendition_adapter ra(bitmap, window, blender);
 
 		_parallel.call([&] (count_t i) {
 			rendition_adapter ra_thread(ra);
-			scanline_adapter<rendition_adapter> sl(ra_thread, _scanline_caches[i], hrange.second - hrange.first + 1);
+			scanline_adapter<rendition_adapter> sl(ra_thread, _scanline_caches[i], mask.width());
 
 			render(sl, mask, alpha, i, _parallelism);
 		});

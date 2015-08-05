@@ -1,5 +1,6 @@
 #pragma once
 
+#include <agge/tools.h>
 #include <agge/types.h>
 
 #include <utee/ut/assert.h>
@@ -25,27 +26,43 @@ namespace agge
 			{
 			public:
 				typedef std::pair<const cell * /*begin*/, const cell * /*end*/> scanline_cells;
-				typedef std::pair<int, int> range;
 
 				enum { _1_shift = precision };
 
 			public:
 				template <typename T, int n>
 				mask(const T (&cells)[n], int y0)
-					: _vrange(y0, y0 + n - 1)
+					: _min_y(y0), _height(n)
 				{
+					int min_x = 0x7FFFFFFF, max_x = -0x7FFFFFFF;
+
 					for (int i = 0; i != n; ++i)
+					{
 						_cells.push_back(cells[i]);
+						for (int j = 0; j != cells[i].second - cells[i].second; ++j)
+						{
+							min_x = agge_min(min_x, (cells[i].first + j)->x);
+							max_x = agge_max(min_x, (cells[i].first + j)->x);
+						}
+					}
+					_width = agge_max(max_x - min_x, -1) + 1;
 				}
 
 				scanline_cells operator [](int y) const
-				{	return _cells.at(y - _vrange.first);	}
+				{	return _cells.at(y - _min_y);	}
 
-				range vrange() const
-				{	return _vrange;	}
+				int min_y() const
+				{	return _min_y;	}
+
+				int height() const
+				{	return _height;	}
+
+			protected:
+				int width() const
+				{	return _width;	}
 
 			private:
-				range _vrange;
+				int _width, _min_y, _height;
 				std::vector<scanline_cells> _cells;
 			};
 
@@ -54,19 +71,12 @@ namespace agge
 			class mask_full : public mask<precision>
 			{
 			public:
-				using mask<precision>::range;
-
-			public:
 				template <typename T, int n>
-				mask_full(const T (&cells)[n], int y0, int x0, int xlimit)
-					: mask<precision>(cells, y0), _hrange(x0, xlimit)
+				mask_full(const T (&cells)[n], int y0)
+					: mask<precision>(cells, y0)
 				{	}
 
-				range hrange() const
-				{	return _hrange;	}
-
-			private:
-				range _hrange;
+				using mask<precision>::width;
 			};
 
 
