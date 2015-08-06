@@ -4,9 +4,6 @@
 
 #include "basics.h"
 
-#include <algorithm>
-#include <functional>
-
 namespace aggx
 {
 	template<class Clip>
@@ -41,11 +38,6 @@ namespace aggx
 
 		template<class VertexSource>
 		void add_path(VertexSource& vs, unsigned path_id = 0);
-
-		int min_x() const { return m_outline.hrange().first; }
-		int min_y() const { return m_outline.vrange().first; }
-		int max_x() const { return m_outline.hrange().second; }
-		int max_y() const { return m_outline.vrange().second; }
 
 		void prepare();
 		const agge::vector_rasterizer &get_mask();

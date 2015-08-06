@@ -6,6 +6,7 @@
 
 #include <aggx/blenders.h>
 #include <aggx/rasterizer.h>
+#include <aggx/aggx_vertex_sequence.h>
 
 #include <agg/include/agg_rasterizer_sl_clip.h>
 
@@ -45,6 +46,8 @@ class CChildView : public CWnd
 	bitmap _agg_bitmap;
 	aggx::rasterizer_scanline_aa<agg::rasterizer_sl_no_clip> _agg_rasterizer;
 	agge::renderer_parallel _renderer;
+	aggx::vertex_sequence<aggx::vertex_dist> _vertex_storage;
+	std::vector<aggx::point_r> _coord_storage;
 
 	DrawMode _drawMode;
 	bool _drawLines, _drawBars, _drawEllipses, _drawSpiral;

@@ -13,7 +13,7 @@ namespace agge
 	{
 		begin_test_suite( ParallelExecutionTests )
 			
-			class thread_capture
+			class thread_capture : public parallel::kernel_function
 			{
 			public:
 				typedef vector< pair<count_t /*logical_id*/, thread_id /*physical_id*/> > log_container;
@@ -23,7 +23,7 @@ namespace agge
 					: log(log_), _mutex(mtx)
 				{	}
 
-				void operator ()(count_t logical_id) const
+				virtual void operator ()(count_t logical_id)
 				{
 					_mutex.lock();
 					log.push_back(make_pair(logical_id, this_thread_id()));
@@ -69,9 +69,10 @@ namespace agge
 				parallel p(1);
 				thread_capture::log_container log;
 				mutex mtx;
+				thread_capture tc(log, mtx);
 
 				// ACT
-				p.call(thread_capture(log, mtx));
+				p.call(tc);
 
 				// ASSERT
 				assert_equal(1u, log.size());
@@ -79,7 +80,7 @@ namespace agge
 				assert_equal(this_thread_id(), log[0].second);
 
 				// ACT
-				p.call(thread_capture(log, mtx));
+				p.call(tc);
 
 				// ASSERT
 				assert_equal(2u, log.size());
@@ -94,9 +95,10 @@ namespace agge
 				parallel p3(3), p7(7);
 				thread_capture::log_container log;
 				mutex mtx;
+				thread_capture tc(log, mtx);
 
 				// ACT
-				p3.call(thread_capture(log, mtx));
+				p3.call(tc);
 
 				// ASSERT
 				sort(log.begin(), log.end());
@@ -113,7 +115,7 @@ namespace agge
 				log.clear();
 
 				// ACT
-				p7.call(thread_capture(log, mtx));
+				p7.call(tc);
 
 				// ASSERT
 				sort(log.begin(), log.end());
@@ -134,12 +136,16 @@ namespace agge
 				parallel p1(4), p2(4);
 				thread_capture::log_container log1, log2, log3, log4;
 				mutex mtx;
-
+				thread_capture tc1(log1, mtx);
+				thread_capture tc2(log2, mtx);
+				thread_capture tc3(log3, mtx);
+				thread_capture tc4(log4, mtx);
+				
 				// ACT
-				p1.call(thread_capture(log1, mtx));
-				p1.call(thread_capture(log2, mtx));
-				p2.call(thread_capture(log3, mtx));
-				p1.call(thread_capture(log4, mtx));
+				p1.call(tc1);
+				p1.call(tc2);
+				p2.call(tc3);
+				p1.call(tc4);
 
 				// ASSERT
 				sort(log1.begin(), log1.end());

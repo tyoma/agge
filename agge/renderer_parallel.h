@@ -37,13 +37,30 @@ namespace agge
 	{
 		typedef renderer::adapter<BitmapT, BlenderT> rendition_adapter;
 
-		const rendition_adapter ra(bitmap, window, blender);
+		struct kernel_function : parallel::kernel_function, noncopyable
+		{
+			kernel_function(const rendition_adapter &adapter_, const renderer_parallel &renderer_, const MaskT &mask_,
+					const AlphaFn &alpha_)
+				: adapter(adapter_), renderer(renderer_), mask(mask_), alpha(alpha_)
+			{	}
 
-		_parallel.call([&] (count_t i) {
-			rendition_adapter ra_thread(ra);
-			scanline_adapter<rendition_adapter> sl(ra_thread, _scanline_caches[i], mask.width());
+			virtual void operator ()(count_t threadid)
+			{
+				rendition_adapter ra_thread(adapter);
+				scanline_adapter<rendition_adapter> sl(ra_thread, renderer._scanline_caches[threadid], mask.width());
 
-			render(sl, mask, alpha, i, _parallelism);
-		});
+				render(sl, mask, alpha, threadid, renderer._parallelism);
+			}
+
+			const rendition_adapter &adapter;
+			const renderer_parallel &renderer;
+			const MaskT &mask;
+			const AlphaFn &alpha;
+		};
+
+		const rendition_adapter adapter(bitmap, window, blender);
+		kernel_function kernel(adapter, *this, mask, alpha);
+
+		_parallel.call(kernel);
 	}
 }

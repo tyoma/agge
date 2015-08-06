@@ -122,7 +122,7 @@ namespace agge
 
 
 	template <typename ScanlineT, typename MaskT, typename AlphaFn>
-	inline void render(ScanlineT &scanline, const MaskT &mask, const AlphaFn &alpha, int offset, int step)
+	AGGE_INLINE void render(ScanlineT &scanline, const MaskT &mask, const AlphaFn &alpha, int offset, int step)
 	{
 		for (int y = mask.min_y() + offset, limit_y = mask.min_y() + mask.height(); y < limit_y; y += step)
 		{			

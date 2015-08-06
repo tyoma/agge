@@ -1,6 +1,7 @@
 #include <agge/parallel.h>
 
 #include <intrin.h>
+#include <memory>
 #include <process.h>
 #include <windows.h>
 
@@ -12,7 +13,7 @@ namespace agge
 {
 	namespace
 	{
-		class hybrid_event
+		class hybrid_event : noncopyable
 		{
 		public:
 			enum { max_spin = 10000 };
@@ -47,10 +48,6 @@ namespace agge
 			}
 
 		private:
-			hybrid_event(const hybrid_event &other);
-			const hybrid_event &operator =(const hybrid_event &rhs);
-
-		private:
 			const HANDLE _native;
 			volatile long _lock_state;
 		};
@@ -66,7 +63,7 @@ namespace agge
 		hybrid_event done;
 
 	public:
-		const parallel::kernel_function *kernel;
+		parallel::kernel_function *kernel;
 
 	private:
 		static unsigned int __stdcall thread_proc(void *data);
@@ -105,11 +102,11 @@ namespace agge
 
 	parallel::parallel(count_t parallelism)
 	try
-		: _thread_allocated(0)
+		: _threads_allocated(0)
 	{
 		thread *p = _threads.get<thread>(parallelism - 1);
 
-		for (count_t i = 1; i != parallelism; ++i, ++_thread_allocated, ++p)
+		for (count_t i = 1; i != parallelism; ++i, ++_threads_allocated, ++p)
 			new (p) thread(i);
 	}
 	catch (...)
@@ -121,17 +118,17 @@ namespace agge
 	parallel::~parallel()
 	{	destroy_threads();	}
 
-	void parallel::call(const kernel_function &kernel)
+	void parallel::call(kernel_function &kernel)
 	{
 		thread * const threads = _threads.get<thread>(0);
 
-		for (count_t i = 0; i != _thread_allocated; ++i)
+		for (count_t i = 0; i != _threads_allocated; ++i)
 		{
 			threads[i].kernel = &kernel;
 			threads[i].ready.set();
 		}
 		kernel(0);
-		for (count_t i = 0; i != _thread_allocated; ++i)
+		for (count_t i = 0; i != _threads_allocated; ++i)
 			threads[i].done.wait();
 	}
 
@@ -139,7 +136,7 @@ namespace agge
 	{
 		thread * const threads = _threads.get<thread>(0);
 
-		for (count_t i = 0; i != _thread_allocated; ++i)
+		for (count_t i = 0; i != _threads_allocated; ++i)
 			threads[i].~thread();
 	}
 }

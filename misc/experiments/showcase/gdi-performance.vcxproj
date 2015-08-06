@@ -218,13 +218,14 @@
     <None Include="res\gdiperformance.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\libraries\aggx\agg_conv_adaptor_vcgen.h" />
-    <ClInclude Include="..\..\libraries\aggx\agg_conv_stroke.h" />
-    <ClInclude Include="..\..\libraries\aggx\agg_math.h" />
-    <ClInclude Include="..\..\libraries\aggx\agg_math_stroke.h" />
-    <ClInclude Include="..\..\libraries\aggx\agg_shorten_path.h" />
-    <ClInclude Include="..\..\libraries\aggx\agg_vcgen_stroke.h" />
-    <ClInclude Include="..\..\libraries\aggx\agg_vertex_sequence.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_conv_adaptor_vcgen.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_conv_stroke.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_ellipse.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_math.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_math_stroke.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_shorten_path.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_vcgen_stroke.h" />
+    <ClInclude Include="..\..\libraries\aggx\aggx_vertex_sequence.h" />
     <ClInclude Include="..\..\libraries\aggx\basics.h" />
     <ClInclude Include="..\..\libraries\aggx\blenders.h" />
     <ClInclude Include="..\..\libraries\aggx\paths.h" />
@@ -239,10 +240,10 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\libraries\aggx\agg_vcgen_stroke.cpp">
+    <ClCompile Include="..\..\libraries\aggx\aggx_vcgen_stroke.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="BarsModel.cpp" />

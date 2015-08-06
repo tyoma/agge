@@ -7,8 +7,8 @@
 #include <agge/blenders_simd.h>
 #include <agge/renderer.h>
 
-#include <aggx/agg_conv_stroke.h>
-#include <aggx/agg_ellipse.h>
+#include <aggx/aggx_conv_stroke.h>
+#include <aggx/aggx_ellipse.h>
 #include <aggx/paths.h>
 
 #include <memory>
@@ -562,12 +562,12 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 		demo::spiral(_agg_path, cx / 2, cy / 2, 5, (std::min)(cx, cy) / 2 - 10, 1, 0);
 
 		demo::agg_path_adaptor p(_agg_path);
-		conv_stroke<demo::agg_path_adaptor> stroke(p);
+		conv_stroke<demo::agg_path_adaptor> stroke(p, _vertex_storage, _coord_storage);
 
 		stroke.width(3);
 
 		_agg_path_flatten.clear();
-		demo::flatten(_agg_path_flatten, stroke);
+		demo::flatten<real>(_agg_path_flatten, stroke);
 	}
 
 	_buffer.DeleteObject();
@@ -767,7 +767,7 @@ void CChildView::drawLines(bitmap &b, const CSize &client, const std::vector<bar
 		D2D1_POINT_2F point = { x, v + b.c };
 
 		line_adaptor l(previous.x, previous.y, point.x, point.y);
-		conv_stroke<line_adaptor> stroke(l);
+		conv_stroke<line_adaptor> stroke(l, _vertex_storage, _coord_storage);
 
 		stroke.width(3);
 		_agg_rasterizer.add_path(stroke);

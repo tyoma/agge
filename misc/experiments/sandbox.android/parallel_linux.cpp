@@ -58,7 +58,7 @@ namespace agge
 		hybrid_event done;
 
 	public:
-		const parallel::kernel_function *kernel;
+		parallel::kernel_function *kernel;
 
 	private:
 		thread(const thread &other);
@@ -90,11 +90,11 @@ namespace agge
 
 	parallel::parallel(count_t parallelism)
 	try
-		: _thread_allocated(0)
+		: _threads_allocated(0)
 	{
 		thread *p = _threads.get<thread>(parallelism - 1);
 
-		for (count_t i = 1; i != parallelism; ++i, ++_thread_allocated, ++p)
+		for (count_t i = 1; i != parallelism; ++i, ++_threads_allocated, ++p)
 			new (p) thread(i);
 	}
 	catch (...)
@@ -106,17 +106,17 @@ namespace agge
 	parallel::~parallel()
 	{	destroy_threads();	}
 
-	void parallel::call(const kernel_function &kernel)
+	void parallel::call(kernel_function &kernel)
 	{
 		thread * const threads = _threads.get<thread>(0);
 
-		for (count_t i = 0; i != _thread_allocated; ++i)
+		for (count_t i = 0; i != _threads_allocated; ++i)
 		{
 			threads[i].kernel = &kernel;
 			threads[i].ready.set();
 		}
 		kernel(0);
-		for (count_t i = 0; i != _thread_allocated; ++i)
+		for (count_t i = 0; i != _threads_allocated; ++i)
 			threads[i].done.wait();
 	}
 
@@ -124,7 +124,7 @@ namespace agge
 	{
 		thread * const threads = _threads.get<thread>(0);
 
-		for (count_t i = 0; i != _thread_allocated; ++i)
+		for (count_t i = 0; i != _threads_allocated; ++i)
 			threads[i].~thread();
 	}
 }
