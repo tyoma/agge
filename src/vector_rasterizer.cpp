@@ -167,13 +167,14 @@ namespace agge
 			return;
 
 		const int max_length = agge_max(_max_x - _min_x + 1, _max_y - _min_y + 1);
+		const int min_x_ = _min_x, min_y_ = _min_y;
 
 		_scanlines.assign(max_length, empty_bin);
 
 		for (const_cells_iterator i = _cells.begin(); i != _cells.end(); ++i)
 		{
-			++_scanlines[i->x - _min_x].length;
-			++_scanlines[i->y - _min_y].start;
+			++_scanlines[i->x - min_x_].length;
+			++_scanlines[i->y - min_y_].start;
 		}
 		count_t start_x = 0, start_y = 0;
 		for (sorted_bins_container::iterator i = _scanlines.begin(); i != _scanlines.end(); ++i)
@@ -187,14 +188,14 @@ namespace agge
 		}
 		for (const_cells_iterator i = _cells.begin(); i != _cells.end(); ++i)
 		{
-			const count_t j = _scanlines[i->x - _min_x].length++;
+			const count_t j = _scanlines[i->x - min_x_].length++;
 			_x_sorted_cells[j] = *i;
 		}
 		for (sorted_bins_container::iterator i = _scanlines.begin(); i != _scanlines.end(); ++i)
 			i->length = 0;
 		for (const_cells_iterator i = _x_sorted_cells.begin(); i != _x_sorted_cells.end(); ++i)
 		{
-			sorted_bin &bin = _scanlines[i->y - _min_y];
+			sorted_bin &bin = _scanlines[i->y - min_y_];
 			const count_t j = bin.length++;
 			_cells[bin.start + j] = *i;
 		}
@@ -265,19 +266,19 @@ namespace agge
 		}
 	}
 
-	void vector_rasterizer::jump_xy(int x, int y)
+	AGGE_INLINE void vector_rasterizer::jump_xy(int x, int y)
 	{
-		if (_current.x != x || _current.y != y)
+		if (_current.x - x | _current.y - y)
 			jumpc(x, y);
 	}
 
-	void vector_rasterizer::jump_x(int x)
+	AGGE_INLINE void vector_rasterizer::jump_x(int x)
 	{
 		commit();
 		_current.x = static_cast<short>(x);
 	}
 
-	void vector_rasterizer::jumpc(int x, int y)
+	AGGE_INLINE void vector_rasterizer::jumpc(int x, int y)
 	{
 		commit();
 		_current.x = static_cast<short>(x), _current.y = static_cast<short>(y);

@@ -47,5 +47,6 @@
     </ClInclude>
     <ClInclude Include="..\agge\bitmap.h" />
     <ClInclude Include="..\agge\tools.h" />
+    <ClInclude Include="..\agge\pod_vector.h" />
   </ItemGroup>
 </Project>

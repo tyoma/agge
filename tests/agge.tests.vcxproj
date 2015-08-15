@@ -191,6 +191,7 @@
       <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DisableLanguageExtensions>
       <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DisableLanguageExtensions>
     </ClCompile>
+    <ClCompile Include="PodVectorTests.cpp" />
     <ClCompile Include="RendererParallelTests.cpp" />
     <ClCompile Include="RendererTests.cpp" />
     <ClCompile Include="ScanlineAdapterTests.cpp" />

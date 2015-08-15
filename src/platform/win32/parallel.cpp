@@ -2,7 +2,6 @@
 
 #include <intrin.h>
 #include <memory>
-#include <process.h>
 #include <windows.h>
 
 #pragma warning(disable: 4355)
@@ -66,7 +65,7 @@ namespace agge
 		parallel::kernel_function *kernel;
 
 	private:
-		static unsigned int __stdcall thread_proc(void *data);
+		static DWORD __stdcall thread_proc(void *data);
 
 	private:
 		const count_t _id;
@@ -76,7 +75,7 @@ namespace agge
 
 
 	parallel::thread::thread(count_t id)
-		: kernel(0), _id(id), _handle(reinterpret_cast<HANDLE>(_beginthreadex(0, 0, &thread::thread_proc, this, 0, 0)))
+		: kernel(0), _id(id), _handle(::CreateThread(0, 0, &thread::thread_proc, this, 0, 0))
 	{
 		if (!_handle)
 			throw bad_alloc();
@@ -90,7 +89,7 @@ namespace agge
 		::CloseHandle(_handle);
 	}
 
-	unsigned int parallel::thread::thread_proc(void *data)
+	DWORD parallel::thread::thread_proc(void *data)
 	{
 		thread *this_ = static_cast<thread *>(data);
 

@@ -17,6 +17,7 @@
       <Filter>platform\win32</Filter>
     </ClCompile>
     <ClCompile Include="BitmapTests.cpp" />
+    <ClCompile Include="PodVectorTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />

@@ -1,9 +1,7 @@
 #pragma once
 
+#include "pod_vector.h"
 #include "types.h"
-
-#include <utility>
-#include <vector>
 
 namespace agge
 {
@@ -29,9 +27,10 @@ namespace agge
 		};
 #pragma pack(pop)
 
-		typedef std::vector<cell> cells_container;
+		struct scanline_cells;
+
+		typedef pod_vector<cell> cells_container;
 		typedef cells_container::const_iterator const_cells_iterator;
-		typedef std::pair<const_cells_iterator /*begin*/, const_cells_iterator /*end*/> scanline_cells;
 
 	public:
 		vector_rasterizer();
@@ -51,7 +50,7 @@ namespace agge
 
 	private:
 		struct sorted_bin;
-		typedef std::vector<sorted_bin> sorted_bins_container;
+		typedef pod_vector<sorted_bin> sorted_bins_container;
 
 	private:
 		void hline(int tg, int ey, int x1, int x2, int dy);
@@ -62,10 +61,16 @@ namespace agge
 
 	private:
 		cell _current;
-		cells_container _cells, _x_sorted_cells;
 		sorted_bins_container _scanlines;
+		cells_container _cells, _x_sorted_cells;
 		int _min_x, _min_y, _max_x, _max_y;
 		bool _sorted;
+	};
+
+	struct vector_rasterizer::scanline_cells
+	{
+		vector_rasterizer::const_cells_iterator first;
+		vector_rasterizer::const_cells_iterator second;
 	};
 
 	struct vector_rasterizer::sorted_bin
@@ -84,11 +89,11 @@ namespace agge
 
 	inline vector_rasterizer::scanline_cells vector_rasterizer::operator [](int y) const
 	{
-		const sorted_bin &scanline = _scanlines[y - _min_y];
-		const const_cells_iterator begin = _cells.begin() + scanline.start;
-		const const_cells_iterator end = begin + scanline.length;
+		const sorted_bin scanline = _scanlines[y - _min_y];
+		const const_cells_iterator start = _cells.begin() + scanline.start;
+		const scanline_cells sc = { start, start + scanline.length };
 
-		return std::make_pair(begin, end);
+		return sc;
 	}
 
 	inline int vector_rasterizer::width() const

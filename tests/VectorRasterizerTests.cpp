@@ -9,6 +9,10 @@ using namespace std;
 
 namespace agge
 {
+	template <typename T>
+	bool operator ==(const vector<T> &lhs, const pod_vector<T> &rhs)
+	{	return lhs.size() == rhs.size() && equal(lhs.begin(), lhs.end(), rhs.begin());	}
+
 	bool operator ==(const vector_rasterizer::cell &lhs, const vector_rasterizer::cell &rhs)
 	{	return lhs.x == rhs.x && lhs.y == rhs.y && lhs.cover == rhs.cover && lhs.area == rhs.area;	}
 
