@@ -39,10 +39,18 @@ namespace agg
     struct ras_conv_int
     {
         typedef int coord_type;
-        static AGG_INLINE int mul_div(double a, double b, double c)
+        //static AGG_INLINE int mul_div(double a, double b, double c)
+        //{
+        //    return iround(a * b / c);
+        //}
+        static AGG_INLINE int mul_div(int a, int b, int c)
         {
-            return iround(a * b / c);
+			  return (long long)a * b / c;
         }
+        //static AGG_INLINE int mul_div(int a, int b, int c)
+        //{
+        //    return (float)a * (float)b / (float)c;
+        //}
         static int xi(int v) { return v; }
         static int yi(int v) { return v; }
         static int upscale(double v) { return iround(v * poly_subpixel_scale); }

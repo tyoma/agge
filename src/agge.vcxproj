@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\agge\bitmap.h" />
+    <ClInclude Include="..\agge\clipper.h" />
     <ClInclude Include="..\agge\config.h" />
     <ClInclude Include="..\agge\math.h" />
     <ClInclude Include="..\agge\memory.h" />

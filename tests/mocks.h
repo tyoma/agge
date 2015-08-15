@@ -67,6 +67,32 @@ namespace agge
 				size_t position;
 			};
 
+			template <typename T>
+			struct coords_pair
+			{
+				T x1, y1;
+				T x2, y2;
+
+				bool operator ==(const coords_pair<T> &rhs) const
+				{	return x1 == rhs.x1 && y1 == rhs.y1 && x2 == rhs.x2 && y2 == rhs.y2;	}
+			};
+
+
+			template <typename T>
+			class vector_rasterizer
+			{
+			public:
+				void line(T x1, T y1, T x2, T y2)
+				{
+					coords_pair<T> segment = { x1, y1, x2, y2 };
+
+					segments.push_back(segment);
+				}
+
+			public:
+				std::vector< coords_pair<T> > segments;
+			};
+
 			template <size_t precision>
 			class mask
 			{

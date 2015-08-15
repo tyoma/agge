@@ -32,4 +32,10 @@ namespace agge
 	template <typename T>
 	inline T agge_max(const T &lhs, const T &rhs)
 	{	return lhs > rhs ? lhs : rhs;	}
+
+	inline int muldiv(int a, int b, int c)
+	{	return a * b / c;	}
+
+	inline float muldiv(float /*a*/, float /*b*/, float /*c*/)
+	{	return 0.0f;	}
 }
