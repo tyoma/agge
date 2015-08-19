@@ -2,11 +2,24 @@
 
 namespace agge
 {
-	enum bits_per_pixel { bpp32 = 32, bpp24 = 24, bpp16 = 16, bpp8 = 8 };
+	enum bits_per_pixel {
+		bpp32 = 32,
+		bpp24 = 24,
+		bpp16 = 16,
+		bpp8 = 8
+	};
+
+	enum path_commands {
+		path_command_stop = 0,
+		path_command_move_to = 1,
+		path_command_line_to = 2,
+	};
+
 
 	typedef unsigned int count_t;
 	typedef unsigned char uint8_t;
 	typedef unsigned short uint16_t;
+	typedef float real_t;
 
 #pragma pack(push, 1)
 	struct pixel32

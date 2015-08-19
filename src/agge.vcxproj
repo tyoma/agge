@@ -43,6 +43,7 @@
     <ClInclude Include="..\agge\pod_vector.h" />
     <ClInclude Include="..\agge\renderer_parallel.h" />
     <ClInclude Include="..\agge\scanline.h" />
+    <ClInclude Include="..\agge\stroker.h" />
     <ClInclude Include="..\agge\tools.h" />
     <ClInclude Include="..\agge\types.h" />
     <ClInclude Include="..\agge\blenders_simd.h" />

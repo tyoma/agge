@@ -91,17 +91,17 @@ namespace aggx
 		void calc_cap(VertexConsumer& vc,
 			const vertex_dist& v0, 
 			const vertex_dist& v1, 
-			real len);
+			real len) const;
 
 		void calc_join(VertexConsumer& vc,
 			const vertex_dist& v0, 
 			const vertex_dist& v1, 
 			const vertex_dist& v2,
 			real len1, 
-			real len2);
+			real len2) const;
 
 	private:
-		AGGE_INLINE void add_vertex(VertexConsumer& vc, real x, real y)
+		static AGGE_INLINE void add_vertex(VertexConsumer& vc, real x, real y)
 		{
 			vc.push_back(coord_type(x, y));
 		}
@@ -109,7 +109,7 @@ namespace aggx
 		void calc_arc(VertexConsumer& vc,
 			real x,   real y, 
 			real dx1, real dy1, 
-			real dx2, real dy2);
+			real dx2, real dy2) const;
 
 		void calc_miter(VertexConsumer& vc,
 			const vertex_dist& v0, 
@@ -119,7 +119,7 @@ namespace aggx
 			real dx2, real dy2,
 			line_join_e lj,
 			real mlimit,
-			real dbevel);
+			real dbevel) const;
 
 		real       m_width;
 		real       m_width_abs;
@@ -176,7 +176,7 @@ namespace aggx
 	void math_stroke<VC>::calc_arc(VC& vc,
 		real x,   real y, 
 		real dx1, real dy1, 
-		real dx2, real dy2)
+		real dx2, real dy2) const
 	{
 		real a1 = atan2(dy1 * m_width_sign, dx1 * m_width_sign);
 		real a2 = atan2(dy2 * m_width_sign, dx2 * m_width_sign);
@@ -223,7 +223,7 @@ namespace aggx
 		real dx2, real dy2,
 		line_join_e lj,
 		real mlimit,
-		real dbevel)
+		real dbevel) const
 	{
 		real xi  = v1.x;
 		real yi  = v1.y;
@@ -325,7 +325,7 @@ namespace aggx
 	void math_stroke<VC>::calc_cap(VC& vc,
 		const vertex_dist& v0, 
 		const vertex_dist& v1, 
-		real len)
+		real len) const
 	{
 		vc.clear();
 
@@ -389,7 +389,7 @@ namespace aggx
 		const vertex_dist& v1, 
 		const vertex_dist& v2,
 		real len1, 
-		real len2)
+		real len2) const
 	{
 		real dx1 = m_width * (v1.y - v0.y) / len1;
 		real dy1 = m_width * (v1.x - v0.x) / len1;

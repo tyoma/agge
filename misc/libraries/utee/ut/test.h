@@ -121,5 +121,8 @@ namespace ut
 
 #define obsolete_test( __test )
 
+#define __tokenpaste(x, y) x ## y
+#define __tokenpaste2(x, y) __tokenpaste(x, y)
+
 #define end_test_suite\
-   } static g_suite##__LINE__;
+   } static __tokenpaste2(g_suite, __LINE__);

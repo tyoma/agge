@@ -20,6 +20,42 @@ namespace agge
 				int cover;
 			};
 
+			class path
+			{
+			public:
+				struct point
+				{
+					real_t x, y;
+					int command;
+				};
+
+			public:
+				path()
+					: position(0)
+				{	}
+
+				template <typename T, size_t n>
+				path(T (&points_)[n])
+					: points(points_, points_ + n), position(0)
+				{	}
+
+				void rewind(unsigned /*path_id*/)
+				{	position = 0;	}
+
+				int vertex(real_t *x, real_t *y)
+				{
+					if (position < points.size())
+					{
+						*x = points[position].x, *y = points[position].y;
+						return points[position].command;
+					}
+					return path_command_stop;
+				}
+
+			public:
+				std::vector<point> points;
+				size_t position;
+			};
 
 			template <size_t precision>
 			class mask

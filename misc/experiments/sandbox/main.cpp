@@ -177,17 +177,19 @@ namespace
 				agge::fill(surface, solid_color_brush(aggx::rgba8(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
 
-			stopwatch(counter);
-				agg_path_adaptor p(_spiral);
-				aggx::conv_stroke<agg_path_adaptor> stroke(p, _vertex_storage, _coord_storage);
-				stroke.width(3);
-				_spiral_flattened.clear();
-				flatten<aggx::real>(_spiral_flattened, stroke);
-			timings.stroking += stopwatch(counter);
-
 			if (_balls.empty())
 			{
+				stopwatch(counter);
+					agg_path_adaptor p(_spiral);
+					aggx::conv_stroke<agg_path_adaptor> stroke(p, _vertex_storage, _coord_storage);
+					stroke.width(3);
+					_spiral_flattened.clear();
+					flatten<aggx::real>(_spiral_flattened, stroke);
+				timings.stroking += stopwatch(counter);
+
 				solid_color_brush brush(aggx::rgba8(0, 154, 255, 230));
+				solid_color_brush brush2(aggx::rgba8(0, 0, 0, 160));
+				solid_color_brush brush3(aggx::rgba8(0, 0, 0, 255));
 
 				stopwatch(counter);
 				_rasterizer.add_path(agg_path_adaptor(_spiral_flattened));
@@ -195,6 +197,40 @@ namespace
 				timings.rasterization += stopwatch(counter);
 				_renderer(surface, 0, _rasterizer.get_mask(), brush, aggx::calculate_alpha<8>());
 				timings.rendition += stopwatch(counter);
+
+
+				AggPath::value_type angle[] = {
+					make_pair(make_pair(140.0f, 65.0f), aggx::path_cmd_move_to),
+					make_pair(make_pair(180.0f, 70.0f), aggx::path_cmd_line_to),
+					make_pair(make_pair(160.0f, 75.0f), aggx::path_cmd_line_to),
+				};
+
+				AggPath anglePath(angle, angle + _countof(angle));
+				agg_path_adaptor p2(anglePath);
+
+				aggx::conv_stroke<agg_path_adaptor> stroke2(p2, _vertex_storage, _coord_storage);
+
+				stroke2.width(31);
+				stroke2.line_join(aggx::miter_join);
+				stroke2.line_cap(aggx::butt_cap);
+				stroke2.miter_limit(10);
+
+				_rasterizer.add_path(stroke2);
+				_rasterizer.prepare();
+				timings.rasterization += stopwatch(counter);
+				_renderer(surface, 0, _rasterizer.get_mask(), brush2, aggx::calculate_alpha<8>());
+
+				aggx::conv_stroke<agg_path_adaptor> stroke3(p2, _vertex_storage, _coord_storage);
+
+				stroke3.width(1);
+				stroke3.line_join(aggx::miter_join);
+				stroke3.line_cap(aggx::butt_cap);
+				stroke3.miter_limit(10);
+
+				_rasterizer.add_path(stroke3);
+				_rasterizer.prepare();
+				timings.rasterization += stopwatch(counter);
+				_renderer(surface, 0, _rasterizer.get_mask(), brush3, aggx::calculate_alpha<8>());
 			}
 
 			for_each(_balls.begin(), _balls.end(), [&] (ball &b) {
