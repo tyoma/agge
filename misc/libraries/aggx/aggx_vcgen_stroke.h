@@ -58,7 +58,7 @@ namespace aggx
 		typedef vertex_sequence<vertex_dist> vertex_storage;
 		typedef std::vector<point_r>         coord_storage;
 
-		vcgen_stroke(vertex_storage &vs, coord_storage &cs);
+		vcgen_stroke();
 
 		void line_cap(line_cap_e lc)     { m_stroker.line_cap(lc); }
 		void line_join(line_join_e lj)   { m_stroker.line_join(lj); }
@@ -95,8 +95,8 @@ namespace aggx
 		const vcgen_stroke& operator = (const vcgen_stroke&);
 
 		math_stroke<coord_storage> m_stroker;
-		vertex_storage &m_src_vertices;
-		coord_storage &m_out_vertices;
+		vertex_storage m_src_vertices;
+		coord_storage m_out_vertices;
 		real                     m_shorten;
 		unsigned                   m_closed;
 		status_e                   m_status;

@@ -65,12 +65,6 @@
     <ClInclude Include="..\..\libraries\aggx\blenders.h">
       <Filter>aggx</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\aggx_conv_adaptor_vcgen.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\aggx_conv_stroke.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libraries\aggx\aggx_ellipse.h">
       <Filter>aggx</Filter>
     </ClInclude>

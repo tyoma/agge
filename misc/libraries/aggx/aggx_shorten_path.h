@@ -55,7 +55,7 @@ namespace aggx
 			}
 			else
 			{
-				n = vs.size() - 1;
+				n = static_cast<int>(vs.size() - 1);
 				vertex_type& prev = vs[n-1];
 				vertex_type& last = vs[n];
 				d = (prev.dist - s) / prev.dist;

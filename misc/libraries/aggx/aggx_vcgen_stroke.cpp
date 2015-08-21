@@ -29,10 +29,8 @@
 namespace aggx
 {
 	//------------------------------------------------------------------------
-	vcgen_stroke::vcgen_stroke(vertex_storage &vs, coord_storage &cs) :
-m_stroker(),
-	m_src_vertices(vs),
-	m_out_vertices(cs),
+vcgen_stroke::vcgen_stroke() :
+	m_stroker(),
 	m_shorten(0.0),
 	m_closed(0),
 	m_status(initial),

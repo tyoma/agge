@@ -27,6 +27,15 @@ namespace agge
 				{
 					real_t x, y;
 					int command;
+
+					bool operator ==(const point &rhs) const
+					{
+						if (command != rhs.command)
+							return false;
+						if (command == path_command_stop)
+							return true;
+						return x == rhs.x && y == rhs.y;
+					}
 				};
 
 			public:
@@ -47,7 +56,7 @@ namespace agge
 					if (position < points.size())
 					{
 						*x = points[position].x, *y = points[position].y;
-						return points[position].command;
+						return points[position++].command;
 					}
 					return path_command_stop;
 				}

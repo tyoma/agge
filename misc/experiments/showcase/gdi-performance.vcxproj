@@ -218,8 +218,6 @@
     <None Include="res\gdiperformance.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\libraries\aggx\aggx_conv_adaptor_vcgen.h" />
-    <ClInclude Include="..\..\libraries\aggx\aggx_conv_stroke.h" />
     <ClInclude Include="..\..\libraries\aggx\aggx_ellipse.h" />
     <ClInclude Include="..\..\libraries\aggx\aggx_math.h" />
     <ClInclude Include="..\..\libraries\aggx\aggx_math_stroke.h" />

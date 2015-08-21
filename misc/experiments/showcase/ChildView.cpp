@@ -6,9 +6,10 @@
 
 #include <agge/blenders_simd.h>
 #include <agge/renderer.h>
+#include <agge/stroker.h>
 
-#include <aggx/aggx_conv_stroke.h>
 #include <aggx/aggx_ellipse.h>
+#include <aggx/aggx_vcgen_stroke.h>
 #include <aggx/paths.h>
 
 #include <memory>
@@ -528,7 +529,7 @@ void CChildView::OnPaint()
 				_agg_rasterizer.add_path(demo::agg_path_adaptor(_agg_path_flatten));
 
 				_renderer(_agg_bitmap, 0, _agg_rasterizer.get_mask(), blender(rgba8(0, 150, 255)),
-					aggx::calculate_alpha<8>());
+					calculate_alpha<8>());
 			}
 		}
 
@@ -562,12 +563,14 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 		demo::spiral(_agg_path, cx / 2, cy / 2, 5, (std::min)(cx, cy) / 2 - 10, 1, 0);
 
 		demo::agg_path_adaptor p(_agg_path);
-		conv_stroke<demo::agg_path_adaptor> stroke(p, _vertex_storage, _coord_storage);
+		vcgen_stroke stroke;
 
 		stroke.width(3);
 
+		agge::path_generator_adapter<demo::agg_path_adaptor, vcgen_stroke> stroke_path(p, stroke);
+
 		_agg_path_flatten.clear();
-		demo::flatten<real>(_agg_path_flatten, stroke);
+		demo::flatten<real>(_agg_path_flatten, stroke_path);
 	}
 
 	_buffer.DeleteObject();
@@ -767,17 +770,20 @@ void CChildView::drawLines(bitmap &b, const CSize &client, const std::vector<bar
 		D2D1_POINT_2F point = { x, v + b.c };
 
 		line_adaptor l(previous.x, previous.y, point.x, point.y);
-		conv_stroke<line_adaptor> stroke(l, _vertex_storage, _coord_storage);
+		vcgen_stroke stroke;
 
 		stroke.width(3);
-		_agg_rasterizer.add_path(stroke);
+
+		agge::path_generator_adapter<line_adaptor, vcgen_stroke> stroke_path(l, stroke);
+
+		_agg_rasterizer.add_path(stroke_path);
 
 		previous = point;
 		x += 2 * d + 1;
 	});
 
 	_renderer(_agg_bitmap, 0, _agg_rasterizer.get_mask(), blender(rgba8(0, 0, 0)),
-		aggx::calculate_alpha<8>());
+		calculate_alpha<8>());
 }
 
 void CChildView::drawBars(bitmap &b, const CSize &client, const vector<bar> &bars)
@@ -812,7 +818,7 @@ void CChildView::drawBars(bitmap &b, const CSize &client, const vector<bar> &bar
 	});
 
 	_renderer(_agg_bitmap, 0, _agg_rasterizer.get_mask(), blender(rgba8(0, 0, 0, 96)),
-		aggx::calculate_alpha<8>());
+		calculate_alpha<8>());
 }
 
 void CChildView::drawEllipses(bitmap &b, const CSize &client, const vector<ellipse_t> &ellipses)
@@ -825,7 +831,7 @@ void CChildView::drawEllipses(bitmap &b, const CSize &client, const vector<ellip
 		_agg_rasterizer.add_path(ellipse);
 
 		_renderer(_agg_bitmap, 0, _agg_rasterizer.get_mask(), CChildView::blender(rgba8(GetRValue(e.second),
-			GetGValue(e.second), GetBValue(e.second), 224)), aggx::calculate_alpha<8>());
+			GetGValue(e.second), GetBValue(e.second), 224)), calculate_alpha<8>());
 	});
 }
 
