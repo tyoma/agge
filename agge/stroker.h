@@ -1,9 +1,57 @@
 #pragma once
 
-#include "types.h"
+#include "pod_vector.h"
 
 namespace agge
 {
+	typedef pod_vector<point_r> points;
+
+	class stroke : noncopyable
+	{
+	public:
+		struct cap;
+		struct join;
+
+	public:
+		stroke();
+		~stroke();
+
+		void remove_all();
+		void add_vertex(real_t x, real_t y, int command);
+		
+		int vertex(real_t *x, real_t *y);
+		
+		void width(real_t w);
+
+	private:
+		struct point_ref;
+		
+		typedef pod_vector<point_ref> input_vertices;
+
+	private:
+		void generate();
+
+	private:
+		input_vertices _input;
+		points _output;
+		points::const_iterator _output_iterator;
+		cap *_cap;
+		real_t _width;
+	};
+
+	struct stroke::cap
+	{
+		virtual ~cap() { }
+		virtual void calc(points &output, real_t w, const point_r &v0, real_t d, const point_r &v1) const = 0;
+	};
+
+	struct stroke::join
+	{
+		virtual ~join() { }
+		virtual void calc(points &output, real_t w, const point_r &v0, real_t d01, const point_r &v1, real_t d12, const point_r &v2) const = 0;
+	};
+
+
 	template <typename SourceT, typename GeneratorT>
 	class path_generator_adapter : noncopyable
 	{

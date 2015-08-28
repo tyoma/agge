@@ -122,6 +122,29 @@ namespace
 				ren_aa.color(agg::rgba8(0, 154, 255, 255));
 				agg::render_scanlines(_rasterizer, _scanline, ren_aa);
 				timings.rendition += stopwatch(counter);
+
+
+				pair<pair<float, float>, unsigned> p2data[] = {
+					make_pair(make_pair(100.0f, 100.0f), agg::path_cmd_move_to),
+					make_pair(make_pair(200.0f, 107.0f), agg::path_cmd_line_to),
+					make_pair(make_pair(100.0f, 114.0f), agg::path_cmd_line_to),
+				};
+
+				AggPath p2v(p2data, p2data + 3);
+				agg_path_adaptor p2(p2v);
+				agg::conv_stroke<agg_path_adaptor> stroke(p2);
+				stroke.width(20.0f);
+
+				stroke.miter_limit(100);
+				stroke.inner_miter_limit(14.6);
+
+//				stroke.line_join(agg::bevel_join);
+//				stroke.inner_join(agg::inner_bevel);
+
+				_rasterizer.filling_rule(agg::fill_even_odd);
+				_rasterizer.add_path(stroke);
+				ren_aa.color(agg::rgba8(0, 0, 0));
+				agg::render_scanlines(_rasterizer, _scanline, ren_aa);
 			}
 
 			for_each(_balls.begin(), _balls.end(), [&] (ball &b) {

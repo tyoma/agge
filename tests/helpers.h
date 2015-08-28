@@ -7,6 +7,9 @@
 
 namespace agge
 {
+	template <typename T>
+	class pod_vector;
+
 	namespace tests
 	{
 		template <typename T, size_t n, int alignment_order = 4>
@@ -93,8 +96,23 @@ namespace agge
 			rect<CoordT> rc = { left, top, left + width, top + height };
 			return rc;
 		}
+
+		template <typename T>
+		bool equal(const T &lhs, const T &rhs)
+		{	return lhs == rhs;	}
+
+		template <>
+		bool equal(const float &lhs, const float &rhs);
 	}
 
 	inline bool operator ==(const pixel32 &lhs, const pixel32 &rhs)
 	{	return lhs.c0 == rhs.c0 && lhs.c1 == rhs.c1 && lhs.c2 == rhs.c2 && lhs.c3 == rhs.c3;	}
+
+	template <typename T>
+	inline bool operator ==(const point<T> &lhs, const point<T> &rhs)
+	{	return tests::equal(lhs.x, rhs.x) && tests::equal(lhs.y, rhs.y);	}
+
+	template <typename T>
+	bool operator ==(const std::vector<T> &lhs, const pod_vector<T> &rhs)
+	{	return lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());	}
 }

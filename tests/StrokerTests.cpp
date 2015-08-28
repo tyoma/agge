@@ -1,5 +1,7 @@
 #include <agge/stroker.h>
 
+//#include <misc/libraries/aggx/aggx_vcgen_stroke.h>
+
 #include "helpers.h"
 #include "mocks.h"
 
@@ -223,7 +225,143 @@ namespace agge
 
 				assert_equal(reference2, g.points);
 			}
+		end_test_suite
 
+
+		begin_test_suite( PathStrokeTests )
+			test( HorizontalLineIsTransformedToARect )
+			{
+				// INIT
+				stroke s;
+
+				s.width(2.1f);
+
+				// ACT
+				s.add_vertex(1.3f, 5.81f, path_command_move_to);
+				s.add_vertex(7.1f, 5.81f, path_command_line_to);
+				mocks::path::point points1[] = { get(s), get(s), get(s), get(s), get(s), };
+
+				// ASSERT
+				mocks::path::point reference1[] = {
+					{ 1.3f, 6.86f, path_command_move_to },
+					{ 1.3f, 4.76f, path_command_line_to },
+					{ 7.1f, 4.76f, path_command_line_to },
+					{ 7.1f, 6.86f, path_command_line_to },
+					{ 0.0f, 0.0f, 0x6F },
+				};
+
+				assert_equal(reference1, points1);
+
+				// INIT
+				s.width(1.5f);
+				s.remove_all();
+
+				// ACT
+				s.add_vertex(108.3f, -15.1f, path_command_move_to);
+				s.add_vertex(-5.0f, -15.1f, path_command_line_to);
+				mocks::path::point points2[] = { get(s), get(s), get(s), get(s), get(s), };
+
+				// ASSERT
+				mocks::path::point reference2[] = {
+					{ 108.3f, -15.85f, path_command_move_to },
+					{ 108.3f, -14.35f, path_command_line_to },
+					{ -5.0f, -14.35f, path_command_line_to },
+					{ -5.0f, -15.85f, path_command_line_to },
+					{ 0.0f, 0.0f, 0x6F },
+				};
+
+				assert_equal(reference2, points2);
+			}
+
+
+			test( VerticalLineIsTransformedToARect )
+			{
+				// INIT
+				stroke s;
+
+				s.width(7.0f);
+
+				// ACT
+				s.add_vertex(1.3f, -5.31f, path_command_move_to);
+				s.add_vertex(1.3f, 1.8f, path_command_line_to);
+				mocks::path::point points1[] = { get(s), get(s), get(s), get(s), get(s), };
+
+				// ASSERT
+				mocks::path::point reference1[] = {
+					{ -2.2f, -5.31f, path_command_move_to },
+					{ 4.8f, -5.31f, path_command_line_to },
+					{ 4.8f, 1.8f, path_command_line_to },
+					{ -2.2f, 1.8f, path_command_line_to },
+					{ 0.0f, 0.0f, 0x6F },
+				};
+
+				assert_equal(reference1, points1);
+
+				// INIT
+				s.width(4.0f);
+				s.remove_all();
+
+				// ACT
+				s.add_vertex(-108.3f, 15.1f, path_command_move_to);
+				s.add_vertex(-108.3f, -10.0f, path_command_line_to);
+				mocks::path::point points2[] = { get(s), get(s), get(s), get(s), get(s), };
+
+				// ASSERT
+				mocks::path::point reference2[] = {
+					{ -106.3f, 15.1f, path_command_move_to },
+					{ -110.3f, 15.1f, path_command_line_to },
+					{ -110.3f, -10.0f, path_command_line_to },
+					{ -106.3f, -10.0f, path_command_line_to },
+					{ 0.0f, 0.0f, 0x6F },
+				};
+
+				assert_equal(reference2, points2);
+			}
+
+
+			test( InclinedLineIsTransformedToARect )
+			{
+				// INIT
+				stroke s;
+
+				s.width(2.0f);
+
+				// ACT
+				s.add_vertex(1.0f, -5.0f, path_command_move_to);
+				s.add_vertex(26.9808f, 10.0f, path_command_line_to);
+				mocks::path::point points1[] = { get(s), get(s), get(s), get(s), get(s), };
+
+				// ASSERT
+				mocks::path::point reference1[] = {
+					{ 0.5f, -4.13397f, path_command_move_to },
+					{ 1.5f, -5.86603f, path_command_line_to },
+					{ 27.4808f, 9.13397f, path_command_line_to },
+					{ 26.4808f, 10.8660f, path_command_line_to },
+					{ 0.0f, 0.0f, 0x6F },
+				};
+
+				assert_equal(reference1, points1);
+
+				// INIT
+				s.width(4.0f / 0.707107f);
+				s.remove_all();
+
+				// ACT
+				s.add_vertex(10.0f, -10.0f, path_command_move_to);
+				s.add_vertex(0.0f, 0.0f, path_command_line_to);
+				mocks::path::point points2[] = { get(s), get(s), get(s), get(s), get(s), };
+
+				// ASSERT
+				mocks::path::point reference2[] = {
+					{ 8.0f, -12.0f, path_command_move_to },
+					{ 12.0f, -8.0f, path_command_line_to },
+					{ 2.0f, 2.0f, path_command_line_to },
+					{ -2.0f, -2.0f, path_command_line_to },
+					{ 0.0f, 0.0f, 0x6F },
+				};
+
+				assert_equal(reference2, points2);
+			}
 		end_test_suite
 	}
 }

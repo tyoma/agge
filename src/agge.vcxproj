@@ -32,6 +32,9 @@
       <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DisableLanguageExtensions>
       <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DisableLanguageExtensions>
     </ClCompile>
+    <ClCompile Include="stroker.cpp" />
+    <ClCompile Include="stroke_features.cpp" />
+    <ClCompile Include="stroke_math.cpp" />
     <ClCompile Include="vector_rasterizer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -44,6 +47,8 @@
     <ClInclude Include="..\agge\renderer_parallel.h" />
     <ClInclude Include="..\agge\scanline.h" />
     <ClInclude Include="..\agge\stroker.h" />
+    <ClInclude Include="..\agge\stroke_features.h" />
+    <ClInclude Include="..\agge\stroke_math.h" />
     <ClInclude Include="..\agge\tools.h" />
     <ClInclude Include="..\agge\types.h" />
     <ClInclude Include="..\agge\blenders_simd.h" />

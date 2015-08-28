@@ -45,13 +45,28 @@ namespace agge
 #pragma pack(pop)
 
 	template <typename CoordT>
+	struct point
+	{
+		CoordT x, y;
+	};
+
+	template <typename CoordT>
 	struct rect
 	{
 		CoordT x1, y1, x2, y2;
 	};
 
+
+	typedef point<real_t> point_r;
 	typedef rect<int> rect_i;
 
+
+	template <typename CoordT>
+	point<CoordT> create_point(CoordT x, CoordT y)
+	{
+		point<CoordT> p = { x, y };
+		return p;
+	}
 
 	template <typename CoordT>
 	inline CoordT width(const rect<CoordT> &rc)

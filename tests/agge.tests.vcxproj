@@ -174,8 +174,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\misc\libraries\aggx\aggx_vcgen_stroke.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="BitmapTests.cpp" />
     <ClCompile Include="BlenderTests.cpp" />
+    <ClCompile Include="helpers.cpp" />
     <ClCompile Include="MiscTests.cpp" />
     <ClCompile Include="mt.cpp">
       <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DisableLanguageExtensions>
@@ -196,6 +200,7 @@
     <ClCompile Include="RendererTests.cpp" />
     <ClCompile Include="ScanlineAdapterTests.cpp" />
     <ClCompile Include="ScanlineRasterizerTests.cpp" />
+    <ClCompile Include="StrokeFeaturesTests.cpp" />
     <ClCompile Include="StrokerTests.cpp" />
     <ClCompile Include="VectorRasterizerTests.cpp" />
   </ItemGroup>

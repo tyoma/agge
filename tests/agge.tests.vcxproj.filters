@@ -19,6 +19,9 @@
     <ClCompile Include="BitmapTests.cpp" />
     <ClCompile Include="PodVectorTests.cpp" />
     <ClCompile Include="StrokerTests.cpp" />
+    <ClCompile Include="..\misc\libraries\aggx\aggx_vcgen_stroke.cpp" />
+    <ClCompile Include="helpers.cpp" />
+    <ClCompile Include="StrokeFeaturesTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />

@@ -1,11 +1,11 @@
 #pragma once
 
+#include "helpers.h"
+
 #include <agge/tools.h>
-#include <agge/types.h>
 
 #include <utee/ut/assert.h>
 #include <utility>
-#include <vector>
 
 namespace agge
 {
@@ -34,7 +34,7 @@ namespace agge
 							return false;
 						if (command == path_command_stop)
 							return true;
-						return x == rhs.x && y == rhs.y;
+						return equal(x, rhs.x) && equal(y, rhs.y);
 					}
 				};
 
