@@ -23,9 +23,22 @@ namespace agge
 		
 		void width(real_t w);
 
+		template <typename CapT>
+		void set_cap(const CapT &c);
+
+		template <typename JoinT>
+		void set_join(const JoinT &j);
+
 	private:
+		enum state {
+			start_cap = 0,
+			outline_forward = 1,
+			end_cap = 2,
+			outline_backward = 3,
+			end_poly = 4,
+			stop = 5,
+		};
 		struct point_ref;
-		
 		typedef pod_vector<point_ref> input_vertices;
 
 	private:
@@ -34,9 +47,13 @@ namespace agge
 	private:
 		input_vertices _input;
 		points _output;
+		input_vertices::const_iterator _input_iterator;
 		points::const_iterator _output_iterator;
 		cap *_cap;
+		join *_join;
 		real_t _width;
+		int _state;
+		bool _initial;
 	};
 
 	struct stroke::cap
@@ -74,6 +91,19 @@ namespace agge
 		int _state;
 	};
 
+
+
+	template <typename CapT>
+	inline void stroke::set_cap(const CapT &/*c*/)
+	{
+		_cap = new CapT;
+	}
+
+	template <typename JoinT>
+	inline void stroke::set_join(const JoinT &/*j*/)
+	{
+		_join = new JoinT;
+	}
 
 
 	template <typename SourceT, typename GeneratorT>

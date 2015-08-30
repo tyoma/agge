@@ -16,6 +16,43 @@ namespace agge
 	{
 		namespace
 		{
+			mocks::path::point moveto(real_t x, real_t y)
+			{
+				mocks::path::point p = { x, y, path_command_move_to };
+				return p;
+			}
+
+			mocks::path::point lineto(real_t x, real_t y)
+			{
+				mocks::path::point p = { x, y, path_command_line_to };
+				return p;
+			}
+
+
+			class passthrough_cap : public stroke::cap
+			{
+				virtual void calc(points &output, real_t w, const point_r &v0, real_t d, const point_r &v1) const
+				{
+					output.push_back(create_point(w, d));
+					output.push_back(v0);
+					output.push_back(v1);
+				}
+			};
+
+
+			class passthrough_join : public stroke::join
+			{
+				virtual void calc(points &output, real_t w, const point_r &v0, real_t d01, const point_r &v1, real_t d12, const point_r &v2) const
+				{
+					output.push_back(create_point(w, d01));
+					output.push_back(v0);
+					output.push_back(v1);
+					output.push_back(v2);
+					output.push_back(create_point(d12, 0.0f));
+				}
+			};
+
+
 			class passthrough_generator : public mocks::path
 			{
 			public:
@@ -239,7 +276,7 @@ namespace agge
 				// ACT
 				s.add_vertex(1.3f, 5.81f, path_command_move_to);
 				s.add_vertex(7.1f, 5.81f, path_command_line_to);
-				mocks::path::point points1[] = { get(s), get(s), get(s), get(s), get(s), };
+				mocks::path::point points1[] = { get(s), get(s), get(s), get(s), get(s), get(s), };
 
 				// ASSERT
 				mocks::path::point reference1[] = {
@@ -247,7 +284,7 @@ namespace agge
 					{ 1.3f, 4.76f, path_command_line_to },
 					{ 7.1f, 4.76f, path_command_line_to },
 					{ 7.1f, 6.86f, path_command_line_to },
-					{ 0.0f, 0.0f, 0x6F },
+					{ 0.0f, 0.0f, path_command_end_poly }, { 0.0f, 0.0f, path_command_stop },
 				};
 
 				assert_equal(reference1, points1);
@@ -259,7 +296,7 @@ namespace agge
 				// ACT
 				s.add_vertex(108.3f, -15.1f, path_command_move_to);
 				s.add_vertex(-5.0f, -15.1f, path_command_line_to);
-				mocks::path::point points2[] = { get(s), get(s), get(s), get(s), get(s), };
+				mocks::path::point points2[] = { get(s), get(s), get(s), get(s), get(s), get(s), };
 
 				// ASSERT
 				mocks::path::point reference2[] = {
@@ -267,7 +304,7 @@ namespace agge
 					{ 108.3f, -14.35f, path_command_line_to },
 					{ -5.0f, -14.35f, path_command_line_to },
 					{ -5.0f, -15.85f, path_command_line_to },
-					{ 0.0f, 0.0f, 0x6F },
+					{ 0.0f, 0.0f, path_command_end_poly }, { 0.0f, 0.0f, path_command_stop },
 				};
 
 				assert_equal(reference2, points2);
@@ -284,7 +321,7 @@ namespace agge
 				// ACT
 				s.add_vertex(1.3f, -5.31f, path_command_move_to);
 				s.add_vertex(1.3f, 1.8f, path_command_line_to);
-				mocks::path::point points1[] = { get(s), get(s), get(s), get(s), get(s), };
+				mocks::path::point points1[] = { get(s), get(s), get(s), get(s), get(s), get(s), };
 
 				// ASSERT
 				mocks::path::point reference1[] = {
@@ -292,7 +329,8 @@ namespace agge
 					{ 4.8f, -5.31f, path_command_line_to },
 					{ 4.8f, 1.8f, path_command_line_to },
 					{ -2.2f, 1.8f, path_command_line_to },
-					{ 0.0f, 0.0f, 0x6F },
+					{ 0.0f, 0.0f, path_command_end_poly },
+					{ 0.0f, 0.0f, path_command_stop },
 				};
 
 				assert_equal(reference1, points1);
@@ -304,7 +342,7 @@ namespace agge
 				// ACT
 				s.add_vertex(-108.3f, 15.1f, path_command_move_to);
 				s.add_vertex(-108.3f, -10.0f, path_command_line_to);
-				mocks::path::point points2[] = { get(s), get(s), get(s), get(s), get(s), };
+				mocks::path::point points2[] = { get(s), get(s), get(s), get(s), get(s), get(s), };
 
 				// ASSERT
 				mocks::path::point reference2[] = {
@@ -312,7 +350,8 @@ namespace agge
 					{ -110.3f, 15.1f, path_command_line_to },
 					{ -110.3f, -10.0f, path_command_line_to },
 					{ -106.3f, -10.0f, path_command_line_to },
-					{ 0.0f, 0.0f, 0x6F },
+					{ 0.0f, 0.0f, path_command_end_poly },
+					{ 0.0f, 0.0f, path_command_stop },
 				};
 
 				assert_equal(reference2, points2);
@@ -329,7 +368,7 @@ namespace agge
 				// ACT
 				s.add_vertex(1.0f, -5.0f, path_command_move_to);
 				s.add_vertex(26.9808f, 10.0f, path_command_line_to);
-				mocks::path::point points1[] = { get(s), get(s), get(s), get(s), get(s), };
+				mocks::path::point points1[] = { get(s), get(s), get(s), get(s), get(s), get(s), };
 
 				// ASSERT
 				mocks::path::point reference1[] = {
@@ -337,7 +376,7 @@ namespace agge
 					{ 1.5f, -5.86603f, path_command_line_to },
 					{ 27.4808f, 9.13397f, path_command_line_to },
 					{ 26.4808f, 10.8660f, path_command_line_to },
-					{ 0.0f, 0.0f, 0x6F },
+					{ 0.0f, 0.0f, path_command_end_poly }, { 0.0f, 0.0f, path_command_stop },
 				};
 
 				assert_equal(reference1, points1);
@@ -349,7 +388,7 @@ namespace agge
 				// ACT
 				s.add_vertex(10.0f, -10.0f, path_command_move_to);
 				s.add_vertex(0.0f, 0.0f, path_command_line_to);
-				mocks::path::point points2[] = { get(s), get(s), get(s), get(s), get(s), };
+				mocks::path::point points2[] = { get(s), get(s), get(s), get(s), get(s), get(s), };
 
 				// ASSERT
 				mocks::path::point reference2[] = {
@@ -357,7 +396,118 @@ namespace agge
 					{ 12.0f, -8.0f, path_command_line_to },
 					{ 2.0f, 2.0f, path_command_line_to },
 					{ -2.0f, -2.0f, path_command_line_to },
-					{ 0.0f, 0.0f, 0x6F },
+					{ 0.0f, 0.0f, path_command_end_poly }, { 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference2, points2);
+			}
+
+
+			test( StrokerGeneratesSinglePointSequenceForOpenSegment )
+			{
+				// INIT
+				stroke s;
+
+				s.add_vertex(0.0f, 0.0f, path_command_move_to);
+				s.add_vertex(0.0f, 1.0f, path_command_line_to);
+
+				s.set_cap(passthrough_cap());
+				s.set_join(passthrough_join());
+				s.width(4.0f);
+
+				// ACT
+				mocks::path::point points1[] = { get(s), get(s), get(s), get(s), get(s), get(s), get(s), get(s), };
+
+				// ASSERT
+				mocks::path::point reference1[] = {
+					moveto(2.0f, 1.0f), lineto(0.0f, 0.0f), lineto(0.0f, 1.0f),
+					lineto(2.0f, 1.0f), lineto(0.0f, 1.0f), lineto(0.0f, 0.0f),
+					{ 0.0f, 0.0f, path_command_end_poly }, { 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference1, points1);
+
+				// INIT
+				s.remove_all();
+				s.width(3.0f);
+				s.add_vertex(1.0f, 2.0f, path_command_move_to);
+				s.add_vertex(4.0f, 6.0f, path_command_line_to);
+
+				// ACT
+				mocks::path::point points2[] = { get(s), get(s), get(s), get(s), get(s), get(s), get(s), get(s), };
+
+				// ASSERT
+				mocks::path::point reference2[] = {
+					moveto(1.5f, 5.0f), lineto(1.0f, 2.0f), lineto(4.0f, 6.0f),
+					lineto(1.5f, 5.0f), lineto(4.0f, 6.0f), lineto(1.0f, 2.0f),
+					{ 0.0f, 0.0f, path_command_end_poly }, { 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference2, points2);
+			}
+
+
+			test( StrokerGeneratesSinglePointSequenceForOpenPolyline )
+			{
+				// INIT
+				stroke s;
+
+				s.add_vertex(1.0f, 1.0f, path_command_move_to);
+				s.add_vertex(4.0f, 5.0f, path_command_line_to);
+				s.add_vertex(4.0f, 15.0f, path_command_line_to);
+
+				s.set_cap(passthrough_cap());
+				s.set_join(passthrough_join());
+				s.width(1.0f);
+
+				// ACT
+				mocks::path::point points1[] = {
+					get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s),
+				};
+
+				// ASSERT
+				mocks::path::point reference1[] = {
+					moveto(0.5f, 5.0f), lineto(1.0f, 1.0f), lineto(4.0f, 5.0f),
+					lineto(0.5f, 5.0f), lineto(1.0f, 1.0f), lineto(4.0f, 5.0f), lineto(4.0f, 15.0f), lineto(10.0f, 0.0f),
+					lineto(0.5f, 10.0f), lineto(4.0f, 15.0f), lineto(4.0f, 5.0f),
+					lineto(0.5f, 10.0f), lineto(4.0f, 15.0f), lineto(4.0f, 5.0f), lineto(1.0f, 1.0f), lineto(5.0f, 0.0f),
+					{ 0.0f, 0.0f, path_command_end_poly }, { 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference1, points1);
+
+				// INIT
+				s.remove_all();
+				s.width(3.4f);
+				s.add_vertex(1.0f, 1.0f, path_command_move_to);
+				s.add_vertex(1.0f, 0.0f, path_command_line_to);
+				s.add_vertex(5.0f, 3.0f, path_command_line_to);
+				s.add_vertex(5.0f, 15.0f, path_command_line_to);
+
+				// ACT
+				mocks::path::point points2[] = {
+					get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s),
+				};
+
+				// ASSERT
+				mocks::path::point reference2[] = {
+					moveto(1.7f, 1.0f), lineto(1.0f, 1.0f), lineto(1.0f, 0.0f),
+					lineto(1.7f, 1.0f), lineto(1.0f, 1.0f), lineto(1.0f, 0.0f), lineto(5.0f, 3.0f), lineto(5.0f, 0.0f),
+					lineto(1.7f, 5.0f), lineto(1.0f, 0.0f), lineto(5.0f, 3.0f), lineto(5.0f, 15.0f), lineto(12.0f, 0.0f),
+					lineto(1.7f, 12.0f), lineto(5.0f, 15.0f), lineto(5.0f, 3.0f),
+					lineto(1.7f, 12.0f), lineto(5.0f, 15.0f), lineto(5.0f, 3.0f), lineto(1.0f, 0.0f), lineto(5.0f, 0.0f),
+					lineto(1.7f, 5.0f), lineto(5.0f, 3.0f), lineto(1.0f, 0.0f), lineto(1.0f, 1.0f), lineto(1.0f, 0.0f),
+					{ 0.0f, 0.0f, path_command_end_poly }, { 0.0f, 0.0f, path_command_stop },
 				};
 
 				assert_equal(reference2, points2);

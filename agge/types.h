@@ -13,6 +13,7 @@ namespace agge
 		path_command_stop = 0x00,
 		path_command_move_to = 0x01,
 		path_command_line_to = 0x02,
+		path_command_end_poly = 0x0F,
 		path_commands_mask = 0x0F,
 
 		path_flag_close = 0x10,
