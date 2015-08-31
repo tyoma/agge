@@ -2,6 +2,21 @@
 
 namespace agge
 {
+	template <typename CoordT>
+	struct point;
+
+	template <typename CoordT>
+	struct rect;
+
+	typedef unsigned int count_t;
+	typedef unsigned char uint8_t;
+	typedef unsigned short uint16_t;
+	typedef float real_t;
+	typedef point<real_t> point_r;
+	typedef rect<int> rect_i;
+
+
+
 	enum bits_per_pixel {
 		bpp32 = 32,
 		bpp24 = 24,
@@ -21,10 +36,6 @@ namespace agge
 	};
 
 
-	typedef unsigned int count_t;
-	typedef unsigned char uint8_t;
-	typedef unsigned short uint16_t;
-	typedef float real_t;
 
 #pragma pack(push, 1)
 	struct pixel32
@@ -56,26 +67,6 @@ namespace agge
 	{
 		CoordT x1, y1, x2, y2;
 	};
-
-
-	typedef point<real_t> point_r;
-	typedef rect<int> rect_i;
-
-
-	template <typename CoordT>
-	point<CoordT> create_point(CoordT x, CoordT y)
-	{
-		point<CoordT> p = { x, y };
-		return p;
-	}
-
-	template <typename CoordT>
-	inline CoordT width(const rect<CoordT> &rc)
-	{	return rc.x2 - rc.x1;	}
-
-	template <typename CoordT>
-	inline CoordT height(const rect<CoordT> &rc)
-	{	return rc.y2 - rc.y1;	}
 
 	class noncopyable
 	{

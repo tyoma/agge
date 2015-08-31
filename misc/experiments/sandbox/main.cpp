@@ -7,12 +7,12 @@
 #include <agge/blenders_simd.h>
 #include <agge/renderer_parallel.h>
 #include <agge/stroker.h>
+#include <agge/stroke_features.h>
 
 #include <aggx/rasterizer.h>
 #include <aggx/blenders.h>
 
 #include <aggx/aggx_ellipse.h>
-#include <aggx/aggx_vcgen_stroke.h>
 
 #include <agg_conv_stroke.h>
 #include <agg_rasterizer_sl_clip.h>
@@ -205,19 +205,18 @@ namespace
 			{
 				stopwatch(counter);
 					agg_path_adaptor p(_spiral);
-					aggx::vcgen_stroke stroke;
+					agge::stroke s;
+					agge::path_generator_adapter<agg_path_adaptor, agge::stroke> path_stroke(p, s);
 
-					stroke.width(3);
-
-					agge::path_generator_adapter<agg_path_adaptor, aggx::vcgen_stroke> path_stroke(p, stroke);
+					s.width(3);
+					s.set_cap(agge::caps::butt());
+					s.set_join(agge::joins::bevel());
 
 					_spiral_flattened.clear();
 					flatten<aggx::real>(_spiral_flattened, path_stroke);
 				timings.stroking += stopwatch(counter);
 
 				solid_color_brush brush(aggx::rgba8(0, 154, 255, 230));
-				solid_color_brush brush2(aggx::rgba8(0, 0, 0, 160));
-				solid_color_brush brush3(aggx::rgba8(0, 0, 0, 255));
 
 				stopwatch(counter);
 				_rasterizer.add_path(agg_path_adaptor(_spiral_flattened));

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <agge/math.h>
 #include <agge/types.h>
 
 #include <algorithm>

@@ -2,11 +2,34 @@
 
 namespace agge
 {
+	template <typename CoordT>
+	struct point;
+
+	template <typename CoordT>
+	struct rect;
+
+
+
+	template <typename CoordT>
+	inline point<CoordT> create_point(CoordT x, CoordT y)
+	{
+		point<CoordT> p = { x, y };
+		return p;
+	}
+
+	template <typename CoordT>
+	inline CoordT width(const rect<CoordT> &rc)
+	{	return rc.x2 - rc.x1;	}
+
+	template <typename CoordT>
+	inline CoordT height(const rect<CoordT> &rc)
+	{	return rc.y2 - rc.y1;	}
+
 	template <typename T>
-	T agge_min(const T &lhs, const T &rhs)
+	inline T agge_min(const T &lhs, const T &rhs)
 	{	return lhs < rhs ? lhs : rhs;	}
 
 	template <typename T>
-	T agge_max(const T &lhs, const T &rhs)
+	inline T agge_max(const T &lhs, const T &rhs)
 	{	return lhs > rhs ? lhs : rhs;	}
 }

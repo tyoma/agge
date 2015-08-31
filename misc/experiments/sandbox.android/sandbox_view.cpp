@@ -18,10 +18,10 @@
 
 #include <aggx/rasterizer.h>
 #include <aggx/blenders.h>
-#include <aggx/aggx_vcgen_stroke.h>
 
 #include <agge/renderer_parallel.h>
 #include <agge/stroker.h>
+#include <agge/stroke_features.h>
 
 #include <agg/include/agg_rasterizer_sl_clip.h>
 
@@ -109,27 +109,11 @@ namespace
 			: renderer(parallelism)
 		{	}
 
-		void update_size(unsigned width, unsigned height)
-		{
-			//AggPath spiral_line;
-
-			spiral.clear();
-			demo::spiral(spiral, width / 2, height / 2, 5, (std::min)(width, height) / 2 - 10, 1, 0);
-
-			//agg_path_adaptor p(spiral_line);
-			//conv_stroke<agg_path_adaptor> stroke(p);
-
-			//stroke.width(3);
-
-			//spiral.clear();
-			//flatten(spiral, stroke);
-		}
-
 	public:
 		rasterizer_scanline rasterizer;
 		renderer_parallel renderer;
 		AggPath spiral;
-		vcgen_stroke stroke;
+		agge::stroke stroke;
 	};
 }
 
@@ -164,8 +148,10 @@ try
 	agg_path_adaptor p(agg->spiral);
 
 	agg->stroke.width(3);
+	agg->stroke.set_cap(agge::caps::butt());
+	agg->stroke.set_join(agge::joins::bevel());
 
-	agge::path_generator_adapter<agg_path_adaptor, vcgen_stroke> stroke_path(p, agg->stroke);
+	agge::path_generator_adapter<agg_path_adaptor, agge::stroke> stroke_path(p, agg->stroke);
 
 	agg->rasterizer.add_path(stroke_path);
 	agg->renderer(bm, 0, agg->rasterizer.get_mask(), blender(rgba8(0, 154, 255, 255)), calculate_alpha<8>());
@@ -180,7 +166,8 @@ try
 	jfieldID fieldidAGG = env->GetFieldID(env->GetObjectClass(obj), "aggObject", "J");
 	AGG* agg = reinterpret_cast<AGG*>(env->GetLongField(obj, fieldidAGG));
 
-	agg->update_size(width, height);
+	agg->spiral.clear();
+	demo::spiral(agg->spiral, width / 2, height / 2, 5, (std::min)(width, height) / 2 - 10, 1, 0);
 }
 catch (...)
 {

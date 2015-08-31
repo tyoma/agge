@@ -7,9 +7,9 @@
 #include <agge/blenders_simd.h>
 #include <agge/renderer.h>
 #include <agge/stroker.h>
+#include <agge/stroke_features.h>
 
 #include <aggx/aggx_ellipse.h>
-#include <aggx/aggx_vcgen_stroke.h>
 #include <aggx/paths.h>
 
 #include <memory>
@@ -563,11 +563,12 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 		demo::spiral(_agg_path, cx / 2, cy / 2, 5, (std::min)(cx, cy) / 2 - 10, 1, 0);
 
 		demo::agg_path_adaptor p(_agg_path);
-		vcgen_stroke stroke;
 
-		stroke.width(3);
+		_stroke.width(3);
+		_stroke.set_cap(agge::caps::butt());
+		_stroke.set_join(agge::joins::bevel());
 
-		agge::path_generator_adapter<demo::agg_path_adaptor, vcgen_stroke> stroke_path(p, stroke);
+		agge::path_generator_adapter<demo::agg_path_adaptor, agge::stroke> stroke_path(p, _stroke);
 
 		_agg_path_flatten.clear();
 		demo::flatten<real>(_agg_path_flatten, stroke_path);
@@ -764,17 +765,18 @@ void CChildView::drawLines(bitmap &b, const CSize &client, const std::vector<bar
 {
 	const int d = 2, v = client.cy / 2;
 	int x = 0;
-	D2D1_POINT_2F previous = { x, v + bars.front().c };
+	D2D1_POINT_2F previous = { -1, v + bars.front().c };
+
+	_stroke.set_cap(agge::caps::butt());
+	_stroke.set_join(agge::joins::bevel());
+	_stroke.width(3);
 
 	for_each(bars.begin(), bars.end(), [&] (const bar &b) {
 		D2D1_POINT_2F point = { x, v + b.c };
 
 		line_adaptor l(previous.x, previous.y, point.x, point.y);
-		vcgen_stroke stroke;
 
-		stroke.width(3);
-
-		agge::path_generator_adapter<line_adaptor, vcgen_stroke> stroke_path(l, stroke);
+		agge::path_generator_adapter<line_adaptor, agge::stroke> stroke_path(l, _stroke);
 
 		_agg_rasterizer.add_path(stroke_path);
 

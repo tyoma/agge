@@ -174,9 +174,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\misc\libraries\aggx\aggx_vcgen_stroke.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="BitmapTests.cpp" />
     <ClCompile Include="BlenderTests.cpp" />
     <ClCompile Include="helpers.cpp" />

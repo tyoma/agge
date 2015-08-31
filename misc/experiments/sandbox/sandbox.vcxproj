@@ -173,7 +173,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\libraries\aggx\aggx_vcgen_stroke.cpp" />
     <ClCompile Include="..\..\libraries\agg\src\agg_vcgen_stroke.cpp" />
     <ClCompile Include="..\common\balls.cpp" />
     <ClCompile Include="main.cpp" />
@@ -181,11 +180,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libraries\aggx\aggx_ellipse.h" />
-    <ClInclude Include="..\..\libraries\aggx\aggx_math.h" />
-    <ClInclude Include="..\..\libraries\aggx\aggx_math_stroke.h" />
-    <ClInclude Include="..\..\libraries\aggx\aggx_shorten_path.h" />
-    <ClInclude Include="..\..\libraries\aggx\aggx_vcgen_stroke.h" />
-    <ClInclude Include="..\..\libraries\aggx\aggx_vertex_sequence.h" />
     <ClInclude Include="..\..\libraries\aggx\basics.h" />
     <ClInclude Include="..\..\libraries\aggx\blenders.h" />
     <ClInclude Include="..\..\libraries\aggx\rasterizer.h" />

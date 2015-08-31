@@ -30,13 +30,13 @@
     <ClCompile Include="platform\win32\parallel.cpp">
       <Filter>src\platform\win32</Filter>
     </ClCompile>
-    <ClCompile Include="stroke_math.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="stroker.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="stroke_features.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="math.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -58,7 +58,7 @@
     <ClInclude Include="..\agge\tools.h" />
     <ClInclude Include="..\agge\pod_vector.h" />
     <ClInclude Include="..\agge\stroker.h" />
-    <ClInclude Include="..\agge\stroke_math.h" />
     <ClInclude Include="..\agge\stroke_features.h" />
+    <ClInclude Include="..\agge\math.h" />
   </ItemGroup>
 </Project>

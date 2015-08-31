@@ -31,29 +31,37 @@ namespace agge
 
 	private:
 		enum state {
-			start_cap = 0,
-			outline_forward = 1,
-			end_cap = 2,
-			outline_backward = 3,
-			end_poly = 4,
-			stop = 5,
+			// Stages
+			start = 0x00,
+			start_cap = 0x01,
+			outline_forward = 0x02,
+			end_poly1 = 0x03,
+			end_cap = 0x04,
+			outline_backward = 0x05,
+			end_poly = 0x06,
+			stop = 0x0F,
+			stage_mask = 0x0F,
+
+			// Flags
+			closed = 0x10,
+			moveto = 0x20
 		};
 		struct point_ref;
 		typedef pod_vector<point_ref> input_vertices;
 
 	private:
-		void generate();
+		bool is_closed() const;
+		void set_stage(state stage);
 
 	private:
 		input_vertices _input;
 		points _output;
-		input_vertices::const_iterator _input_iterator;
+		input_vertices::const_iterator _i;
 		points::const_iterator _output_iterator;
 		cap *_cap;
 		join *_join;
 		real_t _width;
 		int _state;
-		bool _initial;
 	};
 
 	struct stroke::cap

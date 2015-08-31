@@ -512,6 +512,111 @@ namespace agge
 
 				assert_equal(reference2, points2);
 			}
+
+			
+			test( TwoOutlinesAreGeneratedForPolygons )
+			{
+				// INIT
+				stroke s;
+
+				s.add_vertex(1.0f, 1.0f, path_command_move_to);
+				s.add_vertex(4.0f, 5.0f, path_command_line_to);
+				s.add_vertex(4.0f, 15.0f, path_command_line_to);
+				s.add_vertex(0.0f, 0.0f, path_command_end_poly);
+
+				s.set_join(passthrough_join());
+				s.width(2.0f);
+
+				// ACT
+				mocks::path::point points1[] = {
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s),
+				};
+
+				// ASSERT
+				mocks::path::point reference1[] = {
+					moveto(1.0f, sqrt(205.0f)), lineto(4.0f, 15.0f), lineto(1.0f, 1.0f), lineto(4.0f, 5.0f), lineto(5.0f, 0.0f),
+					lineto(1.0f, 5.0f), lineto(1.0f, 1.0f), lineto(4.0f, 5.0f), lineto(4.0f, 15.0f), lineto(10.0f, 0.0f),
+					lineto(1.0f, 10.0f), lineto(4.0f, 5.0f), lineto(4.0f, 15.0f), lineto(1.0f, 1.0f), lineto(sqrt(205.0f), 0.0f),
+					{ 0.0f, 0.0f, path_command_end_poly },
+					moveto(1.0f, 5.0f), lineto(4.0f, 5.0f), lineto(1.0f, 1.0f), lineto(4.0f, 15.0f), lineto(sqrt(205.0f), 0.0f),
+					lineto(1.0f, sqrt(205.0f)), lineto(1.0f, 1.0f), lineto(4.0f, 15.0f), lineto(4.0f, 5.0f), lineto(10.0f, 0.0f),
+					lineto(1.0f, 10.0f), lineto(4.0f, 15.0f), lineto(4.0f, 5.0f), lineto(1.0f, 1.0f), lineto(5.0f, 0.0f),
+					{ 0.0f, 0.0f, path_command_end_poly }, { 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference1, points1);
+
+				// INIT
+				s.remove_all();
+
+				s.add_vertex(1.0f, 1.0f, path_command_move_to);
+				s.add_vertex(5.0f, 2.0f, path_command_line_to);
+				s.add_vertex(4.0f, 6.0f, path_command_line_to);
+				s.add_vertex(0.0f, 5.0f, path_command_line_to);
+				s.add_vertex(0.0f, 0.0f, path_command_end_poly);
+
+				// ACT
+				mocks::path::point points2[] = {
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s), get(s), get(s), get(s),
+					get(s), get(s),
+				};
+
+				// ASSERT
+				real_t l = sqrt(17.0f);
+				mocks::path::point reference2[] = {
+					moveto(1.0f, l), lineto(0.0f, 5.0f), lineto(1.0f, 1.0f), lineto(5.0f, 2.0f), lineto(l, 0.0f),
+					lineto(1.0f, l), lineto(1.0f, 1.0f), lineto(5.0f, 2.0f), lineto(4.0f, 6.0f), lineto(l, 0.0f),
+					lineto(1.0f, l), lineto(5.0f, 2.0f), lineto(4.0f, 6.0f), lineto(0.0f, 5.0f), lineto(l, 0.0f),
+					lineto(1.0f, l), lineto(4.0f, 6.0f), lineto(0.0f, 5.0f), lineto(1.0f, 1.0f), lineto(l, 0.0f),
+					{ 0.0f, 0.0f, path_command_end_poly },
+					moveto(1.0f, l), lineto(5.0f, 2.0f), lineto(1.0f, 1.0f), lineto(0.0f, 5.0f), lineto(l, 0.0f),
+					lineto(1.0f, l), lineto(1.0f, 1.0f), lineto(0.0f, 5.0f), lineto(4.0f, 6.0f), lineto(l, 0.0f),
+					lineto(1.0f, l), lineto(0.0f, 5.0f), lineto(4.0f, 6.0f), lineto(5.0f, 2.0f), lineto(l, 0.0f),
+					lineto(1.0f, l), lineto(4.0f, 6.0f), lineto(5.0f, 2.0f), lineto(1.0f, 1.0f), lineto(l, 0.0f),
+					{ 0.0f, 0.0f, path_command_end_poly }, { 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference2, points2);
+			}
+
+
+			test( EmptyStrokerStopsImmediately )
+			{
+				// INIT
+				stroke s;
+
+				// ACT / ASSERT
+				assert_equal(path_command_stop, get(s).command);
+
+				// INIT
+				s.add_vertex(1.0f, 2.0f, path_command_move_to);
+
+				// ACT / ASSERT
+				assert_equal(path_command_stop, get(s).command);
+
+				// INIT
+				s.add_vertex(1.0f, 2.0f, path_command_line_to);
+				s.add_vertex(0.0f, 0.0f, path_command_end_poly);
+
+				// ACT / ASSERT
+				assert_equal(path_command_stop, get(s).command);
+			}
+
 		end_test_suite
 	}
 }
