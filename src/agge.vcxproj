@@ -43,6 +43,7 @@
     <ClInclude Include="..\agge\math.h" />
     <ClInclude Include="..\agge\memory.h" />
     <ClInclude Include="..\agge\parallel.h" />
+    <ClInclude Include="..\agge\path.h" />
     <ClInclude Include="..\agge\platform\win32\bitmap.h" />
     <ClInclude Include="..\agge\pod_vector.h" />
     <ClInclude Include="..\agge\renderer_parallel.h" />

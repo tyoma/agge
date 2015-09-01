@@ -2,6 +2,8 @@
 
 namespace agge
 {
+	typedef float real_t;
+
 	template <typename CoordT>
 	struct point;
 
@@ -11,31 +13,10 @@ namespace agge
 	typedef unsigned int count_t;
 	typedef unsigned char uint8_t;
 	typedef unsigned short uint16_t;
-	typedef float real_t;
 	typedef point<real_t> point_r;
 	typedef rect<int> rect_i;
 
-
-
-	enum bits_per_pixel {
-		bpp32 = 32,
-		bpp24 = 24,
-		bpp16 = 16,
-		bpp8 = 8
-	};
-
-	enum path_commands {
-		path_command_stop = 0x00,
-		path_command_move_to = 0x01,
-		path_command_line_to = 0x02,
-		path_command_end_poly = 0x0F,
-		path_commands_mask = 0x0F,
-
-		path_flag_close = 0x10,
-		path_flags_mask = 0xF0
-	};
-
-
+	enum bits_per_pixel { bpp32 = 32, bpp24 = 24, bpp16 = 16, bpp8 = 8 };
 
 #pragma pack(push, 1)
 	struct pixel32

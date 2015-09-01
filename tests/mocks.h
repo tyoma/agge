@@ -2,6 +2,7 @@
 
 #include "helpers.h"
 
+#include <agge/path.h>
 #include <agge/tools.h>
 
 #include <utee/ut/assert.h>

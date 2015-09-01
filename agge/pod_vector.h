@@ -21,6 +21,7 @@ namespace agge
 		~pod_vector();
 
 		void push_back(const T &element);
+		void pop_back();
 		void clear();
 		void resize(count_t size);
 		void assign(count_t size, const T &value);
@@ -77,6 +78,10 @@ namespace agge
 			grow();
 		*_end++ = element;
 	}
+
+	template <typename T>
+	inline void pod_vector<T>::pop_back()
+	{	--_end;	}
 
 	template <typename T>
 	inline void pod_vector<T>::clear()

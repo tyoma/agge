@@ -7,7 +7,7 @@ namespace agge
 	namespace tests
 	{
 		template <>
-		bool equal(const float &lhs, const float &rhs)
-		{	return lhs == rhs || fabsf((lhs - rhs) / (lhs + rhs)) <= 2e-6f;	}
+		bool equal(const real_t &lhs, const real_t &rhs)
+		{	return lhs == rhs || fabs((lhs - rhs) / (lhs + rhs)) <= 2e-6f;	}
 	}
 }

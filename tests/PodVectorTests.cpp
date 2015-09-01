@@ -492,6 +492,30 @@ namespace agge
 				assert_equal(18u, v3.size());
 				assert_equal(v3.end(), find_if(v3.begin(), v3.end(), bind1st(not_equal_to<unsigned char>(), 23)));
 			}
+
+
+			test( PoppingLastElementReducesSize )
+			{
+				// INIT
+				pod_vector<char> v;
+
+				v.push_back('r');
+				v.push_back('a');
+				v.push_back('w');
+
+				// ACT
+				v.pop_back();
+
+				// ASSERT
+				assert_equal(2u, v.size());
+
+				// ACT
+				v.pop_back();
+				v.pop_back();
+
+				// ASSERT
+				assert_equal(0u, v.size());
+			}
 		end_test_suite
 	}
 }

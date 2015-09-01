@@ -12,9 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainDialog.h" />
-    <ClInclude Include="..\..\libraries\aggx\win32_bitmap.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libraries\aggx\basics.h">
       <Filter>aggx</Filter>
     </ClInclude>

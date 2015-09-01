@@ -1,5 +1,6 @@
 #pragma once
 
+#include "path.h"
 #include "pod_vector.h"
 
 namespace agge
@@ -44,22 +45,24 @@ namespace agge
 
 			// Flags
 			closed = 0x10,
-			moveto = 0x20
+			moveto = 0x20,
+			ready = 0x40
 		};
 		struct point_ref;
 		typedef pod_vector<point_ref> input_vertices;
 
 	private:
 		bool is_closed() const;
-		void set_stage(state stage);
+		void set_state(int stage_and_flags);
+		void close();
 
 	private:
 		input_vertices _input;
 		points _output;
 		input_vertices::const_iterator _i;
 		points::const_iterator _output_iterator;
-		cap *_cap;
-		join *_join;
+		const cap *_cap;
+		const join *_join;
 		real_t _width;
 		int _state;
 	};
@@ -102,15 +105,21 @@ namespace agge
 
 
 	template <typename CapT>
-	inline void stroke::set_cap(const CapT &/*c*/)
+	inline void stroke::set_cap(const CapT &c)
 	{
-		_cap = new CapT;
+		const CapT *replacement = new CapT(c);
+		
+		delete _cap;
+		_cap = replacement;
 	}
 
 	template <typename JoinT>
-	inline void stroke::set_join(const JoinT &/*j*/)
+	inline void stroke::set_join(const JoinT &j)
 	{
-		_join = new JoinT;
+		const JoinT *replacement = new JoinT(j);
+		
+		delete _join;
+		_join = replacement;
 	}
 
 

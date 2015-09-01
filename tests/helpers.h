@@ -103,7 +103,7 @@ namespace agge
 		{	return lhs == rhs;	}
 
 		template <>
-		bool equal(const float &lhs, const float &rhs);
+		bool equal(const real_t &lhs, const real_t &rhs);
 	}
 
 	inline bool operator ==(const pixel32 &lhs, const pixel32 &rhs)

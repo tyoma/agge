@@ -102,10 +102,16 @@ namespace
 
 			stopwatch(counter);
 				agg_path_adaptor p(_spiral);
-				agg::conv_stroke<agg_path_adaptor> stroke(p);
-				stroke.width(3);
+
+				if (!_stroke.get())
+					_stroke.reset(new agg::conv_stroke<agg_path_adaptor>(p));
+				else
+					_stroke->attach(p);
+
+				_stroke->width(3);
+				_stroke->line_join(agg::bevel_join);
 				_spiral_flattened.clear();
-				flatten<double>(_spiral_flattened, stroke);
+				flatten<double>(_spiral_flattened, *_stroke);
 			timings.stroking += stopwatch(counter);
 
 			bitmap_rendering_buffer rbuf(surface);
@@ -135,11 +141,7 @@ namespace
 				agg::conv_stroke<agg_path_adaptor> stroke(p2);
 				stroke.width(20.0f);
 
-				stroke.miter_limit(100);
-				stroke.inner_miter_limit(14.6);
-
-//				stroke.line_join(agg::bevel_join);
-//				stroke.inner_join(agg::inner_bevel);
+				stroke.line_join(agg::bevel_join);
 
 				_rasterizer.filling_rule(agg::fill_even_odd);
 				_rasterizer.add_path(stroke);
@@ -178,6 +180,7 @@ namespace
 		AggPath _spiral, _spiral_flattened;
 		LARGE_INTEGER _balls_timer;
 		vector<demo::ball> _balls;
+		auto_ptr< agg::conv_stroke<agg_path_adaptor> > _stroke;
 	};
 
 
@@ -205,15 +208,19 @@ namespace
 			{
 				stopwatch(counter);
 					agg_path_adaptor p(_spiral);
-					agge::stroke s;
-					agge::path_generator_adapter<agg_path_adaptor, agge::stroke> path_stroke(p, s);
+					agge::path_generator_adapter<agg_path_adaptor, agge::stroke> path_stroke1(p, _stroke1);
+					agge::path_generator_adapter<agge::path_generator_adapter<agg_path_adaptor, agge::stroke>, agge::stroke> path_stroke2(path_stroke1, _stroke2);
 
-					s.width(3);
-					s.set_cap(agge::caps::butt());
-					s.set_join(agge::joins::bevel());
+					_stroke1.width(3.0f);
+					_stroke1.set_cap(agge::caps::butt());
+					_stroke1.set_join(agge::joins::bevel());
+
+					_stroke2.width(1.2f);
+					_stroke2.set_cap(agge::caps::butt());
+					_stroke2.set_join(agge::joins::bevel());
 
 					_spiral_flattened.clear();
-					flatten<aggx::real>(_spiral_flattened, path_stroke);
+					flatten<agge::real_t>(_spiral_flattened, path_stroke1);
 				timings.stroking += stopwatch(counter);
 
 				solid_color_brush brush(aggx::rgba8(0, 154, 255, 230));
@@ -256,6 +263,7 @@ namespace
 		AggPath _spiral, _spiral_flattened;
 		LARGE_INTEGER _balls_timer;
 		vector<demo::ball> _balls;
+		agge::stroke _stroke1, _stroke2;
 	};
 }
 
