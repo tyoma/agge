@@ -857,6 +857,82 @@ namespace agge
 
 				assert_equal(reference, points);
 			}
+
+
+			test( PathIsNotCompleteIfLastPointRemovedWasTheThirdInThePath )
+			{
+				// INIT
+				stroke s;
+
+				s.add_vertex(2.0f, 5.0f, path_command_move_to);
+				s.add_vertex(0.3f, 19.2f, path_command_line_to);
+
+				// ACT
+				s.add_vertex(2.0f + 0.3f * distance_epsilon, 5.0f + 0.4f * distance_epsilon, path_command_line_to);
+				s.add_vertex(0.0f, 0.0f, path_command_end_poly | path_flag_close);
+
+				// ACT / ASSERT
+				assert_equal(path_command_stop, vertex(s).command);
+			}
+
+
+			test( IncorrectClosureIsIgnored )
+			{
+				// INIT
+				stroke s;
+
+				// ACT
+				s.add_vertex(0.0f, 0.0f, path_command_end_poly | path_flag_close);
+
+				// ACT / ASSERT
+				assert_equal(path_command_stop, vertex(s).command);
+
+				// INIT
+				s.set_cap(passthrough_cap(amount_alive));
+
+				// ACT
+				s.add_vertex(1.0f, 0.4f, path_command_move_to);
+				s.add_vertex(0.0f, 0.0f, path_command_line_to);
+
+				// ACT / ASSERT
+				assert_equal(path_command_move_to, vertex(s).command);
+			}
+
+
+			test( RemnantsOfPreviousIteratorAreSkipped )
+			{
+				// INIT
+				stroke s;
+
+				s.set_cap(passthrough_cap(amount_alive));
+				s.set_join(partial_passthrough_join());
+				s.width(101.0f);
+
+				s.add_vertex(11.0f, 75.0f, path_command_move_to);
+				s.add_vertex(0.3f, 19.2f, path_command_line_to);
+
+				vertex(s);
+
+				// ACT
+				s.remove_all();
+				
+				// ASSERT
+				s.add_vertex(2.0f, 5.0f, path_command_move_to);
+				s.add_vertex(0.3f, 19.2f, path_command_line_to);
+				s.add_vertex(8.2f, 10.0f, path_command_line_to | path_flag_close);
+
+				mocks::path::point points[] = {
+					vertex(s), vertex(s), vertex(s),
+					vertex(s),
+				};
+
+				mocks::path::point reference[] = {
+					moveto(2.0f, 5.0f), lineto(0.3f, 19.2f), lineto(8.2f, 10.0f),
+					{ 0.0f, 0.0f, path_command_end_poly | path_flag_close },
+				};
+
+				assert_equal(reference, points);
+			}
 		end_test_suite
 	}
 }

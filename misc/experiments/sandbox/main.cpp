@@ -220,7 +220,7 @@ namespace
 					_stroke2.set_join(agge::joins::bevel());
 
 					_spiral_flattened.clear();
-					flatten<agge::real_t>(_spiral_flattened, path_stroke1);
+					flatten<agge::real_t>(_spiral_flattened, path_stroke2);
 				timings.stroking += stopwatch(counter);
 
 				solid_color_brush brush(aggx::rgba8(0, 154, 255, 230));

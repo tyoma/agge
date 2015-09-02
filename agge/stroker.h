@@ -33,15 +33,14 @@ namespace agge
 	private:
 		enum state {
 			// Stages
-			start = 0x00,
-			start_cap = 0x01,
-			outline_forward = 0x02,
-			end_poly1 = 0x03,
-			end_cap = 0x04,
-			outline_backward = 0x05,
-			end_poly = 0x06,
-			stop = 0x0F,
-			stage_mask = 0x0F,
+			start_cap = 0x00,
+			outline_forward = 0x01,
+			end_poly1 = 0x02,
+			end_cap = 0x03,
+			outline_backward = 0x04,
+			end_poly = 0x05,
+			stop = 0x06,
+			stage_mask = 0x07,
 
 			// Flags
 			closed = 0x10,
@@ -52,6 +51,7 @@ namespace agge
 		typedef pod_vector<point_ref> input_vertices;
 
 	private:
+		bool prepare();
 		bool is_closed() const;
 		void set_state(int stage_and_flags);
 		void close();
@@ -60,7 +60,7 @@ namespace agge
 		input_vertices _input;
 		points _output;
 		input_vertices::const_iterator _i;
-		points::const_iterator _output_iterator;
+		points::const_iterator _o;
 		const cap *_cap;
 		const join *_join;
 		real_t _width;

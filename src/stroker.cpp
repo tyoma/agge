@@ -18,7 +18,7 @@ namespace agge
 	};
 
 	stroke::stroke()
-		: _cap(0), _join(0), _output_iterator(_output.end()), _state(0)
+		: _cap(0), _join(0), _o(_output.end()), _state(0)
 	{	}
 
 	stroke::~stroke()
@@ -30,44 +30,41 @@ namespace agge
 	void stroke::remove_all()
 	{
 		_input.clear();
-		_output.clear();
-		_output_iterator = _output.end();
-		_state = start;
+		_state = 0;
 	}
 
 	void stroke::add_vertex(real_t x, real_t y, int command)
 	{
 		if (is_vertex(command))
 		{
-			bool add = true;
 			point_ref p = { { x, y } };
 
-			if (!_input.empty())
+			if (_input.empty())
+			{
+				_input.push_back(p);
+			}
+			else
 			{
 				point_ref &last = *(_input.end() - 1);
 
-				add = last.set_distance_to(p.point);
+				if (last.set_distance_to(p.point))
+					_input.push_back(p);
 			}
-			if (add)
-				_input.push_back(p);
 		}
 
-		if (!(_state & ready) && _input.size() > 1)
-			_state |= ready;
-
-		if (agge::is_close(command))
+		if (is_close(command))
 			close();
 	}
 		
 	int stroke::vertex(real_t *x, real_t *y)
 	{
-		for ( ; _state & ready; )
+		for ( ; prepare(); )
 		{
-			if (_output_iterator != _output.end())
+			if (_o != _output.end())
 			{
-				*x = _output_iterator->x;
-				*y = _output_iterator->y;
-				++_output_iterator;
+				*x = _o->x;
+				*y = _o->y;
+				++_o;
 				int command = _state & moveto ? path_command_move_to : path_command_line_to;
 				_state &= ~moveto;
 				return command;
@@ -82,11 +79,6 @@ namespace agge
 
 			switch (_state & stage_mask)
 			{
-			case start:
-				_i = first;
-				set_state((is_closed() ? outline_forward : start_cap) | moveto);
-				break;
-
 			case start_cap:
 				_cap->calc(_output, _width, _i->point, _i->distance, next->point);
 				_i = next;
@@ -96,14 +88,14 @@ namespace agge
 			case outline_forward:
 				_join->calc(_output, _width, prev->point, prev->distance, _i->point, _i->distance, next->point);
 				_i = next;
-				if (is_closed() && _i == first)
+				if (_i == first && is_closed())
 					set_state(end_poly1);
-				else if (!is_closed() && _i == last)
+				else if (_i == last && !is_closed())
 					set_state(end_cap);
 				break;
 
 			case end_poly1:
-				_output_iterator = _output.end();
+				_o = _output.end();
 				set_state(outline_backward | moveto);
 				return path_command_end_poly | path_flag_close;
 
@@ -121,7 +113,7 @@ namespace agge
 				break;
 
 			case end_poly:
-				_output_iterator = _output.end();
+				_o = _output.end();
 				set_state(stop);
 				return path_command_end_poly | path_flag_close;
 
@@ -129,13 +121,27 @@ namespace agge
 				return path_command_stop;
 			}
 
-			_output_iterator = _output.begin();
+			_o = _output.begin();
 		}
 		return path_command_stop;
 	}
 		
 	void stroke::width(real_t w)
 	{	_width = 0.5f * w;	}
+
+	bool stroke::prepare()
+	{
+		if (_state & ready)
+			return true;
+
+		if (_input.size() <= (is_closed() ? 2u : 1u))
+			return false;
+
+		_i = _input.begin();
+		_o = _output.end();
+		set_state((is_closed() ? outline_forward : start_cap) | moveto | ready);
+		return true;
+	}
 
 	bool stroke::is_closed() const
 	{	return 0 != (_state & closed);	}
@@ -145,13 +151,14 @@ namespace agge
 
 	void stroke::close()
 	{
-		const point_ref &first = *_input.begin();
-		point_ref &last = *(_input.end() - 1);
+		if (!_input.empty())
+		{
+			const point_ref &first = *_input.begin();
+			point_ref &last = *(_input.end() - 1);
 		
-		if (!last.set_distance_to(first.point))
-			_input.pop_back();
-		_state |= closed;
-		if (_input.size() < 3)
-			_state &= ~ready;
+			if (!last.set_distance_to(first.point))
+				_input.pop_back();
+			_state |= closed;
+		}
 	}
 }
