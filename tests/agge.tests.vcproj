@@ -49,6 +49,7 @@
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
+				DisableLanguageExtensions="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
@@ -122,6 +123,7 @@
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
+				DisableLanguageExtensions="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
@@ -189,12 +191,16 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="3"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="true"
 				AdditionalIncludeDirectories="..;../misc/libraries"
 				PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
+				DisableLanguageExtensions="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
@@ -265,12 +271,16 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="3"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="true"
 				AdditionalIncludeDirectories="..;../misc/libraries"
 				PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
+				DisableLanguageExtensions="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
@@ -340,6 +350,38 @@
 				<File
 					RelativePath=".\platform\win32\surface.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							DisableLanguageExtensions="false"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							DisableLanguageExtensions="false"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							DisableLanguageExtensions="false"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							DisableLanguageExtensions="false"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\platform\win32\surface.h"
@@ -353,6 +395,10 @@
 		</File>
 		<File
 			RelativePath=".\BlenderTests.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\helpers.cpp"
 			>
 		</File>
 		<File
@@ -370,6 +416,38 @@
 		<File
 			RelativePath=".\mt.cpp"
 			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					DisableLanguageExtensions="false"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Debug|x64"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					DisableLanguageExtensions="false"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					DisableLanguageExtensions="false"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|x64"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					DisableLanguageExtensions="false"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath=".\mt.h"
@@ -377,6 +455,10 @@
 		</File>
 		<File
 			RelativePath=".\ParallelExecutionTests.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\PodVectorTests.cpp"
 			>
 		</File>
 		<File
@@ -393,6 +475,14 @@
 		</File>
 		<File
 			RelativePath=".\ScanlineRasterizerTests.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\StrokeFeaturesTests.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\StrokerTests.cpp"
 			>
 		</File>
 		<File

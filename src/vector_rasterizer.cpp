@@ -3,8 +3,6 @@
 #include <agge/config.h>
 #include <agge/tools.h>
 
-using namespace std;
-
 namespace agge
 {
 	namespace

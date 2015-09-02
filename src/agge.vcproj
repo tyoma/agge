@@ -169,12 +169,17 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="3"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="true"
 				AdditionalIncludeDirectories=".."
 				PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
 				RuntimeLibrary="0"
+				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
+				EnableEnhancedInstructionSet="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
 				DebugInformationFormat="3"
@@ -233,11 +238,15 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="3"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="true"
 				AdditionalIncludeDirectories=".."
 				PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
 				RuntimeLibrary="0"
+				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
@@ -280,6 +289,18 @@
 			>
 			<File
 				RelativePath=".\blenders_intel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\math.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\stroke_features.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\stroker.cpp"
 				>
 			</File>
 			<File
@@ -328,11 +349,23 @@
 			>
 		</File>
 		<File
+			RelativePath="..\agge\math.h"
+			>
+		</File>
+		<File
 			RelativePath="..\agge\memory.h"
 			>
 		</File>
 		<File
 			RelativePath="..\agge\parallel.h"
+			>
+		</File>
+		<File
+			RelativePath="..\agge\path.h"
+			>
+		</File>
+		<File
+			RelativePath="..\agge\pod_vector.h"
 			>
 		</File>
 		<File
@@ -349,6 +382,14 @@
 		</File>
 		<File
 			RelativePath="..\agge\scanline.h"
+			>
+		</File>
+		<File
+			RelativePath="..\agge\stroke_features.h"
+			>
+		</File>
+		<File
+			RelativePath="..\agge\stroker.h"
 			>
 		</File>
 		<File
