@@ -196,7 +196,7 @@
     <ClCompile Include="RendererParallelTests.cpp" />
     <ClCompile Include="RendererTests.cpp" />
     <ClCompile Include="ScanlineAdapterTests.cpp" />
-    <ClCompile Include="ScanlineRasterizerTests.cpp" />
+    <ClCompile Include="RasterizerTests.cpp" />
     <ClCompile Include="StrokeFeaturesTests.cpp" />
     <ClCompile Include="StrokerTests.cpp" />
     <ClCompile Include="VectorRasterizerTests.cpp" />

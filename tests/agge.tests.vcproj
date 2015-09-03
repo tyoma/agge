@@ -462,6 +462,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\RasterizerTests.cpp"
+			>
+		</File>
+		<File
 			RelativePath=".\RendererParallelTests.cpp"
 			>
 		</File>
@@ -471,10 +475,6 @@
 		</File>
 		<File
 			RelativePath=".\ScanlineAdapterTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\ScanlineRasterizerTests.cpp"
 			>
 		</File>
 		<File

@@ -5,11 +5,12 @@
 #include "../common/timing.h"
 
 #include <agge/blenders_simd.h>
+#include <agge/math.h>
+#include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
 #include <agge/stroker.h>
 #include <agge/stroke_features.h>
 
-#include <aggx/rasterizer.h>
 #include <aggx/blenders.h>
 
 #include <aggx/aggx_ellipse.h>
@@ -33,6 +34,51 @@ typedef agge::simd::blender_solid_color blender_used;
 
 namespace
 {
+	class unlimited_miter : public agge::stroke::join
+	{
+	public:
+		virtual void calc(agge::points &output, agge::real_t w, const agge::point_r &v0, agge::real_t d01,
+			const agge::point_r &v1, agge::real_t d12, const agge::point_r &v2) const
+		{
+			using namespace agge;
+
+			d01 = w / d01;
+			d12 = w / d12;
+
+			const real_t dx1 = d01 * (v1.y - v0.y);
+			const real_t dy1 = d01 * (v1.x - v0.x);
+			const real_t dx2 = d12 * (v2.y - v1.y);
+			const real_t dy2 = d12 * (v2.x - v1.x);
+
+			real_t xi, yi;
+
+			if (calc_intersection(v0.x + dx1, v0.y - dy1, v1.x + dx1, v1.y - dy1,
+				v1.x + dx2, v1.y - dy2, v2.x + dx2, v2.y - dy2, &xi, &yi))
+			{
+				output.push_back(create_point(xi, yi));
+			}
+		}
+
+	private:
+		AGGE_INLINE static bool calc_intersection(agge::real_t ax, agge::real_t ay, agge::real_t bx, agge::real_t by,
+			agge::real_t cx, agge::real_t cy, agge::real_t dx, agge::real_t dy, agge::real_t *x, agge::real_t *y)
+		{
+			using namespace agge;
+
+			real_t num = (ay-cy) * (dx-cx) - (ax-cx) * (dy-cy);
+			real_t den = (bx-ax) * (dy-cy) - (by-ay) * (dx-cx);
+			if (fabs(den) < distance_epsilon)
+				return false;	
+			real_t r = num / den;
+			*x = ax + r * (bx-ax);
+			*y = ay + r * (by-ay);
+			return true;
+		}
+
+	private:
+		agge::real_t _miter_limit;
+	};
+
 	agge::simd::blender_solid_color::pixel make_pixel(aggx::rgba8 color)
 	{
 		agge::simd::blender_solid_color::pixel p = { color.b, color.g, color.r, 0 };
@@ -47,6 +93,40 @@ namespace
 			: BlenderT(make_pixel(color), color.a)
 		{	}
 	};
+
+	template <int precision>
+	struct calculate_alpha
+	{
+		unsigned int operator ()(int area) const
+		{
+			area >>= precision + 1;
+			if (area < 0)
+				area = -area;
+			if (area > 255)
+				area = 255;
+			return area;
+		}
+	};
+
+	template <typename LinesSinkT, typename PathT>
+	void add_path(LinesSinkT &sink, PathT &path)
+	{
+		using namespace agge;
+
+		real_t x, y;
+		int cmd;
+
+		sink.reset();
+		for (int command; command = path.vertex(&x, &y), path_command_stop != command; )
+		{
+			if (path_command_line_to == (command & path_command_mask))
+				sink.line_to(x, y);
+			else if (path_command_move_to == (command & path_command_mask))
+				sink.move_to(x, y);
+			if (command & path_flag_close)
+				sink.close_polygon();
+		}
+	}
 
 
 	class bitmap_rendering_buffer
@@ -128,25 +208,6 @@ namespace
 				ren_aa.color(agg::rgba8(0, 154, 255, 255));
 				agg::render_scanlines(_rasterizer, _scanline, ren_aa);
 				timings.rendition += stopwatch(counter);
-
-
-				pair<pair<float, float>, unsigned> p2data[] = {
-					make_pair(make_pair(100.0f, 100.0f), agg::path_cmd_move_to),
-					make_pair(make_pair(200.0f, 107.0f), agg::path_cmd_line_to),
-					make_pair(make_pair(100.0f, 114.0f), agg::path_cmd_line_to),
-				};
-
-				AggPath p2v(p2data, p2data + 3);
-				agg_path_adaptor p2(p2v);
-				agg::conv_stroke<agg_path_adaptor> stroke(p2);
-				stroke.width(20.0f);
-
-				stroke.line_join(agg::bevel_join);
-
-				_rasterizer.filling_rule(agg::fill_even_odd);
-				_rasterizer.add_path(stroke);
-				ren_aa.color(agg::rgba8(0, 0, 0));
-				agg::render_scanlines(_rasterizer, _scanline, ren_aa);
 			}
 
 			for_each(_balls.begin(), _balls.end(), [&] (ball &b) {
@@ -213,23 +274,23 @@ namespace
 
 					_stroke1.width(3.0f);
 					_stroke1.set_cap(agge::caps::butt());
-					_stroke1.set_join(agge::joins::bevel());
+					_stroke1.set_join(unlimited_miter());
 
 					_stroke2.width(1.2f);
 					_stroke2.set_cap(agge::caps::butt());
-					_stroke2.set_join(agge::joins::bevel());
+					_stroke2.set_join(unlimited_miter());
 
 					_spiral_flattened.clear();
-					flatten<agge::real_t>(_spiral_flattened, path_stroke2);
+					flatten<agge::real_t>(_spiral_flattened, path_stroke1);
 				timings.stroking += stopwatch(counter);
 
 				solid_color_brush brush(aggx::rgba8(0, 154, 255, 230));
 
 				stopwatch(counter);
-				_rasterizer.add_path(agg_path_adaptor(_spiral_flattened));
-				_rasterizer.prepare();
+				add_path(_rasterizer, agg_path_adaptor(_spiral_flattened));
+				_rasterizer.sort();
 				timings.rasterization += stopwatch(counter);
-				_renderer(surface, 0, _rasterizer.get_mask(), brush, aggx::calculate_alpha<8>());
+				_renderer(surface, 0, _rasterizer, brush, calculate_alpha<8>());
 				timings.rendition += stopwatch(counter);
 			}
 
@@ -243,10 +304,10 @@ namespace
 				_rasterizer.reset();
 
 				stopwatch(counter);
-				_rasterizer.add_path(e);
-				_rasterizer.prepare();
+				add_path(_rasterizer, e);
+				_rasterizer.sort();
 				timings.rasterization += stopwatch(counter);
-				_renderer(surface, 0, _rasterizer.get_mask(), agge_drawer::solid_color_brush(b.color), aggx::calculate_alpha<8>());
+				_renderer(surface, 0, _rasterizer, agge_drawer::solid_color_brush(b.color), calculate_alpha<8>());
 				timings.rendition += stopwatch(counter);
 			});
 		}
@@ -258,8 +319,25 @@ namespace
 		}
 
 	private:
-		aggx::rasterizer_scanline_aa<agg::rasterizer_sl_no_clip> _rasterizer;
-		agge::renderer_parallel _renderer;
+		class passthrough_clipper
+		{
+		public:
+			void move_to(agge::real_t x, agge::real_t y)
+			{	_last_x = x, _last_y = y;	}
+
+			template <typename LinesSinkT>
+			void line_to(LinesSinkT &sink, agge::real_t x, agge::real_t y)
+			{
+				sink.line(_last_x, _last_y, x, y);
+				move_to(x, y);
+			}
+
+		private:
+			agge::real_t _last_x, _last_y;
+		};
+
+		agge::rasterizer<passthrough_clipper> _rasterizer;
+		__declspec(align(16)) agge::renderer_parallel _renderer;
 		AggPath _spiral, _spiral_flattened;
 		LARGE_INTEGER _balls_timer;
 		vector<demo::ball> _balls;

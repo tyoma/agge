@@ -163,7 +163,7 @@ namespace agge
 			};
 
 
-			template <typename PixelT, size_t guard_size = 0>
+			template <typename PixelT, size_t x_guard = 0, size_t y_guard = 0>
 			class bitmap
 			{
 			public:
@@ -171,11 +171,11 @@ namespace agge
 
 			public:
 				bitmap(count_t width, count_t height)
-					: _width(width), _height(height), data((width + guard_size) * height)
+					: _width(width), _height(height), data((width + x_guard) * (height + y_guard))
 				{	}
 
 				pixel *row_ptr(count_t y)
-				{	return &data[y * (_width + guard_size)];	}
+				{	return &data[y * (_width + x_guard)];	}
 
 				count_t width() const
 				{	return _width;	}
@@ -243,7 +243,13 @@ namespace agge
 			struct simple_alpha
 			{
 				T operator ()(int area) const
-				{	return static_cast<T>(area >> (precision + 1));	}
+				{
+					int v = area >> (precision + 1);
+
+					if (v >= 1 << precision)
+						v = (1 << precision) - 1;
+					return static_cast<T>(v);
+				}
 			};
 		}
 	}
