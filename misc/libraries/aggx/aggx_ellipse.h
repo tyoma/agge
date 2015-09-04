@@ -25,6 +25,8 @@
 #ifndef AGGX_ELLIPSE_INCLUDED
 #define AGGX_ELLIPSE_INCLUDED
 
+#include <agge/path.h>
+
 #include "basics.h"
 
 #include <math.h>
@@ -109,15 +111,15 @@ namespace aggx
         if(m_step == m_num) 
         {
             ++m_step;
-            return path_cmd_end_poly | path_flags_close | path_flags_ccw;
+			return agge::path_command_end_poly | agge::path_flag_close;
         }
-        if(m_step > m_num) return path_cmd_stop;
+		if(m_step > m_num) return agge::path_command_stop;
         real angle = real(m_step) / real(m_num) * 2.0f * pi;
         if(m_cw) angle = 2.0f * pi - angle;
         *x = m_x + cos(angle) * m_rx;
         *y = m_y + sin(angle) * m_ry;
         m_step++;
-        return ((m_step == 1) ? path_cmd_move_to : path_cmd_line_to);
+		return ((m_step == 1) ? agge::path_command_move_to : agge::path_command_line_to);
     }
 
 }

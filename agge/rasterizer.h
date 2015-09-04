@@ -1,5 +1,6 @@
 #pragma once
 
+#include "math.h"
 #include "vector_rasterizer.h"
 
 namespace agge
@@ -8,9 +9,7 @@ namespace agge
 	class rasterizer : private vector_rasterizer
 	{
 	public:
-		using vector_rasterizer::_1;
 		using vector_rasterizer::_1_shift;
-		using vector_rasterizer::cell;
 		using vector_rasterizer::scanline_cells;
 
 	public:
@@ -51,12 +50,7 @@ namespace agge
 	inline void rasterizer<ClipperT>::close_polygon()
 	{	line_to(_start_x, _start_y);	}
 
-	static int fp(real_t v)
-	{	return static_cast<int>(static_cast<real_t>(vector_rasterizer::_1) * v + (v > 0.0f ? 0.5f : -0.5f));	}
-
 	template <typename ClipperT>
 	inline void rasterizer<ClipperT>::line(real_t x1, real_t y1, real_t x2, real_t y2)
-	{
-		vector_rasterizer::line(fp(x1), fp(y1), fp(x2), fp(y2));
-	}
+	{	vector_rasterizer::line(real2fixed<_1>(x1), real2fixed<_1>(y1), real2fixed<_1>(x2), real2fixed<_1>(y2));	}
 }

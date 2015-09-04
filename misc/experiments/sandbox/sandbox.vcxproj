@@ -182,7 +182,6 @@
     <ClInclude Include="..\..\libraries\aggx\aggx_ellipse.h" />
     <ClInclude Include="..\..\libraries\aggx\basics.h" />
     <ClInclude Include="..\..\libraries\aggx\blenders.h" />
-    <ClInclude Include="..\..\libraries\aggx\rasterizer.h" />
     <ClInclude Include="..\common\bouncing.h" />
     <ClInclude Include="..\common\paths.h" />
     <ClInclude Include="..\common\timing.h" />

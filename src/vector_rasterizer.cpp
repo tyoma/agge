@@ -34,7 +34,7 @@ namespace agge
 		_cells.clear();
 		_scanlines.clear();
 		_min_x = 0x7FFF, _min_y = 0x7FFF, _max_x = -0x7FFF, _max_y = -0x7FFF;
-		_sorted = false;
+		_sorted = 0;
 	}
 
 	void vector_rasterizer::line(int x1, int y1, int x2, int y2)
@@ -46,6 +46,8 @@ namespace agge
 
 		extend_bounds(ex1, ey1);
 		extend_bounds(ex2, ey2);
+
+		_sorted = 0;
 
 		if (y2 == y1)
 		{
@@ -198,7 +200,7 @@ namespace agge
 			_cells[bin.start + j] = *i;
 		}
 
-		_sorted = true;
+		_sorted = 1;
 	}
 
 

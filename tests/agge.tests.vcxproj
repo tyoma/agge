@@ -185,6 +185,7 @@
       <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DisableLanguageExtensions>
     </ClCompile>
     <ClCompile Include="ParallelExecutionTests.cpp" />
+    <ClCompile Include="PathTests.cpp" />
     <ClCompile Include="platform\win32\RawBitmapTests.cpp" />
     <ClCompile Include="platform\win32\surface.cpp">
       <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DisableLanguageExtensions>

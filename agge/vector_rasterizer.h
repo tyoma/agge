@@ -63,8 +63,7 @@ namespace agge
 		cell _current;
 		sorted_bins_container _scanlines;
 		cells_container _cells, _x_sorted_cells;
-		int _min_x, _min_y, _max_x, _max_y;
-		bool _sorted;
+		int _min_x, _min_y, _max_x, _max_y, _sorted;
 	};
 
 	struct vector_rasterizer::scanline_cells
@@ -85,7 +84,7 @@ namespace agge
 	{	return _cells;	}
 
 	inline bool vector_rasterizer::sorted() const
-	{	return _sorted;	}
+	{	return !!_sorted;	}
 
 	inline vector_rasterizer::scanline_cells vector_rasterizer::operator [](int y) const
 	{

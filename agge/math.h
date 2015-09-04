@@ -11,6 +11,13 @@ namespace agge
 	};
 
 	real_t sqrt(real_t x);
+
+	template <count_t _1>
+	inline int real2fixed(real_t v)
+	{
+		v *= static_cast<real_t>(_1);
+		return static_cast<int>(v > 0 ? v + 0.5f : v - 0.5f);
+	}
 	
 	inline real_t distance(real_t ax, real_t ay, real_t bx, real_t by)
 	{

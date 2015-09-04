@@ -28,7 +28,7 @@ using namespace std;
 using namespace demo;
 
 const int c_thread_count = 1;
-const bool c_use_original_agg = false;
+const bool c_use_original_agg = true;
 const int c_balls_number = 0;//700;
 typedef agge::simd::blender_solid_color blender_used;
 
@@ -74,9 +74,6 @@ namespace
 			*y = ay + r * (by-ay);
 			return true;
 		}
-
-	private:
-		agge::real_t _miter_limit;
 	};
 
 	agge::simd::blender_solid_color::pixel make_pixel(aggx::rgba8 color)
@@ -114,9 +111,8 @@ namespace
 		using namespace agge;
 
 		real_t x, y;
-		int cmd;
 
-		sink.reset();
+		path.rewind(0);
 		for (int command; command = path.vertex(&x, &y), path_command_stop != command; )
 		{
 			if (path_command_line_to == (command & path_command_mask))
@@ -261,6 +257,8 @@ namespace
 			LARGE_INTEGER counter;
 			const float dt = 0.3f * (float)stopwatch(_balls_timer);
 
+			_rasterizer.reset();
+
 			stopwatch(counter);
 				agge::fill(surface, solid_color_brush(aggx::rgba8(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
@@ -290,7 +288,7 @@ namespace
 				add_path(_rasterizer, agg_path_adaptor(_spiral_flattened));
 				_rasterizer.sort();
 				timings.rasterization += stopwatch(counter);
-				_renderer(surface, 0, _rasterizer, brush, calculate_alpha<8>());
+				_renderer(surface, 0, _rasterizer, brush, calculate_alpha<agge::vector_rasterizer::_1_shift>());
 				timings.rendition += stopwatch(counter);
 			}
 
@@ -307,7 +305,7 @@ namespace
 				add_path(_rasterizer, e);
 				_rasterizer.sort();
 				timings.rasterization += stopwatch(counter);
-				_renderer(surface, 0, _rasterizer, agge_drawer::solid_color_brush(b.color), calculate_alpha<8>());
+				_renderer(surface, 0, _rasterizer, agge_drawer::solid_color_brush(b.color), calculate_alpha<agge::vector_rasterizer::_1_shift>());
 				timings.rendition += stopwatch(counter);
 			});
 		}
