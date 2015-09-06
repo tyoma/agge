@@ -86,6 +86,21 @@ namespace agge
 				{
 					coords_pair<T> segment = { x1, y1, x2, y2 };
 
+					if (!segments.empty())
+					{
+						coords_pair<T> &last = segments.back();
+
+						if (segment.x1 == segment.x2 && last.x1 == last.x2 && segment.x1 == last.x1)
+						{
+							last.y2 = y2;
+							return;
+						}
+						else if (segment.y1 == segment.y2 && last.y1 == last.y2 && segment.y1 == last.y1)
+						{
+							last.x2 = x2;
+							return;
+						}
+					}
 					segments.push_back(segment);
 				}
 

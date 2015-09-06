@@ -22,6 +22,7 @@
     <ClCompile Include="StrokeFeaturesTests.cpp" />
     <ClCompile Include="RasterizerTests.cpp" />
     <ClCompile Include="PathTests.cpp" />
+    <ClCompile Include="ClipperTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />

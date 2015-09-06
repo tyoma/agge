@@ -130,20 +130,21 @@ namespace agge
 			}
 
 
-			test( TrianglesExceedingXAreClippedToTrapezoids )
+			test( TrianglesExceedingXAreClippedToTrapezoids1 )
 			{
 				// INIT
-				clipper<int> c1;
-				mocks::vector_rasterizer<int> r1;
-				rect<int> b1 = { 10, -1000, 40, 1000 };
+				clipper<int> c;
+				clipper<real_t> cf;
+				mocks::vector_rasterizer<int> r;
+				mocks::vector_rasterizer<real_t> rf;
 
-				c1.set(b1);
+				c.set(create_rect(10, -1000, 40, 1000));
 
 				// ACT
-				c1.move_to(0, 0);
-				c1.line_to(r1, 50, 0);
-				c1.line_to(r1, 50, 5);
-				c1.line_to(r1, 0, 0);
+				c.move_to(0, 0);
+				c.line_to(r, 50, 0);
+				c.line_to(r, 50, 5);
+				c.line_to(r, 0, 0);
 
 				// ASSERT
 				mocks::coords_pair<int> reference1[] = {
@@ -153,7 +154,112 @@ namespace agge
 					{ 10, 1, 10, 0 },
 				};
 
-				assert_equal(reference1, r1.segments);
+				assert_equal(reference1, r.segments);
+
+				// INIT
+				r.segments.clear();
+
+				// ACT
+				c.move_to(-20, 3);
+				c.line_to(r, 52, 3);
+				c.line_to(r, 52, 39);
+				c.line_to(r, -20, 3);
+
+				// ASSERT
+				mocks::coords_pair<int> reference2[] = {
+					{ 10, 3, 40, 3 },
+					{ 40, 3, 40, 33 },
+					{ 40, 33, 10, 18 },
+					{ 10, 18, 10, 3 },
+				};
+
+				assert_equal(reference2, r.segments);
+
+				// INIT
+				cf.set(create_rect(-2.5f, -1000.0f, -0.5f, 1000.0f));
+
+				// ACT
+				cf.move_to(-3.0f, 7.0f);
+				cf.line_to(rf, 0.0f, 7.0f);
+				cf.line_to(rf, 0.0f, 8.5f);
+				cf.line_to(rf, -3.0f, 7.0f);
+
+				// ASSERT
+				mocks::coords_pair<real_t> reference3[] = {
+					{ -2.5f, 7.0f, -0.5f, 7.0f },
+					{ -0.5f, 7.0f, -0.5f, 8.25f },
+					{ -0.5f, 8.25f, -2.5f, 7.25 },
+					{ -2.5f, 7.25, -2.5f, 7.0f },
+				};
+
+				assert_equal(reference3, rf.segments);
+			}
+
+
+
+			test( TrianglesExceedingXAreClippedToTrapezoids2 )
+			{
+				// INIT
+				clipper<int> c;
+				clipper<real_t> cf;
+				mocks::vector_rasterizer<int> r;
+				mocks::vector_rasterizer<real_t> rf;
+
+				c.set(create_rect(20, -1000, 70, 1000));
+
+				// ACT
+				c.move_to(0, 0);
+				c.line_to(r, 0, 40);
+				c.line_to(r, 80, 0);
+				c.line_to(r, 0, 0);
+
+				// ASSERT
+				mocks::coords_pair<int> reference1[] = {
+					{ 20, 0, 20, 30 },
+					{ 20, 30, 70, 5 },
+					{ 70, 5, 70, 0 },
+					{ 70, 0, 20, 0 },
+				};
+
+				assert_equal(reference1, r.segments);
+
+				// INIT
+				r.segments.clear();
+
+				// ACT
+				c.move_to(-20, 3);
+				c.line_to(r, -20, -27);
+				c.line_to(r, 80, 3);
+				c.line_to(r, -20, 3);
+
+				// ASSERT
+				mocks::coords_pair<int> reference2[] = {
+					{ 20, 3, 20, -15 },
+					{ 20, -15, 70, 0 },
+					{ 70, 0, 70, 3 },
+					{ 70, 3, 20, 3 },
+				};
+
+				assert_equal(reference2, r.segments);
+
+				// INIT
+				cf.set(create_rect(-2.5f, -1000.0f, -0.5f, 1000.0f));
+
+				// ACT
+				cf.move_to(-13.0f, 5.0f);
+				cf.line_to(rf, -13.0f, 15.0f);
+				cf.line_to(rf, 7.0f, 5.0f);
+				cf.line_to(rf, -13.0f, 5.0f);
+
+				// ASSERT
+				mocks::coords_pair<real_t> reference3[] = {
+					{ -2.5f, 5.0f, -2.5f, 9.75f },
+					{ -2.5f, 9.75f, -0.5f, 8.75f },
+					{ -0.5f, 8.75f, -0.5f, 5.0f },
+					{ -0.5f, 5.0f, -2.5f, 5.0f },
+				};
+
+				assert_equal(reference3, rf.segments);
 			}
 
 		end_test_suite

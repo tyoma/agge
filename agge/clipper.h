@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tools.h"
+#include "math.h"
 #include "types.h"
 
 namespace agge
@@ -30,12 +30,12 @@ namespace agge
 		void set(const rect<T> &window);
 		void move_to(T x, T y);
 
-		template <typename RasterizerT>
-		void line_to(RasterizerT &rasterizer, T x, T y);
+		template <typename LinesSinkT>
+		void line_to(LinesSinkT &sink, T x, T y);
 
 	private:
-		template <typename RasterizerT>
-		void line_clip_y(RasterizerT &rasterizer, T x1, T y1, T x2, T y2) const;
+		template <typename LinesSinkT>
+		void line_clip_y(LinesSinkT &sink, T x1, T y1, T x2, T y2) const;
 
 	private:
 		rect<T> _window;
@@ -76,8 +76,8 @@ namespace agge
 	}
 
 	template <typename T>
-	template <typename RasterizerT>
-	inline void clipper<T>::line_to(RasterizerT &rasterizer, T x2, T y2)
+	template <typename LinesSinkT>
+	inline void clipper<T>::line_to(LinesSinkT &sink, T x2, T y2)
 	{
 		if (_enabled)
 		{
@@ -88,14 +88,14 @@ namespace agge
 			T y3, y4;
 			int f1 = _f1;
 
-			switch(((f1 & x_clipped) << 1) | (f2 & x_clipped))
+			switch (((f1 & x_clipped) << 1) | (f2 & x_clipped))
 			{
 			case 0:
-				line_clip_y(rasterizer, x1, y1, x2, y2);
+				line_clip_y(sink, x1, y1, x2, y2);
 				break;
 
 			case (x2_clipped << 1) | x2_clipped:
-				line_clip_y(rasterizer, _window.x2, y1, _window.x2, y2/*, f1, f2*/);
+				line_clip_y(sink, _window.x2, y1, _window.x2, y2/*, f1, f2*/);
 				break;
 
 			case (x2_clipped << 1) | x1_clipped:
@@ -103,9 +103,9 @@ namespace agge
 				y4 = y1 + muldiv(_window.x1 - x1, y2 - y1, x2 - x1);
 //				f3 = clipping_y(y3, _window);
 //				f4 = clipping_y(y4, _window);
-				line_clip_y(rasterizer, _window.x2, y1, _window.x2, y3/*, f1, f3*/);
-				line_clip_y(rasterizer, _window.x2, y3, _window.x1, y4/*, f3, f4*/);
-				line_clip_y(rasterizer, _window.x1, y4, _window.x1, y2/*, f4, f2*/);
+				line_clip_y(sink, _window.x2, y1, _window.x2, y3/*, f1, f3*/);
+				line_clip_y(sink, _window.x2, y3, _window.x1, y4/*, f3, f4*/);
+				line_clip_y(sink, _window.x1, y4, _window.x1, y2/*, f4, f2*/);
 				break;
 
 			case (x1_clipped << 1) | x2_clipped:
@@ -113,29 +113,33 @@ namespace agge
 				y4 = y1 + muldiv(_window.x2 - x1, y2 - y1, x2 - x1);
 //				f3 = clipping_y(y3, _window);
 //				f4 = clipping_y(y4, _window);
-//				line_clip_y(rasterizer, _window.x1, y1, _window.x1, y3/*, f1, f3*/);
-				line_clip_y(rasterizer, _window.x1, y3, _window.x2, y4/*, f3, f4*/);
-//				line_clip_y(rasterizer, _window.x2, y4, _window.x2, y2/*, f4, f2*/);
+				line_clip_y(sink, _window.x1, y1, _window.x1, y3/*, f1, f3*/);
+				line_clip_y(sink, _window.x1, y3, _window.x2, y4/*, f3, f4*/);
+				line_clip_y(sink, _window.x2, y4, _window.x2, y2/*, f4, f2*/);
 				break;
 
-			default:
-				throw 0;
+			case (x1_clipped << 1) | x1_clipped:
+				line_clip_y(sink, _window.x1, y1, _window.x1, y2/*, f1, f2*/);
+				break;
+
+			//default:
+			//	throw 0;
 			}
 			_f1 = f2;
 		}
 		else
 		{
-			rasterizer.line(_x1, _y1, x2, y2);
+			sink.line(_x1, _y1, x2, y2);
 		}
 		_x1 = x2;
 		_y1 = y2;
 	}
 
 	template <typename T>
-	template <typename RasterizerT>
-	inline void clipper<T>::line_clip_y(RasterizerT &rasterizer, T x1, T y1, T x2, T y2) const
+	template <typename LinesSinkT>
+	inline void clipper<T>::line_clip_y(LinesSinkT &sink, T x1, T y1, T x2, T y2) const
 	{
-		rasterizer.line(x1, y1, x2, y2);
+		sink.line(x1, y1, x2, y2);
 	}
 
 }

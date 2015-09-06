@@ -18,6 +18,13 @@ namespace agge
 	}
 
 	template <typename CoordT>
+	inline rect<CoordT> create_rect(CoordT x1, CoordT y1, CoordT x2, CoordT y2)
+	{
+		rect<CoordT> r = { x1, y1, x2, y2 };
+		return r;
+	}
+
+	template <typename CoordT>
 	inline CoordT width(const rect<CoordT> &rc)
 	{	return rc.x2 - rc.x1;	}
 
@@ -32,10 +39,4 @@ namespace agge
 	template <typename T>
 	inline T agge_max(const T &lhs, const T &rhs)
 	{	return lhs > rhs ? lhs : rhs;	}
-
-	inline int muldiv(int a, int b, int c)
-	{	return a * b / c;	}
-
-	inline float muldiv(float /*a*/, float /*b*/, float /*c*/)
-	{	return 0.0f;	}
 }

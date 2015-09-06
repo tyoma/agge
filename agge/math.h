@@ -12,6 +12,12 @@ namespace agge
 
 	real_t sqrt(real_t x);
 
+	inline int muldiv(int a, int b, int c)
+	{	return static_cast<int>(static_cast<__int64>(a) * b / c);	}
+
+	inline real_t muldiv(real_t a, real_t b, real_t c)
+	{	return a * b / c;	}
+
 	template <count_t _1>
 	inline int real2fixed(real_t v)
 	{
