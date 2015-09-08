@@ -13,7 +13,7 @@ namespace agge
 	real_t sqrt(real_t x);
 
 	inline int muldiv(int a, int b, int c)
-	{	return static_cast<int>(static_cast<__int64>(a) * b / c);	}
+	{	return static_cast<int>(static_cast<long long>(a) * b / c);	}
 
 	inline real_t muldiv(real_t a, real_t b, real_t c)
 	{	return a * b / c;	}

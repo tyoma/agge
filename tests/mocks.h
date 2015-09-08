@@ -74,7 +74,7 @@ namespace agge
 				T x2, y2;
 
 				bool operator ==(const coords_pair<T> &rhs) const
-				{	return x1 == rhs.x1 && y1 == rhs.y1 && x2 == rhs.x2 && y2 == rhs.y2;	}
+				{	return equal(x1, rhs.x1) && equal(y1, rhs.y1) && equal(x2, rhs.x2) && equal(y2, rhs.y2);	}
 			};
 
 
