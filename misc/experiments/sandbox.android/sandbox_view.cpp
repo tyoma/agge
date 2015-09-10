@@ -16,14 +16,13 @@
 
 #include "../common/paths.h"
 
-#include <aggx/rasterizer.h>
 #include <aggx/blenders.h>
 
+#include <agge/clipper.h>
+#include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
 #include <agge/stroker.h>
 #include <agge/stroke_features.h>
-
-#include <agg/include/agg_rasterizer_sl_clip.h>
 
 #include <jni.h>
 #include <android/bitmap.h>
@@ -53,6 +52,39 @@ namespace
 			: BlenderT(make_pixel(color), color.a)
 		{	}
 	};
+
+	template <int precision>
+	struct calculate_alpha
+	{
+		unsigned int operator ()(int area) const
+		{
+			area >>= precision + 1;
+			if (area < 0)
+				area = -area;
+			if (area > 255)
+				area = 255;
+			return area;
+		}
+	};
+
+	template <typename LinesSinkT, typename PathT>
+	void add_path(LinesSinkT &sink, PathT &path)
+	{
+		using namespace agge;
+
+		real_t x, y;
+
+		path.rewind(0);
+		for (int command; command = path.vertex(&x, &y), path_command_stop != command; )
+		{
+			if (path_command_line_to == (command & path_command_mask))
+				sink.line_to(x, y);
+			else if (path_command_move_to == (command & path_command_mask))
+				sink.move_to(x, y);
+			if (command & path_flag_close)
+				sink.close_polygon();
+		}
+	}
 
 	class bitmap_proxy
 	{
@@ -100,7 +132,6 @@ namespace
 	};
 
 	typedef blenderx<blender_solid_color> blender;
-	typedef rasterizer_scanline_aa<agg::rasterizer_sl_no_clip/*agg::rasterizer_sl_clip_int*/> rasterizer_scanline;
 
 	struct AGG : noncopyable
 	{
@@ -110,7 +141,7 @@ namespace
 		{	}
 
 	public:
-		rasterizer_scanline rasterizer;
+		agge::rasterizer< clipper<int> > rasterizer;
 		renderer_parallel renderer;
 		AggPath spiral;
 		agge::stroke stroke;
@@ -153,8 +184,10 @@ try
 
 	agge::path_generator_adapter<agg_path_adaptor, agge::stroke> stroke_path(p, agg->stroke);
 
-	agg->rasterizer.add_path(stroke_path);
-	agg->renderer(bm, 0, agg->rasterizer.get_mask(), blender(rgba8(0, 154, 255, 255)), calculate_alpha<8>());
+	agg->rasterizer.reset();
+	add_path(agg->rasterizer, stroke_path);
+	agg->rasterizer.sort();
+	agg->renderer(bm, 0, agg->rasterizer, blender(rgba8(0, 154, 255, 255)), calculate_alpha<8>());
 }
 catch (...)
 {

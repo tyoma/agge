@@ -24,6 +24,9 @@ namespace agge
 	class clipper
 	{
 	public:
+		typedef T coord_type;
+
+	public:
 		clipper();
 
 		void reset();		

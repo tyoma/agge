@@ -61,5 +61,6 @@
     <ClInclude Include="..\agge\stroke_features.h" />
     <ClInclude Include="..\agge\math.h" />
     <ClInclude Include="..\agge\path.h" />
+    <ClInclude Include="..\agge\clipper.h" />
   </ItemGroup>
 </Project>

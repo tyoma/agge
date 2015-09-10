@@ -222,7 +222,6 @@
     <ClInclude Include="..\..\libraries\aggx\basics.h" />
     <ClInclude Include="..\..\libraries\aggx\blenders.h" />
     <ClInclude Include="..\..\libraries\aggx\paths.h" />
-    <ClInclude Include="..\..\libraries\aggx\rasterizer.h" />
     <ClInclude Include="BarsModel.h" />
     <ClInclude Include="BarView.h" />
     <ClInclude Include="ChildView.h" />

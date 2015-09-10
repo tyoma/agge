@@ -1,12 +1,13 @@
 #pragma once
 
 #include <agge/bitmap.h>
+#include <agge/clipper.h>
 #include <agge/platform/win32/bitmap.h>
+#include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
 #include <agge/stroker.h>
 
 #include <aggx/blenders.h>
-#include <aggx/rasterizer.h>
 
 #include <agg/include/agg_rasterizer_sl_clip.h>
 
@@ -44,7 +45,7 @@ class CChildView : public CWnd
 	CComPtr<ID2D1BitmapBrush> _brushBackground;
 
 	bitmap _agg_bitmap;
-	aggx::rasterizer_scanline_aa<agg::rasterizer_sl_no_clip> _agg_rasterizer;
+	agge::rasterizer< agge::clipper<int> > _agg_rasterizer;
 	agge::renderer_parallel _renderer;
 	agge::stroke _stroke;
 

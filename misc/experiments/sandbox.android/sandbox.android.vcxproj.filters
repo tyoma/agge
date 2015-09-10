@@ -25,9 +25,6 @@
     <Filter Include="app\res\values">
       <UniqueIdentifier>{c306a213-5711-4498-ae8e-f512586064f8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="agge">
-      <UniqueIdentifier>{8733c9e3-407f-4ff1-8508-d4b19640771a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="AndroidApk\src\impression\sandbox\Sandbox.java">
@@ -54,27 +51,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sandbox_view.cpp" />
-    <ClCompile Include="..\..\..\src\vector_rasterizer.cpp">
-      <Filter>agge</Filter>
-    </ClCompile>
     <ClCompile Include="parallel_linux.cpp" />
-    <ClCompile Include="..\..\..\src\math.cpp">
-      <Filter>agge</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\stroke_features.cpp">
-      <Filter>agge</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\stroker.cpp">
-      <Filter>agge</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\agge\vector_rasterizer.h">
-      <Filter>agge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\rasterizer.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libraries\aggx\blenders.h">
       <Filter>aggx</Filter>
     </ClInclude>

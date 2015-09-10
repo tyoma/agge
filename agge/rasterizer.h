@@ -5,7 +5,11 @@
 
 namespace agge
 {
-	template <typename ClipperT>
+	template <typename T>
+	struct scaling;
+
+
+	template < typename ClipperT, typename ScalingT = scaling<typename ClipperT::coord_type> >
 	class rasterizer : private vector_rasterizer
 	{
 	public:
@@ -26,11 +30,14 @@ namespace agge
 		using vector_rasterizer::height;
 
 	private:
-		void line(real_t x1, real_t y1, real_t x2, real_t y2);
+		typedef typename ClipperT::coord_type coord_type;
+
+	private:
+		void line(coord_type x1, coord_type y1, coord_type x2, coord_type y2);
 
 	private:
 		ClipperT _clipper;
-		real_t _start_x, _start_y;
+		coord_type _start_x, _start_y;
 
 	private:
 		friend ClipperT;
@@ -38,19 +45,58 @@ namespace agge
 
 
 
-	template <typename ClipperT>
-	inline void rasterizer<ClipperT>::move_to(real_t x, real_t y)
-	{	_clipper.move_to(_start_x = x, _start_y = y);	}
+	template <>
+	struct scaling<int>
+	{
+		static void scale1(real_t x, real_t y, int &cx, int &cy)
+		{	cx = iround(256.0f * x), cy = iround(256.0f * y);	}
 
-	template <typename ClipperT>
-	inline void rasterizer<ClipperT>::line_to(real_t x, real_t y)
-	{	_clipper.line_to(*this, x, y);	}
+		static void scale2(int x1, int y1, int x2, int y2, int &cx1, int &cy1, int &cx2, int &cy2)
+		{	cx1 = x1, cy1 = y1, cx2 = x2, cy2 = y2;	}
+	};
 
-	template <typename ClipperT>
-	inline void rasterizer<ClipperT>::close_polygon()
-	{	line_to(_start_x, _start_y);	}
+	template <>
+	struct scaling<real_t>
+	{
+		static void scale1(real_t x, real_t y, real_t &cx, real_t &cy)
+		{	cx = x, cy = y;	}
 
-	template <typename ClipperT>
-	inline void rasterizer<ClipperT>::line(real_t x1, real_t y1, real_t x2, real_t y2)
-	{	vector_rasterizer::line(real2fixed<_1>(x1), real2fixed<_1>(y1), real2fixed<_1>(x2), real2fixed<_1>(y2));	}
+		static void scale2(real_t x1, real_t y1, real_t x2, real_t y2, int &cx1, int &cy1, int &cx2, int &cy2)
+		{
+			cx1 = iround(256.0f * x1);
+			cy1 = iround(256.0f * y1);
+			cx2 = iround(256.0f * x2);
+			cy2 = iround(256.0f * y2);
+		}
+	};
+
+
+	template <typename ClipperT, typename ScalingT>
+	inline void rasterizer<ClipperT, ScalingT>::move_to(real_t x, real_t y)
+	{
+		ScalingT::scale1(x, y, _start_x, _start_y);
+		_clipper.move_to(_start_x, _start_y);
+	}
+
+	template <typename ClipperT, typename ScalingT>
+	inline void rasterizer<ClipperT, ScalingT>::line_to(real_t x, real_t y)
+	{
+		coord_type cx, cy;
+
+		ScalingT::scale1(x, y, cx, cy);
+		_clipper.line_to(*this, cx, cy);
+	}
+
+	template <typename ClipperT, typename ScalingT>
+	inline void rasterizer<ClipperT, ScalingT>::close_polygon()
+	{	_clipper.line_to(*this, _start_x, _start_y);	}
+
+	template <typename ClipperT, typename ScalingT>
+	inline void rasterizer<ClipperT, ScalingT>::line(coord_type x1, coord_type y1, coord_type x2, coord_type y2)
+	{
+		int cx1, cy1, cx2, cy2;
+
+		ScalingT::scale2(x1, y1, x2, y2, cx1, cy1, cx2, cy2);
+		vector_rasterizer::line(cx1, cy1, cx2, cy2);
+	}
 }
