@@ -82,16 +82,21 @@ namespace agge
 			case start_cap:
 				_cap->calc(_output, _width, _i->point, _i->distance, next->point);
 				_i = next;
-				set_state(_i == last ? end_cap : outline_forward);
+				set_state(_i == last ? end_cap : open_outline_forward);
 				break;
 
-			case outline_forward:
+			case open_outline_forward:
 				_join->calc(_output, _width, prev->point, prev->distance, _i->point, _i->distance, next->point);
 				_i = next;
-				if (_i == first && is_closed())
-					set_state(end_poly1);
-				else if (_i == last && !is_closed())
+				if (_i == last)
 					set_state(end_cap);
+				break;
+
+			case closed_outline_forward:
+				_join->calc(_output, _width, prev->point, prev->distance, _i->point, _i->distance, next->point);
+				_i = next;
+				if (_i == first)
+					set_state(end_poly1);
 				break;
 
 			case end_poly1:
@@ -139,7 +144,7 @@ namespace agge
 
 		_i = _input.begin();
 		_o = _output.end();
-		set_state((is_closed() ? outline_forward : start_cap) | moveto | ready);
+		set_state((is_closed() ? closed_outline_forward : start_cap) | moveto | ready);
 		return true;
 	}
 

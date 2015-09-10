@@ -34,12 +34,13 @@ namespace agge
 		enum state {
 			// Stages
 			start_cap = 0x00,
-			outline_forward = 0x01,
-			end_poly1 = 0x02,
-			end_cap = 0x03,
-			outline_backward = 0x04,
-			end_poly = 0x05,
-			stop = 0x06,
+			open_outline_forward = 0x01,
+			closed_outline_forward = 0x02,
+			end_poly1 = 0x03,
+			end_cap = 0x04,
+			outline_backward = 0x05,
+			end_poly = 0x06,
+			stop = 0x07,
 			stage_mask = 0x07,
 
 			// Flags

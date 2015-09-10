@@ -28,7 +28,7 @@ using namespace std;
 using namespace demo;
 
 const int c_thread_count = 1;
-const bool c_use_original_agg = true;
+const bool c_use_original_agg = false;
 const int c_balls_number = 0;//700;
 typedef agge::simd::blender_solid_color blender_used;
 
