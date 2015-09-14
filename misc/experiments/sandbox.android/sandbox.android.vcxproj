@@ -47,7 +47,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <ClCompile>
-      <AdditionalOptions>-fpermissive -ffast-math -std=c++11</AdditionalOptions>
+      <AdditionalOptions>-fpermissive -std=c++11</AdditionalOptions>
       <GccExceptionHandling>true</GccExceptionHandling>
       <OptimizationLevel>O0</OptimizationLevel>
       <AdditionalIncludeDirectories>./../../libraries;./../../..</AdditionalIncludeDirectories>
@@ -69,6 +69,7 @@
       <GccExceptionHandling>true</GccExceptionHandling>
       <StrictAliasing>true</StrictAliasing>
       <InlineLimit>5000</InlineLimit>
+      <ThumbMode>true</ThumbMode>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -83,17 +84,16 @@
     <None Include="AndroidApk\src\impression\sandbox\SandboxView.java" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\math.cpp" />
-    <ClCompile Include="..\..\..\src\stroker.cpp" />
-    <ClCompile Include="..\..\..\src\stroke_features.cpp" />
-    <ClCompile Include="..\..\..\src\vector_rasterizer.cpp" />
     <ClCompile Include="parallel_linux.cpp" />
     <ClCompile Include="sandbox_view.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\agge\vector_rasterizer.h" />
     <ClInclude Include="..\..\libraries\aggx\blenders.h" />
-    <ClInclude Include="..\..\libraries\aggx\rasterizer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\agge.vcxproj">
+      <Project>{f849e92c-248a-46b2-9eab-f86578a21316}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -5,6 +5,7 @@
 #include "../common/timing.h"
 
 #include <agge/blenders_simd.h>
+#include <agge/clipper.h>
 #include <agge/math.h>
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
@@ -317,24 +318,7 @@ namespace
 		}
 
 	private:
-		class passthrough_clipper
-		{
-		public:
-			void move_to(agge::real_t x, agge::real_t y)
-			{	_last_x = x, _last_y = y;	}
-
-			template <typename LinesSinkT>
-			void line_to(LinesSinkT &sink, agge::real_t x, agge::real_t y)
-			{
-				sink.line(_last_x, _last_y, x, y);
-				move_to(x, y);
-			}
-
-		private:
-			agge::real_t _last_x, _last_y;
-		};
-
-		agge::rasterizer<passthrough_clipper> _rasterizer;
+		agge::rasterizer< agge::clipper<int> > _rasterizer;
 		__declspec(align(16)) agge::renderer_parallel _renderer;
 		AggPath _spiral, _spiral_flattened;
 		LARGE_INTEGER _balls_timer;

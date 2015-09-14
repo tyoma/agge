@@ -104,6 +104,39 @@ namespace
 		agge::simd::blender_solid_color::pixel p = { color.b, color.g, color.r, 0 };
 		return p;
 	}
+
+	template <int precision>
+	struct calculate_alpha
+	{
+		unsigned int operator ()(int area) const
+		{
+			area >>= precision + 1;
+			if (area < 0)
+				area = -area;
+			if (area > 255)
+				area = 255;
+			return area;
+		}
+	};
+
+	template <typename LinesSinkT, typename PathT>
+	void add_path(LinesSinkT &sink, PathT &path)
+	{
+		using namespace agge;
+
+		real_t x, y;
+
+		path.rewind(0);
+		for (int command; command = path.vertex(&x, &y), path_command_stop != command; )
+		{
+			if (path_command_line_to == (command & path_command_mask))
+				sink.line_to(x, y);
+			else if (path_command_move_to == (command & path_command_mask))
+				sink.move_to(x, y);
+			if (command & path_flag_close)
+				sink.close_polygon();
+		}
+	}
 }
 
 class CChildView::blender : public agge::simd::blender_solid_color
@@ -521,14 +554,10 @@ void CChildView::OnPaint()
 			}
 			if (_drawSpiral)
 			{
-				//agg_path_adaptor p(_agg_path);
-				//conv_stroke<agg_path_adaptor> stroke(p);
-
-				//stroke.width(3);
-				//_agg_rasterizer.add_path(stroke);
-				_agg_rasterizer.add_path(demo::agg_path_adaptor(_agg_path_flatten));
-
-				_renderer(_agg_bitmap, 0, _agg_rasterizer.get_mask(), blender(rgba8(0, 150, 255)),
+				_agg_rasterizer.reset();
+				add_path(_agg_rasterizer, demo::agg_path_adaptor(_agg_path_flatten));
+				_agg_rasterizer.sort();
+				_renderer(_agg_bitmap, 0, _agg_rasterizer, blender(rgba8(0, 150, 255)),
 					calculate_alpha<8>());
 			}
 		}
@@ -602,7 +631,7 @@ void CChildView::drawLines(CDC &dc, const CSize &client, const vector<bar> &bars
 	const int d = 2, v = client.cy / 2;
 	int x = 0;
 
-	CPen pen(PS_SOLID | PS_GEOMETRIC, 3, RGB(0, 0, 0));
+	CPen pen(PS_SOLID | PS_GEOMETRIC, 2, RGB(0, 0, 0));
 
 	CPen *previousPen = dc.SelectObject(&pen);
 
@@ -669,7 +698,7 @@ void CChildView::drawLines(Graphics &graphics, const CSize &client, const vector
 	const int d = 2, v = client.cy / 2;
 	int x = 0;
 	Point previous(x, v + bars.front().c);
-	Pen pen(Color(0, 0, 0), 3.0f);
+	Pen pen(Color(0, 0, 0), 2.0f);
 
 	for_each(bars.begin(), bars.end(), [&] (const bar &b) {
 		Point point(x, v + b.c);
@@ -712,7 +741,7 @@ void CChildView::drawLines(ID2D1RenderTarget *graphics, const CSize &client, con
 	for_each(bars.begin(), bars.end(), [&] (const bar &b) {
 		D2D1_POINT_2F point = { x, v + b.c };
 
-		graphics->DrawLine(previous, point, _brush, 3.0f);
+		graphics->DrawLine(previous, point, _brush, 2.0f);
 
 		previous = point;
 		x += 2 * d + 1;
@@ -769,7 +798,9 @@ void CChildView::drawLines(bitmap &b, const CSize &client, const std::vector<bar
 
 	_stroke.set_cap(agge::caps::butt());
 	_stroke.set_join(agge::joins::bevel());
-	_stroke.width(3);
+	_stroke.width(2);
+
+	_agg_rasterizer.reset();
 
 	for_each(bars.begin(), bars.end(), [&] (const bar &b) {
 		D2D1_POINT_2F point = { x, v + b.c };
@@ -778,13 +809,14 @@ void CChildView::drawLines(bitmap &b, const CSize &client, const std::vector<bar
 
 		agge::path_generator_adapter<line_adaptor, agge::stroke> stroke_path(l, _stroke);
 
-		_agg_rasterizer.add_path(stroke_path);
+		add_path(_agg_rasterizer, stroke_path);
 
 		previous = point;
 		x += 2 * d + 1;
 	});
 
-	_renderer(_agg_bitmap, 0, _agg_rasterizer.get_mask(), blender(rgba8(0, 0, 0)),
+	_agg_rasterizer.sort();
+	_renderer(_agg_bitmap, 0, _agg_rasterizer, blender(rgba8(0, 0, 0)),
 		calculate_alpha<8>());
 }
 
@@ -793,33 +825,36 @@ void CChildView::drawBars(bitmap &b, const CSize &client, const vector<bar> &bar
 	const float d = 2.0f, v = client.cy / 2;
 	float x = 0.0f;
 
+	_agg_rasterizer.reset();
+
 	for_each(bars.begin(), bars.end(), [&] (const bar &b) {
 		D2D1_RECT_F highlow = { x, v + b.h, x + 1, v + b.l };
 		D2D1_RECT_F opentick = { x - d, v + b.o, x, v + b.o + 1 };
 		D2D1_RECT_F closetick = { x, v + b.c, x + d + 1, v + b.c + 1 };
 
-		_agg_rasterizer.move_to_d(highlow.left, highlow.top);
-		_agg_rasterizer.line_to_d(highlow.left, highlow.bottom);
-		_agg_rasterizer.line_to_d(highlow.right, highlow.bottom);
-		_agg_rasterizer.line_to_d(highlow.right, highlow.top);
-		_agg_rasterizer.line_to_d(highlow.left, highlow.top);
+		_agg_rasterizer.move_to(highlow.left, highlow.top);
+		_agg_rasterizer.line_to(highlow.left, highlow.bottom);
+		_agg_rasterizer.line_to(highlow.right, highlow.bottom);
+		_agg_rasterizer.line_to(highlow.right, highlow.top);
+		_agg_rasterizer.line_to(highlow.left, highlow.top);
 
-		_agg_rasterizer.move_to_d(opentick.left, opentick.top);
-		_agg_rasterizer.line_to_d(opentick.left, opentick.bottom);
-		_agg_rasterizer.line_to_d(opentick.right, opentick.bottom);
-		_agg_rasterizer.line_to_d(opentick.right, opentick.top);
-		_agg_rasterizer.line_to_d(opentick.left, opentick.top);
+		_agg_rasterizer.move_to(opentick.left, opentick.top);
+		_agg_rasterizer.line_to(opentick.left, opentick.bottom);
+		_agg_rasterizer.line_to(opentick.right, opentick.bottom);
+		_agg_rasterizer.line_to(opentick.right, opentick.top);
+		_agg_rasterizer.line_to(opentick.left, opentick.top);
 
-		_agg_rasterizer.move_to_d(closetick.left, closetick.top);
-		_agg_rasterizer.line_to_d(closetick.left, closetick.bottom);
-		_agg_rasterizer.line_to_d(closetick.right, closetick.bottom);
-		_agg_rasterizer.line_to_d(closetick.right, closetick.top);
-		_agg_rasterizer.line_to_d(closetick.left, closetick.top);
+		_agg_rasterizer.move_to(closetick.left, closetick.top);
+		_agg_rasterizer.line_to(closetick.left, closetick.bottom);
+		_agg_rasterizer.line_to(closetick.right, closetick.bottom);
+		_agg_rasterizer.line_to(closetick.right, closetick.top);
+		_agg_rasterizer.line_to(closetick.left, closetick.top);
 
 		x += 2 * d + 1;
 	});
 
-	_renderer(_agg_bitmap, 0, _agg_rasterizer.get_mask(), blender(rgba8(0, 0, 0, 96)),
+	_agg_rasterizer.sort();
+	_renderer(_agg_bitmap, 0, _agg_rasterizer, blender(rgba8(0, 0, 0, 96)),
 		calculate_alpha<8>());
 }
 
@@ -830,9 +865,10 @@ void CChildView::drawEllipses(bitmap &b, const CSize &client, const vector<ellip
 		ellipse ellipse(0.5 * (e.first.left + e.first.right), 0.5 * (e.first.top + e.first.bottom),
 			0.5 * (e.first.right - e.first.left), 0.5 * (e.first.bottom - e.first.top));
 
-		_agg_rasterizer.add_path(ellipse);
-
-		_renderer(_agg_bitmap, 0, _agg_rasterizer.get_mask(), CChildView::blender(rgba8(GetRValue(e.second),
+		_agg_rasterizer.reset();
+		add_path(_agg_rasterizer, ellipse);
+		_agg_rasterizer.sort();
+		_renderer(_agg_bitmap, 0, _agg_rasterizer, CChildView::blender(rgba8(GetRValue(e.second),
 			GetGValue(e.second), GetBValue(e.second), 224)), calculate_alpha<8>());
 	});
 }

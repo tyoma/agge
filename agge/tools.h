@@ -18,6 +18,13 @@ namespace agge
 	}
 
 	template <typename CoordT>
+	inline rect<CoordT> create_rect(CoordT x1, CoordT y1, CoordT x2, CoordT y2)
+	{
+		rect<CoordT> r = { x1, y1, x2, y2 };
+		return r;
+	}
+
+	template <typename CoordT>
 	inline CoordT width(const rect<CoordT> &rc)
 	{	return rc.x2 - rc.x1;	}
 
