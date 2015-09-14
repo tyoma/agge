@@ -374,6 +374,83 @@ namespace agge
 				assert_equal(reference2, rf.segments);
 			}
 
+
+			test( TrianglesExceedingBothYAreClippedToBoundingLines )
+			{
+				// INIT
+				clipper<int> c;
+				clipper<real_t> cf;
+				mocks::vector_rasterizer<int> r;
+				mocks::vector_rasterizer<real_t> rf;
+
+				c.set(create_rect(-1000, 10, 1000, 40));
+
+				// ACT
+				c.move_to(0, 0);
+				c.line_to(r, 0, 50);
+				c.line_to(r, 5, 50);
+				c.line_to(r, 0, 0);
+
+				// ASSERT
+				mocks::coords_pair<int> reference1[] = {
+					{ 0, 10, 0, 40 },
+					{ 4, 40, 1, 10 },
+				};
+
+				assert_equal(reference1, r.segments);
+
+				// INIT
+				r.segments.clear();
+
+				// ACT
+				c.move_to(3, -20);
+				c.line_to(r, 3, 52);
+				c.line_to(r, 39, 52);
+				c.line_to(r, 3, -20);
+
+				// ASSERT
+				mocks::coords_pair<int> reference2[] = {
+					{ 3, 10, 3, 40 },
+					{ 33, 40, 18, 10 },
+				};
+
+				assert_equal(reference2, r.segments);
+
+				// INIT
+				cf.set(create_rect<real_t>(-1000.0f, -2.5f, 1000.0f, -0.5f));
+
+				// ACT
+				cf.move_to(7.0f, -3.0f);
+				cf.line_to(rf, 7.0f, 0.0f);
+				cf.line_to(rf, 8.5f, 0.0f);
+				cf.line_to(rf, 7.0f, -3.0f);
+
+				// ASSERT
+				mocks::coords_pair<real_t> reference3[] = {
+					{ 7.0f, -2.5f, 7.0f, -0.5f },
+					{ 8.25f,-0.5f, 7.25f, -2.5f },
+				};
+
+				assert_equal(reference3, rf.segments);
+
+				// INIT
+				rf.segments.clear();
+
+				// ACT
+				cf.move_to(7.0f, -3.0f);
+				cf.line_to(rf, 8.5f, 0.0f);
+				cf.line_to(rf, 7.0f, 0.0f);
+				cf.line_to(rf, 7.0f, -3.0f);
+
+				// ASSERT
+				mocks::coords_pair<real_t> reference4[] = {
+					{ 7.25f, -2.5f, 8.25f, -0.5f },
+					{ 7.0f, -0.5f, 7.0f, -2.5f },
+				};
+
+				assert_equal(reference4, rf.segments);
+			}
+
 		end_test_suite
 	}
 }
