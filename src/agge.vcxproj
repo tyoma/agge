@@ -31,6 +31,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Android'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="dash.cpp" />
     <ClCompile Include="math.cpp" />
     <ClCompile Include="platform\win32\parallel.cpp">
       <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DisableLanguageExtensions>
@@ -60,6 +61,7 @@
     <ClInclude Include="..\agge\bitmap.h" />
     <ClInclude Include="..\agge\clipper.h" />
     <ClInclude Include="..\agge\config.h" />
+    <ClInclude Include="..\agge\dash.h" />
     <ClInclude Include="..\agge\math.h" />
     <ClInclude Include="..\agge\memory.h" />
     <ClInclude Include="..\agge\parallel.h" />
@@ -76,6 +78,7 @@
     <ClInclude Include="..\agge\rasterizer.h" />
     <ClInclude Include="..\agge\vector_rasterizer.h" />
     <ClInclude Include="..\agge\renderer.h" />
+    <ClInclude Include="..\agge\vertex_sequence.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F849E92C-248A-46B2-9EAB-F86578A21316}</ProjectGuid>

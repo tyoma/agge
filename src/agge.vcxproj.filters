@@ -39,6 +39,9 @@
     <ClCompile Include="math.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="dash.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\agge\vector_rasterizer.h" />
@@ -62,5 +65,7 @@
     <ClInclude Include="..\agge\math.h" />
     <ClInclude Include="..\agge\path.h" />
     <ClInclude Include="..\agge\clipper.h" />
+    <ClInclude Include="..\agge\dash.h" />
+    <ClInclude Include="..\agge\vertex_sequence.h" />
   </ItemGroup>
 </Project>

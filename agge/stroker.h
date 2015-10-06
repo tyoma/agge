@@ -1,7 +1,7 @@
 #pragma once
 
 #include "path.h"
-#include "pod_vector.h"
+#include "vertex_sequence.h"
 
 namespace agge
 {
@@ -48,8 +48,6 @@ namespace agge
 			moveto = 0x20,
 			ready = 0x40
 		};
-		struct point_ref;
-		typedef pod_vector<point_ref> input_vertices;
 
 	private:
 		bool prepare();
@@ -58,9 +56,9 @@ namespace agge
 		void close();
 
 	private:
-		input_vertices _input;
+		vertex_sequence _input;
 		points _output;
-		input_vertices::const_iterator _i;
+		vertex_sequence::const_iterator _i;
 		points::const_iterator _o;
 		const cap *_cap;
 		const join *_join;

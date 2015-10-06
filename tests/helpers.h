@@ -1,6 +1,7 @@
 #pragma once
 
 #include <agge/math.h>
+#include <agge/tools.h>
 #include <agge/types.h>
 
 #include <algorithm>
@@ -104,6 +105,17 @@ namespace agge
 
 		template <>
 		bool equal(const real_t &lhs, const real_t &rhs);
+
+		template <typename T>
+		bool is_on_segment(const point<T>& t, const point<T>& segment_a, const point<T>& segment_b)
+		{
+			T xp = (t.x - segment_a.x) * (segment_a.y - segment_b.y) - (t.y - segment_a.y) * (segment_a.x - segment_b.x);
+
+			if (!equal(xp, T()))
+				return false;
+			return agge_min(segment_a.x, segment_b.x) <= t.x && t.x <= agge_min(segment_a.x, segment_b.x)
+				agge_min(segment_a.y, segment_b.y) <= t.y && t.y <= agge_min(segment_a.y, segment_b.y);
+		}
 	}
 
 	inline bool operator ==(const pixel32 &lhs, const pixel32 &rhs)

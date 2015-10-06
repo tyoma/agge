@@ -23,6 +23,7 @@
     <ClCompile Include="RasterizerTests.cpp" />
     <ClCompile Include="PathTests.cpp" />
     <ClCompile Include="ClipperTests.cpp" />
+    <ClCompile Include="DashTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />

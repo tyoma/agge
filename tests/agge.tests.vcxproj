@@ -183,6 +183,7 @@
     <ClCompile Include="BitmapTests.cpp" />
     <ClCompile Include="BlenderTests.cpp" />
     <ClCompile Include="ClipperTests.cpp" />
+    <ClCompile Include="DashTests.cpp" />
     <ClCompile Include="helpers.cpp" />
     <ClCompile Include="MiscTests.cpp" />
     <ClCompile Include="mt.cpp">

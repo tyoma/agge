@@ -5,18 +5,6 @@
 
 namespace agge
 {
-	struct stroke::point_ref
-	{
-		bool set_distance_to(const point_r &next)
-		{
-			distance = agge::distance(point, next);
-			return distance > distance_epsilon;
-		}
-
-		point_r point;
-		real_t distance;
-	};
-
 	stroke::stroke()
 		: _cap(0), _join(0), _o(_output.end()), _state(0)
 	{	}
@@ -35,23 +23,11 @@ namespace agge
 
 	void stroke::add_vertex(real_t x, real_t y, int command)
 	{
-		if (is_vertex(command))
-		{
-			point_ref p = { { x, y } };
-
-			if (_input.empty())
-			{
-				_input.push_back(p);
-			}
-			else
-			{
-				point_ref &last = *(_input.end() - 1);
-
-				if (last.set_distance_to(p.point))
-					_input.push_back(p);
-			}
-		}
-
+		if (path_command_move_to == (path_vertex_mask & command))
+			_input.move_to(x, y);
+		else if (path_command_line_to == (path_vertex_mask & command))
+			_input.line_to(x, y);
+		
 		if (is_close(command))
 			close();
 	}
@@ -72,10 +48,10 @@ namespace agge
 
 			_output.clear();
 
-			const input_vertices::const_iterator first = _input.begin();
-			const input_vertices::const_iterator last = _input.end() - 1;
-			const input_vertices::const_iterator prev = _i == first ? last : _i - 1;
-			const input_vertices::const_iterator next = _i == last ? first : _i + 1;
+			const vertex_sequence::const_iterator first = _input.begin();
+			const vertex_sequence::const_iterator last = _input.end() - 1;
+			const vertex_sequence::const_iterator prev = _i == first ? last : _i - 1;
+			const vertex_sequence::const_iterator next = _i == last ? first : _i + 1;
 
 			switch (_state & stage_mask)
 			{
@@ -156,14 +132,8 @@ namespace agge
 
 	void stroke::close()
 	{
+		_input.close_polygon();
 		if (!_input.empty())
-		{
-			const point_ref &first = *_input.begin();
-			point_ref &last = *(_input.end() - 1);
-		
-			if (!last.set_distance_to(first.point))
-				_input.pop_back();
 			_state |= closed;
-		}
 	}
 }
