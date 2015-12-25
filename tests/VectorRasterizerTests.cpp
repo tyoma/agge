@@ -1043,6 +1043,7 @@ namespace agge
 
 				// ASSERT
 				assert_is_empty(vr.cells());
+				assert_is_false(vr.sorted());
 
 				// INIT
 				vr.line(0x110000, 0x030230, 0x110000, 0x030200);
@@ -1054,6 +1055,43 @@ namespace agge
 
 				// ASSERT
 				assert_is_empty(vr.cells());
+				assert_is_false(vr.sorted());
+			}
+
+
+			test( NoCellsButNonEmptyRangeIsSortableAndScanlinesAreEmpty )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				vr.line(0x12010, 0x23300, 0x12010, 0x23300);
+				vr.line(0x12010, 0x23300, 0x12010, 0x23370);
+				vr.line(0x12010, 0x23370, 0x12010, 0x23370);
+				vr.line(0x12010, 0x23370, 0x12010, 0x23300);
+
+				// ACT
+				vr.sort();
+
+				// ASSERT
+				assert_is_true(vr.sorted());
+				assert_equal(vr[0x233].second, vr[0x233].first);
+
+				// INIT
+				vr.line(0x32010, 0x23700, 0x32010, 0x23700);
+				vr.line(0x32010, 0x23700, 0x32010, 0x23770);
+				vr.line(0x32010, 0x23770, 0x32010, 0x23770);
+				vr.line(0x32010, 0x23770, 0x32010, 0x23700);
+
+				// ACT
+				vr.sort();
+
+				// ASSERT
+				assert_is_true(vr.sorted());
+				assert_equal(vr[0x233].second, vr[0x233].first);
+				assert_equal(vr[0x243].second, vr[0x243].first);
+				assert_equal(vr[0x253].second, vr[0x253].first);
+				assert_equal(vr[0x263].second, vr[0x263].first);
+				assert_equal(vr[0x273].second, vr[0x273].first);
 			}
 
 

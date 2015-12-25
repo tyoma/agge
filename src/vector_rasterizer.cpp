@@ -158,13 +158,11 @@ namespace agge
 	{
 		const sorted_bin empty_bin = { 0 };
 
-		if (_sorted)
+		if (_sorted || _min_y > _max_y)
 			return;
 
 		commit();
 		_x_sorted_cells.resize(_cells.size());
-		if (_x_sorted_cells.empty())
-			return;
 
 		const int max_length = agge_max(_max_x - _min_x + 1, _max_y - _min_y + 1);
 		const int min_x_ = _min_x, min_y_ = _min_y;
