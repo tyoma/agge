@@ -57,9 +57,19 @@ namespace agge
 
 
 	template <typename SrcBitmapT, typename DestBitmapT>
-	inline void copy(const SrcBitmapT &src, count_t src_x, count_t src_y, DestBitmapT &dest, count_t dest_x, count_t dest_y,
+	inline void copy(const SrcBitmapT &src, int src_x, int src_y, DestBitmapT &dest, int dest_x, int dest_y,
 		count_t width, count_t height)
 	{
+		if (src_x < 0)
+			width += src_x, dest_x -= src_x, src_x = 0;
+		if (src_y < 0)
+			height += src_y, dest_y -= src_y, src_y = 0;
+
+		if (dest_x < 0)
+			width += dest_x, src_x -= dest_x, dest_x = 0;
+		if (dest_y < 0)
+			height += dest_y, src_y -= dest_y, dest_y = 0;
+
 		width = agge_min(width, agge_min(src.width() - src_x, dest.width() - dest_x));
 		height = agge_min(height, agge_min(src.height() - src_y, dest.height() - dest_y));
 
