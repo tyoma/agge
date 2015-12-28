@@ -292,6 +292,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\dash.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\math.cpp"
 				>
 			</File>
@@ -345,7 +349,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\agge\clipper.h"
+			>
+		</File>
+		<File
 			RelativePath="..\agge\config.h"
+			>
+		</File>
+		<File
+			RelativePath="..\agge\dash.h"
 			>
 		</File>
 		<File
@@ -402,6 +414,10 @@
 		</File>
 		<File
 			RelativePath="..\agge\vector_rasterizer.h"
+			>
+		</File>
+		<File
+			RelativePath="..\agge\vertex_sequence.h"
 			>
 		</File>
 	</Files>

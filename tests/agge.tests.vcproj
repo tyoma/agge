@@ -398,6 +398,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\ClipperTests.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\DashTests.cpp"
+			>
+		</File>
+		<File
 			RelativePath=".\helpers.cpp"
 			>
 		</File>
@@ -455,6 +463,10 @@
 		</File>
 		<File
 			RelativePath=".\ParallelExecutionTests.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\PathTests.cpp"
 			>
 		</File>
 		<File
