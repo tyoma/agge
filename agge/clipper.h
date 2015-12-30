@@ -68,6 +68,7 @@ namespace agge
 	{
 		_window = window;
 		_enabled = true;
+		_f1 = clipping(_x1, _y1, _window);
 	}
 
 	template <typename T>
@@ -84,73 +85,70 @@ namespace agge
 	{
 		if (_enabled)
 		{
-			int f2 = clipping(x2, y2, _window);
-
-			T x1 = _x1;
-			T y1 = _y1;
-			int f1 = _f1, f3, f4;
+			const int f2 = clipping(x2, y2, _window);
+			int f3, f4;
 			T y3, y4;
 
-			switch ((f1 & x_clipped) | (f2 & x_clipped) << 1)
+			switch ((_f1 & x_clipped) | (f2 & x_clipped) << 1)
 			{
 			case 0 | 0:
-				line_clip_y(sink, x1, y1, x2, y2, f1, f2);
+				line_clip_y(sink, _x1, _y1, x2, y2, _f1, f2);
 				break;
 
 			case 0 | x2_clipped << 1:
-				y3 = y1 + muldiv(_window.x2 - x1, y2 - y1, x2 - x1);
+				y3 = _y1 + muldiv(_window.x2 - _x1, y2 - _y1, x2 - _x1);
 				f3 = clipping_y(y3, _window);
-				line_clip_y(sink, x1, y1, _window.x2, y3, f1, f3);
+				line_clip_y(sink, _x1, _y1, _window.x2, y3, _f1, f3);
 				line_clip_y(sink, _window.x2, y3, _window.x2, y2, f3, f2);
 				break;
 
 			case x2_clipped | 0:
-				y3 = y1 + muldiv(_window.x2 - x1, y2 - y1, x2 - x1);
+				y3 = _y1 + muldiv(_window.x2 - _x1, y2 - _y1, x2 - _x1);
 				f3 = clipping_y(y3, _window);
-				line_clip_y(sink, _window.x2, y1, _window.x2, y3, f1, f3);
+				line_clip_y(sink, _window.x2, _y1, _window.x2, y3, _f1, f3);
 				line_clip_y(sink, _window.x2, y3, x2, y2, f3, f2);
 				break;
 
 			case x2_clipped | x2_clipped << 1:
-				line_clip_y(sink, _window.x2, y1, _window.x2, y2, f1, f2);
+				line_clip_y(sink, _window.x2, _y1, _window.x2, y2, _f1, f2);
 				break;
 
 			case 0 | x1_clipped << 1:
-				y3 = y1 + muldiv(_window.x1 - x1, y2 - y1, x2 - x1);
+				y3 = _y1 + muldiv(_window.x1 - _x1, y2 - _y1, x2 - _x1);
 				f3 = clipping_y(y3, _window);
-				line_clip_y(sink, x1, y1, _window.x1, y3, f1, f3);
+				line_clip_y(sink, _x1, _y1, _window.x1, y3, _f1, f3);
 				line_clip_y(sink, _window.x1, y3, _window.x1, y2, f3, f2);
 				break;
 
 			case x2_clipped | x1_clipped << 1:
-				y3 = y1 + muldiv(_window.x2 - x1, y2 - y1, x2 - x1);
-				y4 = y1 + muldiv(_window.x1 - x1, y2 - y1, x2 - x1);
+				y3 = _y1 + muldiv(_window.x2 - _x1, y2 - _y1, x2 - _x1);
+				y4 = _y1 + muldiv(_window.x1 - _x1, y2 - _y1, x2 - _x1);
 				f3 = clipping_y(y3, _window);
 				f4 = clipping_y(y4, _window);
-				line_clip_y(sink, _window.x2, y1, _window.x2, y3, f1, f3);
+				line_clip_y(sink, _window.x2, _y1, _window.x2, y3, _f1, f3);
 				line_clip_y(sink, _window.x2, y3, _window.x1, y4, f3, f4);
 				line_clip_y(sink, _window.x1, y4, _window.x1, y2, f4, f2);
 				break;
 
 			case x1_clipped | 0:
-				y3 = y1 + muldiv(_window.x1 - x1, y2 - y1, x2 - x1);
+				y3 = _y1 + muldiv(_window.x1 - _x1, y2 - _y1, x2 - _x1);
 				f3 = clipping_y(y3, _window);
-				line_clip_y(sink, _window.x1, y1, _window.x1, y3, f1, f3);
+				line_clip_y(sink, _window.x1, _y1, _window.x1, y3, _f1, f3);
 				line_clip_y(sink, _window.x1, y3, x2, y2, f3, f2);
 				break;
 
 			case x1_clipped | x2_clipped << 1:
-				y3 = y1 + muldiv(_window.x1 - x1, y2 - y1, x2 - x1);
-				y4 = y1 + muldiv(_window.x2 - x1, y2 - y1, x2 - x1);
+				y3 = _y1 + muldiv(_window.x1 - _x1, y2 - _y1, x2 - _x1);
+				y4 = _y1 + muldiv(_window.x2 - _x1, y2 - _y1, x2 - _x1);
 				f3 = clipping_y(y3, _window);
 				f4 = clipping_y(y4, _window);
-				line_clip_y(sink, _window.x1, y1, _window.x1, y3, f1, f3);
+				line_clip_y(sink, _window.x1, _y1, _window.x1, y3, _f1, f3);
 				line_clip_y(sink, _window.x1, y3, _window.x2, y4, f3, f4);
 				line_clip_y(sink, _window.x2, y4, _window.x2, y2, f4, f2);
 				break;
 
 			case x1_clipped | x1_clipped << 1:
-				line_clip_y(sink, _window.x1, y1, _window.x1, y2, f1, f2);
+				line_clip_y(sink, _window.x1, _y1, _window.x1, y2, _f1, f2);
 				break;
 			}
 			_f1 = f2;

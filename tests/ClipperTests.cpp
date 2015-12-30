@@ -451,6 +451,38 @@ namespace agge
 				assert_equal(reference4, rf.segments);
 			}
 
+
+			test( LastPointClippingIsAdjustedOnWindowSetting )
+			{
+				// INIT
+				clipper<float> c;
+				mocks::vector_rasterizer<float> r;
+
+				c.move_to(10.0f, 100.0f);
+
+				// ACT
+				c.set(create_rect<real_t>(-1000.0f, 10.0f, 1000.0f, 40.0f));
+				c.line_to(r, 20.0f, 20.0f);
+
+				// ASSERT
+				mocks::coords_pair<real_t> reference1[] = {
+					{ 17.5f, 40.0f, 20.0f, 20.0f },
+				};
+
+				assert_equal(reference1, r.segments);
+
+				// ACT
+				c.set(create_rect<real_t>(-1000.0f, 30.0f, 1000.0f, 1000.0f));
+				c.line_to(r, 10.0f, 100.0f);
+
+				// ASSERT
+				mocks::coords_pair<real_t> reference2[] = {
+					{ 17.5f, 40.0f, 20.0f, 20.0f },
+					{ 18.75f, 30.0f, 10.0f, 100.0f },
+				};
+
+				assert_equal(reference2, r.segments);
+			}
 		end_test_suite
 	}
 }
