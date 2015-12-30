@@ -34,8 +34,8 @@ namespace agge
 		enum state {
 			// Stages
 			start_cap = 0x00,
-			open_outline_forward = 0x01,
-			closed_outline_forward = 0x02,
+			outline_forward = 0x01,
+			outline_forward_closed = 0x02,
 			end_poly1 = 0x03,
 			end_cap = 0x04,
 			outline_backward = 0x05,
@@ -51,7 +51,6 @@ namespace agge
 
 	private:
 		bool prepare();
-		bool is_closed() const;
 		void set_state(int stage_and_flags);
 		void close();
 

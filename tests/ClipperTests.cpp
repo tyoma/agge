@@ -87,6 +87,33 @@ namespace agge
 			}
 
 
+			test( ResettingClipperDrawsUnboundLines )
+			{
+				// INIT
+				clipper<int> clipper;
+				mocks::vector_rasterizer<int> ras;
+
+				clipper.set(create_rect(-1, -1, 1, 1));
+
+				// ACT
+				clipper.reset();
+
+				// ASSERT
+				clipper.move_to(-0x7FFFFFFF, -0x7FFFFFFF);
+				clipper.line_to(ras, 0x7FFFFFFF, 0x6FFFFFFF);
+				clipper.line_to(ras, 0x6FFFFFFF, 0x7FFFFFFF);
+				clipper.line_to(ras, -0x7FFFFFFF, -0x7FFFFFFF);
+
+				mocks::coords_pair<int> reference[] = {
+					{ -0x7FFFFFFF, -0x7FFFFFFF, +0x7FFFFFFF, +0x6FFFFFFF },
+					{ +0x7FFFFFFF, +0x6FFFFFFF, +0x6FFFFFFF, +0x7FFFFFFF },
+					{ +0x6FFFFFFF, +0x7FFFFFFF, -0x7FFFFFFF, -0x7FFFFFFF },
+				};
+
+				assert_equal(reference, ras.segments);
+			}
+
+
 			test( DrawingWithinBoundsDrawsLinesAsIs )
 			{
 				// INIT

@@ -29,8 +29,9 @@ namespace agge
 	public:
 		clipper();
 
-		void reset();		
+		void reset();
 		void set(const rect<T> &window);
+
 		void move_to(T x, T y);
 
 		template <typename LinesSinkT>
@@ -62,6 +63,10 @@ namespace agge
 	inline clipper<T>::clipper()
 		: _enabled(false)
 	{	}
+
+	template <typename T>
+	inline void clipper<T>::reset()
+	{	_enabled = false;	}
 
 	template <typename T>
 	inline void clipper<T>::set(const rect<T> &window)

@@ -35,24 +35,33 @@ namespace agge
 				T _last_x, _last_y;
 			};
 
-			template <typename T, const mocks::coords_pair<T> * const coords>
+			template <typename T>
 			class emitting_clipper
 			{
 			public:
 				typedef T coord_type;
 
 			public:
+				void reset()
+				{	_window = create_rect(static_cast<T>(1), static_cast<T>(2), static_cast<T>(3), static_cast<T>(4));	}
+
+				void set(const rect<T> &window)
+				{	_window = window;	}
+
 				void move_to(T /*x*/, T /*y*/)
 				{	}
 
 				template <typename LinesSinkT>
 				void line_to(LinesSinkT &sink, T /*x*/, T /*y*/)
 				{
-					sink.line(coords->x1, coords->y1, coords->x1, coords->y2);
-					sink.line(coords->x1, coords->y2, coords->x2, coords->y2);
-					sink.line(coords->x2, coords->y2, coords->x2, coords->y1);
-					sink.line(coords->x2, coords->y1, coords->x1, coords->y1);
+					sink.line(_window.x1, _window.y1, _window.x1, _window.y2);
+					sink.line(_window.x1, _window.y2, _window.x2, _window.y2);
+					sink.line(_window.x2, _window.y2, _window.x2, _window.y1);
+					sink.line(_window.x2, _window.y1, _window.x1, _window.y1);
 				}
+
+			private:
+				rect<T> _window;
 			};
 
 			template <int k1 = 1, int k2 = 1>
@@ -200,11 +209,16 @@ namespace agge
 			{
 				// INIT
 				mocks::bitmap<uint8_t> b1(3, 3), b2(7, 9), b3(3, 3), b4(5, 6);
-				rasterizer< emitting_clipper<int, &c_box1>, scaling_i<0, 1> > r1;
-				rasterizer< emitting_clipper<int, &c_box1>, scaling_i<0, 3> > r2;
-				rasterizer< emitting_clipper<real_t, &c_box2>, scaling_r<0, 1> > r3;
-				rasterizer< emitting_clipper<real_t, &c_box2>, scaling_r<0, 2> > r4;
+				rasterizer< emitting_clipper<int>, scaling_i<1, 1> > r1;
+				rasterizer< emitting_clipper<int>, scaling_i<1, 3> > r2;
+				rasterizer< emitting_clipper<real_t>, scaling_r<1, 1> > r3;
+				rasterizer< emitting_clipper<real_t>, scaling_r<1, 2> > r4;
 				renderer r;
+
+				r1.set_clipping(create_rect<real_t>(0.5f, 0.640625f, 2.21875f, 2.75f));
+				r2.set_clipping(create_rect<real_t>(0.5f, 0.640625f, 2.21875f, 2.75f));
+				r3.set_clipping(create_rect<real_t>(0.5f, 0.640625f, 2.21875f, 2.75f));
+				r4.set_clipping(create_rect<real_t>(0.5f, 0.640625f, 2.21875f, 2.75f));
 
 				// ACT
 				r1.line_to(0.0f, 0.0f);
@@ -257,6 +271,83 @@ namespace agge
 				};
 
 				assert_equal(reference4, b4.data);
+			}
+
+
+			test( CoordinatesTranslationAppliedForClippingWindow )
+			{
+				// INIT
+				mocks::bitmap<uint8_t> b1(5, 7), b2(7, 9);
+				rasterizer< emitting_clipper<int>, scaling_i<2, 1> > r1;
+				rasterizer< emitting_clipper<int>, scaling_i<3, 1> > r2;
+				renderer r;
+
+				// ACT
+				r1.set_clipping(create_rect<real_t>(0.5f, 0.640625f, 2.21875f, 3.0f));
+				r2.set_clipping(create_rect<real_t>(0.5f, 0.640625f, 2.21875f, 2.5f));
+
+				// ACT / ASSERT
+				r1.line_to(0.0f, 0.0f);
+				r1.sort();
+				r(b1, 0, r1, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+
+				r2.line_to(0.0f, 0.0f);
+				r2.sort();
+				r(b2, 0, r2, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+
+				uint8_t reference1[] = {
+					0x00, 0x00, 0x00, 0x00, 0x00,
+					0x00, 0xB8, 0xB8, 0xB8, 0x50,
+					0x00, 0xFF, 0xFF, 0xFF, 0x70,
+					0x00, 0xFF, 0xFF, 0xFF, 0x70,
+					0x00, 0xFF, 0xFF, 0xFF, 0x70,
+					0x00, 0xFF, 0xFF, 0xFF, 0x70,
+					0x00, 0x00, 0x00, 0x00, 0x00,
+				};
+
+				uint8_t reference2[] = {
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+					0x00, 0x0a, 0x14, 0x14, 0x14, 0x14, 0x0d,
+					0x00, 0x80, 0xff, 0xff, 0xff, 0xff, 0xa8,
+					0x00, 0x80, 0xff, 0xff, 0xff, 0xff, 0xa8,
+					0x00, 0x80, 0xff, 0xff, 0xff, 0xff, 0xa8,
+					0x00, 0x80, 0xff, 0xff, 0xff, 0xff, 0xa8,
+					0x00, 0x80, 0xff, 0xff, 0xff, 0xff, 0xa8,
+					0x00, 0x40, 0x80, 0x80, 0x80, 0x80, 0x54,
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				};
+
+				assert_equal(reference1, b1.data);
+				assert_equal(reference2, b2.data);
+			}
+
+
+			test( ClippingResetIsDelegatedToClipper )
+			{
+				// INIT
+				mocks::bitmap<uint8_t> b(4, 5);
+				rasterizer< emitting_clipper<int>, scaling_i<1, 256> > ras;
+				renderer r;
+
+				ras.set_clipping(create_rect<real_t>(0.5f, 0.640625f, 2.21875f, 2.75f));
+
+				// ACT
+				ras.reset_clipping();
+
+				// ACT / ASSERT
+				ras.line_to(0.0f, 0.0f);
+				ras.sort();
+				r(b, 0, ras, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+
+				uint8_t reference[] = {
+					0x00, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00,
+					0x00, 0xFF, 0xFF, 0x00,
+					0x00, 0xFF, 0xFF, 0x00,
+					0x00, 0x00, 0x00, 0x00,
+				};
+
+				assert_equal(reference, b.data);
 			}
 
 
@@ -332,7 +423,6 @@ namespace agge
 
 				assert_equal(reference3, b3.data);
 			}
-
 		end_test_suite
 	}
 }

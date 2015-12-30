@@ -58,17 +58,17 @@ namespace agge
 			case start_cap:
 				_cap->calc(_output, _width, _i->point, _i->distance, next->point);
 				_i = next;
-				set_state(_i == last ? end_cap : open_outline_forward);
+				set_state(_i == last ? end_cap : outline_forward);
 				break;
 
-			case open_outline_forward:
+			case outline_forward:
 				_join->calc(_output, _width, prev->point, prev->distance, _i->point, _i->distance, next->point);
 				_i = next;
 				if (_i == last)
 					set_state(end_cap);
 				break;
 
-			case closed_outline_forward:
+			case outline_forward_closed:
 				_join->calc(_output, _width, prev->point, prev->distance, _i->point, _i->distance, next->point);
 				_i = next;
 				if (_i == first)
@@ -115,17 +115,14 @@ namespace agge
 		if (_state & ready)
 			return true;
 
-		if (_input.size() <= (is_closed() ? 2u : 1u))
+		if (_input.size() <= (_state & closed ? 2u : 1u))
 			return false;
 
 		_i = _input.begin();
 		_o = _output.end();
-		set_state((is_closed() ? closed_outline_forward : start_cap) | moveto | ready);
+		set_state((_state & closed ? outline_forward_closed : start_cap) | moveto | ready);
 		return true;
 	}
-
-	bool stroke::is_closed() const
-	{	return 0 != (_state & closed);	}
 
 	void stroke::set_state(int stage_and_flags)
 	{	_state = (_state & ~stage_mask) | stage_and_flags;	}
