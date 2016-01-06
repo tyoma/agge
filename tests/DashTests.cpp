@@ -63,27 +63,9 @@ namespace agge
 			}
 
 
-			ignore( SegmentIsLimitedToADash )
+			test( SegmentIsLimitedToADash )
 			{
 				// INIT
-				mocks::path::point input1[] = {
-					{ 1.3f, 17.0f, path_command_move_to },
-					{ 5.8f, 11.0f, path_command_line_to },
-					{ 0.0f, 0.0f, path_command_stop },
-				};
-				mocks::path::point input2[] = {
-					{ 1.0f, -1.0f, path_command_move_to },
-					{ 1.0f, 10.0f, path_command_line_to },
-					{ 0.0f, 0.0f, path_command_stop },
-				};
-				mocks::path::point input3[] = {
-					{ 1.9f, 2.7f, path_command_move_to },
-					{ 3.9f, 4.7f, path_command_line_to },
-					{ 0.0f, 0.0f, path_command_stop },
-				};
-				mocks::path p1(input1);
-				mocks::path p2(input2);
-				mocks::path p3(input3);
 				dash d;
 
 				// INIT / ACT
@@ -136,6 +118,39 @@ namespace agge
 				};
 
 				assert_equal(reference3, result3);
+			}
+
+
+			ignore( ThePatternIsAppliedPeriodically )
+			{
+				// INIT
+				dash d;
+
+				d.add_dash(5.0f, 10.0f);
+
+				// ACT
+				d.remove_all();
+				d.move_to(0.0f, 0.0f);
+				d.line_to(45.0f, 0.0f);
+				mocks::path::point result[] = {
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d),
+				};
+
+				// ASSERT
+				mocks::path::point reference[] = {
+					{ 0.0f, 0.0f, path_command_move_to },
+					{ 5.0f, 0.0f, path_command_line_to },
+					{ 15.0f, 0.0f, path_command_move_to },
+					{ 20.0f, 0.0f, path_command_line_to },
+					{ 30.0f, 0.0f, path_command_move_to },
+					{ 35.0f, 0.0f, path_command_line_to },
+					{ 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference, result);
 			}
 		end_test_suite
 	}

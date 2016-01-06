@@ -126,6 +126,10 @@ namespace agge
 	{	return tests::equal(lhs.x, rhs.x) && tests::equal(lhs.y, rhs.y);	}
 
 	template <typename T>
+	inline bool operator ==(const agge_vector<T> &lhs, const agge_vector<T> &rhs)
+	{	return tests::equal(lhs.dx, rhs.dx) && tests::equal(lhs.dy, rhs.dy);	}
+
+	template <typename T>
 	bool operator ==(const std::vector<T> &lhs, const pod_vector<T> &rhs)
 	{	return lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());	}
 }

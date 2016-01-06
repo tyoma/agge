@@ -1,13 +1,16 @@
 #pragma once
 
+
 namespace agge
 {
 	template <typename CoordT>
 	struct point;
 
 	template <typename CoordT>
-	struct rect;
+	struct agge_vector;
 
+	template <typename CoordT>
+	struct rect;
 
 
 	template <typename CoordT>
@@ -15,6 +18,13 @@ namespace agge
 	{
 		point<CoordT> p = { x, y };
 		return p;
+	}
+
+	template <typename CoordT>
+	inline agge_vector<CoordT> create_vector(CoordT dx, CoordT dy)
+	{
+		agge_vector<CoordT> v = { dx, dy };
+		return v;
 	}
 
 	template <typename CoordT>

@@ -30,8 +30,8 @@ namespace agge
 	private:
 		vertex_sequence::const_iterator _i;
 		dash_gap _dashes;
-		real_t _accumulated_length;
-		real_t _previous_x, _previous_y;
+		real_t _remainder;
+		point_r _previous;
 		int _state;
 	};
 }

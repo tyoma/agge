@@ -8,12 +8,16 @@ namespace agge
 	struct point;
 
 	template <typename CoordT>
+	struct agge_vector;
+
+	template <typename CoordT>
 	struct rect;
 
 	typedef unsigned int count_t;
 	typedef unsigned char uint8_t;
 	typedef unsigned short uint16_t;
 	typedef point<real_t> point_r;
+	typedef agge_vector<real_t> vector_r;
 	typedef rect<int> rect_i;
 
 	enum bits_per_pixel { bpp32 = 32, bpp24 = 24, bpp16 = 16, bpp8 = 8 };
@@ -41,6 +45,12 @@ namespace agge
 	struct point
 	{
 		CoordT x, y;
+	};
+
+	template <typename CoordT>
+	struct agge_vector
+	{
+		CoordT dx, dy;
 	};
 
 	template <typename CoordT>

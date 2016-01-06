@@ -30,13 +30,24 @@ namespace agge
 			_state = move;
 
 		case move:
-			*x = _i->point.x, *y = _i->point.y;
+			_remainder = _dashes.dash_length;
+			_previous = _i->point;
+			*x = _previous.x, *y = _previous.y;
 			++_i;
 			_state = generate;
 			return path_command_move_to;
 
 		case generate:
-			*x = _i->point.x, *y = _i->point.y;
+			_remainder -= (_i - 1)->distance;
+			if (_remainder < 0.0f)
+			{
+				point_r limit = _i->point + (_remainder / (_i - 1)->distance) * (_i->point - _previous);
+				*x = limit.x, *y = limit.y;
+			}
+			else
+			{
+				*x = _i->point.x, *y = _i->point.y;
+			}
 			if (++_i == end())
 				_state = complete;
 			return path_command_line_to;

@@ -35,4 +35,32 @@ namespace agge
 	template <typename CoordT>
 	inline CoordT distance(const point<CoordT> &a, const point<CoordT> &b)
 	{	return distance(a.x, a.y, b.x, b.y);	}
+
+	template <typename CoordT>
+	inline point<CoordT> operator +(const point<CoordT> &lhs, const agge_vector<CoordT> &rhs)
+	{
+		const point<CoordT> result = { lhs.x + rhs.dx, lhs.y + rhs.dy };
+		return result;
+	}
+
+	template <typename CoordT>
+	inline agge_vector<CoordT> operator -(const point<CoordT> &lhs, const point<CoordT> &rhs)
+	{
+		const agge_vector<CoordT> result = { lhs.x - rhs.x, lhs.y - rhs.y };
+		return result;
+	}
+
+	template <typename CoordT>
+	inline agge_vector<CoordT> operator *(CoordT lhs, const agge_vector<CoordT> &rhs)
+	{
+		const agge_vector<CoordT> result = { lhs * rhs.dx, lhs * rhs.dy };
+		return result;
+	}
+
+	template <typename CoordT>
+	inline agge_vector<CoordT> operator *(const agge_vector<CoordT> &lhs, CoordT rhs)
+	{
+		const agge_vector<CoordT> result = { rhs * lhs.dx, rhs * lhs.dy };
+		return result;
+	}
 }
