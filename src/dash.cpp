@@ -31,45 +31,44 @@ namespace agge
 		case initial:
 			_j = begin();
 			_dash = &_dashes;
-			_t1 = 0.0f;
-			_t2 = 0.0f;
+			_t = 0.0f;
 			_state = seek;
 
 		case seek:
 			do
 			{
-				_t1 += _j->distance;
+				_t -= _j->distance;
 				if (++_j == end())
 				{
 					_state = complete;
 					return path_command_stop;
 				}
-			}	while (_t1 < _t2);
+			}	while (_t > 0.0f);
 			_state = move;
 
 		case move:
 			i = _j - 1;
-			m = _j->point + ((_t2 - _t1) / i->distance) * (_j->point - i->point);
+			m = _j->point + (_t / i->distance) * (_j->point - i->point);
 			*x = m.x, *y = m.y;
-			_t2 += _dash->dash_length;
-			_state = _t2 > _t1 ? emit_source : finish_dash;
+			_t += _dash->dash_length;
+			_state = _t > 0.0f ? emit_source : finish_dash;
 			return path_command_move_to;
 
 		case emit_source:
 			*x = _j->point.x, *y = _j->point.y;
-			_t1 += _j->distance;
+			_t -= _j->distance;
 			if (++_j == end())
 				_state = complete;
-			else if (_t1 > _t2)
+			else if (_t < 0.0f)
 				_state = finish_dash;
 			return path_command_line_to;
 
 		case finish_dash:
 			i = _j - 1;
-			m = _j->point + ((_t2 - _t1) / i->distance) * (_j->point - i->point);
+			m = _j->point + (_t / i->distance) * (_j->point - i->point);
 			*x = m.x, *y = m.y;
-			_t2 += _dash->gap_length;
-			_state = _t2 >= _t1 ? seek : move;
+			_t += _dash->gap_length;
+			_state = _t >= 0.0f ? seek : move;
 			return path_command_line_to;
 
 		case complete:

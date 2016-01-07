@@ -30,7 +30,7 @@ namespace agge
 	private:
 		vertex_sequence::const_iterator _j;
 		const dash_gap *_dash;
-		real_t _t1, _t2;
+		real_t _t;
 		state _state;
 		dash_gap _dashes;
 	};
