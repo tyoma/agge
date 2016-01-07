@@ -23,65 +23,57 @@ namespace agge
 
 	int dash::vertex(real_t *x, real_t *y)
 	{
-		vertex_sequence::const_iterator previous;
+		vertex_sequence::const_iterator i;
 		point_r m;
 
 		switch (_state)
 		{
-		case complete:
-			return path_command_stop;
-
 		case initial:
-			_i = begin();
+			_j = begin();
+			_dash = &_dashes;
+			_t1 = 0.0f;
+			_t2 = 0.0f;
+			_state = seek;
+
+		case seek:
+			do
+			{
+				_t1 += _j->distance;
+				if (++_j == end())
+				{
+					_state = complete;
+					return path_command_stop;
+				}
+			}	while (_t1 < _t2);
 			_state = move;
 
 		case move:
-			_dash = &_dashes;
-			_remainder = _dash->dash_length;
-			*x = _i->point.x, *y = _i->point.y;
-			if (_i->distance > _dash->dash_length)
-			{
-				_remainder = _i->distance;
-				_state = emit_dash;
-			}
-			else
-			{
-				_remainder = _dash->dash_length;
-				_state = emit_source;
-			}
-			++_i;
+			i = _j - 1;
+			m = _j->point + ((_t2 - _t1) / i->distance) * (_j->point - i->point);
+			*x = m.x, *y = m.y;
+			_t2 += _dash->dash_length;
+			_state = _t2 > _t1 ? emit_source : finish_dash;
 			return path_command_move_to;
 
 		case emit_source:
-			*x = _i->point.x, *y = _i->point.y;
-//			_state = _i->distance > _remainder ? emit_dashes : emit_source;
-			if (++_i == end())
+			*x = _j->point.x, *y = _j->point.y;
+			_t1 += _j->distance;
+			if (++_j == end())
 				_state = complete;
+			else if (_t1 > _t2)
+				_state = finish_dash;
 			return path_command_line_to;
 
-		case move_dash:
-			previous = _i - 1;
-			m = previous->point + ((previous->distance - _remainder + _dash->gap_length) / previous->distance) * (_i->point - previous->point);
-
+		case finish_dash:
+			i = _j - 1;
+			m = _j->point + ((_t2 - _t1) / i->distance) * (_j->point - i->point);
 			*x = m.x, *y = m.y;
-			_remainder -= _dash->gap_length;
-			if (_remainder > _dash->dash_length)
-				_state = emit_dash;
-			else if (++_i == end())
-				_state = complete;
-			return path_command_move_to;
-
-		case emit_dash:
-			previous = _i - 1;
-			m = previous->point + ((previous->distance - _remainder + _dash->dash_length) / previous->distance) * (_i->point - previous->point);
-
-			*x = m.x, *y = m.y;
-			_remainder -= _dash->dash_length;
-			if (_remainder > _dash->gap_length)
-				_state = move_dash;
-			else if (++_i == end())
-				_state = complete;
+			_t2 += _dash->gap_length;
+			_state = _t2 >= _t1 ? seek : move;
 			return path_command_line_to;
+
+		case complete:
+			return path_command_stop;
 		}
 		return path_command_stop;
 	}

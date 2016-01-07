@@ -129,9 +129,69 @@ namespace agge
 				d.add_dash(5.0f, 10.0f);
 
 				// ACT
-				d.remove_all();
 				d.move_to(0.0f, 0.0f);
-				d.line_to(45.0f, 0.0f);
+				d.line_to(44.99f, 0.0f);
+				mocks::path::point result1[] = {
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d),
+				};
+
+				// ASSERT
+				mocks::path::point reference1[] = {
+					{ 0.0f, 0.0f, path_command_move_to },
+					{ 5.0f, 0.0f, path_command_line_to },
+					{ 15.0f, 0.0f, path_command_move_to },
+					{ 20.0f, 0.0f, path_command_line_to },
+					{ 30.0f, 0.0f, path_command_move_to },
+					{ 35.0f, 0.0f, path_command_line_to },
+					{ 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference1, result1);
+
+				// INIT
+				d.add_dash(5.0f, 7.0f);
+				d.remove_all();
+
+				// ACT (pattern end coincides with segment end)
+				d.move_to(0.0f, 0.0f);
+				d.line_to(24.0f, 0.0f);
+				mocks::path::point result2[] = {
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d),
+				};
+
+				// ASSERT
+				mocks::path::point reference2[] = {
+					{ 0.0f, 0.0f, path_command_move_to },
+					{ 5.0f, 0.0f, path_command_line_to },
+					{ 12.0f, 0.0f, path_command_move_to },
+					{ 17.0f, 0.0f, path_command_line_to },
+					{ 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference2, result2);
+			}
+
+
+			test( PointsWithinGapsAreNotEmitted )
+			{
+				// INIT
+				dash d;
+
+				d.add_dash(2.5f, 4.0f);
+
+				// ACT
+				d.move_to(0.0f, 0.0f);
+				d.line_to(3.0f, 0.0f);
+				d.line_to(6.0f, 0.0f);
+				d.line_to(9.1f, 0.0f);
+				d.line_to(12.0f, 0.0f);
+				d.line_to(15.0f, 0.0f);
+
 				mocks::path::point result[] = {
 					vertex(d), vertex(d),
 					vertex(d), vertex(d),
@@ -141,12 +201,40 @@ namespace agge
 
 				// ASSERT
 				mocks::path::point reference[] = {
-					{ 0.0f, 0.0f, path_command_move_to },
-					{ 5.0f, 0.0f, path_command_line_to },
-					{ 15.0f, 0.0f, path_command_move_to },
-					{ 20.0f, 0.0f, path_command_line_to },
-					{ 30.0f, 0.0f, path_command_move_to },
-					{ 35.0f, 0.0f, path_command_line_to },
+					{ 0.0f, 0.0f, path_command_move_to }, { 2.5f, 0.0f, path_command_line_to },
+					{ 6.5f, 0.0f, path_command_move_to }, { 9.0f, 0.0f, path_command_line_to },
+					{ 13.0f, 0.0f, path_command_move_to }, { 15.0f, 0.0f, path_command_line_to },
+					{ 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference, result);
+			}
+
+
+			test( EmittedSourcePointsCanBeFollowedWithGap )
+			{
+				// INIT
+				dash d;
+
+				d.add_dash(3.0f, 2.5f);
+
+				// ACT
+				d.move_to(0.0f, 0.0f);
+				d.line_to(0.0f, 2.0f);
+				d.line_to(0.0f, 4.0f);
+				d.line_to(0.0f, 6.0f);
+				d.line_to(0.0f, 8.0f);
+
+				mocks::path::point result[] = {
+					vertex(d), vertex(d), vertex(d),
+					vertex(d), vertex(d), vertex(d),
+					vertex(d),
+				};
+
+				// ASSERT
+				mocks::path::point reference[] = {
+					{ 0.0f, 0.0f, path_command_move_to }, { 0.0f, 2.0f, path_command_line_to }, { 0.0f, 3.0f, path_command_line_to },
+					{ 0.0f, 5.5f, path_command_move_to }, { 0.0f, 6.0f, path_command_line_to }, { 0.0f, 8.0f, path_command_line_to },
 					{ 0.0f, 0.0f, path_command_stop },
 				};
 
