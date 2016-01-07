@@ -20,7 +20,7 @@ namespace agge
 		int vertex(real_t *x, real_t *y);
 
 	private:
-		enum state { initial = 0, move = 1, generate = 2, complete = 3 };
+		enum state { initial, move, emit_source, emit_dash, move_dash, complete };
 
 		struct dash_gap
 		{
@@ -30,8 +30,8 @@ namespace agge
 	private:
 		vertex_sequence::const_iterator _i;
 		dash_gap _dashes;
+		const dash_gap *_dash;
 		real_t _remainder;
-		point_r _previous;
 		int _state;
 	};
 }

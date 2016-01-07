@@ -121,7 +121,7 @@ namespace agge
 			}
 
 
-			ignore( ThePatternIsAppliedPeriodically )
+			test( ThePatternIsAppliedPeriodically )
 			{
 				// INIT
 				dash d;
