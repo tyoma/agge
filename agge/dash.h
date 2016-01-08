@@ -9,7 +9,7 @@ namespace agge
 	public:
 		dash();
 
-		void reset();
+		void remove_all_dashes();
 		void add_dash(real_t dash_length, real_t gap_length);
 
 		void remove_all();
@@ -29,9 +29,9 @@ namespace agge
 
 	private:
 		vertex_sequence::const_iterator _j;
-		const dash_gap *_dash;
+		pod_vector<dash_gap>::const_iterator _dash;
 		real_t _t;
 		state _state;
-		dash_gap _dashes;
+		pod_vector<dash_gap> _pattern;
 	};
 }

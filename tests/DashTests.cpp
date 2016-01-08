@@ -101,7 +101,7 @@ namespace agge
 				assert_equal(reference2, result2);
 
 				// INIT / ACT
-				d.reset();
+				d.remove_all_dashes();
 				d.add_dash(sqrt(2.0f), 10.0f);
 
 				// ACT
@@ -152,6 +152,7 @@ namespace agge
 				assert_equal(reference1, result1);
 
 				// INIT
+				d.remove_all_dashes();
 				d.add_dash(5.0f, 7.0f);
 				d.remove_all();
 
@@ -240,6 +241,43 @@ namespace agge
 
 				assert_equal(reference, result);
 			}
+
+
+			test( MultipleDashPatternIsSupported )
+			{
+				// INIT
+				dash d;
+
+				d.add_dash(3.0f, 1.0f);
+				d.add_dash(2.0f, 0.5f);
+
+				// ACT
+				d.move_to(1.0f, 2.0f);
+				d.line_to(5.5f, 2.0f);
+				d.line_to(5.5f, 12.0f);
+
+				mocks::path::point result1[] = {
+					vertex(d), vertex(d),
+					vertex(d), vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d),
+				};
+
+				// ASSERT
+				mocks::path::point reference1[] = {
+					{ 1.0f, 2.0f, path_command_move_to }, { 4.0f, 2.0f, path_command_line_to },
+					{ 5.0f, 2.0f, path_command_move_to }, { 5.5f, 2.0f, path_command_line_to }, { 5.5f, 3.5f, path_command_line_to },
+					{ 5.5f, 4.0f, path_command_move_to }, { 5.5f, 7.0f, path_command_line_to },
+					{ 5.5f, 8.0f, path_command_move_to }, { 5.5f, 10.0f, path_command_line_to },
+					{ 5.5f, 10.5f, path_command_move_to }, { 5.5f, 12.0f, path_command_line_to },
+					{ 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference1, result1);
+			}
+
 		end_test_suite
 	}
 }
