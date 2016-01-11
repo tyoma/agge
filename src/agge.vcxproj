@@ -53,7 +53,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Android'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="stroker.cpp" />
+    <ClCompile Include="stroke.cpp" />
     <ClCompile Include="stroke_features.cpp" />
     <ClCompile Include="vector_rasterizer.cpp" />
   </ItemGroup>
@@ -70,7 +70,7 @@
     <ClInclude Include="..\agge\pod_vector.h" />
     <ClInclude Include="..\agge\renderer_parallel.h" />
     <ClInclude Include="..\agge\scanline.h" />
-    <ClInclude Include="..\agge\stroker.h" />
+    <ClInclude Include="..\agge\stroke.h" />
     <ClInclude Include="..\agge\stroke_features.h" />
     <ClInclude Include="..\agge\tools.h" />
     <ClInclude Include="..\agge\types.h" />

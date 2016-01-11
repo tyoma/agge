@@ -6,7 +6,6 @@
 
 #include <agge/blenders_simd.h>
 #include <agge/renderer.h>
-#include <agge/stroker.h>
 #include <agge/stroke_features.h>
 
 #include <aggx/aggx_ellipse.h>

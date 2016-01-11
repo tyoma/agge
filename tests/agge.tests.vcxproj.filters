@@ -17,13 +17,13 @@
     </ClCompile>
     <ClCompile Include="BitmapTests.cpp" />
     <ClCompile Include="PodVectorTests.cpp" />
-    <ClCompile Include="StrokerTests.cpp" />
     <ClCompile Include="helpers.cpp" />
     <ClCompile Include="StrokeFeaturesTests.cpp" />
     <ClCompile Include="RasterizerTests.cpp" />
     <ClCompile Include="PathTests.cpp" />
     <ClCompile Include="ClipperTests.cpp" />
     <ClCompile Include="DashTests.cpp" />
+    <ClCompile Include="StrokeTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />

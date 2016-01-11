@@ -9,7 +9,7 @@
 #include <agge/math.h>
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
-#include <agge/stroker.h>
+#include <agge/stroke.h>
 #include <agge/stroke_features.h>
 
 #include <aggx/blenders.h>
@@ -28,9 +28,9 @@
 using namespace std;
 using namespace demo;
 
-const int c_thread_count = 1;
+const int c_thread_count = 2;
 const bool c_use_original_agg = false;
-const int c_balls_number = 0;//700;
+const int c_balls_number = 1000;
 typedef agge::simd::blender_solid_color blender_used;
 
 namespace

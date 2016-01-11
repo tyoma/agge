@@ -207,7 +207,7 @@
     <ClCompile Include="ScanlineAdapterTests.cpp" />
     <ClCompile Include="RasterizerTests.cpp" />
     <ClCompile Include="StrokeFeaturesTests.cpp" />
-    <ClCompile Include="StrokerTests.cpp" />
+    <ClCompile Include="StrokeTests.cpp" />
     <ClCompile Include="VectorRasterizerTests.cpp" />
   </ItemGroup>
   <ItemGroup>

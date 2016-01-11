@@ -1,6 +1,7 @@
-#include <agge/stroker.h>
+#include <agge/stroke.h>
 
 #include <agge/math.h>
+#include <agge/path.h>
 #include <agge/stroke_features.h>
 
 namespace agge

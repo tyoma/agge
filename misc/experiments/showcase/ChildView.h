@@ -5,7 +5,7 @@
 #include <agge/platform/win32/bitmap.h>
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
-#include <agge/stroker.h>
+#include <agge/stroke.h>
 
 #include <aggx/blenders.h>
 
