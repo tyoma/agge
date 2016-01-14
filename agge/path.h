@@ -53,6 +53,18 @@ namespace agge
 	inline bool is_close(int c)
 	{	return 0 != (path_flag_close & c);	}
 
+	template <typename AcceptorT>
+	inline void add_polyline_vertex(AcceptorT &acceptor, real_t x, real_t y, int command)
+	{
+		if (path_command_move_to == (path_vertex_mask & command))
+			acceptor.move_to(x, y);
+		else if (path_command_line_to == (path_vertex_mask & command))
+			acceptor.line_to(x, y);
+		
+		if (is_close(command))
+			acceptor.close_polygon();
+	}
+
 
 	template <typename SourceT, typename GeneratorT>
 	inline path_generator_adapter<SourceT, GeneratorT>::path_generator_adapter(SourceT &source, GeneratorT &generator)

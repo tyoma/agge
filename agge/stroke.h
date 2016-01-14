@@ -6,7 +6,7 @@ namespace agge
 {
 	typedef pod_vector<point_r> points;
 
-	class stroke : noncopyable
+	class stroke : vertex_sequence, noncopyable
 	{
 	public:
 		struct cap;
@@ -16,11 +16,17 @@ namespace agge
 		stroke();
 		~stroke();
 
+		// Vertex population
 		void remove_all();
+		using vertex_sequence::move_to;
+		using vertex_sequence::line_to;
+		void close_polygon();
 		void add_vertex(real_t x, real_t y, int command);
 		
+		// Vertex access
 		int vertex(real_t *x, real_t *y);
 		
+		// Setup
 		void width(real_t w);
 
 		template <typename CapT>
@@ -51,10 +57,8 @@ namespace agge
 	private:
 		bool prepare();
 		void set_state(int stage_and_flags);
-		void close();
 
 	private:
-		vertex_sequence _input;
 		points _output;
 		vertex_sequence::const_iterator _i;
 		points::const_iterator _o;

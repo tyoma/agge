@@ -9,14 +9,18 @@ namespace agge
 	public:
 		dash();
 
+		// Setup
 		void remove_all_dashes();
 		void add_dash(real_t dash_length, real_t gap_length);
 
+		// Vertex population
 		void remove_all();
 		using vertex_sequence::move_to;
 		using vertex_sequence::line_to;
 		void close_polygon();
+		void add_vertex(real_t x, real_t y, int command);
 
+		// Vertex access
 		int vertex(real_t *x, real_t *y);
 
 	private:

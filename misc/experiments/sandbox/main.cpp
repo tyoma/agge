@@ -6,6 +6,7 @@
 
 #include <agge/blenders_simd.h>
 #include <agge/clipper.h>
+#include <agge/dash.h>
 #include <agge/math.h>
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
@@ -28,9 +29,9 @@
 using namespace std;
 using namespace demo;
 
-const int c_thread_count = 2;
+const int c_thread_count = 1;
 const bool c_use_original_agg = false;
-const int c_balls_number = 1000;
+const int c_balls_number = 0;
 typedef agge::simd::blender_solid_color blender_used;
 
 namespace
@@ -250,7 +251,10 @@ namespace
 	public:
 		agge_drawer()
 			: _renderer(c_thread_count), _balls(c_balls)
-		{ _balls.resize(c_balls_number);	}
+		{
+			_balls.resize(c_balls_number);
+			_dash.add_dash(15.0f, 4.0f);
+		}
 
 	private:
 		virtual void draw(::bitmap &surface, Timings &timings)
@@ -271,6 +275,10 @@ namespace
 					agge::path_generator_adapter<agg_path_adaptor, agge::stroke> path_stroke1(p, _stroke1);
 					agge::path_generator_adapter<agge::path_generator_adapter<agg_path_adaptor, agge::stroke>, agge::stroke> path_stroke2(path_stroke1, _stroke2);
 
+					agge::path_generator_adapter<agg_path_adaptor, agge::dash> path_stroke3(p, _dash);
+					agge::path_generator_adapter<agge::path_generator_adapter<agg_path_adaptor, agge::dash>, agge::stroke> path_stroke4(path_stroke3, _stroke1);
+					agge::path_generator_adapter<agge::path_generator_adapter<agge::path_generator_adapter<agg_path_adaptor, agge::dash>, agge::stroke>, agge::stroke> path_stroke5(path_stroke4, _stroke2);
+
 					_stroke1.width(3.0f);
 					_stroke1.set_cap(agge::caps::butt());
 					_stroke1.set_join(unlimited_miter());
@@ -280,7 +288,7 @@ namespace
 					_stroke2.set_join(unlimited_miter());
 
 					_spiral_flattened.clear();
-					flatten<agge::real_t>(_spiral_flattened, path_stroke1);
+					flatten<agge::real_t>(_spiral_flattened, path_stroke5);
 				timings.stroking += stopwatch(counter);
 
 				solid_color_brush brush(aggx::rgba8(0, 154, 255, 230));
@@ -324,6 +332,7 @@ namespace
 		LARGE_INTEGER _balls_timer;
 		vector<demo::ball> _balls;
 		agge::stroke _stroke1, _stroke2;
+		agge::dash _dash;
 	};
 }
 

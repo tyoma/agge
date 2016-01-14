@@ -100,14 +100,14 @@ namespace agge
 		}
 
 		template <typename T>
-		bool equal(const T &lhs, const T &rhs)
+		inline bool equal(const T &lhs, const T &rhs)
 		{	return lhs == rhs;	}
 
 		template <>
 		bool equal(const real_t &lhs, const real_t &rhs);
 
 		template <typename T>
-		bool is_on_segment(const point<T>& t, const point<T>& segment_a, const point<T>& segment_b)
+		inline bool is_on_segment(const point<T>& t, const point<T>& segment_a, const point<T>& segment_b)
 		{
 			T xp = (t.x - segment_a.x) * (segment_a.y - segment_b.y) - (t.y - segment_a.y) * (segment_a.x - segment_b.x);
 
@@ -116,6 +116,18 @@ namespace agge
 			return agge_min(segment_a.x, segment_b.x) <= t.x && t.x <= agge_min(segment_a.x, segment_b.x)
 				agge_min(segment_a.y, segment_b.y) <= t.y && t.y <= agge_min(segment_a.y, segment_b.y);
 		}
+
+		template <typename T>
+		inline void move_to(T &acceptor, real_t x, real_t y)
+		{	acceptor.add_vertex(x, y, path_command_move_to);	}
+
+		template <typename T>
+		inline void line_to(T &acceptor, real_t x, real_t y, bool close = false)
+		{	acceptor.add_vertex(x, y, path_command_line_to | (close ? path_flag_close : 0));	}
+
+		template <typename T>
+		inline void end_poly(T &acceptor, bool close)
+		{	acceptor.add_vertex(0.0f, 0.0f, path_command_end_poly | (close ? path_flag_close : 0));	}
 	}
 
 	inline bool operator ==(const pixel32 &lhs, const pixel32 &rhs)
@@ -130,6 +142,6 @@ namespace agge
 	{	return tests::equal(lhs.dx, rhs.dx) && tests::equal(lhs.dy, rhs.dy);	}
 
 	template <typename T>
-	bool operator ==(const std::vector<T> &lhs, const pod_vector<T> &rhs)
+	inline bool operator ==(const std::vector<T> &lhs, const pod_vector<T> &rhs)
 	{	return lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());	}
 }

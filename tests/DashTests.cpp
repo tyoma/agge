@@ -31,8 +31,8 @@ namespace agge
 				d.add_dash(6.0f, 1.0f);
 
 				// ACT
-				d.move_to(1.1f, 17.0f);
-				d.line_to(4.1f, 13.0f);
+				move_to(d, 1.1f, 17.0f);
+				line_to(d, 4.1f, 13.0f);
 				mocks::path::point result1[] = { vertex(d), vertex(d), vertex(d), };
 
 				// ASSERT
@@ -46,9 +46,9 @@ namespace agge
 
 				// ACT
 				d.remove_all();
-				d.move_to(1.0f, 1.0f);
-				d.line_to(2.5f, 3.0f);
-				d.line_to(2.7f, 3.1f);
+				move_to(d, 1.0f, 1.0f);
+				line_to(d, 2.5f, 3.0f);
+				line_to(d, 2.7f, 3.1f);
 				mocks::path::point result2[] = { vertex(d), vertex(d), vertex(d), vertex(d), };
 
 				// ASSERT
@@ -72,8 +72,8 @@ namespace agge
 				d.add_dash(5.0f, 10.0f);
 
 				// ACT
-				d.move_to(1.3f, 17.0f);
-				d.line_to(5.8f, 11.0f);
+				move_to(d, 1.3f, 17.0f);
+				line_to(d, 5.8f, 11.0f);
 				mocks::path::point result1[] = { vertex(d), vertex(d), vertex(d), };
 
 				// ASSERT
@@ -87,8 +87,8 @@ namespace agge
 
 				// ACT
 				d.remove_all();
-				d.move_to(1.0f, -1.0f);
-				d.line_to(1.0f, 10.0f);
+				move_to(d, 1.0f, -1.0f);
+				line_to(d, 1.0f, 10.0f);
 				mocks::path::point result2[] = { vertex(d), vertex(d), vertex(d), };
 
 				// ASSERT
@@ -106,8 +106,8 @@ namespace agge
 
 				// ACT
 				d.remove_all();
-				d.move_to(1.9f, 2.7f);
-				d.line_to(3.9f, 4.7f);
+				move_to(d, 1.9f, 2.7f);
+				line_to(d, 3.9f, 4.7f);
 				mocks::path::point result3[] = { vertex(d), vertex(d), vertex(d), };
 
 				// ASSERT
@@ -129,8 +129,8 @@ namespace agge
 				d.add_dash(5.0f, 10.0f);
 
 				// ACT
-				d.move_to(0.0f, 0.0f);
-				d.line_to(44.99f, 0.0f);
+				move_to(d, 0.0f, 0.0f);
+				line_to(d, 44.99f, 0.0f);
 				mocks::path::point result1[] = {
 					vertex(d), vertex(d),
 					vertex(d), vertex(d),
@@ -157,8 +157,8 @@ namespace agge
 				d.remove_all();
 
 				// ACT (pattern end coincides with segment end)
-				d.move_to(0.0f, 0.0f);
-				d.line_to(24.0f, 0.0f);
+				move_to(d, 0.0f, 0.0f);
+				line_to(d, 24.0f, 0.0f);
 				mocks::path::point result2[] = {
 					vertex(d), vertex(d),
 					vertex(d), vertex(d),
@@ -186,12 +186,12 @@ namespace agge
 				d.add_dash(2.5f, 4.0f);
 
 				// ACT
-				d.move_to(0.0f, 0.0f);
-				d.line_to(3.0f, 0.0f);
-				d.line_to(6.0f, 0.0f);
-				d.line_to(9.1f, 0.0f);
-				d.line_to(12.0f, 0.0f);
-				d.line_to(15.0f, 0.0f);
+				move_to(d, 0.0f, 0.0f);
+				line_to(d, 3.0f, 0.0f);
+				line_to(d, 6.0f, 0.0f);
+				line_to(d, 9.1f, 0.0f);
+				line_to(d, 12.0f, 0.0f);
+				line_to(d, 15.0f, 0.0f);
 
 				mocks::path::point result[] = {
 					vertex(d), vertex(d),
@@ -220,11 +220,11 @@ namespace agge
 				d.add_dash(3.0f, 2.5f);
 
 				// ACT
-				d.move_to(0.0f, 0.0f);
-				d.line_to(0.0f, 2.0f);
-				d.line_to(0.0f, 4.0f);
-				d.line_to(0.0f, 6.0f);
-				d.line_to(0.0f, 8.0f);
+				move_to(d, 0.0f, 0.0f);
+				line_to(d, 0.0f, 2.0f);
+				line_to(d, 0.0f, 4.0f);
+				line_to(d, 0.0f, 6.0f);
+				line_to(d, 0.0f, 8.0f);
 
 				mocks::path::point result[] = {
 					vertex(d), vertex(d), vertex(d),
@@ -252,9 +252,9 @@ namespace agge
 				d.add_dash(2.0f, 0.5f);
 
 				// ACT
-				d.move_to(1.0f, 2.0f);
-				d.line_to(5.5f, 2.0f);
-				d.line_to(5.5f, 12.0f);
+				move_to(d, 1.0f, 2.0f);
+				line_to(d, 5.5f, 2.0f);
+				line_to(d, 5.5f, 12.0f);
 
 				mocks::path::point result1[] = {
 					vertex(d), vertex(d),

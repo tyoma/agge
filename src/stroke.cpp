@@ -18,20 +18,19 @@ namespace agge
 
 	void stroke::remove_all()
 	{
-		_input.clear();
+		clear();
 		_state = 0;
 	}
 
-	void stroke::add_vertex(real_t x, real_t y, int command)
+	void stroke::close_polygon()
 	{
-		if (path_command_move_to == (path_vertex_mask & command))
-			_input.move_to(x, y);
-		else if (path_command_line_to == (path_vertex_mask & command))
-			_input.line_to(x, y);
-		
-		if (is_close(command))
-			close();
+		vertex_sequence::close_polygon();
+		if (!empty())
+			_state |= closed;
 	}
+
+	void stroke::add_vertex(real_t x, real_t y, int command)
+	{	add_polyline_vertex(*this, x, y, command);	}
 		
 	int stroke::vertex(real_t *x, real_t *y)
 	{
@@ -49,8 +48,8 @@ namespace agge
 
 			_output.clear();
 
-			const vertex_sequence::const_iterator first = _input.begin();
-			const vertex_sequence::const_iterator last = _input.end() - 1;
+			const vertex_sequence::const_iterator first = begin();
+			const vertex_sequence::const_iterator last = end() - 1;
 			const vertex_sequence::const_iterator prev = _i == first ? last : _i - 1;
 			const vertex_sequence::const_iterator next = _i == last ? first : _i + 1;
 
@@ -116,10 +115,10 @@ namespace agge
 		if (_state & ready)
 			return true;
 
-		if (_input.size() <= (_state & closed ? 2u : 1u))
+		if (size() <= (_state & closed ? 2u : 1u))
 			return false;
 
-		_i = _input.begin();
+		_i = begin();
 		_o = _output.end();
 		set_state((_state & closed ? outline_forward_closed : start_cap) | moveto | ready);
 		return true;
@@ -127,11 +126,4 @@ namespace agge
 
 	void stroke::set_state(int stage_and_flags)
 	{	_state = (_state & ~stage_mask) | stage_and_flags;	}
-
-	void stroke::close()
-	{
-		_input.close_polygon();
-		if (!_input.empty())
-			_state |= closed;
-	}
 }

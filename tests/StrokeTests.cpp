@@ -119,8 +119,8 @@ namespace agge
 				s.set_cap(caps::butt());
 
 				// ACT
-				s.add_vertex(1.3f, 5.81f, path_command_move_to);
-				s.add_vertex(7.1f, 5.81f, path_command_line_to);
+				move_to(s, 1.3f, 5.81f);
+				line_to(s, 7.1f, 5.81f);
 				mocks::path::point points1[] = { vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), };
 
 				// ASSERT
@@ -138,8 +138,8 @@ namespace agge
 				s.remove_all();
 
 				// ACT
-				s.add_vertex(108.3f, -15.1f, path_command_move_to);
-				s.add_vertex(-5.0f, -15.1f, path_command_line_to);
+				move_to(s, 108.3f, -15.1f);
+				line_to(s, -5.0f, -15.1f);
 				mocks::path::point points2[] = { vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), };
 
 				// ASSERT
@@ -163,8 +163,8 @@ namespace agge
 				s.set_cap(caps::butt());
 
 				// ACT
-				s.add_vertex(1.3f, -5.31f, path_command_move_to);
-				s.add_vertex(1.3f, 1.8f, path_command_line_to);
+				move_to(s, 1.3f, -5.31f);
+				line_to(s, 1.3f, 1.8f);
 				mocks::path::point points1[] = { vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), };
 
 				// ASSERT
@@ -182,8 +182,8 @@ namespace agge
 				s.remove_all();
 
 				// ACT
-				s.add_vertex(-108.3f, 15.1f, path_command_move_to);
-				s.add_vertex(-108.3f, -10.0f, path_command_line_to);
+				move_to(s, -108.3f, 15.1f);
+				line_to(s, -108.3f, -10.0f);
 				mocks::path::point points2[] = { vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), };
 
 				// ASSERT
@@ -207,8 +207,8 @@ namespace agge
 				s.set_cap(caps::butt());
 
 				// ACT
-				s.add_vertex(1.0f, -5.0f, path_command_move_to);
-				s.add_vertex(26.9808f, 10.0f, path_command_line_to);
+				move_to(s, 1.0f, -5.0f);
+				line_to(s, 26.9808f, 10.0f);
 				mocks::path::point points1[] = { vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), };
 
 				// ASSERT
@@ -226,8 +226,8 @@ namespace agge
 				s.remove_all();
 
 				// ACT
-				s.add_vertex(10.0f, -10.0f, path_command_move_to);
-				s.add_vertex(0.0f, 0.0f, path_command_line_to);
+				move_to(s, 10.0f, -10.0f);
+				line_to(s, 0.0f, 0.0f);
 				mocks::path::point points2[] = { vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), };
 
 				// ASSERT
@@ -247,8 +247,8 @@ namespace agge
 				// INIT
 				stroke s;
 
-				s.add_vertex(0.0f, 0.0f, path_command_move_to);
-				s.add_vertex(0.0f, 1.0f, path_command_line_to);
+				move_to(s, 0.0f, 0.0f);
+				line_to(s, 0.0f, 1.0f);
 
 				s.set_cap(passthrough_cap(amount_alive));
 				s.set_join(passthrough_join(amount_alive));
@@ -270,8 +270,8 @@ namespace agge
 				// INIT
 				s.remove_all();
 				s.width(3.0f);
-				s.add_vertex(1.0f, 2.0f, path_command_move_to);
-				s.add_vertex(4.0f, 6.0f, path_command_line_to);
+				move_to(s, 1.0f, 2.0f);
+				line_to(s, 4.0f, 6.0f);
 
 				// ACT
 				mocks::path::point points2[] = { vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), vertex(s), };
@@ -293,9 +293,9 @@ namespace agge
 				// INIT
 				stroke s;
 
-				s.add_vertex(1.0f, 1.0f, path_command_move_to);
-				s.add_vertex(4.0f, 5.0f, path_command_line_to);
-				s.add_vertex(4.0f, 15.0f, path_command_line_to);
+				move_to(s, 1.0f, 1.0f);
+				line_to(s, 4.0f, 5.0f);
+				line_to(s, 4.0f, 15.0f);
 
 				s.set_cap(passthrough_cap(amount_alive));
 				s.set_join(passthrough_join(amount_alive));
@@ -325,10 +325,10 @@ namespace agge
 				// INIT
 				s.remove_all();
 				s.width(3.4f);
-				s.add_vertex(1.0f, 1.0f, path_command_move_to);
-				s.add_vertex(1.0f, 0.0f, path_command_line_to);
-				s.add_vertex(5.0f, 3.0f, path_command_line_to);
-				s.add_vertex(5.0f, 15.0f, path_command_line_to);
+				move_to(s, 1.0f, 1.0f);
+				line_to(s, 1.0f, 0.0f);
+				line_to(s, 5.0f, 3.0f);
+				line_to(s, 5.0f, 15.0f);
 
 				// ACT
 				mocks::path::point points2[] = {
@@ -362,10 +362,10 @@ namespace agge
 				// INIT
 				stroke s;
 
-				s.add_vertex(1.0f, 1.0f, path_command_move_to);
-				s.add_vertex(4.0f, 5.0f, path_command_line_to);
-				s.add_vertex(4.0f, 15.0f, path_command_line_to);
-				s.add_vertex(0.0f, 0.0f, path_command_end_poly | path_flag_close);
+				move_to(s, 1.0f, 1.0f);
+				line_to(s, 4.0f, 5.0f);
+				line_to(s, 4.0f, 15.0f);
+				end_poly(s, true);
 
 				s.set_join(passthrough_join(amount_alive));
 				s.width(2.0f);
@@ -400,11 +400,11 @@ namespace agge
 				// INIT
 				s.remove_all();
 
-				s.add_vertex(1.0f, 1.0f, path_command_move_to);
-				s.add_vertex(5.0f, 2.0f, path_command_line_to);
-				s.add_vertex(4.0f, 6.0f, path_command_line_to);
-				s.add_vertex(0.0f, 5.0f, path_command_line_to);
-				s.add_vertex(0.0f, 0.0f, path_command_end_poly | path_flag_close);
+				move_to(s, 1.0f, 1.0f);
+				line_to(s, 5.0f, 2.0f);
+				line_to(s, 4.0f, 6.0f);
+				line_to(s, 0.0f, 5.0f);
+				end_poly(s, true);
 
 				// ACT
 				mocks::path::point points2[] = {
@@ -445,9 +445,9 @@ namespace agge
 				// INIT
 				stroke s;
 
-				s.add_vertex(1.0f, 1.0f, path_command_move_to);
-				s.add_vertex(4.0f, 5.0f, path_command_line_to);
-				s.add_vertex(4.0f, 15.0f, path_command_line_to | path_flag_close);
+				move_to(s, 1.0f, 1.0f);
+				line_to(s, 4.0f, 5.0f);
+				line_to(s, 4.0f, 15.0f, true);
 
 				s.set_join(partial_passthrough_join());
 
@@ -482,13 +482,13 @@ namespace agge
 				assert_equal(path_command_stop, vertex(s).command);
 
 				// INIT
-				s.add_vertex(1.0f, 2.0f, path_command_move_to);
+				move_to(s, 1.0f, 2.0f);
 
 				// ACT / ASSERT
 				assert_equal(path_command_stop, vertex(s).command);
 
 				// INIT
-				s.add_vertex(1.0f, 2.0f, path_command_line_to | path_flag_close);
+				line_to(s, 1.0f, 2.0f, true);
 
 				// ACT / ASSERT
 				assert_equal(path_command_stop, vertex(s).command);
@@ -502,9 +502,9 @@ namespace agge
 
 				s.set_cap(passthrough_cap(amount_alive));
 
-				s.add_vertex(1.0f, 2.0f, path_command_move_to);
-				s.add_vertex(5.0f, 7.0f, path_command_line_to);
-				s.add_vertex(0.0f, 0.0f, path_command_line_to | path_flag_close);
+				move_to(s, 1.0f, 2.0f);
+				line_to(s, 5.0f, 7.0f);
+				line_to(s, 0.0f, 0.0f, true);
 
 				// ACT
 				s.remove_all();
@@ -513,13 +513,13 @@ namespace agge
 				assert_equal(path_command_stop, vertex(s).command);
 
 				// INIT ('ready' flag was cleared)
-				s.add_vertex(1.0f, 2.0f, path_command_move_to);
+				move_to(s, 1.0f, 2.0f);
 
 				// ACT / ASSERT
 				assert_equal(path_command_stop, vertex(s).command);
 
 				// INIT ('closed' flag was cleared)
-				s.add_vertex(1.5f, 7.1f, path_command_line_to);
+				line_to(s, 1.5f, 7.1f);
 
 				// ACT / ASSERT
 				assert_equal(path_command_move_to, vertex(s).command);
@@ -582,10 +582,10 @@ namespace agge
 				// INIT
 				stroke s;
 
-				s.add_vertex(1.0f, 2.0f, path_command_move_to);
+				move_to(s, 1.0f, 2.0f);
 
 				// ACT
-				s.add_vertex(1.0f + 0.5f * distance_epsilon, 2.0f + 0.2f * distance_epsilon, path_command_line_to);
+				line_to(s, 1.0f + 0.5f * distance_epsilon, 2.0f + 0.2f * distance_epsilon);
 
 				// ACT / ASSERT
 				assert_equal(path_command_stop, vertex(s).command);
@@ -599,13 +599,13 @@ namespace agge
 
 				s.set_join(partial_passthrough_join());
 
-				s.add_vertex(2.0f, 5.0f, path_command_move_to);
-				s.add_vertex(0.3f, 19.2f, path_command_line_to);
-				s.add_vertex(8.2f, 10.0f, path_command_line_to);
+				move_to(s, 2.0f, 5.0f);
+				line_to(s, 0.3f, 19.2f);
+				line_to(s, 8.2f, 10.0f);
 
 				// ACT
-				s.add_vertex(2.0f + 0.3f * distance_epsilon, 5.0f + 0.4f * distance_epsilon, path_command_line_to);
-				s.add_vertex(0.0f, 0.0f, path_command_end_poly | path_flag_close);
+				line_to(s, 2.0f + 0.3f * distance_epsilon, 5.0f + 0.4f * distance_epsilon);
+				end_poly(s, true);
 
 				// ASSERT
 				mocks::path::point points[] = {
@@ -627,12 +627,12 @@ namespace agge
 				// INIT
 				stroke s;
 
-				s.add_vertex(2.0f, 5.0f, path_command_move_to);
-				s.add_vertex(0.3f, 19.2f, path_command_line_to);
+				move_to(s, 2.0f, 5.0f);
+				line_to(s, 0.3f, 19.2f);
 
 				// ACT
-				s.add_vertex(2.0f + 0.3f * distance_epsilon, 5.0f + 0.4f * distance_epsilon, path_command_line_to);
-				s.add_vertex(0.0f, 0.0f, path_command_end_poly | path_flag_close);
+				line_to(s, 2.0f + 0.3f * distance_epsilon, 5.0f + 0.4f * distance_epsilon);
+				end_poly(s, true);
 
 				// ACT / ASSERT
 				assert_equal(path_command_stop, vertex(s).command);
@@ -645,7 +645,7 @@ namespace agge
 				stroke s;
 
 				// ACT
-				s.add_vertex(0.0f, 0.0f, path_command_end_poly | path_flag_close);
+				end_poly(s, true);
 
 				// ACT / ASSERT
 				assert_equal(path_command_stop, vertex(s).command);
@@ -654,8 +654,8 @@ namespace agge
 				s.set_cap(passthrough_cap(amount_alive));
 
 				// ACT
-				s.add_vertex(1.0f, 0.4f, path_command_move_to);
-				s.add_vertex(0.0f, 0.0f, path_command_line_to);
+				move_to(s, 1.0f, 0.4f);
+				line_to(s, 0.0f, 0.0f);
 
 				// ACT / ASSERT
 				assert_equal(path_command_move_to, vertex(s).command);
@@ -671,8 +671,8 @@ namespace agge
 				s.set_join(partial_passthrough_join());
 				s.width(101.0f);
 
-				s.add_vertex(11.0f, 75.0f, path_command_move_to);
-				s.add_vertex(0.3f, 19.2f, path_command_line_to);
+				move_to(s, 11.0f, 75.0f);
+				line_to(s, 0.3f, 19.2f);
 
 				vertex(s);
 
@@ -680,9 +680,9 @@ namespace agge
 				s.remove_all();
 				
 				// ASSERT
-				s.add_vertex(2.0f, 5.0f, path_command_move_to);
-				s.add_vertex(0.3f, 19.2f, path_command_line_to);
-				s.add_vertex(8.2f, 10.0f, path_command_line_to | path_flag_close);
+				move_to(s, 2.0f, 5.0f);
+				line_to(s, 0.3f, 19.2f);
+				line_to(s, 8.2f, 10.0f, true);
 
 				mocks::path::point points[] = {
 					vertex(s), vertex(s), vertex(s),

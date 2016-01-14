@@ -24,6 +24,12 @@ namespace agge
 		_state = initial;
 	}
 
+	void dash::close_polygon()
+	{	}
+
+	void dash::add_vertex(real_t x, real_t y, int command)
+	{	add_polyline_vertex(*this, x, y, command);	}
+
 	int dash::vertex(real_t *x, real_t *y)
 	{
 		vertex_sequence::const_iterator i;
