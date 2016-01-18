@@ -339,7 +339,7 @@ namespace
 
 int main()
 {
-	delete new int;
+	::SetProcessDPIAware();
 
 	agg_drawer d1;
 	agge_drawer d2;
