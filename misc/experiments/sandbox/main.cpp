@@ -254,6 +254,7 @@ namespace
 		{
 			_balls.resize(c_balls_number);
 			_dash.add_dash(15.0f, 4.0f);
+			_dash.add_dash(4.0f, 4.0f);
 		}
 
 	private:
@@ -283,9 +284,9 @@ namespace
 					_stroke1.set_cap(agge::caps::butt());
 					_stroke1.set_join(unlimited_miter());
 
-					_stroke2.width(1.2f);
+					_stroke2.width(2.0f);
 					_stroke2.set_cap(agge::caps::butt());
-					_stroke2.set_join(unlimited_miter());
+					_stroke2.set_join(agge::joins::bevel());
 
 					_spiral_flattened.clear();
 					flatten<agge::real_t>(_spiral_flattened, path_stroke5);
