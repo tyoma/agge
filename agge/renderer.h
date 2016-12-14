@@ -1,6 +1,7 @@
 #pragma once
 
 #include "scanline.h"
+#include "tools.h"
 
 namespace agge
 {
@@ -138,13 +139,16 @@ namespace agge
 
 
 	template <typename BitmapT, typename BlenderT>
-	inline void fill(BitmapT &bitmap, const BlenderT &blender)
+	inline void fill(BitmapT &bitmap, const rect_i &area, const BlenderT &blender)
 	{
-		const int width = bitmap.width();
-		const int height = bitmap.height();
+		const int x = agge_max(0, area.x1);
+		const int width = agge_min<int>(bitmap.width(), area.x2) - x;
 
-		for (int y = 0; y != height; ++y)
-			blender(bitmap.row_ptr(y), 0, y, width);
+		if (width > 0)
+		{
+			for (int y = agge_max(0, area.y1), limit_y = agge_min<int>(bitmap.height(), area.y2); y < limit_y; ++y)
+				blender(bitmap.row_ptr(y), x, y, width);
+		}
 	}
 
 

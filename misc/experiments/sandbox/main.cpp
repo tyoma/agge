@@ -173,9 +173,11 @@ namespace
 		{
 			LARGE_INTEGER counter;
 			const float dt = 0.3f * (float)stopwatch(_balls_timer);
+			const agge::rect_i area = { 0, 0, surface.width(), surface.height() };
+
 
 			stopwatch(counter);
-				agge::fill(surface, solid_color_brush(aggx::rgba8(255, 255, 255)));
+				agge::fill(surface, area, solid_color_brush(aggx::rgba8(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
 
 			stopwatch(counter);
@@ -262,11 +264,12 @@ namespace
 		{
 			LARGE_INTEGER counter;
 			const float dt = 0.3f * (float)stopwatch(_balls_timer);
+			const agge::rect_i area = { 0, 0, surface.width(), surface.height() };
 
 			_rasterizer.reset();
 
 			stopwatch(counter);
-				agge::fill(surface, solid_color_brush(aggx::rgba8(255, 255, 255)));
+				agge::fill(surface, area, solid_color_brush(aggx::rgba8(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
 
 			if (_balls.empty())

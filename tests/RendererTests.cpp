@@ -930,12 +930,14 @@ namespace agge
 			test( BitmapFillInvokesBlenderCopyForAllPixels )
 			{
 				// INIT
+				rect_i r1 = { 0, 0, 3, 5 };
+				rect_i r2 = { 0, 0, 4, 7 };
 				mocks::bitmap<int> bitmap1(3, 5);
 				mocks::bitmap<int> bitmap2(4, 7);
 				mocks::blender<int, uint8_t> blender;
 
 				// ACT
-				fill(bitmap1, blender);
+				fill(bitmap1, r1, blender);
 
 				// ASSERT
 				mocks::blender<int, uint8_t>::fill_log_entry reference1[] = {
@@ -952,7 +954,7 @@ namespace agge
 				blender.filling_log.clear();
 
 				// ACT
-				fill(bitmap2, blender);
+				fill(bitmap2, r2, blender);
 
 				// ASSERT
 				mocks::blender<int, uint8_t>::fill_log_entry reference2[] = {
@@ -966,6 +968,106 @@ namespace agge
 				};
 
 				assert_equal(reference2, blender.filling_log);
+			}
+
+
+			test( BitmapFillRespectsFillingAreaRect )
+			{
+				// INIT
+				rect_i r1 = { 1, 2, 3, 5 };
+				rect_i r2 = { 2, 3, 9, 8 };
+				mocks::bitmap<int> bitmap(10, 10);
+				mocks::blender<int, uint8_t> blender;
+
+				// ACT
+				fill(bitmap, r1, blender);
+
+				// ASSERT
+				mocks::blender<int, uint8_t>::fill_log_entry reference1[] = {
+					{ bitmap.row_ptr(2), 1, 2, 2 },
+					{ bitmap.row_ptr(3), 1, 3, 2 },
+					{ bitmap.row_ptr(4), 1, 4, 2 },
+				};
+
+				assert_equal(reference1, blender.filling_log);
+
+				// INIT
+				blender.filling_log.clear();
+
+				// ACT
+				fill(bitmap, r2, blender);
+
+				// ASSERT
+				mocks::blender<int, uint8_t>::fill_log_entry reference2[] = {
+					{ bitmap.row_ptr(3), 2, 3, 7 },
+					{ bitmap.row_ptr(4), 2, 4, 7 },
+					{ bitmap.row_ptr(5), 2, 5, 7 },
+					{ bitmap.row_ptr(6), 2, 6, 7 },
+					{ bitmap.row_ptr(7), 2, 7, 7 },
+				};
+
+				assert_equal(reference2, blender.filling_log);
+			}
+
+
+			test( BitmapFillRespsectsClipsFillAreaByBitmapBounds )
+			{
+				// INIT
+				rect_i r = { -1, -1002, 3000, 152 };
+				mocks::bitmap<int> bitmap1(5, 6);
+				mocks::bitmap<int> bitmap2(15, 7);
+				mocks::blender<int, uint8_t> blender;
+
+				// ACT
+				fill(bitmap1, r, blender);
+
+				// ASSERT
+				mocks::blender<int, uint8_t>::fill_log_entry reference1[] = {
+					{ bitmap1.row_ptr(0), 0, 0, 5 },
+					{ bitmap1.row_ptr(1), 0, 1, 5 },
+					{ bitmap1.row_ptr(2), 0, 2, 5 },
+					{ bitmap1.row_ptr(3), 0, 3, 5 },
+					{ bitmap1.row_ptr(4), 0, 4, 5 },
+					{ bitmap1.row_ptr(5), 0, 5, 5 },
+				};
+
+				assert_equal(reference1, blender.filling_log);
+
+				// INIT
+				blender.filling_log.clear();
+
+				// ACT
+				fill(bitmap2, r, blender);
+
+				// ASSERT
+				mocks::blender<int, uint8_t>::fill_log_entry reference2[] = {
+					{ bitmap2.row_ptr(0), 0, 0, 15 },
+					{ bitmap2.row_ptr(1), 0, 1, 15 },
+					{ bitmap2.row_ptr(2), 0, 2, 15 },
+					{ bitmap2.row_ptr(3), 0, 3, 15 },
+					{ bitmap2.row_ptr(4), 0, 4, 15 },
+					{ bitmap2.row_ptr(5), 0, 5, 15 },
+					{ bitmap2.row_ptr(6), 0, 6, 15 },
+				};
+
+				assert_equal(reference2, blender.filling_log);
+			}
+
+
+			test( BitmapFillDoesNothingOnNonNormalizedRects )
+			{
+				// INIT
+				rect_i r1 = { 3000, -1002, -1, 152 };
+				rect_i r2 = { -1, 152, 3000, -1002 };
+				mocks::bitmap<int> bitmap(15, 7);
+				mocks::blender<int, uint8_t> blender;
+
+				// ACT
+				fill(bitmap, r1, blender);
+				fill(bitmap, r2, blender);
+
+				// ASSERT
+				assert_is_empty(blender.filling_log);
 			}
 
 
