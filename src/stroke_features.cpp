@@ -2,20 +2,14 @@
 
 namespace agge
 {
-	namespace
-	{
-		real_t cross_product(const point_r &v0, const point_r &v1, const point_r &v2)
-		{	return (v2.x - v1.x) * (v1.y - v0.y) - (v2.y - v1.y) * (v1.x - v0.x);	}
-	}
-
 	namespace caps
 	{
 		void butt::calc(points &output, real_t w, const point_r &v0, real_t d, const point_r &v1) const
 		{
 			d = w / d;
 			
-			real_t dx = (v1.y - v0.y) * d;
-			real_t dy = (v1.x - v0.x) * d;
+			const real_t dx = (v1.y - v0.y) * d;
+			const real_t dy = (v1.x - v0.x) * d;
 
 			output.push_back(create_point(v0.x - dx, v0.y + dy));
 			output.push_back(create_point(v0.x + dx, v0.y - dy));
@@ -36,13 +30,6 @@ namespace agge
 
 			output.push_back(create_point(v1.x + dx1, v1.y - dy1));
 			output.push_back(create_point(v1.x + dx2, v1.y - dy2));
-		}
-
-
-		void miter::calc(points &/*output*/, real_t /*w*/, const point_r &v0, real_t /*d01*/, const point_r &v1, real_t /*d12*/, const point_r &v2) const
-		{
-			real_t cp = cross_product(v0, v1, v2);
-			cp;
 		}
 	}
 }
