@@ -55,7 +55,6 @@
     </ClCompile>
     <ClCompile Include="stroke.cpp" />
     <ClCompile Include="stroke_features.cpp" />
-    <ClCompile Include="untested\stroke_features2.cpp" />
     <ClCompile Include="vector_rasterizer.cpp" />
   </ItemGroup>
   <ItemGroup>

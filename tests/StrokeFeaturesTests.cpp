@@ -100,38 +100,6 @@ namespace agge
 
 
 			begin_test_suite( MiterJoinTests )
-				test( PointsSharingTheSameLineDoNotProduceOutput )
-				{
-					// INIT
-					const point_r seq1[] = {
-						{ 3.1f, 2.9f },
-						{ 7.1f, 2.9f },
-						{ 7.2f, 2.9f },
-					};
-					const point_r seq2[] = {
-						{ 3.7f, 2.3f },
-						{ 3.7f, 2.5f },
-						{ 3.7f, 5.3f },
-					};
-					const point_r seq3[] = {
-						{ 5.6f, 3.7f },
-						{ 2.0f, 1.0f },
-						{ 0.8f, 0.1f },
-					};
-					points output;
-					miter j;
-
-					// ACT
-					j.calc(output, 1.5f, seq1[0], 4.0f, seq1[1], 0.1f, seq1[2]);
-
-					j.calc(output, 6.0f, seq1[0], 4.0f, seq1[1], 0.1f, seq1[2]);
-					j.calc(output, 6.0f, seq1[2], 0.1f, seq1[1], 4.0f, seq1[0]);
-					j.calc(output, 6.0f, seq2[0], 0.1f, seq2[1], 5.0f, seq2[2]);
-					j.calc(output, 6.0f, seq3[0], 0.1f, seq3[1], 1.0f, seq3[2]);
-
-					// ASSERT
-					assert_is_empty(output);
-				}
 			end_test_suite
 		}
 	}
