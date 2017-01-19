@@ -189,7 +189,7 @@ namespace
 					_stroke->attach(p);
 
 				_stroke->width(3);
-				_stroke->line_join(agg::bevel_join);
+				_stroke->line_join(agg::miter_join);
 				_spiral_flattened.clear();
 				flatten<double>(_spiral_flattened, *_stroke);
 			timings.stroking += stopwatch(counter);
@@ -292,10 +292,10 @@ namespace
 					_stroke2.set_join(agge::joins::bevel());
 
 					_spiral_flattened.clear();
-					flatten<agge::real_t>(_spiral_flattened, path_stroke5);
+					flatten<agge::real_t>(_spiral_flattened, path_stroke1);
 				timings.stroking += stopwatch(counter);
 
-				solid_color_brush brush(aggx::rgba8(0, 154, 255, 230));
+				solid_color_brush brush(aggx::rgba8(0, 154, 255, 255));
 
 				stopwatch(counter);
 				add_path(_rasterizer, agg_path_adaptor(_spiral_flattened));

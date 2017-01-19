@@ -5,17 +5,17 @@
 
 namespace agge
 {
+	class precise_delta;
+
 	class vector_rasterizer
 	{
 	public:
 		enum
 		{
 			_1_shift = 8,
-			_ep_shift = _1_shift + 4,
 
 			_1 = 1 << _1_shift,
 			_1_mask = _1 - 1,
-			_ep = 1 << _ep_shift,
 		};
 
 #pragma pack(push, 1)
@@ -53,7 +53,7 @@ namespace agge
 		typedef pod_vector<sorted_bin> sorted_bins_container;
 
 	private:
-		void hline(int tg, int ey, int x1, int x2, int dy);
+		void hline(precise_delta &tg_delta, int ey, int x1, int x2, int dy);
 		void jump_xy(int x, int y);
 		void jump_x(int x);
 		void jumpc(int x, int y);

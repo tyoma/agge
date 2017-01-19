@@ -782,8 +782,8 @@ namespace agge
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
 					{ 0, 0, -5799, -87 },
-					{ 1, 0, 4608, 18 },
-					{ 2, 0, 4140, 18 },
+					{ 1, 0, 4864, 19 },
+					{ 2, 0, 3910, 17 },
 				};
 
 				assert_equal(reference, vr.cells());

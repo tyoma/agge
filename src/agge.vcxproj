@@ -105,6 +105,7 @@
     <ClInclude Include="..\agge\vector_rasterizer.h" />
     <ClInclude Include="..\agge\renderer.h" />
     <ClInclude Include="..\agge\vertex_sequence.h" />
+    <ClInclude Include="precise_delta.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

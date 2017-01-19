@@ -1,5 +1,7 @@
 #include <agge/vector_rasterizer.h>
 
+#include "precise_delta.h"
+
 #include <agge/config.h>
 #include <agge/tools.h>
 
@@ -70,7 +72,11 @@ namespace agge
 				add(_current, (x1 & _1_mask) + (x2 & _1_mask), dy);
 			}
 			else
-				hline(_ep * dy / dx, ey1, x1, x2, dy);
+			{
+				precise_delta tg_delta(dy, dx);
+
+				hline(tg_delta, ey1, x1, x2, dy);
+			}
 			return;
 		}
 
@@ -113,35 +119,34 @@ namespace agge
 		{
 			// Ok, we have to render several hlines.
 
-			const int tg = _ep * dy / dx, ctg = _ep * dx / dy;
-			int delta, acc, x_to;
+			const int lift = near - fy1;
+			precise_delta ctg_delta(dx, dy), tg_delta(dy, dx);
 
-			acc = ctg * (near - fy1);
-			delta = acc >> _ep_shift;
-			acc -= delta << _ep_shift;
-			x_to = x1 + delta;
+			ctg_delta.multiply(lift);
+			ctg_delta.next();
+
+			int x_to = x1 + ctg_delta.get();
 			
-			hline(tg, ey1, x1, x_to, near - fy1);
+			hline(tg_delta, ey1, x1, x_to, lift);
 			ey1 += step;
 
 			if (ey1 != ey2)
 			{
 				const int lift = near - far;
-				const int delta_precise = ctg * lift;
+
+				ctg_delta.multiply(lift);
 
 				do
 				{
-					acc += delta_precise;
-					delta = acc >> _ep_shift;
-					acc -= delta << _ep_shift;
+					ctg_delta.next();
 					x1 = x_to;
-					x_to += delta;
+					x_to += ctg_delta.get();
 
-					hline(tg, ey1, x1, x_to, lift);
+					hline(tg_delta, ey1, x1, x_to, lift);
 					ey1 += step;
 				} while (ey1 != ey2);
 			}
-			hline(tg, ey1, x_to, x2, fy2 - far);
+			hline(tg_delta, ey1, x_to, x2, fy2 - far);
 		}
 	}
 
@@ -202,7 +207,7 @@ namespace agge
 	}
 
 
-	AGGE_INLINE void vector_rasterizer::hline(int tg, int ey, int x1, int x2, int dy)
+	AGGE_INLINE void vector_rasterizer::hline(precise_delta &tg_delta, int ey, int x1, int x2, int dy)
 	{
 		const int ex2 = x2 >> _1_shift;
 
@@ -233,29 +238,25 @@ namespace agge
 			const int step = x2 > x1 ? +1 : -1;
 			const int near = x2 > x1 ? _1 : 0;
 			const int far = _1 - near;
-			int delta, acc, y_to;
 
-			acc = tg * (near - fx1);
-			delta = acc >> _ep_shift;
-			acc -= delta << _ep_shift;
-			y_to = delta;
+			tg_delta.multiply(near - fx1);
+			tg_delta.next();
 
-			add(_current, fx1 + near, delta);
+			int y_to = tg_delta.get();
+
+			add(_current, fx1 + near, y_to);
 			ex1 += step;
 			jump_x(ex1);
 
 			if (ex1 != ex2)
 			{
-				const int delta_precise = (near - far) * tg;
+				tg_delta.multiply(near - far);
 
 				do
 				{
-					acc += delta_precise;
-					delta = acc >> _ep_shift;
-					acc -= delta << _ep_shift;
-					y_to += delta;
-
-					set(_current, _1, delta);
+					tg_delta.next();
+					y_to += tg_delta.get();
+					set(_current, _1, tg_delta.get());
 					ex1 += step;
 					jump_x(ex1);
 				} while (ex1 != ex2);
