@@ -25,6 +25,21 @@ namespace agge
 
 			return vector<vector_rasterizer::cell>(row.first, row.second);
 		}
+
+		void assert_hslope(const vector_rasterizer &vr, int ydelta)
+		{
+			for (int y = vr.min_y(); y != vr.min_y() + vr.height(); ++y)
+			{
+				assert_is_true(vr[y].second - vr[y].first >= 2);
+
+				for (vector_rasterizer::const_cells_iterator c = vr[y].first; c != vr[y].second; ++c)
+				{
+					assert_is_true((c->cover > 0) == (ydelta > 0));
+					ydelta -= c->cover;
+				}
+			}
+			assert_equal(0, ydelta);
+		}
 	}
 
 	namespace tests
@@ -681,8 +696,8 @@ namespace agge
 				const vector_rasterizer::cell reference2[] = {
 					{ 5, 130, 1100, 10 },
 					{ 4, 130, 6400, 25 },
-					{ 3, 130, 6144, 24 },
-					{ 2, 130, 6400, 25 },
+					{ 3, 130, 6400, 25 },
+					{ 2, 130, 6144, 24 },
 					{ 1, 130, 5831, 17 },
 				};
 
@@ -703,8 +718,8 @@ namespace agge
 				const vector_rasterizer::cell reference1[] = {
 					{ 5, 130, -1210, -11 },
 					{ 4, 130, -6400, -25},
-					{ 3, 130, -6144, -24 },
-					{ 2, 130, -6400, -25 },
+					{ 3, 130, -6400, -25 },
+					{ 2, 130, -6144, -24 },
 					{ 1, 130, -5488, -16 },
 				};
 
@@ -1231,6 +1246,54 @@ namespace agge
 
 				// ACT / ASSERT
 				assert_is_false(vr.sorted());
+			}
+
+
+			test( LongAlmostHorizontalLinesProduceCorrectCells )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				// ACT
+				vr.line(-0x7FFFFF, -0x2, +0x7FFFFF, +0x2);
+				vr.sort();
+
+				// ASSERT
+				assert_equal(2, vr.height());
+				assert_hslope(vr, 4);
+
+				// INIT
+				vr.reset();
+
+				// ACT
+				vr.line(-0x7FFFFF, +0xFF, +0x7FFFFF, -0xFF);
+				vr.sort();
+
+				// ASSERT
+				assert_equal(2, vr.height());
+				assert_hslope(vr, -0x1FE);
+
+				// INIT
+				vr.reset();
+
+				// ACT
+				vr.line(+0x7FFFFF, -0xFF, -0x7FFFFF, +0xFF);
+				vr.sort();
+
+				// ASSERT
+				assert_equal(2, vr.height());
+				assert_hslope(vr, 0x1FE);
+
+				// INIT
+				vr.reset();
+
+				// ACT
+				vr.line(+0x7FFFFF, +0xFF, -0x7FFFFF, -0xFF);
+				vr.sort();
+
+				// ASSERT
+				assert_equal(2, vr.height());
+				assert_hslope(vr, -0x1FE);
 			}
 
 		end_test_suite

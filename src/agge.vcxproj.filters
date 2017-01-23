@@ -67,8 +67,6 @@
     <ClInclude Include="..\agge\dash.h" />
     <ClInclude Include="..\agge\vertex_sequence.h" />
     <ClInclude Include="..\agge\stroke.h" />
-    <ClInclude Include="precise_delta.h">
-      <Filter>src</Filter>
-    </ClInclude>
+    <ClInclude Include="..\agge\precise_delta.h" />
   </ItemGroup>
 </Project>
