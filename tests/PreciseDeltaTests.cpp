@@ -8,6 +8,84 @@ namespace agge
 	namespace tests
 	{
 		begin_test_suite( APreciseDeltaTests )
+			test( PositiveFractionalDeltaDoesNotOverflow )
+			{
+				// INIT
+				precise_delta d1(98, 99 * 0x10000);
+				int sum = 0;
+
+				// ACT
+				d1.multiply(256);
+
+				// ACT / ASSERT
+				for (int i = 99 * 0x10000; i; --i)
+				{
+					d1.next();
+					sum += d1.get();
+				}
+
+				// ASSERT
+				assert_is_true(98 * 256 - 1 <= sum && sum <= 98 * 256);
+
+				// INIT
+				precise_delta d2(-98, 99 * 0x10000);
+
+				sum = 0;
+
+				// ACT
+				d2.multiply(-256);
+
+				// ACT / ASSERT
+				for (int i = 99 * 0x10000; i; --i)
+				{
+					d2.next();
+					sum += d2.get();
+				}
+
+				// ASSERT
+				assert_is_true(98 * 256 - 1 <= sum && sum <= 98 * 256);
+			}
+
+
+			test( NegativeFractionalDeltaDoesNotOverflow )
+			{
+				// INIT
+				precise_delta d1(98, 99 * 0x10000);
+				int sum = 0;
+
+				// ACT
+				d1.multiply(-256);
+
+				// ACT / ASSERT
+				for (int i = 99 * 0x10000; i; --i)
+				{
+					d1.next();
+					sum += d1.get();
+				}
+
+				// ASSERT
+				assert_is_true(-98 * 256 <= sum && sum <= -98 * 256 + 1);
+
+				// INIT
+				precise_delta d2(-98, 99 * 0x10000);
+
+				sum = 0;
+
+				// ACT
+				d2.multiply(256);
+
+				// ACT / ASSERT
+				for (int i = 99 * 0x10000; i; --i)
+				{
+					d2.next();
+					sum += d2.get();
+				}
+
+				// ASSERT
+				assert_is_true(-98 * 256 <= sum && sum <= -98 * 256 + 1);
+			}
+
+
 			test( MaxNoLossExpMultiplication )
 			{
 				// INIT

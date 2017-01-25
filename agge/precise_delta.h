@@ -11,18 +11,15 @@ namespace agge
 			: _acc(0)
 		{
 			const float q = static_cast<float>(numerator) / denominator;
-			const unsigned int iq = reinterpret_cast<const unsigned int &>(q);
-			int m = (iq & 0x7FFFFF) | 0x800000;
-			int exp = ((iq & 0x7F800000) >> 23) - 127;
+			const int iq = reinterpret_cast<const int &>(q);
+			int exp = (((iq >> 23) & 0xFF) - 127) - 0x15;
+			int m = iq & 0x7FFFFF | 0x800000;
+			int exp_fractional = -negative_or_zero(exp);
 
-			if (iq & 0x80000000)
-				m = -m;
-
-			exp = exp - 0x15;
-			m <<= agge_max(0, exp);
-			exp = agge_max(0, -exp);
-			_exp = agge_min(0x1E, exp);
-			_quotient = m >> (2 + exp - _exp);
+			m <<= positive_or_zero(exp);
+			_exp = negative_or_zero(exp_fractional - 0x1E) + 0x1E;
+			m >>= 2 + exp_fractional - _exp;
+			_quotient = (m ^ (iq >> 31)) + (static_cast<unsigned>(iq) >> 31);
 		}
 
 		void multiply(int k)
@@ -43,10 +40,21 @@ namespace agge
 		}
 
 	private:
+		static int positive_or_zero(int value)
+		{
+			return (static_cast<int>(value ^ 0x80000000) >> 31) & value;
+		}
+
+		static int negative_or_zero(int value)
+		{
+			return (value >> 31) & value;
+		}
+
+	private:
 		int _acc;
 		int _quotient;
 		int _delta_fraction;
-		int _exp;
 		int _delta;
+		unsigned int _exp;
 	};
 }
