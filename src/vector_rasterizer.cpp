@@ -122,9 +122,8 @@ namespace agge
 			precise_delta ctg_delta(dx, dy), tg_delta(dy, dx);
 
 			ctg_delta.multiply(lift);
-			ctg_delta.next();
 
-			int x_to = x1 + ctg_delta.get();
+			int x_to = x1 + ctg_delta.next();
 			
 			hline(tg_delta, ey1, x1, x_to, lift);
 			ey1 += step;
@@ -137,9 +136,8 @@ namespace agge
 
 				do
 				{
-					ctg_delta.next();
 					x1 = x_to;
-					x_to += ctg_delta.get();
+					x_to += ctg_delta.next();
 
 					hline(tg_delta, ey1, x1, x_to, lift);
 					ey1 += step;
@@ -239,9 +237,8 @@ namespace agge
 			const int far = _1 - near;
 
 			tg_delta.multiply(near - fx1);
-			tg_delta.next();
 
-			int y_to = tg_delta.get();
+			int y_to = tg_delta.next();
 
 			add(_current, fx1 + near, y_to);
 			ex1 += step;
@@ -253,9 +250,9 @@ namespace agge
 
 				do
 				{
-					tg_delta.next();
-					y_to += tg_delta.get();
-					set(_current, _1, tg_delta.get());
+					int d = tg_delta.next();
+					y_to += d;
+					set(_current, _1, d);
 					ex1 += step;
 					jump_x(ex1);
 				} while (ex1 != ex2);

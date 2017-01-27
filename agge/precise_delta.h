@@ -1,25 +1,30 @@
 #pragma once
 
-#include "tools.h"
+#include "config.h"
 
 namespace agge
 {
 	class precise_delta
 	{
 	public:
-		precise_delta(int numerator, int denominator)
-			: _acc(0)
+		AGGE_INLINE precise_delta(int numerator, int denominator)
+			: _acc(0), _exp(0)
 		{
 			const float q = static_cast<float>(numerator) / denominator;
-			const int iq = reinterpret_cast<const int &>(q);
-			int exp = (((iq >> 23) & 0xFF) - 127) - 0x15;
-			int m = iq & 0x7FFFFF | 0x800000;
-			int exp_fractional = -negative_or_zero(exp);
+			const int &iq = reinterpret_cast<const int &>(q);
+			const int exp = (((iq & 0x7F800000)) >> 23) - 127;
+			int m = (iq & 0x7FFFFF | 0x800000) /*- 1*/;
 
-			m <<= positive_or_zero(exp);
-			_exp = negative_or_zero(exp_fractional - 0x1E) + 0x1E;
-			m >>= 2 + exp_fractional - _exp;
-			_quotient = (m ^ (iq >> 31)) + (static_cast<unsigned>(iq) >> 31);
+			if (exp > 0x17)
+				m <<= exp - 0x17;
+			else if (exp >= 0x15)
+				m >>= 0x17 - exp;
+			else if (exp >= 0x15 - 0x1E)
+				_exp = 0x15 - exp, m >>= 2;
+			else
+				_exp = 0x1E, m >>= 2 + 0x15 - 0x1E - exp;
+
+			_quotient = (m ^ iq >> 31) + (static_cast<unsigned>(iq) >> 31);
 		}
 
 		void multiply(int k)
@@ -27,34 +32,18 @@ namespace agge
 			_delta_fraction = k * _quotient;
 		}
 
-		int get() const
-		{
-			return _delta;
-		}
-
-		void next()
+		int next()
 		{
 			_acc += _delta_fraction;
-			_delta = _acc >> _exp;
-			_acc -= _delta << _exp;
-		}
-
-	private:
-		static int positive_or_zero(int value)
-		{
-			return (static_cast<int>(value ^ 0x80000000) >> 31) & value;
-		}
-
-		static int negative_or_zero(int value)
-		{
-			return (value >> 31) & value;
+			int delta = _acc >> _exp;
+			_acc -= delta << _exp;
+			return delta;
 		}
 
 	private:
 		int _acc;
 		int _quotient;
 		int _delta_fraction;
-		int _delta;
-		unsigned int _exp;
+		int _exp;
 	};
 }
