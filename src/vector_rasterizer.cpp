@@ -12,18 +12,9 @@ namespace agge
 
 		void add(vector_rasterizer::cell &c, int x1x2, int delta)
 		{
-			c.cover += static_cast<short>(delta);
 			c.area += x1x2 * delta;
+			c.cover += static_cast<short>(delta);
 		}
-
-		void seta(vector_rasterizer::cell &c, int area, int delta)
-		{
-			c.cover = static_cast<short>(delta);
-			c.area = area;
-		}
-
-		void set(vector_rasterizer::cell &c, int x1x2, int delta)
-		{	seta(c, x1x2 * delta, delta);	}
 	}
 
 	vector_rasterizer::vector_rasterizer()
@@ -31,8 +22,8 @@ namespace agge
 
 	void vector_rasterizer::reset()
 	{
-		_current = empty_cell;
 		_cells.clear();
+		_current = _cells.push_back(empty_cell);
 		_scanlines.clear();
 		_min_x = 0x7FFF, _min_y = 0x7FFF, _max_x = -0x7FFF, _max_y = -0x7FFF;
 		_sorted = 0;
@@ -68,7 +59,7 @@ namespace agge
 			if (ex2 == ex1)
 			{
 				jump_xy(ex1, ey1);
-				add(_current, (x1 & _1_mask) + (x2 & _1_mask), dy);
+				add(*_current, (x1 & _1_mask) + (x2 & _1_mask), dy);
 			}
 			else
 			{
@@ -85,8 +76,6 @@ namespace agge
 		const int near = dy > 0 ? _1 : 0;
 		const int far = _1 - near;
 
-		jump_xy(ex1, ey1);
-
 		if (x2 == x1)
 		{
 			// Vertical line - we have to calculate start and end cells,
@@ -96,10 +85,9 @@ namespace agge
 
 			const int two_fx = 2 * (x1 & _1_mask);
 
-			add(_current, two_fx, near - fy1);
-
+			jump_xy(ex1, ey1);
+			add(*_current, two_fx, near - fy1);
 			ey1 += step;
-			jumpc(ex1, ey1);
 
 			if (ey1 != ey2)
 			{
@@ -107,12 +95,11 @@ namespace agge
 
 				do
 				{
-					seta(_current, inner_area, inner_delta);
+					push_cell_area(ex1, ey1, inner_area, inner_delta);
 					ey1 += step;
-					jumpc(ex1, ey1);
 				} while (ey1 != ey2);
 			}
-			set(_current, two_fx, fy2 - far);
+			_current = push_cell(ex1, ey1, two_fx, fy2 - far);
 		}
 		else
 		{
@@ -138,21 +125,11 @@ namespace agge
 				{
 					x1 = x_to;
 					x_to += ctg_delta.next();
-
 					hline(tg_delta, ey1, x1, x_to, lift);
 					ey1 += step;
 				} while (ey1 != ey2);
 			}
 			hline(tg_delta, ey1, x_to, x2, fy2 - far);
-		}
-	}
-
-	void vector_rasterizer::commit()
-	{
-		if (_current.cover | _current.area)
-		{
-			_cells.push_back(_current);
-			seta(_current, 0, 0);
 		}
 	}
 
@@ -163,7 +140,8 @@ namespace agge
 		if (_sorted || _min_y > _max_y)
 			return;
 
-		commit();
+		if (!_cells.empty() & !_current->cover & !_current->area)
+			_cells.pop_back();
 		_x_sorted_cells.resize(_cells.size());
 
 		const int max_length = agge_max(_max_x - _min_x + 1, _max_y - _min_y + 1);
@@ -226,7 +204,7 @@ namespace agge
 		{
 			// Everything is located in a single cell. That is easy!
 
-			add(_current, fx1 + fx2, dy);
+			add(*_current, fx1 + fx2, dy);
 		}
 		else
 		{
@@ -240,9 +218,8 @@ namespace agge
 
 			int y_to = tg_delta.next();
 
-			add(_current, fx1 + near, y_to);
+			add(*_current, fx1 + near, y_to);
 			ex1 += step;
-			jump_x(ex1);
 
 			if (ex1 != ex2)
 			{
@@ -252,31 +229,38 @@ namespace agge
 				{
 					int d = tg_delta.next();
 					y_to += d;
-					set(_current, _1, d);
+					push_cell(ex1, ey, _1, d);
 					ex1 += step;
-					jump_x(ex1);
 				} while (ex1 != ex2);
 			}
-			set(_current, fx2 + far, dy - y_to);
+			_current = push_cell(ex1, ey, fx2 + far, dy - y_to);
 		}
 	}
 
 	AGGE_INLINE void vector_rasterizer::jump_xy(int x, int y)
 	{
-		if (_current.x - x | _current.y - y)
-			jumpc(x, y);
+		if (_current->x ^ x | _current->y ^ y)
+		{
+			if (_current->cover | _current->area)
+				_current = _cells.push_back(empty_cell);
+			_current->x = static_cast<short>(x), _current->y = static_cast<short>(y);
+		}
 	}
 
-	AGGE_INLINE void vector_rasterizer::jump_x(int x)
+	AGGE_INLINE vector_rasterizer::cells_container::iterator vector_rasterizer::push_cell_area(int x, int y, int area, int delta)
 	{
-		commit();
-		_current.x = static_cast<short>(x);
+		vector_rasterizer::cell c;
+		
+		c.x = static_cast<short>(x);
+		c.y = static_cast<short>(y);
+		c.area = area;
+		c.cover = static_cast<short>(delta);
+		return _cells.push_back(c);
 	}
 
-	AGGE_INLINE void vector_rasterizer::jumpc(int x, int y)
+	AGGE_INLINE vector_rasterizer::cells_container::iterator vector_rasterizer::push_cell(int x, int y, int x1x2, int delta)
 	{
-		commit();
-		_current.x = static_cast<short>(x), _current.y = static_cast<short>(y);
+		return push_cell_area(x, y, x1x2 * delta, delta);
 	}
 
 	void vector_rasterizer::extend_bounds(int x, int y)

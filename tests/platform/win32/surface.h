@@ -23,6 +23,8 @@ namespace agge
 				HDC lock();
 				void unlock();
 
+				bool is_valid_handle(HBITMAP hbitmap) const;
+
 			public:
 				const count_t width, height;
 				void *data;

@@ -5,7 +5,7 @@
 #include <agge/path.h>
 #include <agge/tools.h>
 
-#include <utee/ut/assert.h>
+#include <ut/assert.h>
 #include <utility>
 
 namespace agge

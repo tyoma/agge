@@ -50,6 +50,16 @@ namespace agge
 					_previous_bitmap = 0;
 				}
 			}
+
+			bool gdi_surface::is_valid_handle(HBITMAP hbitmap) const
+			{
+				HGDIOBJ previous = ::SelectObject(_context, hbitmap);
+				bool valid = !!previous;
+
+				if (previous)
+					::SelectObject(_context, previous);
+				return valid;
+			}
 		}
 	}
 }

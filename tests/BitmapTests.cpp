@@ -5,8 +5,8 @@
 
 #include <vector>
 
-#include <utee/ut/assert.h>
-#include <utee/ut/test.h>
+#include <ut/assert.h>
+#include <ut/test.h>
 
 using namespace std;
 

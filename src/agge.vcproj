@@ -449,6 +449,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\agge\precise_delta.h"
+			>
+		</File>
+		<File
 			RelativePath="..\agge\rasterizer.h"
 			>
 		</File>

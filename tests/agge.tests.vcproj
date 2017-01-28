@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..;../misc/libraries"
+				AdditionalIncludeDirectories="..;../misc/libraries/utee"
 				PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -118,7 +118,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..;../misc/libraries"
+				AdditionalIncludeDirectories="..;../misc/libraries/utee"
 				PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -196,7 +196,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="..;../misc/libraries"
+				AdditionalIncludeDirectories="..;../misc/libraries/utee"
 				PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -276,7 +276,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="..;../misc/libraries"
+				AdditionalIncludeDirectories="..;../misc/libraries/utee"
 				PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -471,6 +471,10 @@
 		</File>
 		<File
 			RelativePath=".\PodVectorTests.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\PreciseDeltaTests.cpp"
 			>
 		</File>
 		<File

@@ -3,8 +3,8 @@
 #include "surface.h"
 
 #include <memory>
-#include <utee/ut/assert.h>
-#include <utee/ut/test.h>
+#include <ut/assert.h>
+#include <ut/test.h>
 
 using namespace std;
 
@@ -310,6 +310,31 @@ namespace agge
 					};
 
 					assert_is_true(reference2 == s);
+				}
+
+
+				test( NativeHandleIsProvidedFromTheBitmap )
+				{
+					// INIT
+					auto_ptr<raw_bitmap> b1(new raw_bitmap(10, 10, bpp32));
+					auto_ptr<raw_bitmap> b2(new raw_bitmap(10, 10, bpp32));
+					gdi_surface s(1, 1);
+
+					// ACT
+					HBITMAP h1 = b1->native();
+					HBITMAP h2 = b2->native();
+
+					// ASSERT
+					assert_not_equal(h1, h2);
+					assert_is_true(s.is_valid_handle(h1));
+					assert_is_true(s.is_valid_handle(h2));
+
+					// ACT
+					b2.reset();
+
+					// ASSERT
+					assert_is_true(s.is_valid_handle(h1));
+					assert_is_false(s.is_valid_handle(h2));
 				}
 
 			end_test_suite

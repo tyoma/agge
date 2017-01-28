@@ -2,12 +2,42 @@
 
 #include "helpers.h"
 
-#include <utee/ut/assert.h>
-#include <utee/ut/test.h>
+#include <ut/assert.h>
+#include <ut/test.h>
 
 #include <iterator>
 
 using namespace std;
+
+namespace ut
+{
+	bool is_empty(const agge::vector_rasterizer::cell& c)
+	{
+		return !c.area && !c.cover;
+	}
+
+	vector<agge::vector_rasterizer::cell> filter_empty(const agge::vector_rasterizer::cells_container& cells)
+	{
+		vector<agge::vector_rasterizer::cell> cells_filtered;
+
+		// TODO: We have to manually exclude empty (area == 0 && cover == 0) cells from assertions, until they are
+		///	eliminated during rasterization.
+		remove_copy_if(cells.begin(), cells.end(), back_inserter(cells_filtered), &is_empty);
+		return cells_filtered;
+	}
+
+	template <typename T1, size_t n>
+	inline void are_equal(T1 (&i_lhs)[n], const agge::vector_rasterizer::cells_container &i_rhs,
+		const LocationInfo &location)
+	{
+		are_equal(i_lhs, filter_empty(i_rhs), location);
+	}
+
+	inline void is_empty(const agge::vector_rasterizer::cells_container& i_container, const LocationInfo &i_location)
+	{
+		is_empty(filter_empty(i_container), i_location);
+	}
+}
 
 namespace agge
 {
@@ -34,6 +64,8 @@ namespace agge
 
 				for (vector_rasterizer::const_cells_iterator c = vr[y].first; c != vr[y].second; ++c)
 				{
+					if (!c->cover & !c->area)
+						continue;
 					assert_is_true((c->cover > 0) == (ydelta > 0));
 					ydelta -= c->cover;
 				}
@@ -101,7 +133,6 @@ namespace agge
 
 				// ACT
 				vr.reset();
-				vr.commit();
 
 				// ASSERT
 				assert_is_empty(vr.cells());
@@ -135,33 +166,14 @@ namespace agge
 
 				// ACT
 				vr.line(fp(10.0), fp(15.5), fp(70.0), fp(15.5));
-				vr.commit();
 
 				// ASSERT
-				assert_is_true(vr.cells().empty());
+				assert_is_empty(vr.cells());
 
 				// ACT
 				vr.line(fp(10.0), fp(13.5), fp(70.0), fp(13.5));
 				vr.line(fp(11.3), fp(-17.5), fp(29.0), fp(-17.5));
 				vr.line(fp(-10.0), fp(215.5), fp(-70.0), fp(215.5));
-				vr.commit();
-
-				// ASSERT
-				assert_is_true(vr.cells().empty());
-			}
-
-
-			test( RepeatedCommitDoesNotProduceOutput )
-			{
-				// INIT
-				vector_rasterizer vr;
-
-				vr.line(fp(15.0), fp(10.1), fp(15.0), fp(10.7));
-				vr.commit();
-				vr.reset();
-
-				// ACT
-				vr.commit();
 
 				// ASSERT
 				assert_is_empty(vr.cells());
@@ -175,7 +187,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(15.0), fp(10.1), fp(15.0), fp(11.0));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
@@ -189,7 +200,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(53.0), fp(9.0), fp(53.0), fp(10.0));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
@@ -203,7 +213,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(-30000.0), fp(-9.8), fp(-30000.0), fp(-9.5));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference3[] = {
@@ -221,7 +230,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(15.0), fp(10.1), fp(15.0), fp(12.0));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
@@ -236,7 +244,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(53.0), fp(9.0), fp(53.0), fp(13.0));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
@@ -253,7 +260,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(-30001.0), fp(-2.8), fp(-30001.0), fp(-0.5));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference3[] = {
@@ -273,7 +279,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(15.0), fp(10.1), fp(15.0), fp(10.05));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
@@ -287,7 +292,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(53.0), fp(9.0), fp(53.0), fp(8.0));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
@@ -301,7 +305,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(-30000.0), fp(-9.8), fp(-30000.0), fp(-10.0));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference3[] = {
@@ -319,7 +322,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(3.0), fp(10.1), fp(3.0), fp(5.0));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
@@ -338,7 +340,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(23.0), fp(19.0), fp(23.0), fp(17.0));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
@@ -353,7 +354,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(-30001.0), fp(-2.8), fp(-30001.0), fp(-4.71));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference3[] = {
@@ -373,7 +373,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(15.312), fp(10.1), fp(15.312), fp(11.0));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
@@ -387,7 +386,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(53.71), fp(9.0), fp(53.71), fp(10.0));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
@@ -401,7 +399,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(-3000.99), fp(-119.8), fp(-3000.99), fp(-119.5));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference3[] = {
@@ -419,7 +416,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(15.17), fp(10.1), fp(15.17), fp(12.0));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
@@ -434,7 +430,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(53.73), fp(9.0), fp(53.73), fp(13.0));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
@@ -451,7 +446,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(-301.91), fp(-2.8), fp(-301.91), fp(-0.5));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference3[] = {
@@ -471,7 +465,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(15.1), fp(10.1), fp(15.1), fp(10.05));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
@@ -485,7 +478,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(53.172), fp(9.0), fp(53.172), fp(8.0));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
@@ -499,7 +491,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(-3000.75), fp(-9.8), fp(-3000.75), fp(-10.0));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference3[] = {
@@ -520,7 +511,6 @@ namespace agge
 				vr.line(fp(15.4), fp(10.1), fp(15.4), fp(10.7));
 				vr.line(fp(15.4), fp(10.7), fp(15.1), fp(10.7));
 				vr.line(fp(15.1), fp(10.7), fp(15.1), fp(10.1));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
@@ -537,7 +527,6 @@ namespace agge
 				vr.line(fp(17.15), fp(101.6), fp(17.89), fp(101.6));
 				vr.line(fp(17.89), fp(101.6), fp(17.89), fp(101.1));
 				vr.line(fp(17.89), fp(101.1), fp(17.15), fp(101.1));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
@@ -563,7 +552,6 @@ namespace agge
 				vr.line(fp(15.2), fp(10.1), fp(15.2), fp(10.2));
 				vr.line(fp(15.2), fp(10.2), fp(15.1), fp(10.2));
 				vr.line(fp(15.1), fp(10.2), fp(15.1), fp(10.1));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
@@ -582,7 +570,6 @@ namespace agge
 				// ACT
 				vr.line(fp(151.3), fp(11.1), fp(151.3), fp(11.2));
 				vr.line(fp(151.3), fp(11.2), fp(151.3), fp(12.7));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
@@ -601,7 +588,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(0.83), fp(0.42), fp(0.14), fp(0.71)); // in fp - [(212, 108); (36, 182)), v(-176, 74)
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
@@ -615,7 +601,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(-3.93), fp(-17000.7), fp(-3.428), fp(-17000.3)); // in fp - [(-1006, -4352179); (-878, -4352077)), v(128, 102)
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
@@ -635,7 +620,6 @@ namespace agge
 				vr.line(fp(0.0), fp(0.0), fp(0.5), fp(0.0));	// area: 0, cover: 0
 				vr.line(fp(0.5), fp(0.0), fp(0.5), fp(0.5)); // area: 32768, cover: 128
 				vr.line(fp(0.5), fp(0.5), fp(0.0), fp(0.0)); // area: -16384, cover: -128
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
@@ -653,7 +637,6 @@ namespace agge
 
 				// ACT (tg = 2447)
 				vr.line(fp(1.34), fp(10.13), fp(2.0), fp(10.523)); // in fp - [(343, 2593); (512, 2694)), v(169, 101)
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
@@ -672,7 +655,6 @@ namespace agge
 
 				// ACT (forward x, tg = 395)
 				vr.line(fp(1.34), fp(130.13), fp(5.43), fp(130.523)); // in fp - [(343, 33313); (1390, 33414)), v(1047, 101)
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
@@ -690,7 +672,6 @@ namespace agge
 
 				// ACT (backward x, tg = -395)
 				vr.line(fp(5.43), fp(130.13), fp(1.34), fp(130.523)); // in fp - [(1390, 33313); (343, 33414)), v(-1047, 101)
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
@@ -712,7 +693,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(5.43), fp(130.523), fp(1.34), fp(130.13)); // in fp - [(1390, 33414); (343, 33313)), v(-1047, -101)
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
@@ -730,7 +710,6 @@ namespace agge
 
 				// ACT (extra-thin line)
 				vr.line(0, 0, 512, -1);
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
@@ -747,14 +726,13 @@ namespace agge
 				vector_rasterizer vr;
 
 				// ACT
-				vr.line(0, 0, 1536, 3);
-				vr.commit();
+				vr.line(0, 0, 1535, 3); // dx = 6 * 256 - 1 (to compensate floating point rounding)
 
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
 					{ 1, 0, 256, 1 },
 					{ 3, 0, 256, 1 },
-					{ 5, 0, 256, 1 },
+					{ 5, 0, 255, 1 },
 				};
 
 				assert_equal(reference, vr.cells());
@@ -767,18 +745,21 @@ namespace agge
 				vector_rasterizer vr;
 
 				// ACT
-				vr.line(fp(0.0), fp(0.0), fp(255.0), fp(1.0 * 255 / 256));
-				vr.commit();
+				vr.line(fp(0.0), fp(0.0), fp(255.0 - 1.0 / 256), fp(1.0 * 255 / 256));
 
 				// ASSERT
-				vector<vector_rasterizer::cell> reference;
+				vector_rasterizer::cell reference[255];
 
-				for (short x = 0; x < 255; ++x)
+				for (short x = 0; x < 254; ++x)
 				{
 					const vector_rasterizer::cell c = { x, 0, 256, 1 };
 
-					reference.push_back(c);
+					reference[x] = c;
 				}
+
+				const vector_rasterizer::cell c = { 254, 0, 255, 1 };
+
+				reference[254] = c;
 
 				assert_equal(reference, vr.cells());
 			}
@@ -792,7 +773,6 @@ namespace agge
 				// ACT (right triangle)
 				vr.line(fp(0.2), fp(0.9), fp(0.2), fp(0.5));
 				vr.line(fp(0.2), fp(0.5), fp(2.9), fp(0.7));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
@@ -812,7 +792,6 @@ namespace agge
 
 				// ACT (ctg = 252)
 				vr.line(fp(1.2), fp(-1.9), fp(1.3), fp(-0.25)); // in fp - [(307, -486); (333, -64)), v(26, 422)
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
@@ -827,7 +806,6 @@ namespace agge
 
 				// ACT (ctg = 3319)
 				vr.line(fp(0.2), fp(1.9), fp(0.5), fp(2.27)); // in fp - [(51, 486); (128, 581)), v(77, 95)
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
@@ -846,7 +824,6 @@ namespace agge
 
 				// ACT (ctg = -713)
 				vr.line(fp(1.2), fp(1.9), fp(1.5), fp(0.17)); // in fp - [(307, 486); (384, 44)), v(77, -442)
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
@@ -865,7 +842,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(10.2), fp(-1.9), fp(10.9), fp(1.7)); // in fp - [(2611, -486); (2790, 435)), v(179, 921)
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
@@ -886,7 +862,6 @@ namespace agge
 
 				// ACT
 				vr.line(fp(8189.2), fp(-1.9), fp(8189.9), fp(1.7));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
@@ -908,7 +883,6 @@ namespace agge
 				// ACT
 				vr.line(fp(8189.1), fp(-1.7), fp(8189.2), fp(-1.9));
 				vr.line(fp(8189.2), fp(-1.9), fp(8189.9), fp(1.7));
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
@@ -929,7 +903,6 @@ namespace agge
 
 				// ACT
 				vr.line(0x1FF005, 0, 0x1FF008, 3 * 3 * 256);
-				vr.commit();
 
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
@@ -959,7 +932,6 @@ namespace agge
 				vr.line(0x20F000, 0x203, 0x20F000, 0x220);
 				vr.line(0x150000, 0x220, 0x150000, 0x200);
 				vr.line(0x20F000, 0x200, 0x20F000, 0x203);
-				vr.commit();
 				vr.sort();
 
 				// ASSERT
@@ -980,7 +952,6 @@ namespace agge
 				vr.line(0x150000, 0x320, 0x150000, 0x300);
 				vr.line(0x208100, 0x300, 0x208100, 0x330);
 				vr.line(0x110000, 0x330, 0x110000, 0x320);
-				vr.commit();
 				vr.sort();
 
 				// ASSERT
@@ -1006,7 +977,6 @@ namespace agge
 				vr.line(0x100010, 0x100200, 0x100010, 0x100210);
 				vr.line(0x100000, 0x070110, 0x100000, 0x070100);
 				vr.line(0x100010, 0x070100, 0x100010, 0x070110);
-				vr.commit();
 				vr.sort();
 
 				// ASSERT
@@ -1032,7 +1002,6 @@ namespace agge
 				vr.line(0x110010, 0x070200, 0x110010, 0x070210);
 				vr.line(0x110000, 0x030210, 0x110000, 0x030200);
 				vr.line(0x110010, 0x030200, 0x110010, 0x030210);
-				vr.commit();
 				vr.sort();
 
 				// ASSERT
@@ -1124,7 +1093,6 @@ namespace agge
 				vr.line(0x700F10, 0x700200, 0x700F10, 0x700210);
 				vr.line(0x700F00, 0x100210, 0x700F00, 0x100200);
 				vr.line(0x700F10, 0x100200, 0x700F10, 0x100210);
-				vr.commit();
 				vr.sort();
 
 				// ASSERT
@@ -1155,7 +1123,6 @@ namespace agge
 				vr.line(0x700F10, 0x100200, 0x700F10, 0x100210);
 				vr.line(0x100F00, 0x100220, 0x100F00, 0x100200);
 				vr.line(0x100F10, 0x100200, 0x100F10, 0x100220);
-				vr.commit();
 				vr.sort();
 
 				// ASSERT

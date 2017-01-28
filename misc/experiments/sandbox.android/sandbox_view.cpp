@@ -19,9 +19,10 @@
 #include <aggx/blenders.h>
 
 #include <agge/clipper.h>
+#include <agge/path.h>
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
-#include <agge/stroker.h>
+#include <agge/stroke.h>
 #include <agge/stroke_features.h>
 
 #include <jni.h>

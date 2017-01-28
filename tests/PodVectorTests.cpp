@@ -1,8 +1,8 @@
 #include <agge/pod_vector.h>
 
 #include <algorithm>
-#include <utee/ut/assert.h>
-#include <utee/ut/test.h>
+#include <ut/assert.h>
+#include <ut/test.h>
 
 using namespace std;
 
@@ -515,6 +515,24 @@ namespace agge
 
 				// ASSERT
 				assert_equal(0u, v.size());
+			}
+
+
+			test( AppendingReturnsIteratorToTheElementAppended )
+			{
+				// INIT
+				pod_vector<char> v1;
+				pod_vector<int> v2;
+
+				// ACT / ASSERT
+				assert_equal('r', *v1.push_back('r'));
+				assert_equal(1801123, *v2.push_back(1801123));
+
+				// ACT
+				*v2.push_back(13) = 19;
+
+				// ASSERT
+				assert_equal(19, *(v2.end() - 1));
 			}
 		end_test_suite
 	}

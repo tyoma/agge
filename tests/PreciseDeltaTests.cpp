@@ -1,7 +1,19 @@
 #include <agge/precise_delta.h>
 
-#include <utee/ut/assert.h>
-#include <utee/ut/test.h>
+#include <ut/assert.h>
+#include <ut/test.h>
+
+namespace ut
+{
+	inline void are_equal(int reference, int actual, const LocationInfo &location)
+	{
+		if (reference < 0 && (actual < reference || reference + 1 < actual)
+			|| reference > 0 && (actual < reference - 1 || reference < actual))
+		{
+			throw FailedAssertion("Values are not equal!", location);
+		}
+	}
+}
 
 namespace agge
 {
@@ -71,21 +83,37 @@ namespace agge
 
 				// ASSERT
 				assert_is_true(-98 * 256 <= sum && sum <= -98 * 256 + 1);
+			}
 
-				// TODO: This test will pass when rounding mode is fixed.
-				//// INIT
-				//precise_delta d3(-1024, 5632 /*22 * 256*/);
 
-				//sum = 0;
+			test( DivisionResultIsRoundedByChopping )
+			{
+				// INIT
+				precise_delta d1(-1024, 5632 /*22 * 256*/);
+				int sum = 0;
 
-				//// ACT
-				//d3.multiply(256);
+				// ACT
+				d1.multiply(256);
 
-				//// ACT / ASSERT
-				//for (int i = 22; i; --i)
-				//	sum += d3.next();
+				// ACT / ASSERT
+				for (int i = 2200; i; --i)
+					sum += d1.next();
 
-				//assert_is_true(-1024 <= sum && sum <= -1024 + 1);
+				assert_is_true(-102400 <= sum);
+
+				// INIT
+				precise_delta d2(1024, 5632 /*22 * 256*/);
+
+				sum = 0;
+
+				// ACT
+				d2.multiply(256);
+
+				// ACT / ASSERT
+				for (int i = 2200; i; --i)
+					sum += d2.next();
+
+				assert_is_true(102400 >= sum);
 			}
 
 
@@ -132,13 +160,13 @@ namespace agge
 				dp.multiply(256);
 
 				// ACT / ASSERT
-				assert_equal(0x40000000, dp.next());
+				assert_equal(0x400000, dp.next() >> 8);
 
 				// ACT
 				dp.multiply(-256);
 
 				// ACT / ASSERT
-				assert_equal(-0x40000000, dp.next());
+				assert_equal(-0x400000, dp.next() >> 8);
 
 				// INIT
 				precise_delta dn(-0x400000, 1);
@@ -147,13 +175,13 @@ namespace agge
 				dn.multiply(256);
 
 				// ACT / ASSERT
-				assert_equal(-0x40000000, dn.next());
+				assert_equal(-0x400000, dn.next() >> 8);
 
 				// ACT
 				dn.multiply(-256);
 
 				// ACT / ASSERT
-				assert_equal(0x40000000, dn.next());
+				assert_equal(0x400000, dn.next() >> 8);
 			}
 
 
@@ -194,7 +222,7 @@ namespace agge
 			test( ExtremeMinRatioSupported1 )
 			{
 				// INIT
-				precise_delta d(1, 0x1000000);
+				precise_delta d(1, 0xFFFFFF);
 				int sum = 0;
 
 				// ACT
@@ -254,13 +282,13 @@ namespace agge
 				d.multiply(0x40);
 
 				// ACT / ASSERT
-				assert_equal(0x40000000, d.next());
+				assert_equal(0x800000, d.next() >> 7);
 
 				// ACT
 				d.multiply(-0x40);
 
 				// ACT / ASSERT
-				assert_equal(-0x40000000, d.next());
+				assert_equal(-0x800000, d.next() >> 7);
 			}
 
 		end_test_suite

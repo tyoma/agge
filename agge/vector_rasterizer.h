@@ -38,7 +38,6 @@ namespace agge
 		void reset();
 
 		void line(int x1, int y1, int x2, int y2);
-		void commit();
 		const cells_container &cells() const;
 		void sort();
 		bool sorted() const;
@@ -55,14 +54,15 @@ namespace agge
 	private:
 		void hline(precise_delta &tg_delta, int ey, int x1, int x2, int dy);
 		void jump_xy(int x, int y);
-		void jump_x(int x);
-		void jumpc(int x, int y);
+		cells_container::iterator push_cell_area(int x, int y, int area, int delta);
+		cells_container::iterator push_cell(int x, int y, int x1x2, int delta);
 		void extend_bounds(int x, int y);
 
 	private:
-		cell _current;
+		cells_container _cells;
+		cells_container::iterator _current;
+		cells_container _x_sorted_cells;
 		sorted_bins_container _scanlines;
-		cells_container _cells, _x_sorted_cells;
 		int _min_x, _min_y, _max_x, _max_y, _sorted;
 	};
 
