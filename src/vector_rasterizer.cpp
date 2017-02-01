@@ -9,12 +9,6 @@ namespace agge
 	namespace
 	{
 		const vector_rasterizer::cell empty_cell = { 0 };
-
-		void add(vector_rasterizer::cell &c, int x1x2, int delta)
-		{
-			c.area += x1x2 * delta;
-			c.cover += static_cast<short>(delta);
-		}
 	}
 
 	vector_rasterizer::vector_rasterizer()
@@ -59,7 +53,7 @@ namespace agge
 			if (ex2 == ex1)
 			{
 				jump_xy(ex1, ey1);
-				add(*_current, (x1 & _1_mask) + (x2 & _1_mask), dy);
+				add((x1 & _1_mask) + (x2 & _1_mask), dy);
 			}
 			else
 			{
@@ -86,7 +80,7 @@ namespace agge
 			const int two_fx = 2 * (x1 & _1_mask);
 
 			jump_xy(ex1, ey1);
-			add(*_current, two_fx, near - fy1);
+			add(two_fx, near - fy1);
 			ey1 += step;
 
 			if (ey1 != ey2)
@@ -112,7 +106,8 @@ namespace agge
 
 			int x_to = x1 + ctg_delta.next();
 			
-			hline(tg_delta, ey1, x1, x_to, lift);
+			if (lift)
+				hline(tg_delta, ey1, x1, x_to, lift);
 			ey1 += step;
 
 			if (ey1 != ey2)
@@ -129,7 +124,8 @@ namespace agge
 					ey1 += step;
 				} while (ey1 != ey2);
 			}
-			hline(tg_delta, ey1, x_to, x2, fy2 - far);
+			if (int dy = fy2 - far)
+				hline(tg_delta, ey1, x_to, x2, dy);
 		}
 	}
 
@@ -140,8 +136,6 @@ namespace agge
 		if (_sorted || _min_y > _max_y)
 			return;
 
-		if (!_cells.empty() & !_current->cover & !_current->area)
-			_cells.pop_back();
 		_x_sorted_cells.resize(_cells.size());
 
 		const int max_length = agge_max(_max_x - _min_x + 1, _max_y - _min_y + 1);
@@ -181,20 +175,10 @@ namespace agge
 		_sorted = 1;
 	}
 
-
 	AGGE_INLINE void vector_rasterizer::hline(precise_delta &tg_delta, int ey, int x1, int x2, int dy)
 	{
-		const int ex2 = x2 >> _1_shift;
-
-		if (!dy)
-		{
-			// Trivial case. Happens often.
-
-			jump_xy(ex2, ey);
-			return;
-		}
-
 		int ex1 = x1 >> _1_shift;
+		const int ex2 = x2 >> _1_shift;
 		const int fx1 = x1 & _1_mask;
 		const int fx2 = x2 & _1_mask;
 
@@ -204,7 +188,7 @@ namespace agge
 		{
 			// Everything is located in a single cell. That is easy!
 
-			add(*_current, fx1 + fx2, dy);
+			add(fx1 + fx2, dy);
 		}
 		else
 		{
@@ -218,7 +202,7 @@ namespace agge
 
 			int y_to = tg_delta.next();
 
-			add(*_current, fx1 + near, y_to);
+			add(fx1 + near, y_to);
 			ex1 += step;
 
 			if (ex1 != ex2)
@@ -228,8 +212,10 @@ namespace agge
 				do
 				{
 					int d = tg_delta.next();
+
 					y_to += d;
-					push_cell(ex1, ey, _1, d);
+					if (d)
+						push_cell(ex1, ey, _1, d);
 					ex1 += step;
 				} while (ex1 != ex2);
 			}
@@ -245,6 +231,12 @@ namespace agge
 				_current = _cells.push_back(empty_cell);
 			_current->x = static_cast<short>(x), _current->y = static_cast<short>(y);
 		}
+	}
+
+	AGGE_INLINE void vector_rasterizer::add(int x1x2, int delta)
+	{
+		_current->area += x1x2 * delta;
+		_current->cover += static_cast<short>(delta);
 	}
 
 	AGGE_INLINE vector_rasterizer::cells_container::iterator vector_rasterizer::push_cell_area(int x, int y, int area, int delta)
@@ -263,7 +255,7 @@ namespace agge
 		return push_cell_area(x, y, x1x2 * delta, delta);
 	}
 
-	void vector_rasterizer::extend_bounds(int x, int y)
+	AGGE_INLINE void vector_rasterizer::extend_bounds(int x, int y)
 	{
 		if (x < _min_x) _min_x = x;
 		if (x > _max_x) _max_x = x;

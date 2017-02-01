@@ -11,18 +11,14 @@ using namespace std;
 
 namespace ut
 {
-	bool is_empty(const agge::vector_rasterizer::cell& c)
-	{
-		return !c.area && !c.cover;
-	}
-
 	vector<agge::vector_rasterizer::cell> filter_empty(const agge::vector_rasterizer::cells_container& cells)
 	{
-		vector<agge::vector_rasterizer::cell> cells_filtered;
+		agge::vector_rasterizer::cells_container::const_iterator e = cells.end();
 
-		// TODO: We have to manually exclude empty (area == 0 && cover == 0) cells from assertions, until they are
-		///	eliminated during rasterization.
-		remove_copy_if(cells.begin(), cells.end(), back_inserter(cells_filtered), &is_empty);
+		if (cells.size() > 1 && !(e - 1)->area && !(e - 1)->cover)
+			--e;
+
+		vector<agge::vector_rasterizer::cell> cells_filtered(cells.begin(), e);
 		return cells_filtered;
 	}
 
@@ -35,7 +31,10 @@ namespace ut
 
 	inline void is_empty(const agge::vector_rasterizer::cells_container& i_container, const LocationInfo &i_location)
 	{
-		is_empty(filter_empty(i_container), i_location);
+		agge::vector_rasterizer::cell empty = { 0 };
+
+		are_equal(1u, i_container.size(), i_location);
+		are_equal(empty, i_container[0], i_location);
 	}
 }
 
@@ -159,7 +158,7 @@ namespace agge
 			}
 
 
-			test( HorizontalLinesDoNotProduceOutput )
+			test( HorizontalLinesOnlyJumpLastEmptyCell )
 			{
 				// INIT
 				vector_rasterizer vr;
@@ -168,7 +167,11 @@ namespace agge
 				vr.line(fp(10.0), fp(15.5), fp(70.0), fp(15.5));
 
 				// ASSERT
-				assert_is_empty(vr.cells());
+				const vector_rasterizer::cell reference1[] = {
+					{ 70, 15, 0, 0 },
+				};
+
+				assert_equal(reference1, vr.cells());
 
 				// ACT
 				vr.line(fp(10.0), fp(13.5), fp(70.0), fp(13.5));
@@ -176,7 +179,11 @@ namespace agge
 				vr.line(fp(-10.0), fp(215.5), fp(-70.0), fp(215.5));
 
 				// ASSERT
-				assert_is_empty(vr.cells());
+				const vector_rasterizer::cell reference2[] = {
+					{ -70, 215, 0, 0 },
+				};
+
+				assert_equal(reference2, vr.cells());
 			}
 
 
@@ -295,6 +302,7 @@ namespace agge
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
+					{ 53, 9, 0, 0 },
 					{ 53, 8, 0, -256 },
 				};
 
@@ -343,6 +351,7 @@ namespace agge
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
+					{ 23, 19, 0, 0 },
 					{ 23, 18, 0, -256 },
 					{ 23, 17, 0, -256 },
 				};
@@ -481,6 +490,7 @@ namespace agge
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
+					{ 53, 9, 0, 0 },
 					{ 53, 8, -22528, -256 },
 				};
 
@@ -720,7 +730,7 @@ namespace agge
 			}
 
 
-			test( InterCellLowRisingLineRepresentedBySparsedCells )
+			test( InterCellIndividualHLineIsRepresentedBySparsedCells )
 			{
 				// INIT
 				vector_rasterizer vr;
@@ -729,13 +739,30 @@ namespace agge
 				vr.line(0, 0, 1535, 3); // dx = 6 * 256 - 1 (to compensate floating point rounding)
 
 				// ASSERT
-				const vector_rasterizer::cell reference[] = {
+				const vector_rasterizer::cell reference1[] = {
+					{ 0, 0, 0, 0 }, // empty hline starting point is not eliminated
 					{ 1, 0, 256, 1 },
 					{ 3, 0, 256, 1 },
 					{ 5, 0, 255, 1 },
 				};
 
-				assert_equal(reference, vr.cells());
+				assert_equal(reference1, vr.cells());
+
+				// INIT
+				vr.reset();
+
+				// ACT
+				vr.line(-256, 256, 2815, 259); // dx = 12 * 256 - 1 (to compensate floating point rounding)
+
+				// ASSERT
+				const vector_rasterizer::cell reference2[] = {
+					{ -1, 1, 0, 0 }, // empty hline starting point is not eliminated
+					{ 2, 1, 256, 1 },
+					{ 6, 1, 256, 1 },
+					{ 10, 1, 255, 1 },
+				};
+
+				assert_equal(reference2, vr.cells());
 			}
 
 
@@ -1043,7 +1070,7 @@ namespace agge
 			}
 
 
-			test( NoCellsButNonEmptyRangeIsSortableAndScanlinesAreEmpty )
+			test( NoCellsButNonEmptyRangeIsSortableAndScanlinesOnlyHaveEmptyCells )
 			{
 				// INIT
 				vector_rasterizer vr;
@@ -1057,8 +1084,11 @@ namespace agge
 				vr.sort();
 
 				// ASSERT
+				const vector_rasterizer::cell c1 = { 0x120, 0x233, 0, 0 };
+
 				assert_is_true(vr.sorted());
-				assert_equal(vr[0x233].second, vr[0x233].first);
+				assert_equal(1, vr[0x233].second - vr[0x233].first);
+				assert_equal(c1, *vr[0x233].first);
 
 				// INIT
 				vr.line(0x32010, 0x23700, 0x32010, 0x23700);
@@ -1070,12 +1100,15 @@ namespace agge
 				vr.sort();
 
 				// ASSERT
+				const vector_rasterizer::cell c2 = { 0x320, 0x237, 0, 0 };
+
 				assert_is_true(vr.sorted());
 				assert_equal(vr[0x233].second, vr[0x233].first);
-				assert_equal(vr[0x243].second, vr[0x243].first);
-				assert_equal(vr[0x253].second, vr[0x253].first);
-				assert_equal(vr[0x263].second, vr[0x263].first);
-				assert_equal(vr[0x273].second, vr[0x273].first);
+				assert_equal(vr[0x234].second, vr[0x234].first);
+				assert_equal(vr[0x235].second, vr[0x235].first);
+				assert_equal(vr[0x236].second, vr[0x236].first);
+				assert_equal(1, vr[0x237].second - vr[0x237].first);
+				assert_equal(c2, *vr[0x233].first);
 			}
 
 
