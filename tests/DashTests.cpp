@@ -278,6 +278,40 @@ namespace agge
 				assert_equal(reference1, result1);
 			}
 
+
+			test( ClosedPolygonProducesDashesForTheClosingSegment )
+			{
+				// INIT
+				dash d;
+
+				d.add_dash(2.0f, 1.0f);
+
+				// ACT
+				move_to(d, -2.0f, 2.0f);
+				line_to(d, -2.0f, -1.0f);
+				line_to(d, 2.0f, -1.0f);
+				end_poly(d, true);
+
+				mocks::path::point result[] = {
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d),
+				};
+
+				// ASSERT
+				mocks::path::point reference[] = {
+					{ -2.0f, 2.0f, path_command_move_to }, { -2.0f, 0.0f, path_command_line_to },
+					{ -2.0f, -1.0f, path_command_move_to }, { 0.0f, -1.0f, path_command_line_to },
+					{ 1.0f, -1.0f, path_command_move_to }, { 2.0f, -1.0f, path_command_line_to }, { 1.2f, -0.4f, path_command_line_to },
+					{ 0.4f, 0.2f, path_command_move_to }, { -1.2f, 1.4f, path_command_line_to },
+					{ 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference, result);
+			}
+
 		end_test_suite
 	}
 }

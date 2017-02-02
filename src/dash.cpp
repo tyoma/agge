@@ -28,7 +28,13 @@ namespace agge
 	{	}
 
 	void dash::add_vertex(real_t x, real_t y, int command)
-	{	add_polyline_vertex(*this, x, y, command);	}
+	{
+		if (empty())
+			_start.x = x, _start.y = y;
+		else if (command & path_flag_close)
+			add_polyline_vertex(*this, _start.x, _start.y, path_command_line_to);
+		add_polyline_vertex(*this, x, y, command);
+	}
 
 	int dash::vertex(real_t *x, real_t *y)
 	{
