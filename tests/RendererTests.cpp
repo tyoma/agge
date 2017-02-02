@@ -984,9 +984,9 @@ namespace agge
 
 				// ASSERT
 				mocks::blender<int, uint8_t>::fill_log_entry reference1[] = {
-					{ bitmap.row_ptr(2), 1, 2, 2 },
-					{ bitmap.row_ptr(3), 1, 3, 2 },
-					{ bitmap.row_ptr(4), 1, 4, 2 },
+					{ bitmap.row_ptr(2) + 1, 1, 2, 2 },
+					{ bitmap.row_ptr(3) + 1, 1, 3, 2 },
+					{ bitmap.row_ptr(4) + 1, 1, 4, 2 },
 				};
 
 				assert_equal(reference1, blender.filling_log);
@@ -999,11 +999,11 @@ namespace agge
 
 				// ASSERT
 				mocks::blender<int, uint8_t>::fill_log_entry reference2[] = {
-					{ bitmap.row_ptr(3), 2, 3, 7 },
-					{ bitmap.row_ptr(4), 2, 4, 7 },
-					{ bitmap.row_ptr(5), 2, 5, 7 },
-					{ bitmap.row_ptr(6), 2, 6, 7 },
-					{ bitmap.row_ptr(7), 2, 7, 7 },
+					{ bitmap.row_ptr(3) + 2, 2, 3, 7 },
+					{ bitmap.row_ptr(4) + 2, 2, 4, 7 },
+					{ bitmap.row_ptr(5) + 2, 2, 5, 7 },
+					{ bitmap.row_ptr(6) + 2, 2, 6, 7 },
+					{ bitmap.row_ptr(7) + 2, 2, 7, 7 },
 				};
 
 				assert_equal(reference2, blender.filling_log);

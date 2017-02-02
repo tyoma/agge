@@ -147,7 +147,7 @@ namespace agge
 		if (width > 0)
 		{
 			for (int y = agge_max(0, area.y1), limit_y = agge_min<int>(bitmap.height(), area.y2); y < limit_y; ++y)
-				blender(bitmap.row_ptr(y), x, y, width);
+				blender(bitmap.row_ptr(y) + x, x, y, width);
 		}
 	}
 
