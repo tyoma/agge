@@ -56,11 +56,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
       <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <GccExceptionHandling Condition="'$(Platform)'=='Android'">true</GccExceptionHandling>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
       <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <GccExceptionHandling Condition="'$(Platform)'=='Android'">true</GccExceptionHandling>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -69,9 +71,8 @@
     </ClCompile>
     <ClCompile Include="dash.cpp" />
     <ClCompile Include="math.cpp" />
-    <ClCompile Include="platform\win32\parallel.cpp">
+    <ClCompile Include="parallel.cpp">
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="platform\win32\bitmap.cpp">
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
@@ -104,6 +105,8 @@
     <ClInclude Include="..\agge\vector_rasterizer.h" />
     <ClInclude Include="..\agge\renderer.h" />
     <ClInclude Include="..\agge\vertex_sequence.h" />
+    <ClInclude Include="platform\linux\parallel-inline.h" />
+    <ClInclude Include="platform\win32\parallel-inline.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

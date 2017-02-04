@@ -6,7 +6,6 @@
     <ClCompile Include="BlenderTests.cpp" />
     <ClCompile Include="ScanlineAdapterTests.cpp" />
     <ClCompile Include="ParallelExecutionTests.cpp" />
-    <ClCompile Include="mt.cpp" />
     <ClCompile Include="RendererParallelTests.cpp" />
     <ClCompile Include="MiscTests.cpp" />
     <ClCompile Include="platform\win32\surface.cpp">
@@ -26,6 +25,12 @@
     <ClCompile Include="StrokeTests.cpp" />
     <ClCompile Include="PreciseDeltaTests.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="platform\win32\mt.cpp">
+      <Filter>platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\linux\mt.cpp">
+      <Filter>platform\linux</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />
@@ -41,6 +46,9 @@
     </Filter>
     <Filter Include="platform\win32">
       <UniqueIdentifier>{06dbc50d-ce5a-418d-9ea9-75615b7850fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\linux">
+      <UniqueIdentifier>{5686a8e9-c597-4026-adf2-4a6b381de1fa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

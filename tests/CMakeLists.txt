@@ -2,21 +2,35 @@ include_directories(${AGGE_SOURCE_DIR}/misc/libraries/utee)
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-add_executable(agge.tests
+set(AGGE_TEST_SOURCES
+	BitmapTests.cpp
 	BlenderTests.cpp
 	ClipperTests.cpp
 	DashTests.cpp
 	helpers.cpp
 	main.cpp
 	MiscTests.cpp
+	ParallelExecutionTests.cpp
 	PathTests.cpp
 	PodVectorTests.cpp
 	PreciseDeltaTests.cpp
 	RasterizerTests.cpp
 	RendererTests.cpp
+	RendererParallelTests.cpp
 	ScanlineAdapterTests.cpp
 	StrokeFeaturesTests.cpp
 	StrokeTests.cpp
 	VectorRasterizerTests.cpp
 )
-target_link_libraries(agge.tests agge utee)
+
+if (WIN32)
+	set(AGGE_TEST_SOURCES ${AGGE_TEST_SOURCES} platform/win32/mt.cpp platform/win32/RawBitmapTests.cpp platform/win32/surface.cpp)
+else()
+	set(AGGE_TEST_SOURCES ${AGGE_TEST_SOURCES} platform/linux/mt.cpp)
+endif()
+
+find_package(Threads)
+
+add_executable(agge.tests ${AGGE_TEST_SOURCES})
+
+target_link_libraries(agge.tests agge utee ${CMAKE_THREAD_LIBS_INIT})

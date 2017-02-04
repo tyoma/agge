@@ -16,6 +16,9 @@
     <Filter Include="src\platform\win32">
       <UniqueIdentifier>{04d19b1d-2bbd-494f-8851-c45c5b27c6b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\platform\linux">
+      <UniqueIdentifier>{62dfc468-0909-425b-b5f3-66f1e1f2dd0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vector_rasterizer.cpp">
@@ -25,9 +28,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="platform\win32\bitmap.cpp">
-      <Filter>src\platform\win32</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\win32\parallel.cpp">
       <Filter>src\platform\win32</Filter>
     </ClCompile>
     <ClCompile Include="stroke_features.cpp">
@@ -40,6 +40,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="stroke.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="parallel.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,5 +71,11 @@
     <ClInclude Include="..\agge\vertex_sequence.h" />
     <ClInclude Include="..\agge\stroke.h" />
     <ClInclude Include="..\agge\precise_delta.h" />
+    <ClInclude Include="platform\win32\parallel-inline.h">
+      <Filter>src\platform\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\linux\parallel-inline.h">
+      <Filter>src\platform\linux</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

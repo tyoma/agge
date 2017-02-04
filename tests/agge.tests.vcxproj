@@ -77,39 +77,33 @@
   <ItemGroup>
     <ClCompile Include="BitmapTests.cpp" />
     <ClCompile Include="BlenderTests.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Android'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="ClipperTests.cpp" />
     <ClCompile Include="DashTests.cpp" />
     <ClCompile Include="helpers.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MiscTests.cpp" />
-    <ClCompile Include="mt.cpp">
+    <ClCompile Include="platform\linux\mt.cpp">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="platform\win32\mt.cpp">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Android'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="ParallelExecutionTests.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Android'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="ParallelExecutionTests.cpp" />
     <ClCompile Include="PathTests.cpp" />
     <ClCompile Include="platform\win32\RawBitmapTests.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Android'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="platform\win32\surface.cpp">
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Android'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="PodVectorTests.cpp" />
     <ClCompile Include="PreciseDeltaTests.cpp" />
-    <ClCompile Include="RendererParallelTests.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Android'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="RendererParallelTests.cpp" />
     <ClCompile Include="RendererTests.cpp" />
     <ClCompile Include="ScanlineAdapterTests.cpp" />
     <ClCompile Include="RasterizerTests.cpp" />

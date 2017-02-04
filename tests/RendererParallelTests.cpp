@@ -42,7 +42,7 @@ namespace agge
 				int threadnum = -1;
 
 				const uint8_t offset = sizeof(CoverT) * 8;
-				const BitmapT::pixel mask = (1 << offset) - 1;
+				const typename BitmapT::pixel mask = (1 << offset) - 1;
 
 				for (count_t i = 0; i != b.width(); ++i, ++p)
 					if (*p & mask)
@@ -194,7 +194,7 @@ namespace agge
 				};
 				const mocks::mask_full<8> mask1(cells, 3);
 				mocks::bitmap<uint8_t> bitmap1(11, 4);
-				const mocks::blender<uint8_t, uint8_t> blender1;
+				mocks::blender<uint8_t, uint8_t> blender1;
 				const rect_i window = mkrect_sized(-1, 3, 11, 100);
 
 				renderer_parallel r(2);
