@@ -1,6 +1,7 @@
 #pragma once
 
 #include <agge/math.h>
+#include <agge/path.h>
 #include <agge/tools.h>
 #include <agge/types.h>
 
@@ -114,7 +115,7 @@ namespace agge
 			if (!equal(xp, T()))
 				return false;
 			return agge_min(segment_a.x, segment_b.x) <= t.x && t.x <= agge_min(segment_a.x, segment_b.x)
-				agge_min(segment_a.y, segment_b.y) <= t.y && t.y <= agge_min(segment_a.y, segment_b.y);
+				&& agge_min(segment_a.y, segment_b.y) <= t.y && t.y <= agge_min(segment_a.y, segment_b.y);
 		}
 
 		template <typename T>

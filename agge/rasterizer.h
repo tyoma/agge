@@ -81,7 +81,7 @@ namespace agge
 	template <typename ClipperT, typename ScalingT>
 	inline void rasterizer<ClipperT, ScalingT>::set_clipping(const rect<real_t> &window)
 	{
-		rect<ClipperT::coord_type> translated;
+		rect<typename ClipperT::coord_type> translated;
 
 		ScalingT::scale1(window.x1, window.y1, translated.x1, translated.y1);
 		ScalingT::scale1(window.x2, window.y2, translated.x2, translated.y2);

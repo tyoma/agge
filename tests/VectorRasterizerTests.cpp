@@ -5,8 +5,6 @@
 #include <ut/assert.h>
 #include <ut/test.h>
 
-#include <iterator>
-
 using namespace std;
 
 namespace ut

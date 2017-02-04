@@ -8,13 +8,12 @@
 #include <string>
 #include <vector>
 
-#if defined(_MSC_VER) && _MSC_VER==1500
-	namespace std
-	{
-		using tr1::shared_ptr;
-		using tr1::static_pointer_cast;
-	}
-#endif
+namespace std
+{
+   namespace tr1 { }
+
+   using namespace tr1; // To support MSVC 9.0
+}
 
 namespace ut
 {
@@ -121,7 +120,7 @@ namespace ut
 
    template <typename Fixture>
    inline exportable::immutable_string test_case_impl<Fixture>::fixture_name() const
-   {	return Fixture::__suite_name();	}
+   {	return std::string(Fixture::__suite_name());	}
 
    template <typename Fixture>
    inline exportable::immutable_string test_case_impl<Fixture>::name() const
@@ -194,7 +193,7 @@ namespace ut
    template <typename Fixture>
    inline void setup_impl<Fixture>::init(Fixture &fixture) const
    {
-      for (_methods_list_t::const_iterator i = m_inits.begin(); i != m_inits.end(); ++i)
+      for (typename _methods_list_t::const_iterator i = m_inits.begin(); i != m_inits.end(); ++i)
       {
          (fixture.**i)();
       }
@@ -203,7 +202,7 @@ namespace ut
    template <typename Fixture>
    inline void setup_impl<Fixture>::teardown(Fixture &fixture) const
    {
-      for (_methods_list_t::const_iterator i = m_teardowns.begin(); i != m_teardowns.end(); ++i)
+      for (typename _methods_list_t::const_iterator i = m_teardowns.begin(); i != m_teardowns.end(); ++i)
       {
          (fixture.**i)();
       }

@@ -13,7 +13,7 @@ namespace agge
 			const float q = static_cast<float>(numerator) / denominator;
 			const int &iq = reinterpret_cast<const int &>(q);
 			const int exp = (((iq & 0x7F800000)) >> 23) - 127;
-			int m = iq & 0x7FFFFF | 0x800000;
+			int m = (iq & 0x7FFFFF) | 0x800000;
 
 			m--; // Sacrifice precision to be agnostic to the rounding mode: we must not overflow on increments!
 			if (exp > 0x17)

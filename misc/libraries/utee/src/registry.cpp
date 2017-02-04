@@ -2,11 +2,23 @@
 
 using namespace std;
 
+#if defined(_WIN32) || defined(__CYGWIN__)
+   #ifdef __GNUC__
+      #define EXPORTED __attribute__((dllexport))
+   #else
+      #define EXPORTED __declspec(dllexport)
+   #endif
+#else
+   #define EXPORTED
+#endif
+
 namespace ut
 {
    registry::registry()
    {
+#ifdef _MSC_VER
       _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
    }
 
    registry &registry_instance()
@@ -32,7 +44,7 @@ namespace ut
    }
 }
 
-extern "C" __declspec(dllexport) void utee_enumerate_test_cases(void *i_parameter, AcceptTestF i_acceptor)
+extern "C" EXPORTED void utee_enumerate_test_cases(void *i_parameter, AcceptTestF i_acceptor)
 {
    ut::registry &r = ut::registry_instance();
 

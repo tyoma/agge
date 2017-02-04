@@ -7,8 +7,8 @@ namespace ut
 {
 	inline void are_equal(int reference, int actual, const LocationInfo &location)
 	{
-		if (reference < 0 && (actual < reference || reference + 1 < actual)
-			|| reference > 0 && (actual < reference - 1 || reference < actual))
+		if ((reference < 0 && (actual < reference || reference + 1 < actual))
+			|| (reference > 0 && (actual < reference - 1 || reference < actual)))
 		{
 			throw FailedAssertion("Values are not equal!", location);
 		}

@@ -191,6 +191,8 @@ namespace agge
 
 				void operator ()(int x, count_t length, const cover_type *covers)
 				{
+					using namespace std;
+
 					render_log_entry e = { x, vector<cover_type>(covers, covers + length) };
 					render_log.push_back(e);
 					raw_render_log.push_back(make_pair(covers, length));
@@ -271,8 +273,8 @@ namespace agge
 			struct blender<PixelT, CoverT>::fill_log_entry
 			{
 				pixel *pixels;
-				unsigned int x;
-				unsigned int y;
+				int x;
+				int y;
 				unsigned int length;
 
 				bool operator ==(const fill_log_entry &rhs) const

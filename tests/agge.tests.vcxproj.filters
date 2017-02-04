@@ -25,6 +25,7 @@
     <ClCompile Include="DashTests.cpp" />
     <ClCompile Include="StrokeTests.cpp" />
     <ClCompile Include="PreciseDeltaTests.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />

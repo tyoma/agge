@@ -7,13 +7,14 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <typeinfo>
 #include <vector>
 
 namespace ut
 {
-   struct type_info_less : std::binary_function<const type_info *, const type_info *, bool>
+   struct type_info_less : std::binary_function<const std::type_info *, const std::type_info *, bool>
    {
-      bool operator ()(const type_info *lhs, const type_info *rhs) const;
+      bool operator ()(const std::type_info *lhs, const std::type_info *rhs) const;
    };
 
    ///   @brief This is a central registry for unit tests based on this famework. It supports adding non-static test
@@ -21,7 +22,7 @@ namespace ut
    ///      methods. For a definition of a 'fixture', please, refer to http://en.wikipedia.org/wiki/Test_fixture
    class registry
    {
-      typedef std::map<const type_info *, std::shared_ptr<destructible>, type_info_less> _setups_map_t;
+      typedef std::map<const std::type_info *, std::shared_ptr<destructible>, type_info_less> _setups_map_t;
 
       std::vector< std::shared_ptr<test_case> > m_test_cases;
       std::set<std::string> m_registered_names;
@@ -60,7 +61,7 @@ namespace ut
 
 
 
-   inline bool type_info_less::operator ()(const type_info *lhs, const type_info *rhs) const
+   inline bool type_info_less::operator ()(const std::type_info *lhs, const std::type_info *rhs) const
    {
       return !!lhs->before(*rhs);
    }
@@ -72,7 +73,7 @@ namespace ut
    {
       typedef setup_impl<FixtureT> fixture_setup;
 
-      const type_info *t = &typeid(FixtureT);
+      const std::type_info *t = &typeid(FixtureT);
       _setups_map_t::const_iterator s = m_setups.find(t);
 
       s = s == m_setups.end() ?
