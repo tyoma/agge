@@ -47,7 +47,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <ClCompile>
-      <AdditionalOptions>-fpermissive -std=c++11</AdditionalOptions>
+      <AdditionalOptions>-fpermissive</AdditionalOptions>
       <GccExceptionHandling>true</GccExceptionHandling>
       <OptimizationLevel>O0</OptimizationLevel>
       <AdditionalIncludeDirectories>./../../libraries;./../../..</AdditionalIncludeDirectories>
@@ -64,12 +64,10 @@
       <AntBuildType>Debug</AntBuildType>
     </AntBuild>
     <ClCompile>
-      <AdditionalOptions>-fpermissive -ffast-math -std=c++11</AdditionalOptions>
+      <AdditionalOptions>-fpermissive -ffast-math</AdditionalOptions>
       <AdditionalIncludeDirectories>./../../libraries;./../../..</AdditionalIncludeDirectories>
       <GccExceptionHandling>true</GccExceptionHandling>
       <StrictAliasing>true</StrictAliasing>
-      <InlineLimit>5000</InlineLimit>
-      <ThumbMode>true</ThumbMode>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -84,7 +82,6 @@
     <None Include="AndroidApk\src\impression\sandbox\SandboxView.java" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="parallel_linux.cpp" />
     <ClCompile Include="sandbox_view.cpp" />
   </ItemGroup>
   <ItemGroup>

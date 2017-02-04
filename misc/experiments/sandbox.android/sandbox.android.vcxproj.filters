@@ -51,7 +51,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sandbox_view.cpp" />
-    <ClCompile Include="parallel_linux.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libraries\aggx\blenders.h">

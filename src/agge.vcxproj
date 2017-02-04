@@ -63,6 +63,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GccExceptionHandling Condition="'$(Platform)'=='Android'">true</GccExceptionHandling>
+      <StrictAliasing Condition="'$(Configuration)|$(Platform)'=='Release|Android'">true</StrictAliasing>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
