@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".."
+				AdditionalIncludeDirectories="../.."
 				PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -108,7 +108,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".."
+				AdditionalIncludeDirectories="../.."
 				PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -176,7 +176,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories=".."
+				AdditionalIncludeDirectories="../.."
 				PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="false"
@@ -246,7 +246,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories=".."
+				AdditionalIncludeDirectories="../.."
 				PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="false"
@@ -403,93 +403,93 @@
 				Name="win32"
 				>
 				<File
-					RelativePath="..\agge\platform\win32\bitmap.h"
+					RelativePath="..\..\agge\platform\win32\bitmap.h"
 					>
 				</File>
 			</Filter>
 		</Filter>
 		<File
-			RelativePath="..\agge\bitmap.h"
+			RelativePath="..\..\agge\bitmap.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\blenders_simd.h"
+			RelativePath="..\..\agge\blenders_simd.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\clipper.h"
+			RelativePath="..\..\agge\clipper.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\config.h"
+			RelativePath="..\..\agge\config.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\dash.h"
+			RelativePath="..\..\agge\dash.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\math.h"
+			RelativePath="..\..\agge\math.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\memory.h"
+			RelativePath="..\..\agge\memory.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\parallel.h"
+			RelativePath="..\..\agge\parallel.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\path.h"
+			RelativePath="..\..\agge\path.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\pod_vector.h"
+			RelativePath="..\..\agge\pod_vector.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\precise_delta.h"
+			RelativePath="..\..\agge\precise_delta.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\rasterizer.h"
+			RelativePath="..\..\agge\rasterizer.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\renderer.h"
+			RelativePath="..\..\agge\renderer.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\renderer_parallel.h"
+			RelativePath="..\..\agge\renderer_parallel.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\scanline.h"
+			RelativePath="..\..\agge\scanline.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\stroke.h"
+			RelativePath="..\..\agge\stroke.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\stroke_features.h"
+			RelativePath="..\..\agge\stroke_features.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\tools.h"
+			RelativePath="..\..\agge\tools.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\types.h"
+			RelativePath="..\..\agge\types.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\vector_rasterizer.h"
+			RelativePath="..\..\agge\vector_rasterizer.h"
 			>
 		</File>
 		<File
-			RelativePath="..\agge\vertex_sequence.h"
+			RelativePath="..\..\agge\vertex_sequence.h"
 			>
 		</File>
 	</Files>

@@ -6,9 +6,6 @@
     <ClCompile Include="..\common\balls.cpp">
       <Filter>common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libraries\agg\src\agg_vcgen_stroke.cpp">
-      <Filter>agg</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainDialog.h" />
@@ -37,9 +34,6 @@
     </Filter>
     <Filter Include="common">
       <UniqueIdentifier>{ae002ae0-404e-4727-ae0a-72585e494442}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="agg">
-      <UniqueIdentifier>{bcb50d93-cf3e-4b28-8cf5-5315bd71f5a5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

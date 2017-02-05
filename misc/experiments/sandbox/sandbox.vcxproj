@@ -81,7 +81,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\libraries\agg\src\agg_vcgen_stroke.cpp" />
     <ClCompile Include="..\common\balls.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainDialog.cpp" />
@@ -96,7 +95,7 @@
     <ClInclude Include="MainDialog.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\agge.vcxproj">
+    <ProjectReference Include="..\..\..\src\agge\agge.vcxproj">
       <Project>{f849e92c-248a-46b2-9eab-f86578a21316}</Project>
     </ProjectReference>
   </ItemGroup>

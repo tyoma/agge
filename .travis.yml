@@ -10,4 +10,4 @@ compiler:
 script:
  - mkdir _build
  - cd _build
- - cmake .. && make && tests/agge.tests
+ - cmake .. && make && tests/agge/agge.tests

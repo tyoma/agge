@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8B1C0537-2027-4D8C-82BD-72E0E69DB827}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agge", "..\src\agge.vcxproj", "{F849E92C-248A-46B2-9EAB-F86578A21316}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agge", "..\src\agge\agge.vcxproj", "{F849E92C-248A-46B2-9EAB-F86578A21316}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agge.tests", "..\tests\agge.tests.vcxproj", "{A180777F-1EE0-4E11-90CA-D81B01D45ED3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agge.tests", "..\tests\agge\agge.tests.vcxproj", "{A180777F-1EE0-4E11-90CA-D81B01D45ED3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{AD0BA725-9F6F-474E-ADB0-1F506B1CD394} = {AD0BA725-9F6F-474E-ADB0-1F506B1CD394}
 	EndProjectSection

@@ -52,7 +52,7 @@
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions Condition="'$(Platform)'=='Android'">-std=c++11 %(AdditionalOptions)</AdditionalOptions>
       <GccExceptionHandling Condition="'$(Platform)'=='Android'">true</GccExceptionHandling>
       <RuntimeTypeInfo Condition="'$(Platform)'=='Android'">true</RuntimeTypeInfo>
@@ -64,7 +64,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions Condition="'$(Platform)'=='Android'">-std=c++11 %(AdditionalOptions)</AdditionalOptions>
       <GccExceptionHandling Condition="'$(Platform)'=='Android'">true</GccExceptionHandling>
       <RuntimeTypeInfo Condition="'$(Platform)'=='Android'">true</RuntimeTypeInfo>
@@ -112,7 +112,10 @@
     <ClCompile Include="VectorRasterizerTests.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\agge.vcxproj">
+    <ProjectReference Include="..\..\misc\libraries\utee\make\utee.v11.vcxproj">
+      <Project>{4db73ace-2d47-4a6c-8213-2be191dd921f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\agge\agge.vcxproj">
       <Project>{f849e92c-248a-46b2-9eab-f86578a21316}</Project>
     </ProjectReference>
   </ItemGroup>
