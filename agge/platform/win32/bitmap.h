@@ -1,8 +1,6 @@
 #pragma once
 
-#include "../../types.h"
-
-#include <stddef.h>
+#include <agge/types.h>
 
 struct HBITMAP__;
 typedef struct HBITMAP__ *HBITMAP;
@@ -27,9 +25,9 @@ namespace agge
 
 			void *row_ptr(count_t y);
 			const void *row_ptr(count_t y) const;
-			HBITMAP native() const;
 
 		public: // Win32
+			HBITMAP native() const;
 			void blit(HDC hdc, int x, int y, count_t width, count_t height) const;
 
 		private:
@@ -52,10 +50,10 @@ namespace agge
 		{	return _height;	}
 
 		inline void *raw_bitmap::row_ptr(count_t y)
-		{	return reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(_memory) + y * _stride);	}
+		{	return static_cast<uint8_t *>(_memory) + y * _stride;	}
 
 		inline const void *raw_bitmap::row_ptr(count_t y) const
-		{	return reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(_memory) + y * _stride);	}
+		{	return static_cast<const uint8_t *>(_memory) + y * _stride;	}
 
 		inline HBITMAP raw_bitmap::native() const
 		{	return _native;	}

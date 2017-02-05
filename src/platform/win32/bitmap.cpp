@@ -32,7 +32,7 @@ namespace agge
 		}
 
 		raw_bitmap::raw_bitmap(count_t width, count_t height, bits_per_pixel bpp)
-			: _memory(0), _max_width(0), _max_height(0), _bpp(bpp)
+			: _memory(0), _max_width(0), _max_height(0), _bpp(bpp), _native(0)
 		{	resize(width, height);	}
 
 		raw_bitmap::~raw_bitmap()

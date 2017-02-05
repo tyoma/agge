@@ -7,10 +7,6 @@
 #include <agge/renderer_parallel.h>
 #include <agge/stroke.h>
 
-#include <aggx/blenders.h>
-
-#include <agg/include/agg_rasterizer_sl_clip.h>
-
 #include <atlbase.h>
 #include <vector>
 #include <utility>
@@ -27,7 +23,7 @@ namespace Gdiplus
 	class PointF;
 }
 
-typedef std::vector< std::pair<std::pair<aggx::real, aggx::real>, unsigned> > AggPath;
+typedef std::vector< std::pair<std::pair<agge::real_t, agge::real_t>, unsigned> > AggPath;
 typedef agge::bitmap<agge::pixel32, agge::platform::raw_bitmap> bitmap;
 
 class CChildView : public CWnd
