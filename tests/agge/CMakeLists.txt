@@ -1,6 +1,6 @@
 include_directories(${AGGE_SOURCE_DIR}/misc/libraries/utee)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(AGGE_TEST_SOURCES
 	BitmapTests.cpp

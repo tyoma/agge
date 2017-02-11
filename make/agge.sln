@@ -25,6 +25,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sandbox.android", "..\misc\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sandbox", "..\misc\experiments\sandbox\sandbox.vcxproj", "{70EB93F3-E425-46B1-B592-B50167CBBB46}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agge.text.tests", "..\tests\agge.text\agge.text.tests.vcxproj", "{60F5D59B-7647-25B1-BF47-8527687DA8AE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agge.text", "..\src\agge.text\agge.text.vcxproj", "{4B446510-FA62-AD02-51BA-9BDE9564FF26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Android = Debug|Android
@@ -111,12 +115,33 @@ Global
 		{70EB93F3-E425-46B1-B592-B50167CBBB46}.Release|Win32.Build.0 = Release|Win32
 		{70EB93F3-E425-46B1-B592-B50167CBBB46}.Release|x64.ActiveCfg = Release|x64
 		{70EB93F3-E425-46B1-B592-B50167CBBB46}.Release|x64.Build.0 = Release|x64
+		{60F5D59B-7647-25B1-BF47-8527687DA8AE}.Debug|Android.ActiveCfg = Debug|x64
+		{60F5D59B-7647-25B1-BF47-8527687DA8AE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{60F5D59B-7647-25B1-BF47-8527687DA8AE}.Debug|Win32.Build.0 = Debug|Win32
+		{60F5D59B-7647-25B1-BF47-8527687DA8AE}.Debug|x64.ActiveCfg = Debug|x64
+		{60F5D59B-7647-25B1-BF47-8527687DA8AE}.Debug|x64.Build.0 = Debug|x64
+		{60F5D59B-7647-25B1-BF47-8527687DA8AE}.Release|Android.ActiveCfg = Release|x64
+		{60F5D59B-7647-25B1-BF47-8527687DA8AE}.Release|Win32.ActiveCfg = Release|Win32
+		{60F5D59B-7647-25B1-BF47-8527687DA8AE}.Release|Win32.Build.0 = Release|Win32
+		{60F5D59B-7647-25B1-BF47-8527687DA8AE}.Release|x64.ActiveCfg = Release|x64
+		{60F5D59B-7647-25B1-BF47-8527687DA8AE}.Release|x64.Build.0 = Release|x64
+		{4B446510-FA62-AD02-51BA-9BDE9564FF26}.Debug|Android.ActiveCfg = Debug|x64
+		{4B446510-FA62-AD02-51BA-9BDE9564FF26}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4B446510-FA62-AD02-51BA-9BDE9564FF26}.Debug|Win32.Build.0 = Debug|Win32
+		{4B446510-FA62-AD02-51BA-9BDE9564FF26}.Debug|x64.ActiveCfg = Debug|x64
+		{4B446510-FA62-AD02-51BA-9BDE9564FF26}.Debug|x64.Build.0 = Debug|x64
+		{4B446510-FA62-AD02-51BA-9BDE9564FF26}.Release|Android.ActiveCfg = Release|x64
+		{4B446510-FA62-AD02-51BA-9BDE9564FF26}.Release|Win32.ActiveCfg = Release|Win32
+		{4B446510-FA62-AD02-51BA-9BDE9564FF26}.Release|Win32.Build.0 = Release|Win32
+		{4B446510-FA62-AD02-51BA-9BDE9564FF26}.Release|x64.ActiveCfg = Release|x64
+		{4B446510-FA62-AD02-51BA-9BDE9564FF26}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A180777F-1EE0-4E11-90CA-D81B01D45ED3} = {8B1C0537-2027-4D8C-82BD-72E0E69DB827}
+		{60F5D59B-7647-25B1-BF47-8527687DA8AE} = {8B1C0537-2027-4D8C-82BD-72E0E69DB827}
 		{2C76886C-5670-49D2-B817-719075E29647} = {746B1DDB-98A3-4431-9879-AEEADE5DAC7E}
 		{0247C00D-043A-4781-8E4A-F174B9B2CE29} = {746B1DDB-98A3-4431-9879-AEEADE5DAC7E}
 		{AD0BA725-9F6F-474E-ADB0-1F506B1CD394} = {2C76886C-5670-49D2-B817-719075E29647}
