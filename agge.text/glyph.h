@@ -7,17 +7,17 @@ namespace agge
 	class glyph
 	{
 	public:
-		struct iterator;
+		class path_iterator;
 
 	public:
-		iterator get_iterator() const;
+		path_iterator get_path() const;
 
 	public:
 		real_t advance_x;
 		real_t advance_y;
 	};
 
-	class glyph::iterator
+	class glyph::path_iterator
 	{
 	public:
 		void rewind(int id);

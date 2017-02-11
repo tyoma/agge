@@ -4,14 +4,17 @@ namespace agge
 {
 	typedef float real_t;
 
-	template <typename CoordT>
+	template <typename T>
 	struct point;
 
-	template <typename CoordT>
+	template <typename T>
 	struct agge_vector;
 
-	template <typename CoordT>
+	template <typename T>
 	struct rect;
+
+	template <typename T>
+	struct box;
 
 	typedef unsigned int count_t;
 	typedef unsigned char uint8_t;
@@ -19,6 +22,7 @@ namespace agge
 	typedef point<real_t> point_r;
 	typedef agge_vector<real_t> vector_r;
 	typedef rect<int> rect_i;
+	typedef box<real_t> box_r;
 
 	enum bits_per_pixel { bpp32 = 32, bpp24 = 24, bpp16 = 16, bpp8 = 8 };
 
@@ -41,22 +45,28 @@ namespace agge
 	};
 #pragma pack(pop)
 
-	template <typename CoordT>
+	template <typename T>
 	struct point
 	{
-		CoordT x, y;
+		T x, y;
 	};
 
-	template <typename CoordT>
+	template <typename T>
 	struct agge_vector
 	{
-		CoordT dx, dy;
+		T dx, dy;
 	};
 
-	template <typename CoordT>
+	template <typename T>
 	struct rect
 	{
-		CoordT x1, y1, x2, y2;
+		T x1, y1, x2, y2;
+	};
+
+	template <typename T>
+	struct box
+	{
+		T w, h;
 	};
 
 	class noncopyable
