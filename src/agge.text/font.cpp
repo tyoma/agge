@@ -1,9 +1,17 @@
 #include <agge.text/font.h>
 
+#include <agge.text/glyph.h>
+
 using namespace std;
 
 namespace agge
 {
+	font::~font()
+	{
+		for (glyphs_cache_t::const_iterator i = _glyphs.begin(); i != _glyphs.end(); ++i)
+			delete i->second;
+	}
+	
 	const glyph *font::get_glyph(wchar_t character) const
 	{
 		uint16_t index = get_glyph_index(character);

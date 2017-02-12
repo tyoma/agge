@@ -16,7 +16,7 @@ namespace agge
 		typedef std::shared_ptr<font> ptr;
 
 	public:
-		virtual ~font() { }
+		virtual ~font();
 
 		const glyph *get_glyph(wchar_t character) const;
 		real_t get_kerning(wchar_t former, wchar_t latter) const;

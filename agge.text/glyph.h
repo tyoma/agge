@@ -10,6 +10,8 @@ namespace agge
 		class path_iterator;
 
 	public:
+		virtual ~glyph() { }
+
 		path_iterator get_path() const;
 
 	public:

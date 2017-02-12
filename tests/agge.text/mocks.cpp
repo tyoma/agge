@@ -8,6 +8,31 @@ namespace agge
 	{
 		namespace mocks
 		{
+			class glyph : public agge::glyph
+			{
+			public:
+				glyph(size_t *glyphs_alive);
+				virtual ~glyph();
+
+			private:
+				size_t *_glyphs_alive;
+			};
+
+
+
+			glyph::glyph(size_t *glyphs_alive)
+				: _glyphs_alive(glyphs_alive)
+			{
+				if (_glyphs_alive)
+					++*_glyphs_alive;
+			}
+
+			glyph::~glyph()
+			{
+				if (_glyphs_alive)
+					--*_glyphs_alive;
+			}
+
 			uint16_t font::get_glyph_index(wchar_t character) const
 			{
 				indices_map_t::const_iterator i = _indices.find(character);
@@ -15,9 +40,9 @@ namespace agge
 				return i != _indices.end() ? i->second : 0xffff;
 			}
 
-			const glyph *font::load_glyph(uint16_t index) const
+			const agge::glyph *font::load_glyph(uint16_t index) const
 			{
-				agge::glyph *g = new agge::glyph;
+				mocks::glyph *g = new mocks::glyph(_glyphs_alive);
 
 				g->advance_x = static_cast<real_t>(_glyphs[index].metrics.dx);
 				g->advance_y = static_cast<real_t>(_glyphs[index].metrics.dy);

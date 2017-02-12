@@ -19,7 +19,7 @@ namespace agge
 
 			public:
 				template <size_t indices_n, size_t glyphs_n>
-				font(char_to_index (&indices)[indices_n], glyph (&glyphs)[glyphs_n]);
+				font(char_to_index (&indices)[indices_n], glyph (&glyphs)[glyphs_n], size_t *glyphs_alive = 0);
 
 			private:
 				typedef std::map<wchar_t, uint16_t> indices_map_t;
@@ -32,6 +32,7 @@ namespace agge
 			private:
 				indices_map_t _indices;
 				std::vector<glyph> _glyphs;
+				size_t *_glyphs_alive;
 			};
 
 			struct font::char_to_index
@@ -56,8 +57,8 @@ namespace agge
 
 
 			template <size_t indices_n, size_t glyphs_n>
-			inline font::font(char_to_index (&indices)[indices_n], glyph (&glyphs)[glyphs_n])
-				: _indices(indices, indices + indices_n), _glyphs(glyphs, glyphs + glyphs_n)
+			inline font::font(char_to_index (&indices)[indices_n], glyph (&glyphs)[glyphs_n], size_t *glyphs_alive)
+				: _indices(indices, indices + indices_n), _glyphs(glyphs, glyphs + glyphs_n), _glyphs_alive(glyphs_alive)
 			{	}
 		}
 	}
