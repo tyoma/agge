@@ -1,4 +1,5 @@
-﻿Microsoft Visual Studio Solution File, Format Version 10.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{33B2BE07-29E7-4FA3-BD1E-B602AB81B30C}"
 EndProject
@@ -9,13 +10,15 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agge.tests", "..\tests\agge
 		{AD0BA725-9F6F-474E-ADB0-1F506B1CD394} = {AD0BA725-9F6F-474E-ADB0-1F506B1CD394}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{BF2551B5-B129-45AE-B843-941E02412E5C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libraries", "libraries", "{59AB064E-57B6-4CA6-A928-B66140337CC7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utee", "..\misc\libraries\utee\make\utee.v90.vcproj", "{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utee-runner", "..\misc\libraries\utee\make\utee-runner.v90.vcproj", "{AD0BA725-9F6F-474E-ADB0-1F506B1CD394}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "experiments", "experiments", "{02899CD5-2376-4098-B158-42492A7E0745}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sandbox", "..\misc\experiments\sandbox\sandbox.vcproj", "{F163B375-1168-4AB6-9008-DBA928A91CC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,14 +60,22 @@ Global
 		{AD0BA725-9F6F-474E-ADB0-1F506B1CD394}.Release|Win32.Build.0 = Release|Win32
 		{AD0BA725-9F6F-474E-ADB0-1F506B1CD394}.Release|x64.ActiveCfg = Release|x64
 		{AD0BA725-9F6F-474E-ADB0-1F506B1CD394}.Release|x64.Build.0 = Release|x64
+		{F163B375-1168-4AB6-9008-DBA928A91CC3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F163B375-1168-4AB6-9008-DBA928A91CC3}.Debug|Win32.Build.0 = Debug|Win32
+		{F163B375-1168-4AB6-9008-DBA928A91CC3}.Debug|x64.ActiveCfg = Debug|x64
+		{F163B375-1168-4AB6-9008-DBA928A91CC3}.Debug|x64.Build.0 = Debug|x64
+		{F163B375-1168-4AB6-9008-DBA928A91CC3}.Release|Win32.ActiveCfg = Release|Win32
+		{F163B375-1168-4AB6-9008-DBA928A91CC3}.Release|Win32.Build.0 = Release|Win32
+		{F163B375-1168-4AB6-9008-DBA928A91CC3}.Release|x64.ActiveCfg = Release|x64
+		{F163B375-1168-4AB6-9008-DBA928A91CC3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B3315418-4D30-4931-9424-E984483042F9} = {33B2BE07-29E7-4FA3-BD1E-B602AB81B30C}
-		{59AB064E-57B6-4CA6-A928-B66140337CC7} = {BF2551B5-B129-45AE-B843-941E02412E5C}
 		{4DB73ACE-2D47-4A6C-8213-2BE191DD921F} = {59AB064E-57B6-4CA6-A928-B66140337CC7}
 		{AD0BA725-9F6F-474E-ADB0-1F506B1CD394} = {59AB064E-57B6-4CA6-A928-B66140337CC7}
+		{F163B375-1168-4AB6-9008-DBA928A91CC3} = {02899CD5-2376-4098-B158-42492A7E0745}
 	EndGlobalSection
 EndGlobal
