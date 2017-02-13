@@ -322,9 +322,9 @@ namespace aggx
 				shl ecx, 1
 				shr ebx, cl
 less_than_9_bits:
-			xor eax, eax
+			XOR eax, eax
 				mov  ax, g_sqrt_table[ebx*2]
-			mov ecx, edx
+				mov ecx, edx
 				shr eax, cl
 		}
 #else

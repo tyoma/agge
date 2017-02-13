@@ -13,7 +13,7 @@ namespace agge
 
 	public:
 		template <typename BitmapT, typename MaskT, typename BlenderT, typename AlphaFn>
-		void operator ()(BitmapT &bitmap, const rect_i *window, const MaskT &mask, const BlenderT &blender, const AlphaFn &alpha);
+		void operator ()(BitmapT &bitmap_, const rect_i *window, const MaskT &mask, const BlenderT &blender, const AlphaFn &alpha);
 
 	private:
 		raw_memory_object _scanline_cache;
@@ -27,7 +27,7 @@ namespace agge
 		typedef typename BlenderT::cover_type cover_type;
 
 	public:
-		adapter(BitmapT &bitmap, const rect_i *window, const BlenderT &blender);
+		adapter(BitmapT &bitmap_, const rect_i *window, const BlenderT &blender);
 
 		bool set_y(int y);
 		void operator ()(int x, int length, const cover_type *covers);
@@ -47,13 +47,13 @@ namespace agge
 
 
 	template <typename BitmapT, typename BlenderT>
-	inline renderer::adapter<BitmapT, BlenderT>::adapter(BitmapT &bitmap, const rect_i *window, const BlenderT &blender)
+	inline renderer::adapter<BitmapT, BlenderT>::adapter(BitmapT &bitmap_, const rect_i *window, const BlenderT &blender)
 		: _blender(blender),
 			_offset_x(window ? window->x1 : 0),
-			_limit_x((!window || static_cast<int>(bitmap.width()) < width(*window) ? bitmap.width() : width(*window)) + _offset_x), 
-			_bitmap(bitmap),
+			_limit_x((!window || static_cast<int>(bitmap_.width()) < width(*window) ? bitmap_.width() : width(*window)) + _offset_x),
+			_bitmap(bitmap_),
 			_offset_y(window ? window->y1 : 0),
-			_limit_y((!window || static_cast<int>(bitmap.height()) < height(*window) ? bitmap.height() : height(*window)) + _offset_y)
+			_limit_y((!window || static_cast<int>(bitmap_.height()) < height(*window) ? bitmap_.height() : height(*window)) + _offset_y)
 	{	}
 
 	template <typename BitmapT, typename BlenderT>
@@ -139,26 +139,26 @@ namespace agge
 
 
 	template <typename BitmapT, typename BlenderT>
-	inline void fill(BitmapT &bitmap, const rect_i &area, const BlenderT &blender)
+	inline void fill(BitmapT &bitmap_, const rect_i &area, const BlenderT &blender)
 	{
 		const int x = agge_max(0, area.x1);
-		const int width = agge_min<int>(bitmap.width(), area.x2) - x;
+		const int width = agge_min<int>(bitmap_.width(), area.x2) - x;
 
 		if (width > 0)
 		{
-			for (int y = agge_max(0, area.y1), limit_y = agge_min<int>(bitmap.height(), area.y2); y < limit_y; ++y)
-				blender(bitmap.row_ptr(y) + x, x, y, width);
+			for (int y = agge_max(0, area.y1), limit_y = agge_min<int>(bitmap_.height(), area.y2); y < limit_y; ++y)
+				blender(bitmap_.row_ptr(y) + x, x, y, width);
 		}
 	}
 
 
 	template <typename BitmapT, typename MaskT, typename BlenderT, typename AlphaFn>
-	void renderer::operator ()(BitmapT &bitmap, const rect_i *window, const MaskT &mask, const BlenderT &blender,
+	void renderer::operator ()(BitmapT &bitmap_, const rect_i *window, const MaskT &mask, const BlenderT &blender,
 		const AlphaFn &alpha)
 	{
 		typedef adapter<BitmapT, BlenderT> rendition_adapter;
 
-		rendition_adapter ra(bitmap, window, blender);
+		rendition_adapter ra(bitmap_, window, blender);
 		scanline_adapter<rendition_adapter> scanline(ra, _scanline_cache, mask.width());
 
 		render(scanline, mask, alpha, 0, 1);

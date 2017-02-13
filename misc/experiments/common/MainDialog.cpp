@@ -34,6 +34,15 @@ namespace
 	const Timings c_zero_timings = { 0 };
 	const int c_initial_width = 736;
 	const int c_initial_height = 800;
+	
+	class Init
+	{
+	public:
+		Init()
+		{
+			::SetProcessDPIAware();
+		}
+	} g_init;
 }
 
 MainDialog::MainDialog(Drawer &drawer)
@@ -107,7 +116,7 @@ uintptr_t MainDialog::windowProc(unsigned int message, uintptr_t wparam, uintptr
 	case WM_PAINT:
 		{
 			PAINTSTRUCT ps;
-			LARGE_INTEGER counter;
+			long long counter;
 
 			_drawer.draw(_bitmap, _timings);
 

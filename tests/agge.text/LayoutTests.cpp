@@ -80,16 +80,18 @@ namespace agge
 				font::ptr f(new mocks::font(indices, glyphs));
 
 				// ACT
-				layout l1(L"ABC CBA AB\nABB BBC", f);
+				layout l1(L"ABC CBA AB\nABB BBC\n", f);
 				layout l2(L"AC CB\nA AB\nABB BBC\n", f);
+				layout l3(L"AC CB\nA AB\nABB BBC", f); // Last row will be checked even if no newline is encountered.
 				box_r box1 = l1.get_box();
 				box_r box2 = l2.get_box();
+				box_r box3 = l3.get_box();
 
 				// ASSERT
 				assert_equal(120.2f, box1.w);
 				assert_equal(87.1f, box2.w);
+				assert_equal(87.1f, box3.w);
 			}
-
 		
 		end_test_suite
 	}

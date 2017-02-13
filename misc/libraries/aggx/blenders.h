@@ -7,7 +7,7 @@
 
 namespace aggx
 {
-	class blender_solid_color
+	class blender_solid_color : agge::noncopyable
 	{
 	public:
 		typedef agge::uint8_t cover_type;

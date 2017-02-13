@@ -23,7 +23,6 @@
 #include <agge/bitmap.h>
 #include <agge/platform/win32/bitmap.h>
 
-#include <functional>
 #include <memory>
 
 struct HWND__;

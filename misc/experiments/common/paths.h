@@ -1,5 +1,6 @@
 #pragma once
 
+#include <agge/types.h>
 #include <aggx/aggx_math.h>
 #include <aggx/basics.h>
 
@@ -9,7 +10,7 @@ namespace demo
 {
 	typedef std::vector< std::pair<std::pair<aggx::real, aggx::real>, unsigned> > AggPath;
 
-	class agg_path_adaptor
+	class agg_path_adaptor : agge::noncopyable
 	{
 	public:
 		agg_path_adaptor(const AggPath &path)

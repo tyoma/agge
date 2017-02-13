@@ -21,12 +21,12 @@ namespace demo
 		aggx::real x, y;
 	};
 
-	inline void move_and_bounce(ball &ball, aggx::real dt, aggx::real w, aggx::real h)
+	inline void move_and_bounce(ball &ball_, aggx::real dt, aggx::real w, aggx::real h)
 	{
-		const aggx::real radius = ball.radius;
+		const aggx::real radius = ball_.radius;
 		const aggx::real l = radius, r = w - radius, t = radius, b = h - radius;
-		aggx::real &x = ball.x, &y = ball.y;
-		aggx::real &vx = ball.vx, &vy = ball.vy;
+		aggx::real &x = ball_.x, &y = ball_.y;
+		aggx::real &vx = ball_.vx, &vy = ball_.vy;
 		
 		x += dt * vx, y += dt * vy;
 
