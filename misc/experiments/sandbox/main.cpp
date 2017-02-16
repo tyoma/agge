@@ -1,4 +1,6 @@
+#include "../common/blenders.h"
 #include "../common/bouncing.h"
+#include "../common/ellipse.h"
 #include "../common/MainDialog.h"
 #include "../common/paths.h"
 #include "../common/timing.h"
@@ -12,15 +14,12 @@
 #include <agge/stroke.h>
 #include <agge/stroke_features.h>
 
-#include <aggx/aggx_ellipse.h>
-#include <aggx/blenders.h>
-
 using namespace agge;
 using namespace std;
-using namespace demo;
+using namespace common;
 
 const int c_thread_count = 1;
-const int c_balls_number = 0;
+const int c_balls_number = 400;
 typedef simd::blender_solid_color blender_used;
 
 namespace
@@ -67,7 +66,7 @@ namespace
 		}
 	};
 
-	simd::blender_solid_color::pixel make_pixel(aggx::rgba8 color)
+	simd::blender_solid_color::pixel make_pixel(rgba8 color)
 	{
 		simd::blender_solid_color::pixel p = { color.b, color.g, color.r, 0 };
 		return p;
@@ -77,7 +76,7 @@ namespace
 	class blender2 : public BlenderT
 	{
 	public:
-		blender2(aggx::rgba8 color)
+		blender2(rgba8 color)
 			: BlenderT(make_pixel(color), color.a)
 		{	}
 	};
@@ -140,7 +139,7 @@ namespace
 			_rasterizer.reset();
 
 			stopwatch(counter);
-				fill(surface, area, solid_color_brush(aggx::rgba8(255, 255, 255)));
+				fill(surface, area, solid_color_brush(rgba8(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
 
 			if (_balls.empty())
@@ -166,7 +165,7 @@ namespace
 					flatten<real_t>(_spiral_flattened, path_stroke1);
 				timings.stroking += stopwatch(counter);
 
-				solid_color_brush brush(aggx::rgba8(0, 154, 255, 255));
+				solid_color_brush brush(rgba8(0, 154, 255, 255));
 				agg_path_adaptor spiral(_spiral_flattened);
 
 				stopwatch(counter);
@@ -177,12 +176,12 @@ namespace
 				timings.rendition += stopwatch(counter);
 			}
 
-			for (vector<demo::ball>::iterator i = _balls.begin(); i != _balls.end(); ++i)
-				demo::move_and_bounce(*i, dt, static_cast<real_t>(surface.width()), static_cast<real_t>(surface.height()));
+			for (vector<ball>::iterator i = _balls.begin(); i != _balls.end(); ++i)
+				move_and_bounce(*i, dt, static_cast<real_t>(surface.width()), static_cast<real_t>(surface.height()));
 
-			for (vector<demo::ball>::iterator i = _balls.begin(); i != _balls.end(); ++i)
+			for (vector<ball>::iterator i = _balls.begin(); i != _balls.end(); ++i)
 			{
-				aggx::ellipse e(i->x, i->y, i->radius, i->radius);
+				ellipse e(i->x, i->y, i->radius, i->radius);
 
 				_rasterizer.reset();
 
@@ -206,7 +205,7 @@ namespace
 		__declspec(align(16)) renderer_parallel _renderer;
 		AggPath _spiral, _spiral_flattened;
 		long long _balls_timer;
-		vector<demo::ball> _balls;
+		vector<ball> _balls;
 		stroke _stroke1, _stroke2;
 		dash _dash;
 	};

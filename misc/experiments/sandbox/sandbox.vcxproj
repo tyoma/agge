@@ -70,10 +70,10 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\libraries\aggx\aggx_ellipse.h" />
-    <ClInclude Include="..\..\libraries\aggx\basics.h" />
-    <ClInclude Include="..\..\libraries\aggx\blenders.h" />
+    <ClInclude Include="..\common\blenders.h" />
     <ClInclude Include="..\common\bouncing.h" />
+    <ClInclude Include="..\common\color.h" />
+    <ClInclude Include="..\common\ellipse.h" />
     <ClInclude Include="..\common\MainDialog.h" />
     <ClInclude Include="..\common\paths.h" />
     <ClInclude Include="..\common\timing.h" />

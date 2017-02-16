@@ -218,10 +218,6 @@
     <None Include="res\gdiperformance.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\libraries\aggx\aggx_ellipse.h" />
-    <ClInclude Include="..\..\libraries\aggx\basics.h" />
-    <ClInclude Include="..\..\libraries\aggx\blenders.h" />
-    <ClInclude Include="..\..\libraries\aggx\paths.h" />
     <ClInclude Include="BarsModel.h" />
     <ClInclude Include="BarView.h" />
     <ClInclude Include="ChildView.h" />

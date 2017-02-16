@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+#include "../common/blenders.h"
+#include "../common/color.h"
 #include "../common/paths.h"
-
-#include <aggx/blenders.h>
 
 #include <agge/clipper.h>
 #include <agge/path.h>
@@ -30,8 +30,7 @@
 #include <memory>
 
 using namespace agge;
-using namespace aggx;
-using namespace demo;
+using namespace common;
 using namespace std;
 
 namespace
@@ -201,7 +200,7 @@ try
 	AGG* agg = reinterpret_cast<AGG*>(env->GetLongField(obj, fieldidAGG));
 
 	agg->spiral.clear();
-	demo::spiral(agg->spiral, width / 2, height / 2, 5, (std::min)(width, height) / 2 - 10, 1, 0);
+	spiral(agg->spiral, width / 2, height / 2, 5, (std::min)(width, height) / 2 - 10, 1, 0);
 }
 catch (...)
 {

@@ -2,41 +2,36 @@
 #include "ChildView.h"
 #include "resource.h"
 
+#include "../common/color.h"
+#include "../common/ellipse.h"
 #include "../common/paths.h"
 
 #include <agge/blenders_simd.h>
 #include <agge/renderer.h>
 #include <agge/stroke_features.h>
 
-#include <aggx/aggx_ellipse.h>
-#include <aggx/paths.h>
-
 #include <memory>
 #include <functional>
 #include <algorithm>
 
-namespace std
-{
-	using tr1::shared_ptr;
-	using tr1::bind;
-	using namespace tr1::placeholders;
-}
+namespace std { namespace tr1 { } using namespace tr1; }
 
+using namespace agge;
 using namespace std;
 using namespace Gdiplus;
-using namespace aggx;
+using namespace common;
 
-namespace demo
+namespace common
 {
 	typedef std::pair< std::vector<Gdiplus::PointF>, std::vector<BYTE> > GdipPath;
 
 	void pathStart(HDC /*hdc*/)
 	{	}
 
-	void pathMoveTo(HDC hdc, real x, real y)
+	void pathMoveTo(HDC hdc, real_t x, real_t y)
 	{	::MoveToEx(hdc, static_cast<int>(x), static_cast<int>(y), NULL);	}
 	
-	void pathLineTo(HDC hdc, real x, real y)
+	void pathLineTo(HDC hdc, real_t x, real_t y)
 	{	::LineTo(hdc, static_cast<int>(x), static_cast<int>(y));	}
 
 	void pathEnd(HDC /*hdc*/)
@@ -46,13 +41,13 @@ namespace demo
 	void pathStart(GdipPath &/*path*/)
 	{	}
 
-	void pathMoveTo(GdipPath &path, real x, real y)
+	void pathMoveTo(GdipPath &path, real_t x, real_t y)
 	{
 		path.first.push_back(PointF(x, y));
 		path.second.push_back(PathPointTypeStart);
 	}
 	
-	void pathLineTo(GdipPath &path, real x, real y)
+	void pathLineTo(GdipPath &path, real_t x, real_t y)
 	{
 		path.first.push_back(PointF(x, y));
 		path.second.push_back(PathPointTypeLine);
@@ -65,14 +60,14 @@ namespace demo
 	void pathStart(ID2D1GeometrySink &/*path*/)
 	{	}
 
-	void pathMoveTo(ID2D1GeometrySink &path, real x, real y)
+	void pathMoveTo(ID2D1GeometrySink &path, real_t x, real_t y)
 	{
 		D2D1_POINT_2F p = { x, y };
 
 		path.BeginFigure(p, D2D1_FIGURE_BEGIN_HOLLOW);
 	}
 	
-	void pathLineTo(ID2D1GeometrySink &path, real x, real y)
+	void pathLineTo(ID2D1GeometrySink &path, real_t x, real_t y)
 	{
 		D2D1_POINT_2F p = { x, y };
 
@@ -486,7 +481,7 @@ void CChildView::OnPaint()
 
 				CPen *previousPen = target.SelectObject(&pen);
 
-				demo::spiral(target, client.Width() / 2, client.Height() / 2, 5, (std::min)(client.Width(), client.Height()) / 2 - 10, 1, 0);
+				spiral(target, client.Width() / 2, client.Height() / 2, 5, (std::min)(client.Width(), client.Height()) / 2 - 10, 1, 0);
 				dc.SelectObject(previousPen);
 			}
 		}
@@ -555,7 +550,7 @@ void CChildView::OnPaint()
 			if (_drawSpiral)
 			{
 				_agg_rasterizer.reset();
-				add_path(_agg_rasterizer, demo::agg_path_adaptor(_agg_path_flatten));
+				add_path(_agg_rasterizer, agg_path_adaptor(_agg_path_flatten));
 				_agg_rasterizer.sort();
 				_renderer(_agg_bitmap, 0, _agg_rasterizer, blender(rgba8(0, 150, 255)),
 					calculate_alpha<8>());
@@ -575,9 +570,9 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 	{
 		_agg_bitmap.resize(cx, cy);
 
-		demo::GdipPath spiralGdip;
+		GdipPath spiralGdip;
 
-		demo::spiral(spiralGdip, cx / 2, cy / 2, 5, (std::min)(cx, cy) / 2 - 10, 1, 0);
+		spiral(spiralGdip, cx / 2, cy / 2, 5, (std::min)(cx, cy) / 2 - 10, 1, 0);
 		_gdip_path.reset(new GraphicsPath(&spiralGdip.first[0], &spiralGdip.second[0], spiralGdip.first.size()));
 
 		_d2d_path.Release();
@@ -585,22 +580,22 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 
 		CComPtr<ID2D1GeometrySink> sink;
 		_d2d_path->Open(&sink);
-		demo::spiral(*sink, cx / 2, cy / 2, 5, (std::min)(cx, cy) / 2 - 10, 1, 0);
+		spiral(*sink, cx / 2, cy / 2, 5, (std::min)(cx, cy) / 2 - 10, 1, 0);
 		sink->Close();
 
 		_agg_path.clear();
-		demo::spiral(_agg_path, cx / 2, cy / 2, 5, (std::min)(cx, cy) / 2 - 10, 1, 0);
+		spiral(_agg_path, cx / 2, cy / 2, 5, (std::min)(cx, cy) / 2 - 10, 1, 0);
 
-		demo::agg_path_adaptor p(_agg_path);
+		agg_path_adaptor p(_agg_path);
 
 		_stroke.width(3);
 		_stroke.set_cap(agge::caps::butt());
 		_stroke.set_join(agge::joins::bevel());
 
-		agge::path_generator_adapter<demo::agg_path_adaptor, agge::stroke> stroke_path(p, _stroke);
+		agge::path_generator_adapter<agg_path_adaptor, agge::stroke> stroke_path(p, _stroke);
 
 		_agg_path_flatten.clear();
-		demo::flatten<real>(_agg_path_flatten, stroke_path);
+		flatten<real_t>(_agg_path_flatten, stroke_path);
 	}
 
 	_buffer.DeleteObject();
@@ -790,7 +785,7 @@ void CChildView::drawEllipses(ID2D1RenderTarget *graphics, const CSize &client, 
 	});
 }
 
-void CChildView::drawLines(bitmap &b, const CSize &client, const std::vector<bar> &bars)
+void CChildView::drawLines(::bitmap &b, const CSize &client, const std::vector<bar> &bars)
 {
 	const int d = 2, v = client.cy / 2;
 	int x = 0;
@@ -820,7 +815,7 @@ void CChildView::drawLines(bitmap &b, const CSize &client, const std::vector<bar
 		calculate_alpha<8>());
 }
 
-void CChildView::drawBars(bitmap &b, const CSize &client, const vector<bar> &bars)
+void CChildView::drawBars(::bitmap &b, const CSize &client, const vector<bar> &bars)
 {
 	const float d = 2.0f, v = client.cy / 2;
 	float x = 0.0f;
@@ -858,7 +853,7 @@ void CChildView::drawBars(bitmap &b, const CSize &client, const vector<bar> &bar
 		calculate_alpha<8>());
 }
 
-void CChildView::drawEllipses(bitmap &b, const CSize &client, const vector<ellipse_t> &ellipses)
+void CChildView::drawEllipses(::bitmap &b, const CSize &client, const vector<ellipse_t> &ellipses)
 {
 	for_each(ellipses.begin(), ellipses.end(), [&] (const ellipse_t &e) {
 

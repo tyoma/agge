@@ -25,14 +25,9 @@
 #ifndef AGGX_ELLIPSE_INCLUDED
 #define AGGX_ELLIPSE_INCLUDED
 
-#include <agge/path.h>
-#include <agge/types.h>
+#include "paths.h"
 
-#include "basics.h"
-
-#include <math.h>
-
-namespace aggx
+namespace common
 {
 
     //----------------------------------------------------------------ellipse
@@ -97,7 +92,7 @@ namespace aggx
     {
         agge::real_t ra = (fabs(m_rx) + fabs(m_ry)) / 2;
         agge::real_t da = acos(ra / (ra + 0.125f / m_scale)) * 2;
-        m_num = uround(2*pi / da);
+        m_num = static_cast<int>(2*pi / da);
     }
 
     //------------------------------------------------------------------------

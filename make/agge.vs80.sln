@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "experiments", "experiments"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sandbox", "..\misc\experiments\sandbox\sandbox.vcproj", "{F163B375-1168-4AB6-9008-DBA928A91CC3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "text", "..\misc\experiments\text\text.vcproj", "{DA3448AA-73D8-44AB-97EF-89B861B0FB25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -68,6 +70,14 @@ Global
 		{F163B375-1168-4AB6-9008-DBA928A91CC3}.Release|Win32.Build.0 = Release|Win32
 		{F163B375-1168-4AB6-9008-DBA928A91CC3}.Release|x64.ActiveCfg = Release|x64
 		{F163B375-1168-4AB6-9008-DBA928A91CC3}.Release|x64.Build.0 = Release|x64
+		{DA3448AA-73D8-44AB-97EF-89B861B0FB25}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DA3448AA-73D8-44AB-97EF-89B861B0FB25}.Debug|Win32.Build.0 = Debug|Win32
+		{DA3448AA-73D8-44AB-97EF-89B861B0FB25}.Debug|x64.ActiveCfg = Debug|x64
+		{DA3448AA-73D8-44AB-97EF-89B861B0FB25}.Debug|x64.Build.0 = Debug|x64
+		{DA3448AA-73D8-44AB-97EF-89B861B0FB25}.Release|Win32.ActiveCfg = Release|Win32
+		{DA3448AA-73D8-44AB-97EF-89B861B0FB25}.Release|Win32.Build.0 = Release|Win32
+		{DA3448AA-73D8-44AB-97EF-89B861B0FB25}.Release|x64.ActiveCfg = Release|x64
+		{DA3448AA-73D8-44AB-97EF-89B861B0FB25}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,5 +87,6 @@ Global
 		{4DB73ACE-2D47-4A6C-8213-2BE191DD921F} = {59AB064E-57B6-4CA6-A928-B66140337CC7}
 		{AD0BA725-9F6F-474E-ADB0-1F506B1CD394} = {59AB064E-57B6-4CA6-A928-B66140337CC7}
 		{F163B375-1168-4AB6-9008-DBA928A91CC3} = {02899CD5-2376-4098-B158-42492A7E0745}
+		{DA3448AA-73D8-44AB-97EF-89B861B0FB25} = {02899CD5-2376-4098-B158-42492A7E0745}
 	EndGlobalSection
 EndGlobal

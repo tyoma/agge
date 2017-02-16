@@ -1,14 +1,27 @@
 #pragma once
 
+#include <agge/path.h>
 #include <agge/types.h>
-#include <aggx/aggx_math.h>
-#include <aggx/basics.h>
-
+#include <math.h>
 #include <vector>
 
-namespace demo
+namespace common
 {
-	typedef std::vector< std::pair<std::pair<aggx::real, aggx::real>, unsigned> > AggPath;
+	const agge::real_t pi = 3.14159265358979323846f;
+
+	inline float cos(float value)
+	{	return ::cosf(value);	}
+
+	inline float sin(float value)
+	{	return ::sinf(value);	}
+
+	inline double cos(double value)
+	{	return ::cos(value);	}
+
+	inline double sin(double value)
+	{	return ::sin(value);	}
+
+	typedef std::vector< std::pair<std::pair<agge::real_t, agge::real_t>, unsigned> > AggPath;
 
 	class agg_path_adaptor : agge::noncopyable
 	{
@@ -23,18 +36,10 @@ namespace demo
 			_position = _path.begin();
 		}
 
-		unsigned vertex(float* x, float* y)
+		unsigned vertex(agge::real_t* x, agge::real_t* y)
 		{
 			if (_position == _path.end())
-				return aggx::path_cmd_stop;
-			else
-				return *x = _position->first.first, *y = _position->first.second, _position++->second;
-		}
-
-		unsigned vertex(double* x, double* y)
-		{
-			if (_position == _path.end())
-				return aggx::path_cmd_stop;
+				return agge::path_command_stop;
 			else
 				return *x = _position->first.first, *y = _position->first.second, _position++->second;
 		}
@@ -43,41 +48,79 @@ namespace demo
 		const AggPath &_path;
 		AggPath::const_iterator _position;
 	};
+	
+	class line_adaptor
+	{
+	public:
+		line_adaptor(agge::real_t x1, agge::real_t y1, agge::real_t x2, agge::real_t y2)
+			: _x1(x1), _y1(y1), _x2(x2), _y2(y2), _pos(0)
+		{	}
 
-	void pathStart(AggPath &/*path*/)
+		void rewind(unsigned)
+		{
+			_pos = 0;
+		}
+
+		unsigned vertex(agge::real_t* x, agge::real_t* y)
+		{
+			switch (_pos)
+			{
+			case 0:
+				*x = _x1, *y = _y1;
+				++_pos;
+				return agge::path_command_move_to;
+
+			case 1:
+				*x = _x2, *y = _y2;
+				++_pos;
+				return agge::path_command_line_to;
+
+			default:
+				return agge::path_command_stop;
+			}
+		}
+
+	private:
+		agge::real_t _x1, _y1, _x2, _y2;
+		int _pos;
+	};
+
+	inline void pathStart(AggPath &/*path*/)
 	{	}
 
-	void pathMoveTo(AggPath &path, aggx::real x, aggx::real y)
-	{	path.push_back(std::make_pair(std::make_pair(x, y), aggx::path_cmd_move_to));	}
+	inline void pathMoveTo(AggPath &path, agge::real_t x, agge::real_t y)
+	{	path.push_back(std::make_pair(std::make_pair(x, y), agge::path_command_move_to));	}
 	
-	void pathLineTo(AggPath &path, aggx::real x, aggx::real y)
-	{	path.push_back(std::make_pair(std::make_pair(x, y), aggx::path_cmd_line_to));	}
+	inline void pathLineTo(AggPath &path, agge::real_t x, agge::real_t y)
+	{	path.push_back(std::make_pair(std::make_pair(x, y), agge::path_command_line_to));	}
 
-	void pathEnd(AggPath &path)
-	{	path.push_back(std::make_pair(std::make_pair(0.0f, 0.0f), aggx::path_cmd_stop));	}
+	inline void pathEnd(AggPath &path)
+	{	path.push_back(std::make_pair(std::make_pair(0.0f, 0.0f), agge::path_command_stop));	}
 
 	template <typename RealT, typename TargetT, typename PathT>
-	void flatten(TargetT &destination, PathT &source)
+	inline void flatten(TargetT &destination, PathT &source)
 	{
 		unsigned cmd;
 		RealT x, y;
 
 		source.rewind(0);
-		while (!aggx::is_stop(cmd = source.vertex(&x, &y)))
+		while (cmd = source.vertex(&x, &y), cmd != agge::path_command_stop)
 			destination.push_back(std::make_pair(std::make_pair(x, y), cmd));
 	}
 
 	template <typename TargetT>
-	void spiral(TargetT &target, aggx::real x, aggx::real y, aggx::real r1, aggx::real r2, aggx::real step, aggx::real start_angle)
+	inline void spiral(TargetT &target, agge::real_t x, agge::real_t y, agge::real_t r1, agge::real_t r2,
+		agge::real_t step, agge::real_t start_angle)
 	{
-		const aggx::real k = 4.0f;
+		const agge::real_t k = 4.0f;
 
 		bool start = true;
 
 		pathStart(target);
-		for (aggx::real angle = start_angle, dr = k * step / 45.0f, da = k / 180.0f * aggx::pi; r1 < r2; r1 += dr, angle += da, start = false)
+		for (agge::real_t angle = start_angle, dr = k * step / 45.0f, da = k / 180.0f * pi;
+			r1 < r2; r1 += dr, angle += da, start = false)
 		{
-			const aggx::real px = x + aggx::cos(angle) * r1, py = y + aggx::sin(angle) * r1;
+			const agge::real_t px = x + cos(angle) * r1, py = y + sin(angle) * r1;
 
 			if (start)
 				pathMoveTo(target, px, py);
@@ -86,5 +129,4 @@ namespace demo
 		}
 		pathEnd(target);
 	}
-
 }

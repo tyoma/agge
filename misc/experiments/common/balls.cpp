@@ -1,8 +1,6 @@
 #include "bouncing.h"
 
-using namespace aggx;
-
-namespace demo
+namespace common
 {
 	const ball c_balls_array[] = {
 		ball(24.520403f, rgba8(122, 149, 206, 57), 0.563585f, 0.001251f, 0.0f, 0.0f),

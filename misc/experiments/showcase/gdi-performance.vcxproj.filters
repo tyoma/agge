@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="aggx">
-      <UniqueIdentifier>{e7f1c68a-d20f-434f-b014-69607b00c844}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\gdiperformance.rc2">
@@ -49,18 +46,6 @@
     </ClInclude>
     <ClInclude Include="BarsModel.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\basics.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\paths.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\blenders.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\aggx_ellipse.h">
-      <Filter>aggx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

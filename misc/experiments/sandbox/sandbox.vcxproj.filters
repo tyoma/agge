@@ -13,12 +13,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\libraries\aggx\basics.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\blenders.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\paths.h">
       <Filter>common</Filter>
     </ClInclude>
@@ -28,17 +22,20 @@
     <ClInclude Include="..\common\timing.h">
       <Filter>common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libraries\aggx\aggx_ellipse.h">
-      <Filter>aggx</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\MainDialog.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\color.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\ellipse.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\blenders.h">
       <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="aggx">
-      <UniqueIdentifier>{54b2bb9b-e47f-4fc7-8e76-0428a344a1a3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="common">
       <UniqueIdentifier>{ae002ae0-404e-4727-ae0a-72585e494442}</UniqueIdentifier>
     </Filter>

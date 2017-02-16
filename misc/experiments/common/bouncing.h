@@ -1,9 +1,10 @@
 #pragma once
 
-#include <aggx/basics.h>
+#include "color.h"
+
 #include <vector>
 
-namespace demo
+namespace common
 {
 	struct ball
 	{
@@ -11,22 +12,22 @@ namespace demo
 			: radius(1.0f), color(128, 128, 128, 10), vx(1.0f), vy(1.0f), x(1.0f), y(1.0f)
 		{	}
 
-		ball(aggx::real radius_, aggx::rgba8 color_, aggx::real vx_, aggx::real vy_, aggx::real x_, aggx::real y_)
+		ball(agge::real_t radius_, rgba8 color_, agge::real_t vx_, agge::real_t vy_, agge::real_t x_, agge::real_t y_)
 			: radius(radius_), color(color_), vx(vx_), vy(vy_), x(x_), y(y_)
 		{	}
 
-		aggx::real radius;
-		aggx::rgba8 color;
-		aggx::real vx, vy;
-		aggx::real x, y;
+		agge::real_t radius;
+		rgba8 color;
+		agge::real_t vx, vy;
+		agge::real_t x, y;
 	};
 
-	inline void move_and_bounce(ball &ball_, aggx::real dt, aggx::real w, aggx::real h)
+	inline void move_and_bounce(ball &ball_, agge::real_t dt, agge::real_t w, agge::real_t h)
 	{
-		const aggx::real radius = ball_.radius;
-		const aggx::real l = radius, r = w - radius, t = radius, b = h - radius;
-		aggx::real &x = ball_.x, &y = ball_.y;
-		aggx::real &vx = ball_.vx, &vy = ball_.vy;
+		const agge::real_t radius = ball_.radius;
+		const agge::real_t l = radius, r = w - radius, t = radius, b = h - radius;
+		agge::real_t &x = ball_.x, &y = ball_.y;
+		agge::real_t &vx = ball_.vx, &vy = ball_.vy;
 		
 		x += dt * vx, y += dt * vy;
 
