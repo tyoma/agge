@@ -3,8 +3,6 @@
 #include "tools.h"
 #include "types.h"
 
-#include <string.h>
-
 namespace agge
 {
 	template <typename T>
@@ -65,7 +63,13 @@ namespace agge
 	template <typename T>
 	inline pod_vector<T>::pod_vector(const pod_vector &other)
 		: _begin(new T[other.capacity()]), _end(_begin + other.size()), _limit(_begin + other.capacity())
-	{	memcpy(_begin, other._begin, sizeof(T) * other.size());	}
+	{
+		const_iterator i = other.begin();
+		iterator j = begin();
+
+		while (i != other.end())
+			*j++ = *i++;
+	}
 
 	template <typename T>
 	inline pod_vector<T>::~pod_vector()
@@ -152,9 +156,10 @@ namespace agge
 
 		new_capacity += agge_max(2 * by > new_capacity ? by : new_capacity / 2, 1u);
 
-		T *buffer = new T[new_capacity];
-
-		memcpy(buffer, _begin, sizeof(T) * size);
+		T *buffer = new T[new_capacity], *p = buffer;
+		
+		for (iterator i = _begin; i != _end; )
+			*p++ = *i++;
 		delete []_begin;
 		_begin = buffer;
 		_end = _begin + size;

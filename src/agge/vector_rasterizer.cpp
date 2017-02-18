@@ -2,13 +2,26 @@
 
 #include <agge/config.h>
 #include <agge/precise_delta.h>
-#include <agge/tools.h>
 
 namespace agge
 {
 	namespace
 	{
 		const vector_rasterizer::cell empty_cell = { 0 };
+
+		template <typename T>
+		void update_min(T &value, T candidate)
+		{
+			if (candidate < value)
+				value = candidate;
+		}
+
+		template <typename T>
+		void update_max(T &value, T candidate)
+		{
+			if (candidate > value)
+				value = candidate;
+		}
 	}
 
 	vector_rasterizer::vector_rasterizer()
@@ -127,6 +140,32 @@ namespace agge
 			if (int dy = fy2 - far)
 				hline(tg_delta, ey1, x_to, x2, dy);
 		}
+	}
+
+	void vector_rasterizer::append(const vector_rasterizer &source, int dx_, int dy_)
+	{
+		cells_container::iterator w = _current;
+		const short dx = static_cast<short>(dx_), dy = static_cast<short>(dy_);
+		count_t start = _cells.size() - 1; // Relying on a guarantee that we had at least one cell prior this call.
+
+		if (w->area | w->cover)
+			++start;
+		_cells.resize(start + source._cells.size()); // May throw, so no state change prior this call.
+		_sorted = 0;
+		w = _cells.begin() + start;
+		for (const_cells_iterator i = source._cells.begin(), end = source._cells.end(); i != end; ++i)
+		{
+			cell c = *i;
+
+			c.x += dx, c.y += dy;
+			*w++ = c;
+		}
+		_current = --w;
+
+		update_min(_min_x, source._min_x + dx_);
+		update_min(_min_y, source._min_y + dy_);
+		update_max(_max_x, source._max_x + dx_);
+		update_max(_max_y, source._max_y + dy_);
 	}
 
 	void vector_rasterizer::sort()
@@ -257,9 +296,9 @@ namespace agge
 
 	AGGE_INLINE void vector_rasterizer::extend_bounds(int x, int y)
 	{
-		if (x < _min_x) _min_x = x;
-		if (x > _max_x) _max_x = x;
-		if (y < _min_y) _min_y = y;
-		if (y > _max_y) _max_y = y;
+		update_min(_min_x, x);
+		update_min(_min_y, y);
+		update_max(_max_x, x);
+		update_max(_max_y, y);
 	}
 }

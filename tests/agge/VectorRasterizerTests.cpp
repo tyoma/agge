@@ -41,6 +41,9 @@ namespace agge
 	bool operator ==(const vector_rasterizer::cell &lhs, const vector_rasterizer::cell &rhs)
 	{	return lhs.x == rhs.x && lhs.y == rhs.y && lhs.cover == rhs.cover && lhs.area == rhs.area;	}
 
+	bool operator ==(const vector_rasterizer::cells_container &lhs, const vector_rasterizer::cells_container &rhs)
+	{	return lhs.size() == rhs.size() && equal(lhs.begin(), lhs.end(), rhs.begin());	}
+
 	namespace
 	{
 		int fp(double value)
@@ -51,6 +54,14 @@ namespace agge
 			vector_rasterizer::scanline_cells row = r[y];
 
 			return vector<vector_rasterizer::cell>(row.first, row.second);
+		}
+
+		void rectangle(vector_rasterizer &vr, double x1, double y1, double x2, double y2)
+		{
+			vr.line(fp(x1), fp(y2), fp(x1), fp(y1));
+			vr.line(fp(x1), fp(y1), fp(x2), fp(y1));
+			vr.line(fp(x2), fp(y1), fp(x2), fp(y2));
+			vr.line(fp(x2), fp(y2), fp(x1), fp(y2));
 		}
 
 		void assert_hslope(const vector_rasterizer &vr, int ydelta)
@@ -1292,6 +1303,133 @@ namespace agge
 				// ASSERT
 				assert_equal(2, vr.height());
 				assert_hslope(vr, -0x1FE);
+			}
+
+
+			test( OperandCellsAreAppendedOnMerge )
+			{
+				// INIT
+				vector_rasterizer vr1, vr2, vr3;
+
+				rectangle(vr1, -0.9, 2.9, 1.9, 1.1);
+				rectangle(vr2, 1.3, 1.7, 2.9, 0.1);
+				rectangle(vr3, 3.1, -1, 4, -3.75);
+
+				// ACT
+				vr1.append(vr2, 0, 0);
+
+				// ASSERT
+				vector_rasterizer reference;
+
+				rectangle(reference, -0.9, 2.9, 1.9, 1.1);
+				rectangle(reference, 1.3, 1.7, 2.9, 0.1);
+
+				assert_equal(reference.cells(), vr1.cells());
+
+				// ACT
+				vr1.append(vr3, 0, 0);
+
+				// ASSERT
+				rectangle(reference, 3.1, -1, 4, -3.75);
+
+				assert_equal(reference.cells(), vr1.cells());
+			}
+
+
+			test( OffsetAppendedCellsAreShiftedOnMerge )
+			{
+				// INIT
+				vector_rasterizer vr1, vr2;
+
+				rectangle(vr2, -0.9, 2.9, 1.9, 1.1);
+
+				// ACT
+				vr1.append(vr2, 17, 19);
+
+				// ASSERT
+				vector_rasterizer reference;
+
+				rectangle(reference, -0.9 + 17, 2.9 + 19, 1.9 + 17, 1.1 + 19);
+
+				assert_equal(reference.cells(), vr1.cells());
+
+				// ACT
+				vr1.append(vr2, -13, -71);
+
+				// ASSERT
+				rectangle(reference, -0.9 - 13, 2.9 - 71, 1.9 - 13, 1.1 - 71);
+
+				assert_equal(reference.cells(), vr1.cells());
+			}
+
+
+			test( RasterizerBecomesUnsortedAfterAppend )
+			{
+				// INIT
+				vector_rasterizer vr1, vr2;
+
+				rectangle(vr1, -0.9, 2.9, 1.9, 1.1);
+				vr1.sort();
+				rectangle(vr2, -0.9, 2.9, 1.9, 1.1);
+
+				// ACT
+				vr1.append(vr2, 1, 2);
+
+				// ASSERT
+				assert_is_false(vr1.sorted());
+			}
+
+
+			test( BoundsAreExtendedOnAppend )
+			{
+				// INIT
+				vector_rasterizer vr1, vr2, vr3;
+
+				rectangle(vr1, 1, 1, 3, -4);
+				rectangle(vr2, -10, -131, 13, -100);
+				rectangle(vr3, -111, -190, 0, 0);
+
+				// ACT
+				vr1.append(vr2, 0, 0);
+
+				// ASSERT
+				assert_equal(24, vr1.width());
+				assert_equal(-131, vr1.min_y());
+				assert_equal(133, vr1.height());
+
+				// ACT
+				vr1.append(vr3, 0, 0);
+
+				// ASSERT
+				assert_equal(125, vr1.width());
+				assert_equal(-190, vr1.min_y());
+				assert_equal(192, vr1.height());
+			}
+
+
+			test( BoundsAreExtendedOnAppendWithOffset )
+			{
+				// INIT
+				vector_rasterizer vr1, vr2;
+
+				rectangle(vr1, 1, 1, 3, -4);
+				rectangle(vr2, -10, -131, 13, -100);
+
+				// ACT
+				vr1.append(vr2, -101, -102);
+
+				// ASSERT
+				assert_equal(115, vr1.width());
+				assert_equal(-233, vr1.min_y());
+				assert_equal(235, vr1.height());
+
+				// ACT
+				vr1.append(vr2, 1001, 1003);
+
+				// ASSERT
+				assert_equal(1126, vr1.width());
+				assert_equal(-233, vr1.min_y());
+				assert_equal(1137, vr1.height());
 			}
 
 		end_test_suite
