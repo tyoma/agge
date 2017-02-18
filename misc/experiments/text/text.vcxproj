@@ -45,6 +45,10 @@
     <ClCompile>
       <AdditionalIncludeDirectories>./../../..;./../../libraries;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</TreatWarningAsError>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</TreatWarningAsError>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</TreatWarningAsError>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -53,11 +57,13 @@
   <ItemGroup>
     <ClCompile Include="..\common\MainDialog.cpp" />
     <ClCompile Include="..\common\timing.cpp" />
+    <ClCompile Include="glyph_access.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\MainDialog.h" />
     <ClInclude Include="..\common\timing.h" />
+    <ClInclude Include="glyph_access.h" />
     <ClInclude Include="text.h" />
   </ItemGroup>
   <ItemGroup>
