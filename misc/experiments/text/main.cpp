@@ -19,7 +19,7 @@ namespace std { namespace tr1 { } using namespace tr1; }
 using namespace agge;
 using namespace common;
 using namespace std;
-using namespace placeholders;
+using namespace std::placeholders;
 
 typedef simd::blender_solid_color blender_used;
 
@@ -175,10 +175,10 @@ namespace
 		{	}
 
 	private:
-		virtual void draw(::bitmap &surface, Timings &timings)
+		virtual void draw(::bitmap &/*surface*/, Timings &timings)
 		{
 			long long counter;
-			const rect_i area = { 0, 0, surface.width(), surface.height() };
+//			const rect_i area = { 0, 0, surface.width(), surface.height() };
 
 			_rasterizer.reset();
 

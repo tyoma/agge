@@ -19,7 +19,7 @@ using namespace std;
 using namespace common;
 
 const int c_thread_count = 1;
-const int c_balls_number = 400;
+const int c_balls_number = 0;
 typedef simd::blender_solid_color blender_used;
 
 namespace

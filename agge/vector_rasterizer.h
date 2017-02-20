@@ -49,8 +49,7 @@ namespace agge
 		int height() const;
 
 	private:
-		struct sorted_bin;
-		typedef pod_vector<sorted_bin> sorted_bins_container;
+		typedef pod_vector<count_t> histogram;
 
 	private:
 		void hline(precise_delta &tg_delta, int ey, int x1, int x2, int dy);
@@ -64,21 +63,15 @@ namespace agge
 	private:
 		cells_container _cells;
 		cells_container::iterator _current;
+		histogram _histogram_y, _histogram_x;
 		cells_container _x_sorted_cells;
-		sorted_bins_container _scanlines;
-		int _min_x, _min_y, _max_x, _max_y, _sorted;
+		int _min_y, _min_x, _max_x, _max_y, _sorted;
 	};
 
 	struct vector_rasterizer::scanline_cells
 	{
 		vector_rasterizer::const_cells_iterator first;
 		vector_rasterizer::const_cells_iterator second;
-	};
-
-	struct vector_rasterizer::sorted_bin
-	{
-		count_t start;
-		count_t length;
 	};
 
 
@@ -91,9 +84,9 @@ namespace agge
 
 	inline vector_rasterizer::scanline_cells vector_rasterizer::operator [](int y) const
 	{
-		const sorted_bin scanline = _scanlines[y - _min_y];
-		const const_cells_iterator start = _cells.begin() + scanline.start;
-		const scanline_cells sc = { start, start + scanline.length };
+		histogram::const_iterator offset = _histogram_y.begin() + y - _min_y;
+		const const_cells_iterator start = _cells.begin();
+		const scanline_cells sc = { start + *offset++, start + *offset };
 
 		return sc;
 	}

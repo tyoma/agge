@@ -31,7 +31,7 @@ namespace agge
 	{
 		_cells.clear();
 		_current = _cells.push_back(empty_cell);
-		_scanlines.clear();
+		_histogram_y.clear();
 		_min_x = 0x7FFF, _min_y = 0x7FFF, _max_x = -0x7FFF, _max_y = -0x7FFF;
 		_sorted = 0;
 	}
@@ -170,47 +170,32 @@ namespace agge
 
 	void vector_rasterizer::sort()
 	{
-		const sorted_bin empty_bin = { 0 };
-
 		if (_sorted || _min_y > _max_y)
 			return;
 
 		_x_sorted_cells.resize(_cells.size());
 
-		const int max_length = agge_max(_max_x - _min_x + 1, _max_y - _min_y + 1);
-		const int min_x_ = _min_x, min_y_ = _min_y;
+		_histogram_x.assign(width() + 1, 0);
+		_histogram_y.assign(height() + 2, 0);
 
-		_scanlines.assign(max_length, empty_bin);
+		count_t *phistogram_x = &_histogram_x[0] - _min_x + 1;
+		count_t *phistogram_y = &_histogram_y[0] - _min_y + 2;
 
 		for (const_cells_iterator i = _cells.begin(); i != _cells.end(); ++i)
 		{
-			++_scanlines[i->x - min_x_].length;
-			++_scanlines[i->y - min_y_].start;
+			phistogram_x[i->x]++;
+			phistogram_y[i->y]++;
 		}
-		count_t start_x = 0, start_y = 0;
-		for (sorted_bins_container::iterator i = _scanlines.begin(); i != _scanlines.end(); ++i)
-		{
-			const count_t vx = i->length, vy = i->start;
-
-			i->length = start_x;
-			i->start = start_y;
-			start_x += vx;
-			start_y += vy;
-		}
-		for (const_cells_iterator i = _cells.begin(); i != _cells.end(); ++i)
-		{
-			const count_t j = _scanlines[i->x - min_x_].length++;
-			_x_sorted_cells[j] = *i;
-		}
-		for (sorted_bins_container::iterator i = _scanlines.begin(); i != _scanlines.end(); ++i)
-			i->length = 0;
-		for (const_cells_iterator i = _x_sorted_cells.begin(); i != _x_sorted_cells.end(); ++i)
-		{
-			sorted_bin &bin = _scanlines[i->y - min_y_];
-			const count_t j = bin.length++;
-			_cells[bin.start + j] = *i;
-		}
-
+		for (histogram::iterator i = _histogram_x.begin() + 1; i != _histogram_x.end(); ++i)
+			*i += *(i - 1);
+		for (histogram::iterator i = _histogram_y.begin() + 2; i != _histogram_y.end(); ++i)
+			*i += *(i - 1);
+		phistogram_x--;
+		phistogram_y--;
+		for (cells_container::iterator i = _cells.begin(), j = _x_sorted_cells.begin(), e = _cells.end(); i != e; ++i)
+			*(j + phistogram_x[i->x]++) = *i;
+		for (cells_container::iterator i = _x_sorted_cells.begin(), j = _cells.begin(), e = _x_sorted_cells.end(); i != e; ++i)
+			*(j + phistogram_y[i->y]++) = *i;
 		_sorted = 1;
 	}
 
