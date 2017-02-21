@@ -38,29 +38,36 @@ namespace agge
 			}
 		}
 
-		void add(cells_iterator &current, int x1x2, int delta)
+		void add(cells_iterator current, int x1x2, int delta)
 		{
 			current->area += x1x2 * delta;
 			current->cover += static_cast<short>(delta);
 		}
 
-		void push_cell_area(cells_iterator &current, int x, int y, int area, int delta)
+		void seta(cells_iterator current, int x, int y, int area, int delta)
 		{
-			++current;
 			current->x = static_cast<short>(x);
 			current->y = static_cast<short>(y);
 			current->area = area;
 			current->cover = static_cast<short>(delta);
 		}
 
-		void push_cell(cells_iterator &current, int x, int y, int x1x2, int delta)
+		void set(cells_iterator current, int x, int y, int x1x2, int delta)
 		{
-			push_cell_area(current, x, y, x1x2 * delta, delta);
+			seta(current, x, y, x1x2 * delta, delta);
 		}
 
-		void adjust_cells(vector_rasterizer::cells_container &cells, cells_iterator &current)
+		void add_and_commit(cells_iterator &current, int x1x2, int delta)
 		{
-			cells.resize(static_cast<count_t>(current - cells.begin() + 1));
+			int a = current->area + x1x2 * delta;
+			int c = current->cover + delta;
+
+			if (a | c)
+			{
+				current->area = a;
+				current->cover = static_cast<short>(c);
+				current++;
+			}
 		}
 	}
 
@@ -118,74 +125,74 @@ namespace agge
 
 				hline(current, tg_delta, ey1, x1, x2, dy);
 			}
-			adjust_cells(_cells, current);
-			return;
-		}
-
-		const int fy1 = y1 & _1_mask;
-		const int fy2 = y2 & _1_mask;
-		const int step = dy > 0 ? +1 : -1;
-		const int near = dy > 0 ? _1 : 0;
-		const int far = _1 - near;
-
-		if (x2 == x1)
-		{
-			// Vertical line - we have to calculate start and end cells,
-			// and then - the common values of the area and coverage for
-			// all cells of the line. We know exactly there's only one 
-			// cell, so, we don't have to call hline().
-
-			const int two_fx = 2 * (x1 & _1_mask);
-
-			jump_xy(current, ex1, ey1);
-			add(current, two_fx, near - fy1);
-			ey1 += step;
-
-			if (ey1 != ey2)
-			{
-				const int inner_delta = near - far, inner_area = two_fx * inner_delta;
-
-				do
-				{
-					push_cell_area(current, ex1, ey1, inner_area, inner_delta);
-					ey1 += step;
-				} while (ey1 != ey2);
-			}
-			push_cell(current, ex1, ey1, two_fx, fy2 - far);
 		}
 		else
 		{
-			// Ok, we have to render several hlines.
+			const int fy1 = y1 & _1_mask;
+			const int fy2 = y2 & _1_mask;
+			const int step = dy > 0 ? +1 : -1;
+			const int near = dy > 0 ? _1 : 0;
+			const int far = _1 - near;
 
-			const int lift = near - fy1;
-			precise_delta ctg_delta(dx, dy), tg_delta(dy, dx);
-
-			ctg_delta.multiply(lift);
-
-			int x_to = x1 + ctg_delta.next();
-			
-			if (lift)
-				hline(current, tg_delta, ey1, x1, x_to, lift);
-			ey1 += step;
-
-			if (ey1 != ey2)
+			if (x2 == x1)
 			{
-				const int lift = near - far;
+				// Vertical line - we have to calculate start and end cells,
+				// and then - the common values of the area and coverage for
+				// all cells of the line. We know exactly there's only one 
+				// cell, so, we don't have to call hline().
+
+				const int two_fx = 2 * (x1 & _1_mask);
+
+				jump_xy(current, ex1, ey1);
+				add_and_commit(current, two_fx, near - fy1);
+				ey1 += step;
+
+				if (ey1 != ey2)
+				{
+					const int inner_delta = near - far, inner_area = two_fx * inner_delta;
+
+					do
+					{
+						seta(current++, ex1, ey1, inner_area, inner_delta);
+						ey1 += step;
+					} while (ey1 != ey2);
+				}
+				set(current, ex1, ey1, two_fx, fy2 - far);
+			}
+			else
+			{
+				// Ok, we have to render several hlines.
+
+				const int lift = near - fy1;
+				precise_delta ctg_delta(dx, dy), tg_delta(dy, dx);
 
 				ctg_delta.multiply(lift);
 
-				do
-				{
-					x1 = x_to;
-					x_to += ctg_delta.next();
+				int x_to = x1 + ctg_delta.next();
+			
+				if (lift)
 					hline(current, tg_delta, ey1, x1, x_to, lift);
-					ey1 += step;
-				} while (ey1 != ey2);
+				ey1 += step;
+
+				if (ey1 != ey2)
+				{
+					const int lift = near - far;
+
+					ctg_delta.multiply(lift);
+
+					do
+					{
+						x1 = x_to;
+						x_to += ctg_delta.next();
+						hline(current, tg_delta, ey1, x1, x_to, lift);
+						ey1 += step;
+					} while (ey1 != ey2);
+				}
+				if (int dy = fy2 - far)
+					hline(current, tg_delta, ey1, x_to, x2, dy);
 			}
-			if (int dy = fy2 - far)
-				hline(current, tg_delta, ey1, x_to, x2, dy);
 		}
-		adjust_cells(_cells, current);
+		_cells.resize(static_cast<count_t>(current - _cells.begin() + 1));
 	}
 
 	void vector_rasterizer::append(const vector_rasterizer &source, int dx_, int dy_)
@@ -272,7 +279,7 @@ namespace agge
 
 			int y_to = tg_delta.next();
 
-			add(current, fx1 + near, y_to);
+			add_and_commit(current, fx1 + near, y_to);
 			ex1 += step;
 
 			if (ex1 != ex2)
@@ -285,11 +292,11 @@ namespace agge
 
 					y_to += d;
 					if (d)
-						push_cell(current, ex1, ey, _1, d);
+						set(current++, ex1, ey, _1, d);
 					ex1 += step;
 				} while (ex1 != ex2);
 			}
-			push_cell(current, ex1, ey, fx2 + far, dy - y_to);
+			set(current, ex1, ey, fx2 + far, dy - y_to);
 		}
 	}
 

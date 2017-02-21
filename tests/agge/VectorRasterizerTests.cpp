@@ -9,24 +9,6 @@ using namespace std;
 
 namespace ut
 {
-	vector<agge::vector_rasterizer::cell> filter_empty(const agge::vector_rasterizer::cells_container& cells)
-	{
-		agge::vector_rasterizer::cells_container::const_iterator e = cells.end();
-
-		if (cells.size() > 1 && !(e - 1)->area && !(e - 1)->cover)
-			--e;
-
-		vector<agge::vector_rasterizer::cell> cells_filtered(cells.begin(), e);
-		return cells_filtered;
-	}
-
-	template <typename T1, size_t n>
-	inline void are_equal(T1 (&i_lhs)[n], const agge::vector_rasterizer::cells_container &i_rhs,
-		const LocationInfo &location)
-	{
-		are_equal(i_lhs, filter_empty(i_rhs), location);
-	}
-
 	inline void is_empty(const agge::vector_rasterizer::cells_container& i_container, const LocationInfo &i_location)
 	{
 		agge::vector_rasterizer::cell empty = { 0 };
@@ -203,6 +185,7 @@ namespace agge
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
 					{ 15, 10, 0, 230 },
+					{ 15, 11, 0, 0 },
 				};
 
 				assert_equal(reference1, vr.cells());
@@ -216,6 +199,7 @@ namespace agge
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
 					{ 53, 9, 0, 256 },
+					{ 53, 10, 0, 0 },
 				};
 
 				assert_equal(reference2, vr.cells());
@@ -247,6 +231,7 @@ namespace agge
 				const vector_rasterizer::cell reference1[] = {
 					{ 15, 10, 0, 230 },
 					{ 15, 11, 0, 256 },
+					{ 15, 12, 0, 0 },
 				};
 
 				assert_equal(reference1, vr.cells());
@@ -263,6 +248,7 @@ namespace agge
 					{ 53, 10, 0, 256 },
 					{ 53, 11, 0, 256 },
 					{ 53, 12, 0, 256 },
+					{ 53, 13, 0, 0 },
 				};
 
 				assert_equal(reference2, vr.cells());
@@ -307,7 +293,6 @@ namespace agge
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
-					{ 53, 9, 0, 0 },
 					{ 53, 8, 0, -256 },
 				};
 
@@ -356,7 +341,6 @@ namespace agge
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
-					{ 23, 19, 0, 0 },
 					{ 23, 18, 0, -256 },
 					{ 23, 17, 0, -256 },
 				};
@@ -391,6 +375,7 @@ namespace agge
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
 					{ 15, 10, 36800, 230 },
+					{ 15, 11, 0, 0 },
 				};
 
 				assert_equal(reference1, vr.cells());
@@ -404,6 +389,7 @@ namespace agge
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
 					{ 53, 9, 93184, 256 },
+					{ 53, 10, 0, 0 },
 				};
 
 				assert_equal(reference2, vr.cells());
@@ -435,6 +421,7 @@ namespace agge
 				const vector_rasterizer::cell reference1[] = {
 					{ 15, 10, 20240, 230 },
 					{ 15, 11, 22528, 256 },
+					{ 15, 12, 0, 0 },
 				};
 
 				assert_equal(reference1, vr.cells());
@@ -451,6 +438,7 @@ namespace agge
 					{ 53, 10, 95744, 256 },
 					{ 53, 11, 95744, 256 },
 					{ 53, 12, 95744, 256 },
+					{ 53, 13, 0, 0 },
 				};
 
 				assert_equal(reference2, vr.cells());
@@ -495,7 +483,6 @@ namespace agge
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
-					{ 53, 9, 0, 0 },
 					{ 53, 8, -22528, -256 },
 				};
 
@@ -729,6 +716,7 @@ namespace agge
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
 					{ 0, -1, -256, -1 },
+					{ 2, -1, 0, 0 },
 				};
 
 				assert_equal(reference2, vr.cells());
@@ -745,7 +733,6 @@ namespace agge
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
-					{ 0, 0, 0, 0 }, // empty hline starting point is not eliminated
 					{ 1, 0, 256, 1 },
 					{ 3, 0, 256, 1 },
 					{ 5, 0, 255, 1 },
@@ -761,7 +748,6 @@ namespace agge
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
-					{ -1, 1, 0, 0 }, // empty hline starting point is not eliminated
 					{ 2, 1, 256, 1 },
 					{ 6, 1, 256, 1 },
 					{ 10, 1, 255, 1 },
