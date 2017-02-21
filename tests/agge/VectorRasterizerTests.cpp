@@ -167,7 +167,7 @@ namespace agge
 			}
 
 
-			test( HorizontalLinesOnlyJumpLastEmptyCell )
+			test( HorizontalLinesDoesNothing )
 			{
 				// INIT
 				vector_rasterizer vr;
@@ -176,11 +176,11 @@ namespace agge
 				vr.line(fp(10.0), fp(15.5), fp(70.0), fp(15.5));
 
 				// ASSERT
-				const vector_rasterizer::cell reference1[] = {
-					{ 70, 15, 0, 0 },
+				const vector_rasterizer::cell reference[] = {
+					{ 0 },
 				};
 
-				assert_equal(reference1, vr.cells());
+				assert_equal(reference, vr.cells());
 
 				// ACT
 				vr.line(fp(10.0), fp(13.5), fp(70.0), fp(13.5));
@@ -188,11 +188,7 @@ namespace agge
 				vr.line(fp(-10.0), fp(215.5), fp(-70.0), fp(215.5));
 
 				// ASSERT
-				const vector_rasterizer::cell reference2[] = {
-					{ -70, 215, 0, 0 },
-				};
-
-				assert_equal(reference2, vr.cells());
+				assert_equal(reference, vr.cells());
 			}
 
 

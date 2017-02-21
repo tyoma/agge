@@ -52,17 +52,11 @@ namespace agge
 		typedef pod_vector<count_t> histogram;
 
 	private:
-		void hline(precise_delta &tg_delta, int ey, int x1, int x2, int dy);
-
-		void add(int x1x2, int delta);
-		void jump_xy(int x, int y);
-		cells_container::iterator push_cell_area(int x, int y, int area, int delta);
-		cells_container::iterator push_cell(int x, int y, int x1x2, int delta);
+		void hline(cells_container::iterator &current, precise_delta &tg_delta, int ey, int x1, int x2, int dy);
 		void extend_bounds(int x, int y);
 
 	private:
 		cells_container _cells;
-		cells_container::iterator _current;
 		histogram _histogram_y, _histogram_x;
 		cells_container _x_sorted_cells;
 		int _min_y, _min_x, _max_x, _max_y, _sorted;
