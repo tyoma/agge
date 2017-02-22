@@ -207,14 +207,13 @@ namespace agge
 
 		cells_container::iterator w = _cells.begin() + start;
 
-		for (const_cells_iterator i = source._cells.begin(), end = source._cells.end(); i != end; ++i, ++w)
+		for (const_cells_iterator i = source._cells.begin(), end = source._cells.end(); i != end; ++w, ++i)
 		{
 			w->x = i->x + dx;
 			w->y = i->y + dy;
 			w->area = i->area;
 			w->cover = i->cover;
 		}
-		_cells.resize(static_cast<count_t>(w - _cells.begin()));
 
 		update_min(_min_x, source._min_x + dx_);
 		update_min(_min_y, source._min_y + dy_);
