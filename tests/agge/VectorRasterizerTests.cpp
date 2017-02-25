@@ -1233,10 +1233,30 @@ namespace agge
 				vr.sort();
 
 				// ACT
-				vr.line(0x100F50, 0x100200, 0x100F50, 0x100200);
+				vr.line(0x100F50, 0x100200, 0x100F50, 0x100100);
 
 				// ACT / ASSERT
 				assert_is_false(vr.sorted());
+			}
+
+
+			test( HorizontalLinesDoNotAffectSortedPropertyAndBox )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				vr.line(0x100F00, 0x100210, 0x100F50, 0x100200);
+				vr.sort();
+
+				// ACT
+				vr.line(0x1F50, 0x100200, 0x101F50, 0x100200);
+				vr.line(0x1F50, 0x300200, 0x101F50, 0x300200);
+
+				// ACT / ASSERT
+				assert_is_true(vr.sorted());
+				assert_equal(0x1002, vr.min_y());
+				assert_equal(1, vr.height());
+				assert_equal(1, vr.width());
 			}
 
 

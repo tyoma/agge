@@ -9,8 +9,6 @@ namespace agge
 	{
 		typedef vector_rasterizer::cells_container::iterator cells_iterator;
 
-		const vector_rasterizer::cell empty_cell = { 0 };
-
 		template <typename T>
 		void update_min(T &value, T candidate)
 		{
@@ -23,6 +21,21 @@ namespace agge
 		{
 			if (candidate > value)
 				value = candidate;
+		}
+
+		template <typename T>
+		AGGE_INLINE cells_iterator resize_by(T &container, int by)
+		{
+			count_t n = container.size();
+
+			container.resize(n + by);
+			return container.begin() + n;
+		}
+
+		template <typename T>
+		AGGE_INLINE void abridge(T &container, typename T::const_iterator end)
+		{
+			container.resize(static_cast<count_t>(end - container.begin()));
 		}
 
 		void jump_xy(cells_iterator &current, int x, int y)
@@ -76,39 +89,33 @@ namespace agge
 
 	void vector_rasterizer::reset()
 	{
+		const cell empty_cell = { 0 };
+
 		_cells.assign(1, empty_cell);
 		_histogram_y.clear();
-		_min_x = _min_y = 0x7FFF, _max_x = _max_y = -0x7FFF;
+		_max_x = _max_y = -(_min_x = _min_y = 0x7FFF);
 		_sorted = 0;
 	}
 
 	void vector_rasterizer::line(int x1, int y1, int x2, int y2)
 	{
+		const int dx = x2 - x1;
 		const int ex1 = x1 >> _1_shift;
 		int ey1 = y1 >> _1_shift;
 		const int ex2 = x2 >> _1_shift;
 		const int ey2 = y2 >> _1_shift;
+		const int dy = y2 - y1;
+
+		if (!dy) // Trivial case. Happens often.
+			return;
 
 		extend_bounds(ex1, ey1);
 		extend_bounds(ex2, ey2);
 
 		_sorted = 0;
 
-		if (y2 == y1)
-		{
-			// Trivial case. Happens often.
-
-			return;
-		}
-
-		count_t n = _cells.size();
-
 		// Untested: we use top metric of cells required to draw the longest line given the current bounds.
-		_cells.resize(n + 2 * agge_max(width(), height()) + 1);
-
-		cells_container::iterator current = _cells.begin() + n - 1;
-		const int dx = x2 - x1;
-		const int dy = y2 - y1;
+		cells_container::iterator current = resize_by(_cells, 2 * agge_max(width(), height()) + 1) - 1;
 
 		if (ey2 == ey1)
 		{
@@ -169,7 +176,7 @@ namespace agge
 				ctg_delta.multiply(lift);
 
 				int x_to = x1 + ctg_delta.next();
-			
+
 				if (lift)
 					hline(current, tg_delta, ey1, x1, x_to, lift);
 				ey1 += step;
@@ -192,20 +199,17 @@ namespace agge
 					hline(current, tg_delta, ey1, x_to, x2, dy);
 			}
 		}
-		_cells.resize(static_cast<count_t>(current - _cells.begin() + 1));
+		abridge(_cells, ++current);
 	}
 
 	void vector_rasterizer::append(const vector_rasterizer &source, int dx_, int dy_)
 	{
 		const short dx = static_cast<short>(dx_), dy = static_cast<short>(dy_);
-		count_t start = _cells.size() - 1; // Relying on a guarantee that we had at least one cell prior this call.
+		const cell &last = *(_cells.end() - 1); // Relying on a guarantee that we had at least one cell prior this call.
+		const int shift_back = !(last.area | last.cover);
+		cells_container::iterator w = resize_by(_cells, source._cells.size() - shift_back) - shift_back;
 
-		if (_cells[start].area | _cells[start].cover)
-			++start;
-		_cells.resize(start + source._cells.size()); // May throw, so no state change prior this call.
 		_sorted = 0;
-
-		cells_container::iterator w = _cells.begin() + start;
 
 		for (const_cells_iterator i = source._cells.begin(), end = source._cells.end(); i != end; ++w, ++i)
 		{
@@ -234,7 +238,7 @@ namespace agge
 		count_t *phistogram_x = &_histogram_x[0] - _min_x + 1;
 		count_t *phistogram_y = &_histogram_y[0] - _min_y + 2;
 
-		for (const_cells_iterator i = _cells.begin(); i != _cells.end(); ++i)
+		for (const_cells_iterator i = _cells.begin(), e = _cells.end(); i != e; ++i)
 		{
 			phistogram_x[i->x]++;
 			phistogram_y[i->y]++;
