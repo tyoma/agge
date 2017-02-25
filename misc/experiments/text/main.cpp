@@ -136,7 +136,7 @@ namespace demo
 	public:
 		typedef agg_path_adaptor glyph_outline_path;
 		enum {
-			precision_shift = 2,
+			precision_shift = 6,
 
 			precision = 1 << precision_shift
 		};
@@ -174,15 +174,15 @@ namespace demo
 			{
 				x = static_cast<real_t>(static_cast<int>(x * precision)) / precision;
 				y = static_cast<real_t>(static_cast<int>(y * precision)) / precision;
-				i = _glyph_rasters.insert(make_pair(precise_index, make_shared<my_rasterizer>())).first;
+				i = _glyph_rasters.insert(make_pair(precise_index, my_rasterizer())).first;
 
 				font::glyph_outline_path g = get_glyph(index);
 				offset_conv<font::glyph_outline_path> og(g, x, y);
 
-				add_path(*i->second, og);
-//				i->second->squash();
+				add_path(i->second, og);
+				i->second.sort();
 			}
-			return *i->second;
+			return i->second;
 		}
 
 		real_t get_glyph_dx(uint16_t index)
@@ -202,7 +202,7 @@ namespace demo
 		};
 
 		typedef unordered_map<uint16_t, glyph_data, knuth_hash> glyphs_cache_t;
-		typedef unordered_map<int, shared_ptr<my_rasterizer>, knuth_hash> glyph_rasters_cache_t;
+		typedef unordered_map<int, my_rasterizer, knuth_hash> glyph_rasters_cache_t;
 
 	private:
 		glyph_data load_glyph(uint16_t index)
@@ -242,11 +242,6 @@ namespace demo
 			shared_ptr<void> font_selector = select(dc, m_font.get());
 			RECT rc = { 0, 0, surface.width(), surface.height() };
 
-			::SetBkColor(dc, RGB(0, 0, 0));
-			::SetTextColor(dc, RGB(255, 255, 255));
-			::ExtTextOut(dc, 0, 0, ETO_OPAQUE, &rc, _T(""), 0, 0);
-
-			::SetBkColor(dc, RGB(100, 100, 100));
 			::ExtTextOut(dc, 0, 0, ETO_OPAQUE, &rc, _T(""), 0, 0);
 
 			vector<uint16_t> str;
@@ -255,9 +250,8 @@ namespace demo
 
 			stopwatch(timer);
 			for (real_t y = 0; y < 50 * font_height; y += font_height)
-			{
 				::ExtTextOut(dc, 0, y, ETO_GLYPH_INDEX, NULL, (LPCTSTR)&str[0], str.size(), 0);
-			}
+
 			double t = stopwatch(timer);
 
 			timings.rasterization += t;
@@ -276,28 +270,29 @@ namespace demo
 	{
 		enum
 		{
-			font_height = 14
+			font_height = 12
 		};
 
 	public:
 		TextDrawer()
-			: _renderer(1), _font(_T("tahoma"), font_height)
+			: _renderer(1), _font(_T("tahoma"), font_height), _ddx(0.0f)
 		{
 		}
 
 	private:
 		virtual void draw(::bitmap &surface, Timings &timings)
 		{
-			long long counter, counter2;
+			long long counter;
 			const rect_i area = { 0, 0, surface.width(), surface.height() };
 
 			stopwatch(counter);
 				agge::fill(surface, area, solid_color_brush(rgba8(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
 
+			_ddx += 0.02f;
+
 			_rasterizer.reset();
 
-			stopwatch(counter2);
 			stopwatch(counter);
 			for (real_t y = 0; y < 50 * font_height; y += font_height)
 			{
@@ -305,21 +300,22 @@ namespace demo
 
 				for (uint16_t i = 0; i != 100; ++i)
 				{
-					_rasterizer.append(_font.get_glyph_raster(i, x, y), static_cast<int>(x), static_cast<int>(y) + font_height);
+					_rasterizer.append(_font.get_glyph_raster(i, x + _ddx, y), static_cast<int>(x + _ddx), static_cast<int>(y) + font_height);
 					x += _font.get_glyph_dx(i);
 				}
 			}
-			timings.rasterization += stopwatch(counter);
 
-			stopwatch(counter);
-				_rasterizer.sort();
-			timings.rasterization += stopwatch(counter);
+			double append = stopwatch(counter);
 
-			stopwatch(counter);
-				_renderer(surface, 0, _rasterizer, solid_color_brush(rgba8(0, 0, 0, 255)), calculate_alpha<vector_rasterizer::_1_shift>());
-			timings.rendition += stopwatch(counter);
+			_rasterizer.sort();
 
-			timings.stroking += stopwatch(counter2) / 100.0f / 50;
+			double sort = stopwatch(counter);
+
+			_renderer(surface, 0, _rasterizer, solid_color_brush(rgba8(0, 0, 0, 255)), calculate_alpha<vector_rasterizer::_1_shift>());
+
+			double render = stopwatch(counter);
+
+			timings.stroking += (append + sort + render) / 100.0f / 50;
 		}
 
 		virtual void resize(int /*width*/, int /*height*/)
@@ -330,6 +326,7 @@ namespace demo
 		typedef blender2<blender_used> solid_color_brush;
 
 	private:
+		float _ddx;
 		my_rasterizer _rasterizer;
 		__declspec(align(16)) renderer_parallel _renderer;
 		font _font;
