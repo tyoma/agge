@@ -10,9 +10,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agge.tests", "..\tests\agge
 		{AD0BA725-9F6F-474E-ADB0-1F506B1CD394} = {AD0BA725-9F6F-474E-ADB0-1F506B1CD394}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utee", "..\misc\libraries\utee\make\utee.v11.vcxproj", "{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utee", "..\libraries\utee\make\utee.vcxproj", "{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utee-runner", "..\misc\libraries\utee\make\utee-runner.v11.vcxproj", "{AD0BA725-9F6F-474E-ADB0-1F506B1CD394}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utee-runner", "..\libraries\utee\make\utee-runner.vcxproj", "{AD0BA725-9F6F-474E-ADB0-1F506B1CD394}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "experiments", "experiments", "{0247C00D-043A-4781-8E4A-F174B9B2CE29}"
 EndProject
@@ -25,6 +25,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sandbox", "..\misc\experiments\sandbox\sandbox.vcxproj", "{70EB93F3-E425-46B1-B592-B50167CBBB46}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agge.text.tests", "..\tests\agge.text\agge.text.tests.vcxproj", "{60F5D59B-7647-25B1-BF47-8527687DA8AE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AD0BA725-9F6F-474E-ADB0-1F506B1CD394} = {AD0BA725-9F6F-474E-ADB0-1F506B1CD394}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agge.text", "..\src\agge.text\agge.text.vcxproj", "{4B446510-FA62-AD02-51BA-9BDE9564FF26}"
 EndProject
@@ -66,14 +69,12 @@ Global
 		{A180777F-1EE0-4E11-90CA-D81B01D45ED3}.Release|Win32.Build.0 = Release|Win32
 		{A180777F-1EE0-4E11-90CA-D81B01D45ED3}.Release|x64.ActiveCfg = Release|x64
 		{A180777F-1EE0-4E11-90CA-D81B01D45ED3}.Release|x64.Build.0 = Release|x64
-		{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}.Debug|Android.ActiveCfg = Debug|Android
-		{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}.Debug|Android.Build.0 = Debug|Android
+		{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}.Debug|Android.ActiveCfg = Debug|x64
 		{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}.Debug|Win32.Build.0 = Debug|Win32
 		{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}.Debug|x64.ActiveCfg = Debug|x64
 		{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}.Debug|x64.Build.0 = Debug|x64
-		{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}.Release|Android.ActiveCfg = Release|Android
-		{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}.Release|Android.Build.0 = Release|Android
+		{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}.Release|Android.ActiveCfg = Release|x64
 		{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}.Release|Win32.ActiveCfg = Release|Win32
 		{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}.Release|Win32.Build.0 = Release|Win32
 		{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}.Release|x64.ActiveCfg = Release|x64

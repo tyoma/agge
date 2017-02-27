@@ -2,8 +2,8 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Configuration">
     <_PropertySheetDisplayName>AGGE Configuration Properties</_PropertySheetDisplayName>
-    <IntDir>$(SolutionDir)_obj\$(Configuration)_$(PlatformShortName)\$(ProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)_bin\$(Configuration)_$(PlatformShortName)\</OutDir>
+    <IntDir>$(SolutionDir)_obj\$(Configuration)_$(PlatformName)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_bin\$(Configuration)_$(PlatformName)\</OutDir>
     <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
 
@@ -12,7 +12,6 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\misc\libraries\utee;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -33,7 +32,6 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\misc\libraries\utee;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <TreatWarningAsError>true</TreatWarningAsError>

@@ -33,7 +33,6 @@
     <ProjectName>agge.tests</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <Import Project="$(SolutionDir)build.props\agge.props" Condition="exists('$(SolutionDir)build.props\agge.props')" />
   <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -47,22 +46,11 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="PropertySheets">
+	  <Import Project="$(SolutionDir)build.props\agge.tests.props" Condition="exists('$(SolutionDir)build.props\agge.tests.props')" />
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
-    <ClCompile>
-      <AdditionalIncludeDirectories>../..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions Condition="'$(Platform)'=='Android'">-std=c++11 %(AdditionalOptions)</AdditionalOptions>
-      <GccExceptionHandling Condition="'$(Platform)'=='Android'">true</GccExceptionHandling>
-      <RuntimeTypeInfo Condition="'$(Platform)'=='Android'">true</RuntimeTypeInfo>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+  <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>../..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions Condition="'$(Platform)'=='Android'">-std=c++11 %(AdditionalOptions)</AdditionalOptions>
@@ -112,9 +100,6 @@
     <ClCompile Include="VectorRasterizerTests.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\misc\libraries\utee\make\utee.v11.vcxproj">
-      <Project>{4db73ace-2d47-4a6c-8213-2be191dd921f}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\agge\agge.vcxproj">
       <Project>{f849e92c-248a-46b2-9eab-f86578a21316}</Project>
     </ProjectReference>

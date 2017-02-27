@@ -111,7 +111,7 @@ namespace agge
 				r(bitmap, 0, mask, blender, mocks::simple_alpha<uint8_t, 8>());
 
 				// ASSERT
-				uint8_t reference[] = {
+				uint16_t reference[] = {
 					0x0000, 0x0000, 0x0000,	0x0000, 0x0000,
 					0x0011, 0x0011, 0x000E, 0x000E, 0x0000,
 					0x0000, 0x00AB, 0x008D,	0x008D, 0x008D,

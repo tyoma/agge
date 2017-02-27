@@ -24,6 +24,9 @@ namespace agge
 		public:
 			aligned_array();
 
+			const T *begin() const;
+			const T *end() const;
+
 			T *data();
 			const T *data() const;
 			T &operator [](size_t index);
@@ -49,6 +52,14 @@ namespace agge
 		template <typename T, size_t n, int alignment_order>
 		inline aligned_array<T, n, alignment_order>::aligned_array()
 		{	}
+
+		template <typename T, size_t n, int alignment_order>
+		inline const T *aligned_array<T, n, alignment_order>::begin() const
+		{	return data();	}
+
+		template <typename T, size_t n, int alignment_order>
+		inline const T *aligned_array<T, n, alignment_order>::end() const
+		{	return data() + n;	}
 
 		template <typename T, size_t n, int alignment_order>
 		inline T *aligned_array<T, n, alignment_order>::data()
