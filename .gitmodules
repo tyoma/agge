@@ -1,0 +1,4 @@
+[submodule "libraries/utee"]
+	path = libraries/utee
+	url = ../utee.git
+	branch = master
