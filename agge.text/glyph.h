@@ -15,6 +15,7 @@ namespace agge
 		path_iterator get_path() const;
 
 	public:
+		uint16_t index;
 		real_t advance_x;
 		real_t advance_y;
 	};

@@ -11,13 +11,19 @@ namespace agge
 {
 	namespace tests
 	{
+		namespace
+		{
+			font::metrics c_fm1 = { 10.0f, 2.0f, 2.0f };
+			font::metrics c_fm2 = { 14.0f, 3.0f, 1.0f };
+		}
+
 		begin_test_suite( FontTests )
 			test( MissingGlyphIsReportedAsNull )
 			{
 				// INIT
 				mocks::font::char_to_index indices[] = { { L'A', 0 }, };
 				mocks::font::glyph glyphs[] = { { { 11, 0 } }, };
-				mocks::font f(indices, glyphs);
+				mocks::font f(c_fm1, indices, glyphs);
 
 				// ACT / ASSERT
 				assert_null(f.get_glyph(L'B'));
@@ -31,7 +37,7 @@ namespace agge
 				// INIT
 				mocks::font::char_to_index indices[] = { { L'A', 0 }, { L'B', 1 }, { L'!', 2 }, };
 				mocks::font::glyph glyphs[] = { { { 11, 0 } }, { { 11, 0 } }, { { 11, 0 } }, };
-				mocks::font f(indices, glyphs);
+				mocks::font f(c_fm1, indices, glyphs);
 
 				// ACT
 				const glyph *g1 = f.get_glyph(L'A');
@@ -56,7 +62,7 @@ namespace agge
 				size_t alive = 0;
 				mocks::font::char_to_index indices[] = { { L'A', 0 }, { L'B', 1 }, { L'C', 2 }, };
 				mocks::font::glyph glyphs[] = { { { 11, 0 } }, { { 11, 0 } }, { { 11, 0 } }, };
-				auto_ptr<mocks::font> f(new mocks::font(indices, glyphs, &alive));
+				auto_ptr<mocks::font> f(new mocks::font(c_fm1, indices, glyphs, &alive));
 
 				// ACT
 				f->get_glyph(L'A');

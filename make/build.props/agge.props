@@ -4,7 +4,7 @@
     <_PropertySheetDisplayName>AGGE Configuration Properties</_PropertySheetDisplayName>
     <IntDir>$(SolutionDir)_obj\$(Configuration)_$(PlatformName)\$(ProjectName)\</IntDir>
     <OutDir>$(SolutionDir)_bin\$(Configuration)_$(PlatformName)\</OutDir>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset Condition="'$(Platform)'!='Android'">v100</PlatformToolset>
   </PropertyGroup>
 
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">

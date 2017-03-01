@@ -46,6 +46,7 @@ namespace agge
 
 				g->advance_x = static_cast<real_t>(_glyphs[index].metrics.dx);
 				g->advance_y = static_cast<real_t>(_glyphs[index].metrics.dy);
+				g->index = index;
 				return g;
 			}
 
