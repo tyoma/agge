@@ -101,7 +101,7 @@ namespace agge
 				layout l2(L"AAB", f1);
 				layout l3(L"BQA", f1);
 				layout l4(L"A", f2);
-				layout l5(L"ABQ AQA", f2);
+				layout l5(L"ABQ A  QA", f2);
 
 				// ASSERT
 				layout::positioned_glyph reference1[] = { { 0.0f, 0.0f, 1 } };
@@ -114,7 +114,9 @@ namespace agge
 					{ 11.0f, 0.0f, 2 },
 					{ 12.7f, 0.0f, 3 },
 					{ 10.1f, 0.0f, 0 },
-					{ 13.0f, 0.0f, 2 },
+					{ 13.0f, 0.0f, 3 },
+					{ 10.1f, 0.0f, 3 },
+					{ 10.1f, 0.0f, 2 },
 					{ 12.7f, 0.0f, 0 },
 				};
 
@@ -229,30 +231,80 @@ namespace agge
 			}
 		
 
-			ignore( LongSingleLineIsBrokenOnWordBounds )
+			test( LongSingleLineIsBrokenOnWordBounds )
 			{
 				// INIT
 				mocks::font::char_to_index indices[] = {
-					{ L' ', 0 }, { L'A', 1 }, { L'B', 2 }, { L'\'', 3 }, { L'C', 4 }, { L'.', 5 },
+					{ L' ', 0 }, { L'A', 1 }, { L'B', 2 }, { L'C', 3 }, { L'\'', 4 }, { L'.', 5 },
 				};
 				mocks::font::glyph glyphs[] = {
 					{ { 7.1, 0 } },
 					{ { 11, 0 } },
+					{ { 12, 0 } },
 					{ { 13, 0 } },
-					{ { 4.3, 0 } },
-					{ { 13, 0 } },
-					{ { 4, 0 } },
+					{ { 3, 0 } },
+					{ { 3, 0 } },
 				};
 				font::ptr f(new mocks::font(c_fm1, indices, glyphs));
+				layout::const_iterator gr;
+				
+				// 44 + 7.1 + 48 + 7.1 + 26 + 7.1 + 48 + 7.1 + 44
 				layout l1(L"AAAA BBBB CC BBBB AAAA", f);
+
+				// 55 + 7.1 + 36 + 7.1 + 22 + 7.1 + 22 + 7.1 + 80 + 7.1 + 52 + 7.1 + 44 + 7.1 + 118
 				layout l2(L"CCC'C BBB AA AA AAAABBB CCCC AAAA ABABABABAB.", f);
 
 				// ACT
-				//l1.limit_width(11.1f);
-				//l2.limit_width(11.1f);
+				l1.limit_width(139.1f); // AAAA BBBB CC|BBBB AAAA
+				l2.limit_width(139.1f); // CCC'C BBB AA|AA AAAABBB|CCCC AAAA|ABABABABAB.
 
 				// ASSERT
-				assert_equal(2, distance(l1.begin(), l1.end()));
+				layout::positioned_glyph reference11[] = {
+					{ 0.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 0 },
+					{ 7.1f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 0 },
+					{ 7.1f, 0.0f, 3 }, { 13.0f, 0.0f, 3 },
+				};
+				layout::positioned_glyph reference12[] = {
+					{ 0.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 0 },
+					{ 7.1f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 },
+				};
+
+				layout::positioned_glyph reference21[] = {
+					{ 0.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 4 }, { 3.0f, 0.0f, 3 },
+						{ 13.0f, 0.0f, 0 },
+					{ 7.1f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 0 },
+					{ 7.1f, 0.0f, 1 }, { 11.0f, 0.0f, 1 },
+				};
+				layout::positioned_glyph reference22[] = {
+					{ 0.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 0 },
+					{ 7.1f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 2 },
+						{ 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 },
+				};
+				layout::positioned_glyph reference23[] = {
+					{ 0.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 0 },
+					{ 7.1f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, 
+				};
+				layout::positioned_glyph reference24[] = {
+					{ 0.0f, 0.0f, 1 }, { 11.0f, 0.0f, 2 }, { 12.0f, 0.0f, 1 }, { 11.0f, 0.0f, 2 }, { 12.0f, 0.0f, 1 },
+						{ 11.0f, 0.0f, 2 }, { 12.0f, 0.0f, 1 }, { 11.0f, 0.0f, 2 }, { 12.0f, 0.0f, 1 }, { 11.0f, 0.0f, 2 },
+						{ 12.0f, 0.0f, 5 },
+				};
+
+				gr = l1.begin();
+				assert_equal(2, distance(gr, l1.end()));
+				assert_equal(reference11, mkvector(gr->begin, gr->end));
+				++gr;
+				assert_equal(reference12, mkvector(gr->begin, gr->end));
+
+				gr = l2.begin();
+				assert_equal(4, distance(gr, l2.end()));
+				assert_equal(reference21, mkvector(gr->begin, gr->end));
+				++gr;
+				assert_equal(reference22, mkvector(gr->begin, gr->end));
+				++gr;
+				assert_equal(reference23, mkvector(gr->begin, gr->end));
+				++gr;
+				assert_equal(reference24, mkvector(gr->begin, gr->end));
 			}
 
 		end_test_suite

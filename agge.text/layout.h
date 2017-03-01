@@ -35,6 +35,7 @@ namespace agge
 		font::ptr _font;
 		positioned_glyphs_container _glyphs;
 		glyph_runs_container _glyph_runs;
+		real_t _limit_width;
 	};
 
 	struct layout::positioned_glyph
