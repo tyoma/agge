@@ -307,6 +307,57 @@ namespace agge
 				assert_equal(reference24, mkvector(gr->begin, gr->end));
 			}
 
+
+			test( LongWordsAreEmergentlyBrokenOnWidthLimit )
+			{
+				// INIT
+				mocks::font::char_to_index indices[] = { { L'A', 0 }, { L'B', 1 }, { L'C', 2 }, };
+				mocks::font::glyph glyphs[] = {
+					{ { 1, 0 } },
+					{ { 2, 0 } },
+					{ { 3, 0 } },
+				};
+				font::ptr f(new mocks::font(c_fm1, indices, glyphs));
+				layout::const_iterator gr;
+				layout l(L"ABCABCABC", f);
+
+				// ACT
+				l.limit_width(6);
+
+				// ASSERT
+				layout::positioned_glyph reference1[] = { { 0.0f, 0.0f, 0 }, { 1.0f, 0.0f, 1 }, { 2.0f, 0.0f, 2 }, };
+
+				gr = l.begin();
+				assert_equal(3, distance(gr, l.end()));
+				assert_equal(reference1, mkvector(gr->begin, gr->end));
+				++gr;
+				assert_equal(reference1, mkvector(gr->begin, gr->end));
+				++gr;
+				assert_equal(reference1, mkvector(gr->begin, gr->end));
+
+				// ACT
+				l.limit_width(8);
+
+				// ASSERT
+				layout::positioned_glyph reference21[] = {
+					{ 0.0f, 0.0f, 0 }, { 1.0f, 0.0f, 1 }, { 2.0f, 0.0f, 2 }, { 3.0f, 0.0f, 0 },
+				};
+				layout::positioned_glyph reference22[] = {
+					{ 0.0f, 0.0f, 1 }, { 2.0f, 0.0f, 2 }, { 3.0f, 0.0f, 0 }, { 1.0f, 0.0f, 1 },
+				};
+				layout::positioned_glyph reference23[] = {
+					{ 0.0f, 0.0f, 2 },
+				};
+
+				gr = l.begin();
+				assert_equal(3, distance(gr, l.end()));
+				assert_equal(reference21, mkvector(gr->begin, gr->end));
+				++gr;
+				assert_equal(reference22, mkvector(gr->begin, gr->end));
+				++gr;
+				assert_equal(reference23, mkvector(gr->begin, gr->end));
+			}
+
 		end_test_suite
 	}
 }

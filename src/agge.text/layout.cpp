@@ -11,6 +11,16 @@ namespace agge
 	{
 		real_t height(const font::metrics &m)
 		{	return m.ascent + m.descent + m.leading; }
+
+		bool eat_lf(wstring::const_iterator &i)
+		{
+			if (*i == L'\n')
+			{
+				++i;
+				return true;
+			}
+			return false;
+		}
 	}
 
 	namespace sensors
@@ -35,7 +45,7 @@ namespace agge
 	}
 
 	layout::layout(const wchar_t *text, font::ptr font_)
-		: _text(text), _font(font_), _limit_width(0.0f)
+		: _text(text), _font(font_), _limit_width(1e30f)
 	{
 		analyze();
 	}
@@ -59,69 +69,59 @@ namespace agge
 	{
 		if (_text.empty())
 			return;
+
 		const font::metrics m = _font->get_metrics();
-		const count_t limit = static_cast<count_t>(_text.size());
-		const glyph *previous = 0;
-		sensors::eow eow;
+		const wstring &text = _text;
+		real_t y = 0;
 
-		_glyphs.resize(limit);
-		_glyph_runs.resize(limit);
+		_glyph_runs.clear();
+		_glyphs.resize(static_cast<count_t>(_text.size()));
 
-		glyph_runs_container::iterator gr = _glyph_runs.begin();
-		positioned_glyphs_container::iterator pg = _glyphs.begin(), eow_pg = pg;
-		gr->begin = gr->end = pg;
-		gr->width = 0.0f;
-		gr->reference.x = 0.0f;
-		gr->reference.y = m.ascent;
-		gr->glyph_run_font = _font;
+		positioned_glyphs_container::iterator pgi = _glyphs.begin();
 
-		for (wstring::const_iterator i = _text.begin(), eow_i = _text.end(); i != _text.end(); ++i)
+		for (wstring::const_iterator i = text.begin(); i != text.end(); )
 		{
-			const wchar_t c = *i;
-			const glyph *g;
+			real_t width = 0.0f;
+			const glyph *previous = 0;
+			sensors::eow eow;
+			positioned_glyphs_container::iterator start_pgi = pgi, eow_pgi = pgi;
 
-			if (eow(c))
+			for (wstring::const_iterator eow_i = _text.end(); i != _text.end() && !eat_lf(i); ++i, ++pgi)
 			{
-				eow_i = i;
-				eow_pg = pg;
-			}
+				const glyph *g = _font->get_glyph(*i);
 
-			switch (c)
-			{
-			default:
-				g = _font->get_glyph(c);
-
-				gr->width += g->advance_x;
-				if (_limit_width == 0.0f || gr->width <= _limit_width)
+				if (eow(*i))
 				{
-					pg->dx = previous ? previous->advance_x : 0.0f;
-					pg->dy = 0.0f;
-					pg->index = g->index;
-					++pg;
-					previous = g;
+					eow_i = i;
+					eow_pgi = pgi;
+				}
+
+				width += g->advance_x;
+				if (width > _limit_width)
+				{
+					if (eow_i != _text.end()) // not an emergency break
+					{
+						i = eow_i + 1;
+						pgi = eow_pgi;
+					}
 					break;
 				}
-				else
-				{
-					gr->width -= g->advance_x;
-					pg = eow_pg;
-					i = eow_i;
-				}
-
-			case '\n':
-				gr->end = pg;
-				++gr;
-				gr->end = gr->begin = pg;
-				gr->width = 0.0f;
-				gr->reference.x = 0.0f;
-				gr->reference.y = (gr - 1)->reference.y + height(m);
-				gr->glyph_run_font = _font;
-				previous = 0;
-				break;
+				pgi->dx = previous ? previous->advance_x : 0.0f;
+				pgi->dy = 0.0f;
+				pgi->index = g->index;
+				previous = g;
 			}
-		}
-		gr->end = pg;
 
-		_glyph_runs.resize(static_cast<count_t>(gr - _glyph_runs.begin() + (gr->end != gr->begin)));
+			glyph_run gr;
+
+			gr.begin = start_pgi;
+			gr.end = pgi;
+			gr.reference.x = 0.0f;
+			gr.reference.y = y + m.ascent;
+			gr.width = width;
+			gr.glyph_run_font = _font;
+			_glyph_runs.push_back(gr);
+			y += height(m);
+		}
 	}
 }
