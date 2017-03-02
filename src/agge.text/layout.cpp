@@ -1,7 +1,6 @@
 #include <agge.text/layout.h>
 
 #include <agge/tools.h>
-#include <agge.text/glyph.h>
 
 using namespace std;
 

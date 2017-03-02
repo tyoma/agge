@@ -1,7 +1,5 @@
 #include <agge.text/font.h>
 
-#include <agge.text/glyph.h>
-
 using namespace std;
 
 namespace agge

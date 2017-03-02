@@ -1,5 +1,6 @@
 #pragma once
 
+#include <agge.text/font.h>
 #include <agge.text/layout.h>
 #include <iterator>
 #include <vector>
@@ -32,4 +33,7 @@ namespace agge
 
 	inline bool operator ==(const point_r &lhs, const point_r &rhs)
 	{	return tests::equal(lhs.x, rhs.x) && tests::equal(lhs.y, rhs.y);	}
+
+	inline bool operator ==(const glyph::path_point &lhs, const glyph::path_point &rhs)
+	{	return lhs.command == rhs.command && tests::equal(lhs.x, rhs.x) && tests::equal(lhs.y, rhs.y);	}
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <agge/path.h>
 #include <agge/pod_vector.h>
 #include <memory>
 #include <unordered_map>
@@ -46,4 +47,57 @@ namespace agge
 		const metrics _metrics;
 		mutable glyphs_cache_t _glyphs;
 	};
+
+	class glyph
+	{
+	public:
+		struct path_point { int command; real_t x, y; };
+		class path_iterator;
+		typedef pod_vector<path_point> outline_storage;
+		typedef std::shared_ptr<outline_storage> outline_ptr; 
+
+	public:
+		virtual ~glyph() { }
+
+		path_iterator get_outline() const;
+
+	public:
+		uint16_t index;
+		real_t advance_x;
+		real_t advance_y;
+		outline_ptr outline;
+	};
+
+	class glyph::path_iterator
+	{
+	public:
+		explicit path_iterator(const glyph::outline_ptr &outline);
+
+		void rewind(int id);
+		int vertex(real_t *x, real_t *y);
+
+	private:
+		glyph::outline_ptr _outline;
+		glyph::outline_storage::const_iterator _i;
+	};
+
+
+	inline glyph::path_iterator glyph::get_outline() const
+	{	return path_iterator(outline);	}
+
+
+	inline glyph::path_iterator::path_iterator(const glyph::outline_ptr &outline)
+		: _outline(outline), _i(_outline->begin())
+	{	}
+
+	inline void glyph::path_iterator::rewind(int /*id*/)
+	{	_i = _outline->begin();	}
+
+	inline int glyph::path_iterator::vertex(real_t *x, real_t *y)
+	{
+		if (_i == _outline->end())
+			return path_command_stop;
+		*x = _i->x, *y = _i->y;
+		return _i++->command;
+	}
 }
