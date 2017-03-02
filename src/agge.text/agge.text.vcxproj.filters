@@ -16,6 +16,5 @@
   <ItemGroup>
     <ClInclude Include="..\..\agge.text\layout.h" />
     <ClInclude Include="..\..\agge.text\font.h" />
-    <ClInclude Include="..\..\agge.text\glyph.h" />
   </ItemGroup>
 </Project>

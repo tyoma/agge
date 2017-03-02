@@ -1,6 +1,6 @@
 #include "mocks.h"
 
-#include <agge.text/glyph.h>
+using namespace std;
 
 namespace agge
 {
@@ -8,31 +8,6 @@ namespace agge
 	{
 		namespace mocks
 		{
-			class glyph : public agge::glyph
-			{
-			public:
-				glyph(size_t *glyphs_alive);
-				virtual ~glyph();
-
-			private:
-				size_t *_glyphs_alive;
-			};
-
-
-
-			glyph::glyph(size_t *glyphs_alive)
-				: _glyphs_alive(glyphs_alive)
-			{
-				if (_glyphs_alive)
-					++*_glyphs_alive;
-			}
-
-			glyph::~glyph()
-			{
-				if (_glyphs_alive)
-					--*_glyphs_alive;
-			}
-
 			uint16_t font::get_glyph_index(wchar_t character) const
 			{
 				indices_map_t::const_iterator i = _indices.find(character);
@@ -42,10 +17,35 @@ namespace agge
 
 			const agge::glyph *font::load_glyph(uint16_t index) const
 			{
-				mocks::glyph *g = new mocks::glyph(_glyphs_alive);
+				class mock_glyph : public agge::glyph
+				{
+				public:
+					mock_glyph(size_t *glyphs_alive)
+						: _glyphs_alive(glyphs_alive)
+					{
+						if (_glyphs_alive)
+							++*_glyphs_alive;
+					}
 
-				g->advance_x = static_cast<real_t>(_glyphs[index].metrics.dx);
-				g->advance_y = static_cast<real_t>(_glyphs[index].metrics.dy);
+					virtual ~mock_glyph()
+					{
+						if (_glyphs_alive)
+							--*_glyphs_alive;
+					}
+
+				private:
+					size_t *_glyphs_alive;
+				};
+
+				agge::glyph *g = new mock_glyph(_glyphs_alive);
+				const font::glyph &myg = _glyphs[index];
+
+				g->advance_x = static_cast<real_t>(myg.metrics.dx);
+				g->advance_y = static_cast<real_t>(myg.metrics.dy);
+				g->index = index;
+				g->outline.reset(new agge::glyph::outline_storage);
+				for (vector<agge::glyph::path_point>::const_iterator i = myg.outline.begin(); i != myg.outline.end(); ++i)
+					g->outline->push_back(*i);
 				return g;
 			}
 

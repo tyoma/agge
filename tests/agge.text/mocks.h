@@ -19,7 +19,8 @@ namespace agge
 
 			public:
 				template <size_t indices_n, size_t glyphs_n>
-				font(char_to_index (&indices)[indices_n], glyph (&glyphs)[glyphs_n], size_t *glyphs_alive = 0);
+				font(const metrics &metrics_, const char_to_index (&indices)[indices_n],
+					glyph (&glyphs)[glyphs_n], size_t *glyphs_alive = 0);
 
 			private:
 				typedef std::map<wchar_t, uint16_t> indices_map_t;
@@ -52,14 +53,28 @@ namespace agge
 					double dx;
 					double dy;
 				} metrics;
+				std::vector<agge::glyph::path_point> outline;
 			};
 
 
 
 			template <size_t indices_n, size_t glyphs_n>
-			inline font::font(char_to_index (&indices)[indices_n], glyph (&glyphs)[glyphs_n], size_t *glyphs_alive)
-				: _indices(indices, indices + indices_n), _glyphs(glyphs, glyphs + glyphs_n), _glyphs_alive(glyphs_alive)
+			inline font::font(const metrics &metrics_, const char_to_index (&indices)[indices_n],
+					glyph (&glyphs)[glyphs_n], size_t *glyphs_alive)
+				: agge::font(metrics_), _indices(indices, indices + indices_n), _glyphs(glyphs, glyphs + glyphs_n),
+					_glyphs_alive(glyphs_alive)
 			{	}
+
+
+			template <typename T, size_t n>
+			inline font::glyph glyph(double dx, double dy, T (&outline)[n])
+			{
+				font::glyph g = { dx, dy };
+
+				for (size_t i = 0; i != n; ++i)
+					g.outline.push_back(outline[i]);
+				return g;
+			}
 		}
 	}
 }
