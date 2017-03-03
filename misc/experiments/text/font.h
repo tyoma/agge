@@ -2,6 +2,9 @@
 
 #include <agge.text/font.h>
 
+struct HFONT__;
+typedef struct HFONT__ *HFONT;
+
 namespace demo
 {
 	struct knuth_hash
@@ -12,7 +15,9 @@ namespace demo
 	class font : public agge::font
 	{
 	public:
-		static ptr create(int height, const wchar_t *typeface, bool bold, bool italic);
+		static std::shared_ptr<font> create(int height, const wchar_t *typeface, bool bold, bool italic);
+
+		HFONT native() const;
 
 	private:
 		typedef std::unordered_map<wchar_t, agge::uint16_t, knuth_hash> char2index;

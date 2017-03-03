@@ -55,12 +55,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\dc.cpp" />
     <ClCompile Include="..\common\MainDialog.cpp" />
     <ClCompile Include="..\common\timing.cpp" />
     <ClCompile Include="font.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\dc.h" />
     <ClInclude Include="..\common\MainDialog.h" />
     <ClInclude Include="..\common\timing.h" />
     <ClInclude Include="font.h" />

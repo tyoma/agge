@@ -3,6 +3,7 @@
 
 #include "../common/blenders.h"
 #include "../common/color.h"
+#include "../common/dc.h"
 #include "../common/MainDialog.h"
 #include "../common/timing.h"
 
@@ -11,6 +12,7 @@
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
 #include <agge.text/layout.h>
+#include <windows.h>
 
 namespace std { namespace tr1 { } using namespace tr1; }
 
@@ -103,9 +105,7 @@ namespace demo
 	{
 	private:
 		enum {
-			precision_shift = 4,
-
-			precision = 1 << precision_shift
+			precision = 5
 		};
 
 	public:
@@ -148,15 +148,10 @@ namespace demo
 
 	class TextDrawer : public Drawer
 	{
-		enum
-		{
-			font_height = 14
-		};
-
 	public:
 		TextDrawer()
-			: _renderer(1), _font(font::create(font_height, L"tahoma", false, false)), _layout(c_text_long.c_str(), _font),
-				_ddx(0.0f)
+			: _renderer(1), _font(font::create(13, L"tahoma", false, false)),
+				_layout(c_text_long.c_str(), _font), _ddx(0.0f), _native(false)
 		{	}
 
 	private:
@@ -164,12 +159,15 @@ namespace demo
 		{
 			long long counter;
 			const rect_i area = { 0, 0, surface.width(), surface.height() };
+			size_t glyphs = 0;
+			dc ctx(&surface);
+			dc::handle h = ctx.select(_font->native());
 
 			stopwatch(counter);
 				agge::fill(surface, area, solid_color_brush(rgba8(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
 
-//			_ddx += 0.006f;
+//			_ddx += 0.01f;
 
 			_rasterizer.reset();
 
@@ -177,14 +175,32 @@ namespace demo
 
 			double layouting = stopwatch(counter);
 			
+			::SetTextAlign(ctx, TA_BASELINE | TA_LEFT);
+
 			for (layout::const_iterator i = _layout.begin(); i != _layout.end(); ++i)
 			{
 				real_t x = i->reference.x + _ddx;
 
-				for (layout::positioned_glyphs_container::const_iterator j = i->begin; j != i->end; ++j)
+				_glyph_indices.clear();
+
+				if (i->reference.y > surface.height())
+					break;
+
+				glyphs += distance(i->begin, i->end);
+				if (_native)
 				{
-					x += j->dx;
-					_glyph_rasters.draw_glyph(_rasterizer, *i->glyph_run_font, j->index, x, i->reference.y);
+					for (layout::positioned_glyphs_container::const_iterator j = i->begin; j != i->end; ++j)
+						_glyph_indices.push_back(j->index);
+					::ExtTextOut(ctx, static_cast<int>(x), static_cast<int>(i->reference.y), ETO_GLYPH_INDEX /*| ETO_PDY*/, 0,
+						reinterpret_cast<LPCTSTR>(&_glyph_indices[0]), static_cast<UINT>(_glyph_indices.size()), 0);
+				}
+				else
+				{
+					for (layout::positioned_glyphs_container::const_iterator j = i->begin; j != i->end; ++j)
+					{
+						x += j->dx;
+						_glyph_rasters.draw_glyph(_rasterizer, *i->glyph_run_font, j->index, x, i->reference.y);
+					}
 				}
 			}
 
@@ -198,7 +214,7 @@ namespace demo
 
 			double render = stopwatch(counter);
 
-			timings.stroking += (layouting + append + sort + render) / c_text_long.size();
+			timings.stroking += (layouting + append + sort + render) / glyphs;
 		}
 
 		virtual void resize(int /*width*/, int /*height*/)
@@ -209,13 +225,15 @@ namespace demo
 		typedef blender2<blender_used> solid_color_brush;
 
 	private:
-		float _ddx;
 		my_rasterizer _rasterizer;
 		__declspec(align(16)) renderer_parallel _renderer;
-		font::ptr _font;
+		shared_ptr<font> _font;
 		layout _layout;
+		float _ddx;
 		vector<uint16_t> _indices;
 		glyph_rasters_cache _glyph_rasters;
+		vector<uint16_t> _glyph_indices;
+		bool _native;
 	};
 }
 

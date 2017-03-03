@@ -1,18 +1,18 @@
 #include "font.h"
 
-#include <functional>
+#include "../common/dc.h"
+
 #include <windows.h>
 
 using namespace agge;
 using namespace std;
-using namespace std::placeholders;
 
 namespace demo
 {
 	namespace
 	{
 		const short factor = 1;
-		const short xfactor = 50;
+		const short xfactor = 100;
 		const UINT c_format = GGO_GLYPH_INDEX | GGO_NATIVE | /*GGO_UNHINTED |*/ GGO_METRICS;
 		const MAT2 c_identity = { { 0, xfactor * factor }, { 0, 0 }, { 0, 0 }, { 0, -factor }, };
 
@@ -27,7 +27,7 @@ namespace demo
 			return p;
 		}
 
-		void bezier2(glyph::outline_storage &outline, real_t x2, real_t y2, real_t x3, real_t y3, real_t d = 0.1f)
+		void bezier2(glyph::outline_storage &outline, real_t x2, real_t y2, real_t x3, real_t y3, real_t d = 0.03f)
 		{
 			const real_t x1 = (outline.end() - 1)->x, y1 = (outline.end() - 1)->y;
 			
@@ -41,57 +41,44 @@ namespace demo
 			}
 			outline.push_back(path_point(path_command_line_to, x3, y3));
 		}
-
-		class selector_dc : noncopyable
-		{
-		public:
-			selector_dc(shared_ptr<void> native)
-				: _native(native), _dc(::CreateCompatibleDC(0)), _previous(::SelectObject(_dc, native.get()))
-			{	}
-
-			~selector_dc()
-			{	::SelectObject(_dc, _previous), ::DeleteDC(_dc);	}
-
-			operator HDC() const
-			{	return _dc;	}
-
-		private:
-			shared_ptr<void> _native;
-			HDC _dc;
-			HGDIOBJ _previous;
-		};
 	}
 
-	font::ptr font::create(int height, const wchar_t *typeface, bool bold, bool italic)
+	std::shared_ptr<font> font::create(int height, const wchar_t *typeface, bool bold, bool italic)
 	{
-		shared_ptr<void> native(::CreateFontW(height, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, !!italic, FALSE, FALSE, 0, 0,
-			0, 0, 0, typeface), &::DeleteObject);
-		selector_dc dc(native);
+		shared_ptr<void> native(::CreateFontW(height, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, !!italic, FALSE, FALSE, 0,
+			CLEARTYPE_NATURAL_QUALITY, 0, 0, 0, typeface), &::DeleteObject);
+		dc ctx;
+		dc::handle h(ctx.select(static_cast<HFONT>(native.get())));
 		metrics m;
 		TEXTMETRIC tm;
 
-		::GetTextMetrics(dc, &tm);
+
+		::GetTextMetrics(ctx, &tm);
 		m.ascent = static_cast<real_t>(tm.tmAscent);
 		m.descent = static_cast<real_t>(tm.tmDescent);
 		m.leading = static_cast<real_t>(tm.tmExternalLeading);
-		return font::ptr(new font(m, native));
+		return std::shared_ptr<font>(new font(m, native));
 	}
 
 	font::font(const metrics &m, std::shared_ptr<void> native)
 		: agge::font(m), _native(native)
 	{
-		selector_dc dc(_native);
+		dc ctx;
+		dc::handle h(ctx.select(this->native()));
 		wchar_t chars[0x10000];
 		uint16_t indices[_countof(chars)] = {};
 
 		for (int i = 0; i != _countof(chars); ++i)
 			chars[i] = (wchar_t)i;
 
-		int converted = ::GetGlyphIndicesW(dc, chars, _countof(chars), indices, 0);
+		int converted = ::GetGlyphIndicesW(ctx, chars, _countof(chars), indices, 0);
 		for (int i = 0; i != converted; ++i)
 			if (indices[i] != 0xffff)
 				_char2index[(wchar_t)i] = indices[i];
 	}
+
+	HFONT font::native() const
+	{	return static_cast<HFONT>(_native.get());	}
 
 	uint16_t font::get_glyph_index(wchar_t character) const
 	{
@@ -105,21 +92,22 @@ namespace demo
 
 		GLYPHMETRICS gm;
 		auto_ptr<glyph> g(new glyph);
-		selector_dc dc(_native);
-		const int size = ::GetGlyphOutline(dc, index, c_format, &gm, 0, 0, &c_identity);
+		dc ctx;
+		dc::handle h(ctx.select(native()));
+		const int size = ::GetGlyphOutline(ctx, index, c_format, &gm, 0, 0, &c_identity);
 
 		if (size == GDI_ERROR)
 			return 0;
 
 		g->index = index;
-		g->advance_x = static_cast<real_t>(gm.gmCellIncX) / xfactor;
+		g->advance_x = static_cast<real_t>(gm.gmCellIncX) / xfactor / factor;
 		g->advance_y = static_cast<real_t>(gm.gmCellIncY);
 		g->outline.reset(new glyph::outline_storage);
 
 		if (size)
 		{
 			vector<uint8_t> buffer(size);
-			::GetGlyphOutline(dc, index, c_format, &gm, size, &buffer[0], &c_identity);
+			::GetGlyphOutline(ctx, index, c_format, &gm, size, &buffer[0], &c_identity);
 			for (pvoid p = &buffer[0], end = &buffer[0] + size; p != end; )
 			{
 				const TTPOLYGONHEADER *header = static_cast<const TTPOLYGONHEADER *>(p);
