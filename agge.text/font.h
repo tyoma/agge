@@ -29,6 +29,7 @@ namespace agge
 		metrics get_metrics() const;
 
 		const glyph *get_glyph(wchar_t character) const;
+		const glyph *get_glyph_by_index(uint16_t index) const;
 		real_t get_kerning(wchar_t former, wchar_t latter) const;
 
 	protected:

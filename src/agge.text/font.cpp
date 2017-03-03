@@ -23,7 +23,11 @@ namespace agge
 
 		if (index == 0xFFFF)
 			return 0;
+		return get_glyph_by_index(index);
+	}
 
+	const glyph *font::get_glyph_by_index(uint16_t index) const
+	{
 		glyphs_cache_t::const_iterator i = _glyphs.find(index);
 
 		if (_glyphs.end() == i)

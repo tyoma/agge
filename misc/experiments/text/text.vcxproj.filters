@@ -8,7 +8,7 @@
     <ClCompile Include="..\common\timing.cpp">
       <Filter>common</Filter>
     </ClCompile>
-    <ClCompile Include="glyph_access.cpp" />
+    <ClCompile Include="font.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="text.h" />
@@ -18,7 +18,7 @@
     <ClInclude Include="..\common\timing.h">
       <Filter>common</Filter>
     </ClInclude>
-    <ClInclude Include="glyph_access.h" />
+    <ClInclude Include="font.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="common">

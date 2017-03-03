@@ -1,5 +1,5 @@
 #include "text.h"
-#include "glyph_access.h"
+#include "font.h"
 
 #include "../common/blenders.h"
 #include "../common/color.h"
@@ -10,30 +10,19 @@
 #include <agge/clipper.h>
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
-#include <functional>
-#include <iostream>
-#include <tchar.h>
-#include <unordered_map>
-#include <vector>
-#include <windows.h>
+#include <agge.text/layout.h>
 
 namespace std { namespace tr1 { } using namespace tr1; }
 
 using namespace agge;
 using namespace common;
 using namespace std;
-using namespace std::placeholders;
 
 typedef simd::blender_solid_color blender_used;
 typedef rasterizer< clipper<int> > my_rasterizer;
 
 namespace demo
 {
-	struct knuth_hash
-	{
-		size_t operator ()(int key) const throw() { return key * 2654435761; }
-	};
-
 	template <typename BlenderT>
 	class blender2 : public BlenderT
 	{
@@ -110,59 +99,21 @@ namespace demo
 		real_t _dx, _dy;
 	};
 
-	shared_ptr<void> select(HDC hdc, HGDIOBJ hobject)
-	{	return shared_ptr<void>(::SelectObject(hdc, hobject), bind(::SelectObject, hdc, _1));	}
-
-	class MemDC : noncopyable
+	class glyph_rasters_cache : noncopyable
 	{
-	public:
-		MemDC()
-			: _dc(::CreateCompatibleDC(NULL), &DeleteDC)
-		{	}
-
-		MemDC(::bitmap &surface)
-			: _dc(::CreateCompatibleDC(NULL), &DeleteDC)
-		{	_selector = select(*this, surface.native());	}
-
-		operator HDC() const
-		{	return static_cast<HDC>(_dc.get());	}
-
 	private:
-		shared_ptr<void> _dc, _selector;
-	};
-
-	class font : noncopyable
-	{
-	public:
-		typedef agg_path_adaptor glyph_outline_path;
 		enum {
-			precision_shift = 6,
+			precision_shift = 4,
 
 			precision = 1 << precision_shift
 		};
 
 	public:
-		font(const TCHAR *typeface, int height)
-			: _font(::CreateFont(height, 0, 0, 0, 0, FALSE, FALSE, FALSE, 0, 0, 0, 0, 0, typeface), &::DeleteObject),
-				_selector(select(_dc, _font.get()))
-		{	}
-
-		void get_glyph_indices(const TCHAR *text, vector<uint16_t> &indices)
+		void draw_glyph(my_rasterizer &r, const agge::font &font_, uint16_t index, real_t x, real_t y)
 		{
-			common::get_glyph_indices(_dc, text, indices);
-		}
+			const real_t original_x = x;
+			const real_t original_y = y;
 
-		glyph_outline_path get_glyph(uint16_t index)
-		{
-			glyphs_cache_t::const_iterator i = _glyphs.find(index);
-
-			if (_glyphs.end() == i)
-				i = _glyphs.insert(make_pair(index, load_glyph(index))).first;
-			return glyph_outline_path(i->second.outline);
-		}
-
-		const my_rasterizer &get_glyph_raster(uint16_t index, real_t x, real_t y)
-		{
 			x -= floorf(x);
 			y -= floorf(y);
 
@@ -175,53 +126,27 @@ namespace demo
 				x = static_cast<real_t>(static_cast<int>(x * precision)) / precision;
 				y = static_cast<real_t>(static_cast<int>(y * precision)) / precision;
 				i = _glyph_rasters.insert(make_pair(precise_index, my_rasterizer())).first;
+				
+				if (const glyph *g = font_.get_glyph_by_index(index))
+				{
+					offset_conv<glyph::path_iterator> outline(g->get_outline(), x, y);
 
-				font::glyph_outline_path g = get_glyph(index);
-				offset_conv<font::glyph_outline_path> og(g, x, y);
-
-				add_path(i->second, og);
-				i->second.sort();
+					add_path(i->second, outline);
+					i->second.sort();
+				}
 			}
-			return i->second;
-		}
-
-		real_t get_glyph_dx(uint16_t index)
-		{
-			glyphs_cache_t::const_iterator i = _glyphs.find(index);
-
-			if (_glyphs.end() == i)
-				i = _glyphs.insert(make_pair(index, load_glyph(index))).first;
-			return i->second.dx;
+			if (i->second.height())
+				r.append(i->second, original_x, original_y);
 		}
 
 	private:
-		struct glyph_data
-		{
-			real_t dx;
-			glyph_outline outline;
-		};
-
-		typedef unordered_map<uint16_t, glyph_data, knuth_hash> glyphs_cache_t;
 		typedef unordered_map<int, my_rasterizer, knuth_hash> glyph_rasters_cache_t;
 
 	private:
-		glyph_data load_glyph(uint16_t index)
-		{
-			glyph_data gd;
-
-			gd.dx = common::get_glyph_dx(_dc, index);
-			get_glyph_outline(_dc, index, gd.outline);
-			return gd;
-		}
-
-	private:
-		MemDC _dc;
-		shared_ptr<void> _font, _selector;
-		glyphs_cache_t _glyphs;
 		glyph_rasters_cache_t _glyph_rasters;
 	};
 
-	class TextDrawerGDI : public Drawer
+	class TextDrawer : public Drawer
 	{
 		enum
 		{
@@ -229,55 +154,10 @@ namespace demo
 		};
 
 	public:
-		TextDrawerGDI()
-			: m_font(::CreateFont(font_height, 0, 0, 0, 0, FALSE, FALSE, FALSE, 0, 0, 0, 0, 0, _T("tahoma")), &::DeleteObject)
-		{	}
-
-	private:
-		virtual void draw(::bitmap &surface, Timings &timings)
-		{
-			const basic_string<TCHAR> &text = c_text2;
-			long long timer;
-			MemDC dc(surface);
-			shared_ptr<void> font_selector = select(dc, m_font.get());
-			RECT rc = { 0, 0, surface.width(), surface.height() };
-
-			::ExtTextOut(dc, 0, 0, ETO_OPAQUE, &rc, _T(""), 0, 0);
-
-			vector<uint16_t> str;
-			for (int i = 0; i != 100; ++i)
-				str.push_back(i);
-
-			stopwatch(timer);
-			for (real_t y = 0; y < 50 * font_height; y += font_height)
-				::ExtTextOut(dc, 0, y, ETO_GLYPH_INDEX, NULL, (LPCTSTR)&str[0], str.size(), 0);
-
-			double t = stopwatch(timer);
-
-			timings.rasterization += t;
-			timings.stroking += t / str.size() / 50;
-		}
-
-		virtual void resize(int /*width*/, int /*height*/)
-		{
-		}
-
-	private:
-		shared_ptr<void> m_font;
-	};
-
-	class TextDrawer : public Drawer
-	{
-		enum
-		{
-			font_height = 12
-		};
-
-	public:
 		TextDrawer()
-			: _renderer(1), _font(_T("tahoma"), font_height), _ddx(0.0f)
-		{
-		}
+			: _renderer(1), _font(font::create(font_height, L"tahoma", false, false)), _layout(c_text_long.c_str(), _font),
+				_ddx(0.0f)
+		{	}
 
 	private:
 		virtual void draw(::bitmap &surface, Timings &timings)
@@ -289,19 +169,22 @@ namespace demo
 				agge::fill(surface, area, solid_color_brush(rgba8(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
 
-			_ddx += 0.02f;
+//			_ddx += 0.006f;
 
 			_rasterizer.reset();
 
-			stopwatch(counter);
-			for (real_t y = 0; y < 50 * font_height; y += font_height)
-			{
-				real_t x = 0.0f;
+			_layout.limit_width(surface.width());
 
-				for (uint16_t i = 0; i != 100; ++i)
+			double layouting = stopwatch(counter);
+			
+			for (layout::const_iterator i = _layout.begin(); i != _layout.end(); ++i)
+			{
+				real_t x = i->reference.x + _ddx;
+
+				for (layout::positioned_glyphs_container::const_iterator j = i->begin; j != i->end; ++j)
 				{
-					_rasterizer.append(_font.get_glyph_raster(i, x + _ddx, y), static_cast<int>(x + _ddx), static_cast<int>(y) + font_height);
-					x += _font.get_glyph_dx(i);
+					x += j->dx;
+					_glyph_rasters.draw_glyph(_rasterizer, *i->glyph_run_font, j->index, x, i->reference.y);
 				}
 			}
 
@@ -315,7 +198,7 @@ namespace demo
 
 			double render = stopwatch(counter);
 
-			timings.stroking += (append + sort + render) / 100.0f / 50;
+			timings.stroking += (layouting + append + sort + render) / c_text_long.size();
 		}
 
 		virtual void resize(int /*width*/, int /*height*/)
@@ -329,8 +212,10 @@ namespace demo
 		float _ddx;
 		my_rasterizer _rasterizer;
 		__declspec(align(16)) renderer_parallel _renderer;
-		font _font;
+		font::ptr _font;
+		layout _layout;
 		vector<uint16_t> _indices;
+		glyph_rasters_cache _glyph_rasters;
 	};
 }
 
