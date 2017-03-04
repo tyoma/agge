@@ -62,28 +62,19 @@ namespace demo
 
 	font::font(const metrics &m, std::shared_ptr<void> native)
 		: agge::font(m), _native(native)
-	{
-		dc ctx;
-		dc::handle h(ctx.select(this->native()));
-		wchar_t chars[0x10000];
-		uint16_t indices[_countof(chars)] = {};
-
-		for (int i = 0; i != _countof(chars); ++i)
-			chars[i] = (wchar_t)i;
-
-		int converted = ::GetGlyphIndicesW(ctx, chars, _countof(chars), indices, 0);
-		for (int i = 0; i != converted; ++i)
-			if (indices[i] != 0xffff)
-				_char2index[(wchar_t)i] = indices[i];
-	}
+	{	}
 
 	HFONT font::native() const
 	{	return static_cast<HFONT>(_native.get());	}
 
 	uint16_t font::get_glyph_index(wchar_t character) const
 	{
-		char2index::const_iterator i = _char2index.find(character);
-		return i != _char2index.end() ? i->second : 0xffff;
+		dc ctx;
+		dc::handle h(ctx.select(native()));
+		WORD index = 0;
+
+		::GetGlyphIndicesW(ctx, &character, 1, &index, 0/*GGI_MARK_NONEXISTING_GLYPHS*/);
+		return index;
 	}
 
 	const glyph *font::load_glyph(uint16_t index) const

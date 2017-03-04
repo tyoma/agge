@@ -25,6 +25,11 @@ typedef rasterizer< clipper<int> > my_rasterizer;
 
 namespace demo
 {
+	struct knuth_hash
+	{
+		size_t operator ()(int key) const throw() { return key * 2654435761; }
+	};
+
 	template <typename BlenderT>
 	class blender2 : public BlenderT
 	{
@@ -151,7 +156,7 @@ namespace demo
 	public:
 		TextDrawer()
 			: _renderer(1), _font(font::create(-12, L"tahoma", false, false)),
-				_layout(c_text_long.c_str(), _font), _ddx(0.0f), _native(false)
+				_layout(c_text_long.c_str(), _font), _ddx(0.0f), _native(true)
 		{	}
 
 	private:
