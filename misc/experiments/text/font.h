@@ -10,7 +10,7 @@ namespace demo
 	class font : public agge::font
 	{
 	public:
-		static std::shared_ptr<font> create(int height, const wchar_t *typeface, bool bold, bool italic);
+		static agge::shared_ptr<font> create(int height, const wchar_t *typeface, bool bold, bool italic);
 
 		HFONT native() const;
 
@@ -22,6 +22,6 @@ namespace demo
 		virtual agge::pod_vector<kerning_pair> load_kerning() const;
 
 	private:
-		std::shared_ptr<void> _native;
+		agge::shared_ptr<void> _native;
 	};		 
 }

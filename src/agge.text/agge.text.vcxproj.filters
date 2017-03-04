@@ -16,5 +16,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\agge.text\layout.h" />
     <ClInclude Include="..\..\agge.text\font.h" />
+    <ClInclude Include="..\..\agge.text\shared_ptr.h" />
+    <ClInclude Include="..\..\agge.text\hash_map.h" />
   </ItemGroup>
 </Project>

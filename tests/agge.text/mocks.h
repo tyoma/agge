@@ -13,7 +13,7 @@ namespace agge
 			class font : public agge::font
 			{
 			public:
-				typedef std::shared_ptr<font> ptr;
+				typedef shared_ptr<font> ptr;
 				struct char_to_index;
 				struct glyph;
 

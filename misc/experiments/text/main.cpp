@@ -14,8 +14,6 @@
 #include <agge.text/layout.h>
 #include <windows.h>
 
-namespace std { namespace tr1 { } using namespace tr1; }
-
 using namespace agge;
 using namespace common;
 using namespace std;
@@ -25,11 +23,6 @@ typedef rasterizer< clipper<int> > my_rasterizer;
 
 namespace demo
 {
-	struct knuth_hash
-	{
-		size_t operator ()(int key) const throw() { return key * 2654435761; }
-	};
-
 	template <typename BlenderT>
 	class blender2 : public BlenderT
 	{
@@ -130,7 +123,7 @@ namespace demo
 			{
 				x = static_cast<real_t>(static_cast<int>(x * precision)) / precision;
 				y = static_cast<real_t>(static_cast<int>(y * precision)) / precision;
-				i = _glyph_rasters.insert(make_pair(precise_index, my_rasterizer())).first;
+				_glyph_rasters.insert(precise_index, my_rasterizer(), i);
 				
 				if (const glyph *g = font_.get_glyph(index))
 				{
@@ -145,7 +138,7 @@ namespace demo
 		}
 
 	private:
-		typedef unordered_map<int, my_rasterizer, knuth_hash> glyph_rasters_cache_t;
+		typedef hash_map<int, my_rasterizer> glyph_rasters_cache_t;
 
 	private:
 		glyph_rasters_cache_t _glyph_rasters;
@@ -156,7 +149,7 @@ namespace demo
 	public:
 		TextDrawer()
 			: _renderer(1), _font(font::create(-12, L"tahoma", false, false)),
-				_layout(c_text_long.c_str(), _font), _ddx(0.0f), _native(true)
+				_layout(c_text_long.c_str(), _font), _ddx(0.0f), _native(false)
 		{	}
 
 	private:

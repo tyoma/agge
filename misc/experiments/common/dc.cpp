@@ -3,10 +3,12 @@
 #include <functional>
 #include <windows.h>
 
+namespace std { namespace tr1 {} using namespace tr1; }
+
 using namespace std;
 using namespace std::placeholders;
 
-namespace demo
+namespace common
 {
 	dc::dc(bitmap *surface)
 		: _dc(::CreateCompatibleDC(NULL)), _bitmap_selector(surface ? select(surface->native()) : 0)

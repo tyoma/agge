@@ -3,21 +3,19 @@
 #include <agge/bitmap.h>
 #include <agge/platform/win32/bitmap.h>
 #include <agge/types.h>
-#include <memory>
-
-namespace std { namespace tr1 {} using namespace tr1; }
+#include <agge.text/shared_ptr.h>
 
 typedef agge::bitmap<agge::pixel32, agge::platform::raw_bitmap> bitmap;
 struct HDC__;
 typedef struct HDC__ *HDC;
 typedef void *HGDIOBJ;
 
-namespace demo
+namespace common
 {
 	class dc : agge::noncopyable
 	{
 	public:
-		typedef std::shared_ptr<void> handle;
+		typedef agge::shared_ptr<void> handle;
 
 	public:
 		explicit dc(bitmap *surface = 0);

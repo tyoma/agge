@@ -5,6 +5,7 @@
 #include <windows.h>
 
 using namespace agge;
+using namespace common;
 using namespace std;
 
 namespace demo

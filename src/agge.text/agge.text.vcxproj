@@ -66,7 +66,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\agge.text\font.h" />
+    <ClInclude Include="..\..\agge.text\hash_map.h" />
     <ClInclude Include="..\..\agge.text\layout.h" />
+    <ClInclude Include="..\..\agge.text\shared_ptr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
