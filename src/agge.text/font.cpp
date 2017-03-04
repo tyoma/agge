@@ -17,16 +17,16 @@ namespace agge
 	font::metrics font::get_metrics() const
 	{	return _metrics;	}
 
-	const glyph *font::get_glyph(wchar_t character) const
+	uint16_t font::map_single(wchar_t character) const
 	{
-		uint16_t index = get_glyph_index(character);
+		pair<char2index_cache_t::iterator, bool> r = _char2glyph.insert(make_pair(character, 0));
 
-		if (index == 0xFFFF)
-			return 0;
-		return get_glyph_by_index(index);
+		if (r.second)
+			r.first->second = get_glyph_index(character);
+		return r.first->second;
 	}
 
-	const glyph *font::get_glyph_by_index(uint16_t index) const
+	const glyph *font::get_glyph(uint16_t index) const
 	{
 		glyphs_cache_t::const_iterator i = _glyphs.find(index);
 

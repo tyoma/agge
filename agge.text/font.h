@@ -28,13 +28,13 @@ namespace agge
 
 		metrics get_metrics() const;
 
-		const glyph *get_glyph(wchar_t character) const;
-		const glyph *get_glyph_by_index(uint16_t index) const;
-		real_t get_kerning(wchar_t former, wchar_t latter) const;
+		uint16_t map_single(wchar_t character) const;
+		const glyph *get_glyph(uint16_t index) const;
 
 	protected:
 		struct kerning_pair;
 		typedef std::unordered_map<uint16_t, const glyph *> glyphs_cache_t;
+		typedef std::unordered_map<wchar_t, uint16_t> char2index_cache_t;
 
 	protected:
 		font(const metrics &metrics_);
@@ -47,6 +47,7 @@ namespace agge
 	private:
 		const metrics _metrics;
 		mutable glyphs_cache_t _glyphs;
+		mutable char2index_cache_t _char2glyph;
 	};
 
 	class glyph
@@ -63,7 +64,6 @@ namespace agge
 		path_iterator get_outline() const;
 
 	public:
-		uint16_t index;
 		real_t advance_x;
 		real_t advance_y;
 		outline_ptr outline;

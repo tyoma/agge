@@ -46,27 +46,27 @@ namespace agge
 				mocks::font f(c_fm1, indices, glyphs);
 
 				// ACT / ASSERT
-				assert_null(f.get_glyph(L'B'));
-				assert_null(f.get_glyph(L'C'));
-				assert_null(f.get_glyph(L' '));
+				assert_null(f.get_glyph(2));
+				assert_null(f.get_glyph(10111));
+				assert_null(f.get_glyph(1));
 			}
 
 
 			test( SameGlyphIsReturnedOnConsequentCalls )
 			{
 				// INIT
-				mocks::font::char_to_index indices[] = { { L'A', 0 }, { L'B', 1 }, { L'!', 2 }, };
+				mocks::font::char_to_index indices[] = { { L'A', 0 }, };
 				mocks::font::glyph glyphs[] = { { { 11, 0 } }, { { 11, 0 } }, { { 11, 0 } }, };
 				mocks::font f(c_fm1, indices, glyphs);
 
 				// ACT
-				const glyph *g1 = f.get_glyph(L'A');
-				const glyph *g2 = f.get_glyph(L'B');
-				const glyph *g3 = f.get_glyph(L'!');
-				const glyph *g4 = f.get_glyph(L'B');
-				const glyph *g5 = f.get_glyph(L'A');
-				const glyph *g6 = f.get_glyph(L'B');
-				const glyph *g7 = f.get_glyph(L'!');
+				const glyph *g1 = f.get_glyph(0);
+				const glyph *g2 = f.get_glyph(1);
+				const glyph *g3 = f.get_glyph(2);
+				const glyph *g4 = f.get_glyph(1);
+				const glyph *g5 = f.get_glyph(0);
+				const glyph *g6 = f.get_glyph(1);
+				const glyph *g7 = f.get_glyph(2);
 
 				// ASSERT
 				assert_equal(g1, g5);
@@ -80,19 +80,19 @@ namespace agge
 			{
 				// INIT
 				size_t alive = 0;
-				mocks::font::char_to_index indices[] = { { L'A', 0 }, { L'B', 1 }, { L'C', 2 }, };
+				mocks::font::char_to_index indices[] = { { L'A', 0 }, };
 				mocks::font::glyph glyphs[] = { { { 11, 0 } }, { { 11, 0 } }, { { 11, 0 } }, };
 				auto_ptr<mocks::font> f(new mocks::font(c_fm1, indices, glyphs, &alive));
 
 				// ACT
-				f->get_glyph(L'A');
-				f->get_glyph(L'B');
+				f->get_glyph(0);
+				f->get_glyph(1);
 
 				// ASSERT
 				assert_equal(2u, alive);
 
 				// ACT
-				f->get_glyph(L'C');
+				f->get_glyph(2);
 
 				// ASSERT
 				assert_equal(3u, alive);
@@ -108,7 +108,7 @@ namespace agge
 			test( GlyphsReturnIteratableOutlinePaths )
 			{
 				// INIT
-				mocks::font::char_to_index indices[] = { { L'A', 0 }, { L'B', 1 }, };
+				mocks::font::char_to_index indices[] = { { L'A', 0 }, };
 				glyph::path_point outline0[] = {
 					{ 1, 1.1f, 2.4f }, { 2, 4.1f, 7.5f }, { 3, 3.6f, 1.3f }, { 4, 3.6f, 1.3f }
 				};
@@ -117,9 +117,9 @@ namespace agge
 				mocks::font f(c_fm1, indices, glyphs);
 
 				// ACT
-				const glyph *g1 = f.get_glyph(L'A');
+				const glyph *g1 = f.get_glyph(0);
 				pod_vector<glyph::path_point> points1 = convert_copy(g1->get_outline());
-				const glyph *g2 = f.get_glyph(L'B');
+				const glyph *g2 = f.get_glyph(1);
 				pod_vector<glyph::path_point> points2 = convert_copy(g2->get_outline());
 
 				// ASSERT
@@ -139,7 +139,7 @@ namespace agge
 				mocks::font f(c_fm1, indices, glyphs);
 
 				// ACT
-				const glyph *g = f.get_glyph(L'A');
+				const glyph *g = f.get_glyph(0);
 				glyph::path_iterator i = g->get_outline();
 				pod_vector<glyph::path_point> points1 = convert(i);
 				i.rewind(0);
@@ -148,6 +148,45 @@ namespace agge
 				// ASSERT
 				assert_equal(outline, points1);
 				assert_equal(outline, points2);
+			}
+
+
+			test( SingleGlyphMatchingIsMadeAccordinglyMappingSupplied )
+			{
+				// INIT
+				mocks::font::char_to_index indices[] = {
+					{ L'A', 0 }, { L'b', 13 }, { L'h', 1130 }, { L'!', 7 }, { L'"', 19 },
+				};
+				mocks::font::glyph glyphs[] = { { 0, 0 }, };
+				mocks::font f(c_fm1, indices, glyphs);
+
+				// ACT / ASSERT
+				assert_equal(0u, f.map_single(L'A'));
+				assert_equal(13u, f.map_single(L'b'));
+				assert_equal(1130u, f.map_single(L'h'));
+				assert_equal(7u, f.map_single(L'!'));
+				assert_equal(19u, f.map_single(L'"'));
+			}
+
+
+			test( SingleGlyphMatchingCachesUnderlyingResult )
+			{
+				// INIT
+				mocks::font::char_to_index indices[] = {
+					{ L'a', 19 }, { L'B', 13111 },
+				};
+				mocks::font::glyph glyphs[] = { { 0, 0 }, };
+				mocks::font f(c_fm1, indices, glyphs);
+
+				// INIT / ACT (caching occurs here)
+				f.map_single(L'a');
+				f.map_single(L'B');
+				f.glyph_mapping_calls = 0;
+
+				// ACT / ASSERT
+				assert_equal(19u, f.map_single(L'a'));
+				assert_equal(13111u, f.map_single(L'B'));
+				assert_equal(0, f.glyph_mapping_calls);
 			}
 
 		end_test_suite

@@ -127,7 +127,7 @@ namespace demo
 				y = static_cast<real_t>(static_cast<int>(y * precision)) / precision;
 				i = _glyph_rasters.insert(make_pair(precise_index, my_rasterizer())).first;
 				
-				if (const glyph *g = font_.get_glyph_by_index(index))
+				if (const glyph *g = font_.get_glyph(index))
 				{
 					offset_conv<glyph::path_iterator> outline(g->get_outline(), x, y);
 

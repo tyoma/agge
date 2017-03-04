@@ -99,7 +99,6 @@ namespace demo
 		if (size == GDI_ERROR)
 			return 0;
 
-		g->index = index;
 		if (1 == xfactor * factor)
 		{
 			ABC abc;
