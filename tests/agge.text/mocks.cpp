@@ -12,6 +12,7 @@ namespace agge
 			{
 				indices_map_t::const_iterator i = _indices.find(character);
 
+				++glyph_mapping_calls;
 				return i != _indices.end() ? i->second : 0xffff;
 			}
 
@@ -37,12 +38,14 @@ namespace agge
 					size_t *_glyphs_alive;
 				};
 
+				if (index >= _glyphs.size())
+					return 0;
+
 				agge::glyph *g = new mock_glyph(_glyphs_alive);
 				const font::glyph &myg = _glyphs[index];
 
 				g->advance_x = static_cast<real_t>(myg.metrics.dx);
 				g->advance_y = static_cast<real_t>(myg.metrics.dy);
-				g->index = index;
 				g->outline.reset(new agge::glyph::outline_storage);
 				for (vector<agge::glyph::path_point>::const_iterator i = myg.outline.begin(); i != myg.outline.end(); ++i)
 					g->outline->push_back(*i);

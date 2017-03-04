@@ -87,7 +87,8 @@ namespace agge
 
 			for (wstring::const_iterator eow_i = _text.end(); i != _text.end() && !eat_lf(i); ++i, ++pgi)
 			{
-				const glyph *g = _font->get_glyph(*i);
+				const uint16_t index = _font->map_single(*i);
+				const glyph *g = _font->get_glyph(index);
 
 				if (eow(*i))
 				{
@@ -107,7 +108,7 @@ namespace agge
 				}
 				pgi->dx = previous ? previous->advance_x : 0.0f;
 				pgi->dy = 0.0f;
-				pgi->index = g->index;
+				pgi->index = index;
 				previous = g;
 			}
 
