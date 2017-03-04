@@ -2,10 +2,8 @@
 
 #include <agge/path.h>
 #include <agge/pod_vector.h>
-#include <memory>
-#include <unordered_map>
-
-namespace std { namespace tr1 {} using namespace tr1; }
+#include <agge.text/shared_ptr.h>
+#include <agge.text/hash_map.h>
 
 namespace agge
 {
@@ -14,7 +12,7 @@ namespace agge
 	class font : noncopyable
 	{
 	public:
-		typedef std::shared_ptr<font> ptr;
+		typedef shared_ptr<font> ptr;
 
 		struct metrics
 		{
@@ -33,8 +31,8 @@ namespace agge
 
 	protected:
 		struct kerning_pair;
-		typedef std::unordered_map<uint16_t, const glyph *> glyphs_cache_t;
-		typedef std::unordered_map<wchar_t, uint16_t> char2index_cache_t;
+		typedef hash_map<uint16_t, const glyph *> glyphs_cache_t;
+		typedef hash_map<wchar_t, uint16_t> char2index_cache_t;
 
 	protected:
 		font(const metrics &metrics_);
@@ -56,7 +54,7 @@ namespace agge
 		struct path_point { int command; real_t x, y; };
 		class path_iterator;
 		typedef pod_vector<path_point> outline_storage;
-		typedef std::shared_ptr<outline_storage> outline_ptr; 
+		typedef shared_ptr<outline_storage> outline_ptr; 
 
 	public:
 		virtual ~glyph() { }

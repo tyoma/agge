@@ -1,7 +1,5 @@
 #include <agge.text/font.h>
 
-using namespace std;
-
 namespace agge
 {
 	font::font(const metrics &metrics_)
@@ -19,11 +17,16 @@ namespace agge
 
 	uint16_t font::map_single(wchar_t character) const
 	{
-		pair<char2index_cache_t::iterator, bool> r = _char2glyph.insert(make_pair(character, 0));
+		char2index_cache_t::const_iterator i = _char2glyph.find(character);
 
-		if (r.second)
-			r.first->second = get_glyph_index(character);
-		return r.first->second;
+		if (_char2glyph.end() == i)
+		{
+			char2index_cache_t::iterator inserted;
+
+			_char2glyph.insert(character, get_glyph_index(character), inserted);
+			i = inserted;
+		}
+		return i->second;
 	}
 
 	const glyph *font::get_glyph(uint16_t index) const
@@ -32,9 +35,11 @@ namespace agge
 
 		if (_glyphs.end() == i)
 		{
-			const glyph *g = load_glyph(index);
+			glyphs_cache_t::iterator inserted;
 
-			i = _glyphs.insert(make_pair(index, g)).first;
+			_glyphs.insert(index, 0, inserted);
+			inserted->second = load_glyph(index); // Avoid memory leak on exception in insert().
+			i = inserted;
 		}
 		return i->second;
 	}
