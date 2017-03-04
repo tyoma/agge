@@ -12,7 +12,7 @@ namespace demo
 	namespace
 	{
 		const short factor = 1;
-		const short xfactor = 100;
+		const short xfactor = 1;
 		const UINT c_format = GGO_GLYPH_INDEX | GGO_NATIVE | /*GGO_UNHINTED |*/ GGO_METRICS;
 		const MAT2 c_identity = { { 0, xfactor * factor }, { 0, 0 }, { 0, 0 }, { 0, -factor }, };
 
@@ -100,7 +100,15 @@ namespace demo
 			return 0;
 
 		g->index = index;
-		g->advance_x = static_cast<real_t>(gm.gmCellIncX) / xfactor / factor;
+		if (1 == xfactor * factor)
+		{
+			ABC abc;
+
+			::GetCharABCWidthsI(ctx, index, 1, 0, &abc);
+			g->advance_x = static_cast<real_t>(abc.abcA + abc.abcB + abc.abcC);
+		}
+		else
+			g->advance_x = static_cast<real_t>(gm.gmCellIncX) / xfactor / factor;
 		g->advance_y = static_cast<real_t>(gm.gmCellIncY);
 		g->outline.reset(new glyph::outline_storage);
 

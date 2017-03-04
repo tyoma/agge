@@ -150,7 +150,7 @@ namespace demo
 	{
 	public:
 		TextDrawer()
-			: _renderer(1), _font(font::create(13, L"tahoma", false, false)),
+			: _renderer(1), _font(font::create(-12, L"tahoma", false, false)),
 				_layout(c_text_long.c_str(), _font), _ddx(0.0f), _native(false)
 		{	}
 
@@ -215,6 +215,8 @@ namespace demo
 			double render = stopwatch(counter);
 
 			timings.stroking += (layouting + append + sort + render) / glyphs;
+			timings.rasterization += append + sort;
+			timings.rendition += render;
 		}
 
 		virtual void resize(int /*width*/, int /*height*/)
