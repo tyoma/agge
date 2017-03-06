@@ -2,15 +2,9 @@
 
 namespace agge
 {
-	font::font(const metrics &metrics_)
-		: _metrics(metrics_)
+	font::font(const accessor_ptr &accessor_)
+		: _accessor(accessor_), _metrics(accessor_->get_metrics())
 	{	}
-
-	font::~font()
-	{
-		for (glyphs_cache_t::const_iterator i = _glyphs.begin(); i != _glyphs.end(); ++i)
-			delete i->second;
-	}
 	
 	font::metrics font::get_metrics() const
 	{	return _metrics;	}
@@ -23,7 +17,7 @@ namespace agge
 		{
 			char2index_cache_t::iterator inserted;
 
-			_char2glyph.insert(character, get_glyph_index(character), inserted);
+			_char2glyph.insert(character, _accessor->get_glyph_index(character), inserted);
 			i = inserted;
 		}
 		return i->second;
@@ -31,16 +25,18 @@ namespace agge
 
 	const glyph *font::get_glyph(uint16_t index) const
 	{
-		glyphs_cache_t::const_iterator i = _glyphs.find(index);
+		glyphs_cache_t::iterator i = _glyphs.find(index);
 
 		if (_glyphs.end() == i)
 		{
 			glyphs_cache_t::iterator inserted;
+			glyph g;
 
-			_glyphs.insert(index, 0, inserted);
-			inserted->second = load_glyph(index); // Avoid memory leak on exception in insert().
-			i = inserted;
+			g.outline.reset(new glyph::outline_storage);
+			if (!_accessor->load_glyph(index, g.metrics, *g.outline))
+				g.outline.reset();
+			_glyphs.insert(index, g, i);
 		}
-		return i->second;
+		return i->second.outline ? &i->second : 0;
 	}
 }

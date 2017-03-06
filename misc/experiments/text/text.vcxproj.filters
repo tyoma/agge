@@ -8,10 +8,10 @@
     <ClCompile Include="..\common\timing.cpp">
       <Filter>common</Filter>
     </ClCompile>
-    <ClCompile Include="font.cpp" />
     <ClCompile Include="..\common\dc.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="win32_font.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="text.h" />
@@ -21,10 +21,10 @@
     <ClInclude Include="..\common\timing.h">
       <Filter>common</Filter>
     </ClInclude>
-    <ClInclude Include="font.h" />
     <ClInclude Include="..\common\dc.h">
       <Filter>common</Filter>
     </ClInclude>
+    <ClInclude Include="win32_font.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="common">

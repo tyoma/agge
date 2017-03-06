@@ -105,14 +105,7 @@ namespace
 
 		path.rewind(0);
 		for (int command; command = path.vertex(&x, &y), path_command_stop != command; )
-		{
-			if (path_command_line_to == (command & path_command_mask))
-				sink.line_to(x, y);
-			else if (path_command_move_to == (command & path_command_mask))
-				sink.move_to(x, y);
-			if (command & path_flag_close)
-				sink.close_polygon();
-		}
+			add_polyline_vertex(sink, x, y, command);
 	}
 
 

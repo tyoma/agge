@@ -1,5 +1,5 @@
 #include "text.h"
-#include "font.h"
+#include "win32_font.h"
 
 #include "../common/blenders.h"
 #include "../common/color.h"
@@ -62,14 +62,7 @@ namespace demo
 
 		path.rewind(0);
 		for (int command; command = path.vertex(&x, &y), path_command_stop != command; )
-		{
-			if (path_command_line_to == (command & path_command_mask))
-				sink.line_to(x, y);
-			else if (path_command_move_to == (command & path_command_mask))
-				sink.move_to(x, y);
-			if (command & path_flag_close)
-				sink.close_polygon();
-		}
+			add_polyline_vertex(sink, x, y, command);
 	}
 
 	template <typename SourceT>
@@ -148,8 +141,8 @@ namespace demo
 	{
 	public:
 		TextDrawer()
-			: _renderer(1), _font(font::create(-12, L"tahoma", false, false)),
-				_layout(c_text_long.c_str(), _font), _ddx(0.0f), _native(false)
+			: _renderer(1), _font_accessor(new win32_font_accessor(-11, L"tahoma", false, false)),
+				_font(new font(_font_accessor)), _layout(c_text_long.c_str(), _font), _ddx(0.0f), _native(false)
 		{	}
 
 	private:
@@ -159,7 +152,7 @@ namespace demo
 			const rect_i area = { 0, 0, surface.width(), surface.height() };
 			size_t glyphs = 0;
 			dc ctx(&surface);
-			dc::handle h = ctx.select(_font->native());
+			dc::handle h = ctx.select(_font_accessor->native());
 
 			stopwatch(counter);
 				agge::fill(surface, area, solid_color_brush(rgba8(255, 255, 255)));
@@ -208,7 +201,7 @@ namespace demo
 
 			double sort = stopwatch(counter);
 
-			_renderer(surface, 0, _rasterizer, solid_color_brush(rgba8(0, 0, 0, 255)), calculate_alpha<vector_rasterizer::_1_shift>());
+			_renderer(surface, 0, _rasterizer, solid_color_brush(rgba8(255, 0, 0, 255)), calculate_alpha<vector_rasterizer::_1_shift>());
 
 			double render = stopwatch(counter);
 
@@ -227,6 +220,7 @@ namespace demo
 	private:
 		my_rasterizer _rasterizer;
 		__declspec(align(16)) renderer_parallel _renderer;
+		shared_ptr<win32_font_accessor> _font_accessor;
 		shared_ptr<font> _font;
 		layout _layout;
 		float _ddx;

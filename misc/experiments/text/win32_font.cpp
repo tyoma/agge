@@ -1,4 +1,4 @@
-#include "font.h"
+#include "win32_font.h"
 
 #include "../common/dc.h"
 
@@ -44,31 +44,29 @@ namespace demo
 		}
 	}
 
-	std::shared_ptr<font> font::create(int height, const wchar_t *typeface, bool bold, bool italic)
-	{
-		shared_ptr<void> native(::CreateFontW(height, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, !!italic, FALSE, FALSE, 0,
-			CLEARTYPE_NATURAL_QUALITY, 0, 0, 0, typeface), &::DeleteObject);
-		dc ctx;
-		dc::handle h(ctx.select(static_cast<HFONT>(native.get())));
-		metrics m;
-		TEXTMETRIC tm;
+	win32_font_accessor::win32_font_accessor(int height, const wchar_t *typeface, bool bold, bool italic)
+		: _native(::CreateFontW(height, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, !!italic, FALSE, FALSE, 0,
+			CLEARTYPE_NATURAL_QUALITY, 0, 0, 0, typeface), &::DeleteObject)
+	{	}
 
+	HFONT win32_font_accessor::native() const
+	{	return static_cast<HFONT>(_native.get());	}
+
+	font::metrics win32_font_accessor::get_metrics() const
+	{
+		dc ctx;
+		dc::handle h(ctx.select(static_cast<HFONT>(_native.get())));
+		font::metrics m;
+		TEXTMETRIC tm;
 
 		::GetTextMetrics(ctx, &tm);
 		m.ascent = static_cast<real_t>(tm.tmAscent);
 		m.descent = static_cast<real_t>(tm.tmDescent);
 		m.leading = static_cast<real_t>(tm.tmExternalLeading);
-		return std::shared_ptr<font>(new font(m, native));
+		return m;
 	}
 
-	font::font(const metrics &m, std::shared_ptr<void> native)
-		: agge::font(m), _native(native)
-	{	}
-
-	HFONT font::native() const
-	{	return static_cast<HFONT>(_native.get());	}
-
-	uint16_t font::get_glyph_index(wchar_t character) const
+	uint16_t win32_font_accessor::get_glyph_index(wchar_t character) const
 	{
 		dc ctx;
 		dc::handle h(ctx.select(native()));
@@ -78,30 +76,28 @@ namespace demo
 		return index;
 	}
 
-	const glyph *font::load_glyph(uint16_t index) const
+	bool win32_font_accessor::load_glyph(uint16_t index, glyph::glyph_metrics &m, glyph::outline_storage &o) const
 	{
 		typedef const void *pvoid;
 
 		GLYPHMETRICS gm;
-		auto_ptr<glyph> g(new glyph);
 		dc ctx;
 		dc::handle h(ctx.select(native()));
 		const int size = ::GetGlyphOutline(ctx, index, c_format, &gm, 0, 0, &c_identity);
 
 		if (size == GDI_ERROR)
-			return 0;
+			return false;
 
 		if (1 == xfactor * factor)
 		{
 			ABC abc;
 
 			::GetCharABCWidthsI(ctx, index, 1, 0, &abc);
-			g->advance_x = static_cast<real_t>(abc.abcA + abc.abcB + abc.abcC);
+			m.advance_x = static_cast<real_t>(abc.abcA + abc.abcB + abc.abcC);
 		}
 		else
-			g->advance_x = static_cast<real_t>(gm.gmCellIncX) / xfactor / factor;
-		g->advance_y = static_cast<real_t>(gm.gmCellIncY);
-		g->outline.reset(new glyph::outline_storage);
+			m.advance_x = static_cast<real_t>(gm.gmCellIncX) / xfactor / factor;
+		m.advance_y = static_cast<real_t>(gm.gmCellIncY);
 
 		if (size)
 		{
@@ -113,8 +109,8 @@ namespace demo
 				const pvoid next_poly = static_cast<const uint8_t *>(p) + header->cb;
 
 				p = header + 1;
-				g->outline->push_back(path_point(path_command_move_to, fixed2real(header->pfxStart.x) / xfactor,
-					fixed2real(header->pfxStart.y)));
+				o.push_back(path_point(path_command_move_to,
+					fixed2real(header->pfxStart.x) / xfactor, fixed2real(header->pfxStart.y)));
 
 				for (const TTPOLYCURVE *curve; curve = static_cast<const TTPOLYCURVE *>(p), p != next_poly;
 					p = static_cast<const uint8_t *>(p) + sizeof(TTPOLYCURVE) + (curve->cpfx - 1) * sizeof(POINTFX))
@@ -124,7 +120,7 @@ namespace demo
 					case TT_PRIM_LINE:
 						for (WORD i = 0; i != curve->cpfx; ++i)
 						{
-							g->outline->push_back(path_point(path_command_line_to,
+							o.push_back(path_point(path_command_line_to,
 								fixed2real(curve->apfx[i].x) / xfactor, fixed2real(curve->apfx[i].y)));
 						}
 						break;
@@ -141,7 +137,7 @@ namespace demo
 								*(int*)&pnt_c.x = (*(int*)&pnt_b.x + *(int*)&pnt_c.x) / 2;
 								*(int*)&pnt_c.y = (*(int*)&pnt_b.y + *(int*)&pnt_c.y) / 2;
 							}
-							bezier2(*g->outline, fixed2real(pnt_b.x) / xfactor, fixed2real(pnt_b.y),
+							bezier2(o, fixed2real(pnt_b.x) / xfactor, fixed2real(pnt_b.y),
 								fixed2real(pnt_c.x) / xfactor, fixed2real(pnt_c.y));
 						}
 						break;
@@ -150,15 +146,10 @@ namespace demo
 						break;
 					}
 				}
-				(g->outline->end() - 1)->command |= path_flag_close;
+				(o.end() - 1)->command |= path_flag_close;
 				p = next_poly;
 			}
 		}
-		return g.release();
-	}
-
-	pod_vector<font::kerning_pair> font::load_kerning() const
-	{
-		throw 0;
+		return true;
 	}
 }
