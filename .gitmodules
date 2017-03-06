@@ -2,3 +2,7 @@
 	path = libraries/utee
 	url = ../utee.git
 	branch = master
+[submodule "libraries/freetype2"]
+	path = libraries/freetype2
+	url = git://git.sv.nongnu.org/freetype/freetype2.git
+	branch = master
