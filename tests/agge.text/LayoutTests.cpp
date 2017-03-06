@@ -22,9 +22,9 @@ namespace agge
 		begin_test_suite( LayoutTests )
 			test( EmptyLayoutHasEmptyBox )
 			{
-				mocks::font::char_to_index indices[] = { { L'A', 0 }, };
-				mocks::font::glyph glyphs[] = { { { 0, 0 } }, };
-				font::ptr f(new mocks::font(c_fm1, indices, glyphs));
+				mocks::font_accessor::char_to_index indices[] = { { L'A', 0 }, };
+				mocks::font_accessor::glyph glyphs[] = { { { 0, 0 } }, };
+				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
 
 				// INIT / ACT
 				layout l(L"", f);
@@ -41,12 +41,12 @@ namespace agge
 			test( SingleLineUnboundLayoutBoxEqualsSumOfAdvances )
 			{
 				// INIT
-				mocks::font::char_to_index indices1[] = { { L'A', 1 }, { L'B', 0 }, { L'Q', 0 }, };
-				mocks::font::glyph glyphs[] = {
+				mocks::font_accessor::char_to_index indices1[] = { { L'A', 1 }, { L'B', 0 }, { L'Q', 0 }, };
+				mocks::font_accessor::glyph glyphs[] = {
 					{ { 13, 0 } },
 					{ { 11, 0 } },
 				};
-				font::ptr f1(new mocks::font(c_fm1, indices1, glyphs));
+				font::ptr f1 = mocks::create_font(c_fm1, indices1, glyphs);
 
 				// INIT / ACT
 				layout l1(L"A", f1);
@@ -64,8 +64,8 @@ namespace agge
 				assert_equal(37.0f, box3.w);
 
 				// INIT
-				mocks::font::char_to_index indices2[] = { { L'A', 0 }, { L'B', 0 }, { L'Q', 0 }, };
-				font::ptr f2(new mocks::font(c_fm1, indices2, glyphs));
+				mocks::font_accessor::char_to_index indices2[] = { { L'A', 0 }, { L'B', 0 }, { L'Q', 0 }, };
+				font::ptr f2 = mocks::create_font(c_fm1, indices2, glyphs);
 
 				// INIT / ACT
 				layout l4(L"A", f2);
@@ -84,16 +84,16 @@ namespace agge
 			test( SingleLineUnboundLayoutProducesSingleGlyphRuns )
 			{
 				// INIT
-				mocks::font::char_to_index indices1[] = { { L'A', 1 }, { L'B', 0 }, { L'Q', 0 }, };
-				mocks::font::char_to_index indices2[] = { { L'A', 0 }, { L'B', 1 }, { L'Q', 2 }, { L' ', 3 } };
-				mocks::font::glyph glyphs[] = {
+				mocks::font_accessor::char_to_index indices1[] = { { L'A', 1 }, { L'B', 0 }, { L'Q', 0 }, };
+				mocks::font_accessor::char_to_index indices2[] = { { L'A', 0 }, { L'B', 1 }, { L'Q', 2 }, { L' ', 3 } };
+				mocks::font_accessor::glyph glyphs[] = {
 					{ { 13, 0 } },
 					{ { 11, 0 } },
 					{ { 12.7, 0 } },
 					{ { 10.1, 0 } },
 				};
-				font::ptr f1(new mocks::font(c_fm1, indices1, glyphs));
-				font::ptr f2(new mocks::font(c_fm1, indices2, glyphs));
+				font::ptr f1 = mocks::create_font(c_fm1, indices1, glyphs);
+				font::ptr f2 = mocks::create_font(c_fm1, indices2, glyphs);
 				layout::const_iterator gr;
 
 				// INIT / ACT
@@ -148,14 +148,14 @@ namespace agge
 			test( MultiLineUnboundLayoutBoxEqualsMaxOfSumOfAdvancesInEachRow )
 			{
 				// INIT
-				mocks::font::char_to_index indices[] = { { L' ', 0 }, { L'A', 1 }, { L'B', 2 }, { L'C', 3 }, };
-				mocks::font::glyph glyphs[] = {
+				mocks::font_accessor::char_to_index indices[] = { { L' ', 0 }, { L'A', 1 }, { L'B', 2 }, { L'C', 3 }, };
+				mocks::font_accessor::glyph glyphs[] = {
 					{ { 7.1, 0 } },
 					{ { 11, 0 } },
 					{ { 13, 0 } },
 					{ { 17, 0 } },
 				};
-				font::ptr f(new mocks::font(c_fm1, indices, glyphs));
+				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
 
 				// ACT
 				layout l1(L"ABC CBA AB\nABB BBC\n", f);
@@ -175,15 +175,15 @@ namespace agge
 			test( MultiLineUnboundLayoutProducesGlyphRunsForEachLine )
 			{
 				// INIT
-				mocks::font::char_to_index indices[] = { { L' ', 0 }, { L'A', 1 }, { L'B', 2 }, { L'C', 3 }, };
-				mocks::font::glyph glyphs[] = {
+				mocks::font_accessor::char_to_index indices[] = { { L' ', 0 }, { L'A', 1 }, { L'B', 2 }, { L'C', 3 }, };
+				mocks::font_accessor::glyph glyphs[] = {
 					{ { 7.1, 0 } },
 					{ { 11, 0 } },
 					{ { 13, 0 } },
 					{ { 17, 0 } },
 				};
-				font::ptr f1(new mocks::font(c_fm1, indices, glyphs));
-				font::ptr f2(new mocks::font(c_fm2, indices, glyphs));
+				font::ptr f1 = mocks::create_font(c_fm1, indices, glyphs);
+				font::ptr f2 = mocks::create_font(c_fm2, indices, glyphs);
 				layout::const_iterator gr;
 
 				// INIT / ACT
@@ -234,10 +234,10 @@ namespace agge
 			test( LongSingleLineIsBrokenOnWordBounds )
 			{
 				// INIT
-				mocks::font::char_to_index indices[] = {
+				mocks::font_accessor::char_to_index indices[] = {
 					{ L' ', 0 }, { L'A', 1 }, { L'B', 2 }, { L'C', 3 }, { L'\'', 4 }, { L'.', 5 },
 				};
-				mocks::font::glyph glyphs[] = {
+				mocks::font_accessor::glyph glyphs[] = {
 					{ { 7.1, 0 } },
 					{ { 11, 0 } },
 					{ { 12, 0 } },
@@ -245,7 +245,7 @@ namespace agge
 					{ { 3, 0 } },
 					{ { 3, 0 } },
 				};
-				font::ptr f(new mocks::font(c_fm1, indices, glyphs));
+				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
 				layout::const_iterator gr;
 				
 				// 44 + 7.1 + 48 + 7.1 + 26 + 7.1 + 48 + 7.1 + 44
@@ -311,13 +311,13 @@ namespace agge
 			test( LongWordsAreEmergentlyBrokenOnWidthLimit )
 			{
 				// INIT
-				mocks::font::char_to_index indices[] = { { L'A', 0 }, { L'B', 1 }, { L'C', 2 }, };
-				mocks::font::glyph glyphs[] = {
+				mocks::font_accessor::char_to_index indices[] = { { L'A', 0 }, { L'B', 1 }, { L'C', 2 }, };
+				mocks::font_accessor::glyph glyphs[] = {
 					{ { 1, 0 } },
 					{ { 2, 0 } },
 					{ { 3, 0 } },
 				};
-				font::ptr f(new mocks::font(c_fm1, indices, glyphs));
+				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
 				layout::const_iterator gr;
 				layout l(L"ABCABCABC", f);
 

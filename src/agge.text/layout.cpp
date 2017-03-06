@@ -96,7 +96,7 @@ namespace agge
 					eow_pgi = pgi;
 				}
 
-				width += g->advance_x;
+				width += g->metrics.advance_x;
 				if (width > _limit_width)
 				{
 					if (eow_i != _text.end()) // not an emergency break
@@ -106,7 +106,7 @@ namespace agge
 					}
 					break;
 				}
-				pgi->dx = previous ? previous->advance_x : 0.0f;
+				pgi->dx = previous ? previous->metrics.advance_x : 0.0f;
 				pgi->dy = 0.0f;
 				pgi->index = index;
 				previous = g;

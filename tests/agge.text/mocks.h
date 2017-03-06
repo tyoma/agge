@@ -10,17 +10,16 @@ namespace agge
 	{
 		namespace mocks
 		{
-			class font : public agge::font
+			class font_accessor : public font::accessor
 			{
 			public:
-				typedef shared_ptr<font> ptr;
 				struct char_to_index;
 				struct glyph;
 
 			public:
 				template <size_t indices_n, size_t glyphs_n>
-				font(const metrics &metrics_, const char_to_index (&indices)[indices_n],
-					glyph (&glyphs)[glyphs_n], size_t *glyphs_alive = 0);
+				font_accessor(const font::metrics &metrics_, const char_to_index (&indices)[indices_n],
+					glyph (&glyphs)[glyphs_n]);
 
 			public:
 				mutable int glyph_mapping_calls;
@@ -29,17 +28,17 @@ namespace agge
 				typedef std::map<wchar_t, uint16_t> indices_map_t;
 
 			private:
+				virtual font::metrics get_metrics() const;
 				virtual uint16_t get_glyph_index(wchar_t character) const;
-				virtual const agge::glyph *load_glyph(uint16_t index) const;
-				virtual pod_vector<kerning_pair> load_kerning() const;
+				virtual bool load_glyph(uint16_t index, agge::glyph::glyph_metrics &m, agge::glyph::outline_storage &o) const;
 
 			private:
+				font::metrics _metrics;
 				indices_map_t _indices;
 				std::vector<glyph> _glyphs;
-				size_t *_glyphs_alive;
 			};
 
-			struct font::char_to_index
+			struct font_accessor::char_to_index
 			{
 				wchar_t symbol;
 				uint16_t index;
@@ -49,7 +48,7 @@ namespace agge
 				{	return std::make_pair(symbol, index);	}
 			};
 
-			struct font::glyph
+			struct font_accessor::glyph
 			{
 				struct
 				{
@@ -62,21 +61,29 @@ namespace agge
 
 
 			template <size_t indices_n, size_t glyphs_n>
-			inline font::font(const metrics &metrics_, const char_to_index (&indices)[indices_n],
-					glyph (&glyphs)[glyphs_n], size_t *glyphs_alive)
-				: agge::font(metrics_), glyph_mapping_calls(0), _indices(indices, indices + indices_n),
-					_glyphs(glyphs, glyphs + glyphs_n), _glyphs_alive(glyphs_alive)
+			inline font_accessor::font_accessor(const font::metrics &metrics_, const char_to_index (&indices)[indices_n],
+					glyph (&glyphs)[glyphs_n])
+				: glyph_mapping_calls(0), _metrics(metrics_), _indices(indices, indices + indices_n),
+					_glyphs(glyphs, glyphs + glyphs_n)
 			{	}
 
 
 			template <typename T, size_t n>
-			inline font::glyph glyph(double dx, double dy, T (&outline)[n])
+			inline font_accessor::glyph glyph(double dx, double dy, T (&outline)[n])
 			{
-				font::glyph g = { dx, dy };
+				font_accessor::glyph g = { dx, dy };
 
 				for (size_t i = 0; i != n; ++i)
 					g.outline.push_back(outline[i]);
 				return g;
+			}
+
+			template <size_t indices_n, size_t glyphs_n>
+			inline font::ptr create_font(const font::metrics &metrics_,
+				const font_accessor::char_to_index (&indices)[indices_n], font_accessor::glyph (&glyphs)[glyphs_n])
+			{
+				font::accessor_ptr a(new font_accessor(metrics_, indices,glyphs));
+				return font::ptr(new font(a));
 			}
 		}
 	}
