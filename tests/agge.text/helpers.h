@@ -26,6 +26,14 @@ namespace agge
 			point<T> p = { x, y };
 			return p;
 		}
+
+		template <typename T, size_t n>
+		inline T *begin(T (&p)[n])
+		{	return p;	}
+
+		template <typename T, size_t n>
+		inline T *end(T (&p)[n])
+		{	return p + n;	}
 	}
 
 	inline bool operator ==(const layout::positioned_glyph &lhs, const layout::positioned_glyph &rhs)

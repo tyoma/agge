@@ -1,6 +1,8 @@
 #pragma once
 
 #include <agge.text/font.h>
+#include <agge.text/font_engine.h>
+
 #include <map>
 #include <vector>
 
@@ -10,6 +12,11 @@ namespace agge
 	{
 		namespace mocks
 		{
+			class fonts_loader : public font_engine::loader
+			{
+				virtual font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic);
+			};
+
 			class font_accessor : public font::accessor
 			{
 			public:

@@ -11,10 +11,10 @@ namespace agge
 		size_t operator ()(int key) const { return key * 2654435761; }
 	};
 
-	template <typename KeyT, typename ValueT>
-	class hash_map : private std::unordered_map<KeyT, ValueT, knuth_hash>
+	template <typename KeyT, typename ValueT, typename HashF = knuth_hash>
+	class hash_map : private std::unordered_map<KeyT, ValueT, HashF>
 	{
-		typedef std::unordered_map<KeyT, ValueT, knuth_hash> base_t;
+		typedef std::unordered_map<KeyT, ValueT, HashF> base_t;
 
 	public:
 		using typename base_t::const_iterator;
@@ -30,8 +30,8 @@ namespace agge
 
 
 
-	template <typename KeyT, typename ValueT>
-	inline bool hash_map<KeyT, ValueT>::insert(const KeyT &key, const ValueT &value, iterator &i)
+	template <typename KeyT, typename ValueT, typename HashF>
+	inline bool hash_map<KeyT, ValueT, HashF>::insert(const KeyT &key, const ValueT &value, iterator &i)
 	{
 		const std::pair<iterator, bool> r = base_t::insert(typename base_t::value_type(key, value));
 

@@ -31,6 +31,12 @@ namespace agge
 					o.push_back(*i);
 				return true;
 			}
+
+
+			font::accessor_ptr fonts_loader::load(const wchar_t * /*typeface*/, int /*height*/, bool /*bold*/, bool /*italic*/)
+			{
+				throw 0;
+			}
 		}
 	}
 }
