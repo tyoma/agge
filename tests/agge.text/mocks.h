@@ -4,6 +4,7 @@
 #include <agge.text/font_engine.h>
 
 #include <map>
+#include <string>
 #include <vector>
 
 namespace agge
@@ -12,9 +13,23 @@ namespace agge
 	{
 		namespace mocks
 		{
+			struct font_descriptor
+			{
+				std::wstring typeface;
+				int height;
+				bool bold;
+				bool italic;
+				font_engine::grid_fit grid_fit;
+			};
+
 			class fonts_loader : public font_engine::loader
 			{
-				virtual font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic);
+			public:
+				std::vector<font_descriptor> created_log;
+
+			private:
+				virtual font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic,
+					font_engine::grid_fit grid_fit);
 			};
 
 			class font_accessor : public font::accessor
@@ -37,7 +52,7 @@ namespace agge
 			private:
 				virtual font::metrics get_metrics() const;
 				virtual uint16_t get_glyph_index(wchar_t character) const;
-				virtual bool load_glyph(uint16_t index, agge::glyph::glyph_metrics &m, agge::glyph::outline_storage &o) const;
+				virtual agge::glyph::outline_ptr load_glyph(uint16_t index, agge::glyph::glyph_metrics &m) const;
 
 			private:
 				font::metrics _metrics;
@@ -91,6 +106,14 @@ namespace agge
 			{
 				font::accessor_ptr a(new font_accessor(metrics_, indices,glyphs));
 				return font::ptr(new font(a));
+			}
+
+
+
+			inline bool operator ==(const font_descriptor &lhs, const font_descriptor &rhs)
+			{
+				return lhs.typeface == rhs.typeface && lhs.height == rhs.height && lhs.bold == rhs.bold
+					&& lhs.italic == rhs.italic && lhs.grid_fit == rhs.grid_fit;
 			}
 		}
 	}

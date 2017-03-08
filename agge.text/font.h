@@ -69,7 +69,7 @@ namespace agge
 		virtual ~accessor() { }
 		virtual font::metrics get_metrics() const = 0;
 		virtual uint16_t get_glyph_index(wchar_t character) const = 0;
-		virtual bool load_glyph(uint16_t index, glyph::glyph_metrics &m, glyph::outline_storage &o) const = 0;
+		virtual glyph::outline_ptr load_glyph(uint16_t index, glyph::glyph_metrics &m) const = 0;
 	};
 
 	struct glyph::path_point

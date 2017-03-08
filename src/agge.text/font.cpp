@@ -32,9 +32,7 @@ namespace agge
 			glyphs_cache_t::iterator inserted;
 			glyph g;
 
-			g.outline.reset(new glyph::outline_storage);
-			if (!_accessor->load_glyph(index, g.metrics, *g.outline))
-				g.outline.reset();
+			g.outline = _accessor->load_glyph(index, g.metrics);
 			_glyphs.insert(index, g, i);
 		}
 		return i->second.outline ? &i->second : 0;
