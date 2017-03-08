@@ -12,15 +12,8 @@ namespace demo
 {
 	namespace
 	{
-		const short factor = 1;
-		const short xfactor = 1;
-		const UINT c_format = GGO_GLYPH_INDEX | GGO_NATIVE | /*GGO_UNHINTED |*/ GGO_METRICS;
-		const MAT2 c_identity = { { 0, xfactor * factor }, { 0, 0 }, { 0, 0 }, { 0, -factor }, };
-
 		real_t fixed2real(FIXED value)
-		{
-			return (value.value + value.fract / 65536.0f) / factor;
-		}
+		{	return static_cast<real_t>(value.value + value.fract / 65536.0);	}
 
 		glyph::path_point path_point(int command, real_t x, real_t y)
 		{
@@ -44,9 +37,10 @@ namespace demo
 		}
 	}
 
-	win32_font_accessor::win32_font_accessor(int height, const wchar_t *typeface, bool bold, bool italic)
+	win32_font_accessor::win32_font_accessor(int height, const wchar_t *typeface, bool bold, bool italic,
+			agge::font_engine::grid_fit grid_fit)
 		: _native(::CreateFontW(height, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, !!italic, FALSE, FALSE, 0,
-			CLEARTYPE_NATURAL_QUALITY, 0, 0, 0, typeface), &::DeleteObject)
+			ANTIALIASED_QUALITY, 0, 0, 0, typeface), &::DeleteObject), _grid_fit(grid_fit)
 	{	}
 
 	HFONT win32_font_accessor::native() const
@@ -76,19 +70,25 @@ namespace demo
 		return index;
 	}
 
-	bool win32_font_accessor::load_glyph(uint16_t index, glyph::glyph_metrics &m, glyph::outline_storage &o) const
+	glyph::outline_ptr win32_font_accessor::load_glyph(uint16_t index, glyph::glyph_metrics &m) const
 	{
 		typedef const void *pvoid;
+
+		const UINT format = GGO_GLYPH_INDEX | GGO_NATIVE | GGO_METRICS
+			| (font_engine::gf_none == _grid_fit ? GGO_UNHINTED : 0);
+		const int xfactor = font_engine::gf_vertical == _grid_fit ? 48 : 1;
+		const MAT2 c_identity = { { 0, (short)xfactor }, { 0, 0 }, { 0, 0 }, { 0, -1 }, };
 
 		GLYPHMETRICS gm;
 		dc ctx;
 		dc::handle h(ctx.select(native()));
-		const int size = ::GetGlyphOutline(ctx, index, c_format, &gm, 0, 0, &c_identity);
+		const int size = ::GetGlyphOutline(ctx, index, format, &gm, 0, 0, &c_identity);
+		glyph::outline_ptr o;
 
 		if (size == GDI_ERROR)
-			return false;
+			return o;
 
-		if (1 == xfactor * factor)
+		if (_grid_fit == font_engine::gf_strong)
 		{
 			ABC abc;
 
@@ -96,20 +96,20 @@ namespace demo
 			m.advance_x = static_cast<real_t>(abc.abcA + abc.abcB + abc.abcC);
 		}
 		else
-			m.advance_x = static_cast<real_t>(gm.gmCellIncX) / xfactor / factor;
+			m.advance_x = static_cast<real_t>(gm.gmCellIncX) / xfactor;
 		m.advance_y = static_cast<real_t>(gm.gmCellIncY);
-
+		o.reset(new glyph::outline_storage);
 		if (size)
 		{
 			vector<uint8_t> buffer(size);
-			::GetGlyphOutline(ctx, index, c_format, &gm, size, &buffer[0], &c_identity);
+			::GetGlyphOutline(ctx, index, format, &gm, size, &buffer[0], &c_identity);
 			for (pvoid p = &buffer[0], end = &buffer[0] + size; p != end; )
 			{
 				const TTPOLYGONHEADER *header = static_cast<const TTPOLYGONHEADER *>(p);
 				const pvoid next_poly = static_cast<const uint8_t *>(p) + header->cb;
 
 				p = header + 1;
-				o.push_back(path_point(path_command_move_to,
+				o->push_back(path_point(path_command_move_to,
 					fixed2real(header->pfxStart.x) / xfactor, fixed2real(header->pfxStart.y)));
 
 				for (const TTPOLYCURVE *curve; curve = static_cast<const TTPOLYCURVE *>(p), p != next_poly;
@@ -120,7 +120,7 @@ namespace demo
 					case TT_PRIM_LINE:
 						for (WORD i = 0; i != curve->cpfx; ++i)
 						{
-							o.push_back(path_point(path_command_line_to,
+							o->push_back(path_point(path_command_line_to,
 								fixed2real(curve->apfx[i].x) / xfactor, fixed2real(curve->apfx[i].y)));
 						}
 						break;
@@ -137,7 +137,7 @@ namespace demo
 								*(int*)&pnt_c.x = (*(int*)&pnt_b.x + *(int*)&pnt_c.x) / 2;
 								*(int*)&pnt_c.y = (*(int*)&pnt_b.y + *(int*)&pnt_c.y) / 2;
 							}
-							bezier2(o, fixed2real(pnt_b.x) / xfactor, fixed2real(pnt_b.y),
+							bezier2(*o, fixed2real(pnt_b.x) / xfactor, fixed2real(pnt_b.y),
 								fixed2real(pnt_c.x) / xfactor, fixed2real(pnt_c.y));
 						}
 						break;
@@ -146,10 +146,10 @@ namespace demo
 						break;
 					}
 				}
-				(o.end() - 1)->command |= path_flag_close;
+				(o->end() - 1)->command |= path_flag_close;
 				p = next_poly;
 			}
 		}
-		return true;
+		return o;
 	}
 }
