@@ -65,6 +65,7 @@ namespace agge
 
 		if (i == _fonts->end())
 		{
+			real_t factor = 1.0f;
 			font::accessor_ptr a;
 
 			if (gf_none == gf)
@@ -72,6 +73,7 @@ namespace agge
 				scalabale_fonts_cache::iterator i;
 				font_key skey = key;
 				
+				factor = static_cast<real_t>(height) / c_rescalable_height;
 				skey.height = c_rescalable_height;
 				if (_scalable_fonts->insert(skey, font::accessor_ptr(), i))
 					a = i->second = _loader.load(typeface, skey.height, bold, italic, gf);
@@ -83,7 +85,7 @@ namespace agge
 				a = _loader.load(typeface, height, bold, italic, gf);
 			}
 
-			font::ptr f(new font(a));
+			font::ptr f(new font(a, factor));
 			
 			_fonts->insert(key, f, i);
 		}

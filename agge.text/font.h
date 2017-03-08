@@ -25,6 +25,7 @@ namespace agge
 		path_iterator get_outline() const;
 
 	public:
+		real_t factor;
 		glyph_metrics metrics;
 		outline_ptr outline;
 	};
@@ -44,7 +45,7 @@ namespace agge
 		};
 
 	public:
-		font(const accessor_ptr &accessor_);
+		explicit font(const accessor_ptr &accessor_, real_t factor = 1.0f);
 
 		metrics get_metrics() const;
 
@@ -57,9 +58,10 @@ namespace agge
 
 	private:
 		const accessor_ptr _accessor;
-		const metrics _metrics;
+		metrics _metrics;
 		mutable glyphs_cache_t _glyphs;
 		mutable char2index_cache_t _char2glyph;
+		real_t _factor;
 	};
 
 
@@ -81,24 +83,25 @@ namespace agge
 	class glyph::path_iterator
 	{
 	public:
-		explicit path_iterator(const glyph::outline_ptr &outline);
+		explicit path_iterator(const glyph::outline_ptr &outline, real_t factor);
 
 		void rewind(int id);
 		int vertex(real_t *x, real_t *y);
 
 	private:
 		glyph::outline_ptr _outline;
+		real_t _factor;
 		glyph::outline_storage::const_iterator _i;
 	};
 
 
 
 	inline glyph::path_iterator glyph::get_outline() const
-	{	return path_iterator(outline);	}
+	{	return path_iterator(outline, factor);	}
 
 
-	inline glyph::path_iterator::path_iterator(const glyph::outline_ptr &outline)
-		: _outline(outline), _i(_outline->begin())
+	inline glyph::path_iterator::path_iterator(const glyph::outline_ptr &outline, real_t factor)
+		: _outline(outline), _factor(factor), _i(_outline->begin())
 	{	}
 
 	inline void glyph::path_iterator::rewind(int /*id*/)
@@ -108,7 +111,7 @@ namespace agge
 	{
 		if (_i == _outline->end())
 			return path_command_stop;
-		*x = _i->x, *y = _i->y;
+		*x = _i->x * _factor, *y = _i->y * _factor;
 		return _i++->command;
 	}
 }

@@ -17,24 +17,6 @@ namespace agge
 		{
 			font::metrics c_fm1 = { 10.0f, 2.0f, 2.0f };
 			font::metrics c_fm2 = { 14.0f, 3.0f, 1.0f };
-
-			template <typename IteratorT>
-			pod_vector<glyph::path_point> convert(IteratorT &i)
-			{
-				real_t x, y;
-				pod_vector<glyph::path_point> result;
-
-				for (int command; command = i.vertex(&x, &y), path_command_stop != command; )
-				{
-					glyph::path_point p = { command, x, y };
-					result.push_back(p);
-				}
-				return result;
-			}
-
-			template <typename IteratorT>
-			pod_vector<glyph::path_point> convert_copy(IteratorT i)
-			{	return convert(i);	}
 		}
 
 		begin_test_suite( FontTests )

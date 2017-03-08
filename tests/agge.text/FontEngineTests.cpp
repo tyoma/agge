@@ -13,6 +13,12 @@ namespace agge
 {
 	namespace tests
 	{
+		namespace
+		{
+			font::metrics c_fm1 = { 1.1f, 2.2f, 3.3f };
+			font::metrics c_fm2 = { 4.4f, 5.6f, 7.1f };
+		}
+
 		begin_test_suite( FontEngineTests )
 			
 			test( CreatingDifferentFontsReturnsDifferentObjects )
@@ -89,9 +95,9 @@ namespace agge
 
 				// ASSERT
 				mocks::font_descriptor fd1[] = {
-					{ L"arial", 13, false, false, font_engine::gf_strong },
-					{ L"tahoma", 29, true, false, font_engine::gf_vertical },
-					{ L"helvetica", 1000, false, true, font_engine::gf_none },
+					mocks::font_descriptor(L"arial", 13, false, false, font_engine::gf_strong),
+					mocks::font_descriptor(L"tahoma", 29, true, false, font_engine::gf_vertical),
+					mocks::font_descriptor(L"helvetica", 1000, false, true, font_engine::gf_none),
 				};
 
 				assert_equal(fd1, loader.created_log);
@@ -107,7 +113,7 @@ namespace agge
 
 				// ASSERT
 				mocks::font_descriptor fd2[] = {
-					{ L"arial", 1000, true, true, font_engine::gf_none },
+					mocks::font_descriptor(L"arial", 1000, true, true, font_engine::gf_none),
 				};
 
 				assert_equal(fd2, loader.created_log);
@@ -130,7 +136,7 @@ namespace agge
 
 				// ASSERT
 				mocks::font_descriptor fd1[] = {
-					{ L"arial", 1000, false, true, font_engine::gf_none },
+					mocks::font_descriptor(L"arial", 1000, false, true, font_engine::gf_none),
 				};
 
 				assert_equal(fd1, loader.created_log);
@@ -144,11 +150,62 @@ namespace agge
 
 				// ASSERT
 				mocks::font_descriptor fd2[] = {
-					{ L"arial", 1000, false, true, font_engine::gf_none },
-					{ L"times", 1000, true, false, font_engine::gf_none },
+					mocks::font_descriptor(L"arial", 1000, false, true, font_engine::gf_none),
+					mocks::font_descriptor(L"times", 1000, true, false, font_engine::gf_none),
 				};
 
 				assert_equal(fd2, loader.created_log);
+			}
+
+
+			test( FontCreatedReceivesTheAccessorAndTheScalingNecessary )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L'A', 0 }, };
+				glyph::path_point outline1[] = { { 1, 1.1f, 2.4f }, { 2, 4.1f, 7.5f }, };
+				glyph::path_point outline2[] = { { 3, 1.1f, 4.2f }, { 7, 1.4f, 5.7f }, };
+				mocks::font_accessor::glyph glyphs1[] = {
+					mocks::glyph(1.1, 1.2, outline1), mocks::glyph(1.3, 1.4, outline2),
+				};
+				mocks::font_accessor::glyph glyphs2[] = {
+					mocks::glyph(2.1, 2.2, outline2), mocks::glyph(3.3, 3.4, outline1),
+				};
+				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
+					make_pair(mocks::font_descriptor(L"Tahoma", 1000, false, false, font_engine::gf_none),
+						mocks::font_accessor(c_fm1, indices, glyphs1)),
+					make_pair(mocks::font_descriptor(L"Verdana", 1000, true, false, font_engine::gf_none),
+						mocks::font_accessor(c_fm2, indices, glyphs2)),
+				};
+				mocks::fonts_loader loader(fonts);
+				font_engine e(loader);
+
+				// ACT
+				font::ptr f = e.create_font(L"Tahoma", 17, false, false, font_engine::gf_none);
+				const glyph *g1 = f->get_glyph(0);
+				pod_vector<glyph::path_point> o1 = convert_copy(g1->get_outline());
+				const glyph *g2 = f->get_glyph(1);
+				pod_vector<glyph::path_point> o2 = convert_copy(g2->get_outline());
+
+				// ASSERT
+				assert_equal(0.017 * c_fm1, f->get_metrics());
+				assert_is_true(equal(0.017f * 1.1f, g1->metrics.advance_x));
+				assert_is_true(equal(0.017f * 1.2f, g1->metrics.advance_y));
+				assert_equal(outline1, (1 / 0.017) * o1);
+				assert_is_true(equal(0.017f * 1.3f, g2->metrics.advance_x));
+				assert_is_true(equal(0.017f * 1.4f, g2->metrics.advance_y));
+				assert_equal(outline2, (1 / 0.017) * o2);
+
+				// ACT
+				f = e.create_font(L"Verdana", 710, true, false, font_engine::gf_none);
+				g1 = f->get_glyph(0);
+				pod_vector<glyph::path_point> o3 = convert_copy(g1->get_outline());
+				g2 = f->get_glyph(1);
+				pod_vector<glyph::path_point> o4 = convert_copy(g2->get_outline());
+
+				// ASSERT
+				assert_equal(0.71 * c_fm2, f->get_metrics());
+				assert_equal(outline2, (1 / 0.71) * o3);
+				assert_equal(outline1, (1 / 0.71) * o4);
 			}
 
 		end_test_suite

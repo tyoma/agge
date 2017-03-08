@@ -15,21 +15,17 @@ namespace agge
 		{
 			struct font_descriptor
 			{
+				font_descriptor(const std::wstring &typeface, int height, bool bold, bool italic,
+					font_engine::grid_fit grid_fit);
+
+				bool operator <(const font_descriptor &rhs) const;
+				bool operator ==(const font_descriptor &rhs) const;
+
 				std::wstring typeface;
 				int height;
 				bool bold;
 				bool italic;
 				font_engine::grid_fit grid_fit;
-			};
-
-			class fonts_loader : public font_engine::loader
-			{
-			public:
-				std::vector<font_descriptor> created_log;
-
-			private:
-				virtual font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic,
-					font_engine::grid_fit grid_fit);
 			};
 
 			class font_accessor : public font::accessor
@@ -39,6 +35,7 @@ namespace agge
 				struct glyph;
 
 			public:
+				font_accessor();
 				template <size_t indices_n, size_t glyphs_n>
 				font_accessor(const font::metrics &metrics_, const char_to_index (&indices)[indices_n],
 					glyph (&glyphs)[glyphs_n]);
@@ -58,6 +55,24 @@ namespace agge
 				font::metrics _metrics;
 				indices_map_t _indices;
 				std::vector<glyph> _glyphs;
+			};
+
+			class fonts_loader : public font_engine::loader
+			{
+			public:
+				template <typename T, size_t n>
+				explicit fonts_loader(T (&fonts)[n]);
+				fonts_loader();
+
+			public:
+				std::vector<font_descriptor> created_log;
+
+			private:
+				virtual font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic,
+					font_engine::grid_fit grid_fit);
+
+			private:
+				std::map<font_descriptor, font_accessor> _fonts;
 			};
 
 			struct font_accessor::char_to_index
@@ -91,6 +106,12 @@ namespace agge
 
 
 			template <typename T, size_t n>
+			inline fonts_loader::fonts_loader(T (&fonts)[n])
+				: _fonts(fonts, fonts + n)
+			{	}
+
+
+			template <typename T, size_t n>
 			inline font_accessor::glyph glyph(double dx, double dy, T (&outline)[n])
 			{
 				font_accessor::glyph g = { dx, dy };
@@ -106,14 +127,6 @@ namespace agge
 			{
 				font::accessor_ptr a(new font_accessor(metrics_, indices,glyphs));
 				return font::ptr(new font(a));
-			}
-
-
-
-			inline bool operator ==(const font_descriptor &lhs, const font_descriptor &rhs)
-			{
-				return lhs.typeface == rhs.typeface && lhs.height == rhs.height && lhs.bold == rhs.bold
-					&& lhs.italic == rhs.italic && lhs.grid_fit == rhs.grid_fit;
 			}
 		}
 	}
