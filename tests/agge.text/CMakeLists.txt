@@ -1,4 +1,5 @@
 set(AGGE_TEXT_TEST_SOURCES
+	FontEngineTests.cpp
 	FontTests.cpp
 	helpers.cpp
 	LayoutTests.cpp

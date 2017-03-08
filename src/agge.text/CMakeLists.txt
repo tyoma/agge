@@ -1,5 +1,6 @@
 set(AGGE_TEXT_SOURCES
 	font.cpp
+	font_engine.cpp
 	layout.cpp
 )
 

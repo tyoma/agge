@@ -1,7 +1,10 @@
 #pragma once
 
 #include <agge.text/font.h>
+#include <agge.text/font_engine.h>
+
 #include <map>
+#include <string>
 #include <vector>
 
 namespace agge
@@ -10,6 +13,21 @@ namespace agge
 	{
 		namespace mocks
 		{
+			struct font_descriptor
+			{
+				font_descriptor(const std::wstring &typeface, int height, bool bold, bool italic,
+					font_engine::grid_fit grid_fit);
+
+				bool operator <(const font_descriptor &rhs) const;
+				bool operator ==(const font_descriptor &rhs) const;
+
+				std::wstring typeface;
+				int height;
+				bool bold;
+				bool italic;
+				font_engine::grid_fit grid_fit;
+			};
+
 			class font_accessor : public font::accessor
 			{
 			public:
@@ -17,6 +35,7 @@ namespace agge
 				struct glyph;
 
 			public:
+				font_accessor();
 				template <size_t indices_n, size_t glyphs_n>
 				font_accessor(const font::metrics &metrics_, const char_to_index (&indices)[indices_n],
 					glyph (&glyphs)[glyphs_n]);
@@ -30,12 +49,30 @@ namespace agge
 			private:
 				virtual font::metrics get_metrics() const;
 				virtual uint16_t get_glyph_index(wchar_t character) const;
-				virtual bool load_glyph(uint16_t index, agge::glyph::glyph_metrics &m, agge::glyph::outline_storage &o) const;
+				virtual agge::glyph::outline_ptr load_glyph(uint16_t index, agge::glyph::glyph_metrics &m) const;
 
 			private:
 				font::metrics _metrics;
 				indices_map_t _indices;
 				std::vector<glyph> _glyphs;
+			};
+
+			class fonts_loader : public font_engine::loader
+			{
+			public:
+				template <typename T, size_t n>
+				explicit fonts_loader(T (&fonts)[n]);
+				fonts_loader();
+
+			public:
+				std::vector<font_descriptor> created_log;
+
+			private:
+				virtual font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic,
+					font_engine::grid_fit grid_fit);
+
+			private:
+				std::map<font_descriptor, font_accessor> _fonts;
 			};
 
 			struct font_accessor::char_to_index
@@ -65,6 +102,12 @@ namespace agge
 					glyph (&glyphs)[glyphs_n])
 				: glyph_mapping_calls(0), _metrics(metrics_), _indices(indices, indices + indices_n),
 					_glyphs(glyphs, glyphs + glyphs_n)
+			{	}
+
+
+			template <typename T, size_t n>
+			inline fonts_loader::fonts_loader(T (&fonts)[n])
+				: _fonts(fonts, fonts + n)
 			{	}
 
 

@@ -7,6 +7,9 @@
     <ClCompile Include="font.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="font_engine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -18,5 +21,6 @@
     <ClInclude Include="..\..\agge.text\font.h" />
     <ClInclude Include="..\..\agge.text\shared_ptr.h" />
     <ClInclude Include="..\..\agge.text\hash_map.h" />
+    <ClInclude Include="..\..\agge.text\font_engine.h" />
   </ItemGroup>
 </Project>

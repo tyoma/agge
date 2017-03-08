@@ -55,6 +55,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FontEngineTests.cpp" />
     <ClCompile Include="FontTests.cpp" />
     <ClCompile Include="helpers.cpp" />
     <ClCompile Include="LayoutTests.cpp" />
