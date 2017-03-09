@@ -40,7 +40,7 @@ namespace agge
 		void line(int x1, int y1, int x2, int y2);
 		void append(const vector_rasterizer &source, int dx, int dy);
 		const cells_container &cells() const;
-		void sort();
+		void sort(bool was_presorted = false);
 		bool sorted() const;
 
 		scanline_cells operator [](int y) const;

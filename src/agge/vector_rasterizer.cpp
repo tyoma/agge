@@ -38,6 +38,34 @@ namespace agge
 			container.resize(static_cast<count_t>(end - container.begin()));
 		}
 
+		template <typename IteratorT>
+		void sort_cells_x_ascending(IteratorT begin, IteratorT end)
+		{
+			// Yeah, bubblesort! 7th grade knowledge finally put to work! Seriously, if you append presorted cells and then
+			//	sort them by Ys, you end up with almost sorted array.
+			for (IteratorT i = end; i != begin; )
+			{
+				bool sorted = true;
+
+				--i;
+				for (IteratorT j = begin; j != i; )
+				{
+					IteratorT k = j++;
+
+					if (k->x > j->x)
+					{
+						vector_rasterizer::cell t = *k;
+						
+						*k = *j;
+						*j = t;
+						sorted = false;
+					}
+				}
+				if (sorted)
+					break;
+			}
+		}
+
 		void jump_xy(cells_iterator &current, int x, int y)
 		{
 			if (current->x ^ x | current->y ^ y)
@@ -225,34 +253,52 @@ namespace agge
 		update_max(_max_y, source._max_y + dy_);
 	}
 
-	void vector_rasterizer::sort()
+	void vector_rasterizer::sort(bool was_presorted)
 	{
 		if (_sorted || _min_y > _max_y)
 			return;
 
 		_x_sorted_cells.resize(_cells.size());
-
-		_histogram_x.assign(width() + 1, 0);
 		_histogram_y.assign(height() + 2, 0);
 
-		count_t *phistogram_x = &_histogram_x[0] - _min_x + 1;
 		count_t *phistogram_y = &_histogram_y[0] - _min_y + 2;
 
-		for (const_cells_iterator i = _cells.begin(), e = _cells.end(); i != e; ++i)
+		if (was_presorted)
 		{
-			phistogram_x[i->x]++;
-			phistogram_y[i->y]++;
+			for (const_cells_iterator i = _cells.begin(), e = _cells.end(); i != e; ++i)
+				phistogram_y[i->y]++;
+			_cells.swap(_x_sorted_cells);
 		}
-		for (histogram::iterator i = _histogram_x.begin() + 1; i != _histogram_x.end(); ++i)
-			*i += *(i - 1);
+		else
+		{
+			_histogram_x.assign(width() + 1, 0);
+
+			count_t *phistogram_x = &_histogram_x[0] - _min_x + 1;
+
+			for (const_cells_iterator i = _cells.begin(), e = _cells.end(); i != e; ++i)
+			{
+				phistogram_x[i->x]++;
+				phistogram_y[i->y]++;
+			}
+			for (histogram::iterator i = _histogram_x.begin() + 1; i != _histogram_x.end(); ++i)
+				*i += *(i - 1);
+			phistogram_x--;
+			for (cells_container::iterator i = _cells.begin(), j = _x_sorted_cells.begin(), e = _cells.end(); i != e; ++i)
+				*(j + phistogram_x[i->x]++) = *i;
+		}
+
 		for (histogram::iterator i = _histogram_y.begin() + 2; i != _histogram_y.end(); ++i)
 			*i += *(i - 1);
-		phistogram_x--;
 		phistogram_y--;
-		for (cells_container::iterator i = _cells.begin(), j = _x_sorted_cells.begin(), e = _cells.end(); i != e; ++i)
-			*(j + phistogram_x[i->x]++) = *i;
 		for (cells_container::iterator i = _x_sorted_cells.begin(), j = _cells.begin(), e = _x_sorted_cells.end(); i != e; ++i)
 			*(j + phistogram_y[i->y]++) = *i;
+
+		if (was_presorted)
+		{
+			for (histogram::iterator i = _histogram_y.begin(); i != _histogram_y.end() - 1; ++i)
+				sort_cells_x_ascending(_cells.begin() + *i, _cells.begin() + *(i + 1));
+		}
+
 		_sorted = 1;
 	}
 

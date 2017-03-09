@@ -247,7 +247,7 @@ namespace demo
 
 			double append = stopwatch(counter);
 
-			_rasterizer.sort();
+			_rasterizer.sort(true);
 
 			double sort = stopwatch(counter);
 

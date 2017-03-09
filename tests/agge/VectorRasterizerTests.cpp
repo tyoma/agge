@@ -939,7 +939,7 @@ namespace agge
 			}
 
 
-			test( CellsAreSortedHorizontally )
+			void CellsAreSortedHorizontallyPre(bool presorted)
 			{
 				// INIT
 				vector_rasterizer vr;
@@ -950,7 +950,7 @@ namespace agge
 				vr.line(0x20F000, 0x203, 0x20F000, 0x220);
 				vr.line(0x150000, 0x220, 0x150000, 0x200);
 				vr.line(0x20F000, 0x200, 0x20F000, 0x203);
-				vr.sort();
+				vr.sort(presorted);
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
@@ -970,7 +970,7 @@ namespace agge
 				vr.line(0x150000, 0x320, 0x150000, 0x300);
 				vr.line(0x208100, 0x300, 0x208100, 0x330);
 				vr.line(0x110000, 0x330, 0x110000, 0x320);
-				vr.sort();
+				vr.sort(presorted);
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
@@ -982,8 +982,14 @@ namespace agge
 				assert_equal(reference2, vr.cells());
 			}
 
+			test( CellsAreSortedHorizontally )
+			{
+				CellsAreSortedHorizontallyPre(true);
+				CellsAreSortedHorizontallyPre(false);
+			}
 
-			test( CellsAreSortedVertically )
+
+			void CellsAreSortedVerticallyPre(bool presorted)
 			{
 				// INIT
 				vector_rasterizer vr;
@@ -995,7 +1001,7 @@ namespace agge
 				vr.line(0x100010, 0x100200, 0x100010, 0x100210);
 				vr.line(0x100000, 0x070110, 0x100000, 0x070100);
 				vr.line(0x100010, 0x070100, 0x100010, 0x070110);
-				vr.sort();
+				vr.sort(presorted);
 
 				// ASSERT
 				const vector_rasterizer::cell reference1[] = {
@@ -1020,7 +1026,7 @@ namespace agge
 				vr.line(0x110010, 0x070200, 0x110010, 0x070210);
 				vr.line(0x110000, 0x030210, 0x110000, 0x030200);
 				vr.line(0x110010, 0x030200, 0x110010, 0x030210);
-				vr.sort();
+				vr.sort(presorted);
 
 				// ASSERT
 				const vector_rasterizer::cell reference2[] = {
@@ -1034,14 +1040,20 @@ namespace agge
 				assert_equal(reference2, vr.cells());
 			}
 
+			test( CellsAreSortedVertically )
+			{
+				CellsAreSortedVerticallyPre(true);
+				CellsAreSortedVerticallyPre(false);
+			}
 
-			test( EmptyCellsCanBeSorted )
+
+			void EmptyCellsCanBeSortedPre(bool presorted)
 			{
 				// INIT
 				vector_rasterizer vr;
 
 				// ACT
-				vr.sort();
+				vr.sort(presorted);
 
 				// ASSERT
 				assert_is_empty(vr.cells());
@@ -1053,15 +1065,21 @@ namespace agge
 
 				// ACT
 				vr.reset();
-				vr.sort();
+				vr.sort(presorted);
 
 				// ASSERT
 				assert_is_empty(vr.cells());
 				assert_is_false(vr.sorted());
 			}
 
+			test( EmptyCellsCanBeSorted )
+			{
+				EmptyCellsCanBeSortedPre(true);
+				EmptyCellsCanBeSortedPre(false);
+			}
 
-			test( NoCellsButNonEmptyRangeIsSortableAndScanlinesOnlyHaveEmptyCells )
+
+			void NoCellsButNonEmptyRangeIsSortableAndScanlinesOnlyHaveEmptyCellsPre(bool presorted)
 			{
 				// INIT
 				vector_rasterizer vr;
@@ -1072,7 +1090,7 @@ namespace agge
 				vr.line(0x12010, 0x23370, 0x12010, 0x23300);
 
 				// ACT
-				vr.sort();
+				vr.sort(presorted);
 
 				// ASSERT
 				const vector_rasterizer::cell c1 = { 0x120, 0x233, 0, 0 };
@@ -1088,7 +1106,7 @@ namespace agge
 				vr.line(0x32010, 0x23770, 0x32010, 0x23700);
 
 				// ACT
-				vr.sort();
+				vr.sort(presorted);
 
 				// ASSERT
 				const vector_rasterizer::cell c2 = { 0x320, 0x237, 0, 0 };
@@ -1102,8 +1120,14 @@ namespace agge
 				assert_equal(c2, *vr[0x233].first);
 			}
 
+			test( NoCellsButNonEmptyRangeIsSortableAndScanlinesOnlyHaveEmptyCells )
+			{
+				NoCellsButNonEmptyRangeIsSortableAndScanlinesOnlyHaveEmptyCellsPre(true);
+				NoCellsButNonEmptyRangeIsSortableAndScanlinesOnlyHaveEmptyCellsPre(false);
+			}
 
-			test( YsAreMoreSignificantThanXsWhileSorting )
+
+			void YsAreMoreSignificantThanXsWhileSortingPre(bool presorted)
 			{
 				// INIT
 				vector_rasterizer vr;
@@ -1117,7 +1141,7 @@ namespace agge
 				vr.line(0x700F10, 0x700200, 0x700F10, 0x700210);
 				vr.line(0x700F00, 0x100210, 0x700F00, 0x100200);
 				vr.line(0x700F10, 0x100200, 0x700F10, 0x100210);
-				vr.sort();
+				vr.sort(presorted);
 
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
@@ -1130,8 +1154,14 @@ namespace agge
 				assert_equal(reference, vr.cells());
 			}
 
+			test( YsAreMoreSignificantThanXsWhileSorting )
+			{
+				YsAreMoreSignificantThanXsWhileSortingPre(true);
+				YsAreMoreSignificantThanXsWhileSortingPre(false);
+			}
 
-			test( AccessingSortedCells )
+
+			void AccessingSortedCellsPre(bool presorted)
 			{
 				// INIT
 				vector_rasterizer vr;
@@ -1147,7 +1177,7 @@ namespace agge
 				vr.line(0x700F10, 0x100200, 0x700F10, 0x100210);
 				vr.line(0x100F00, 0x100220, 0x100F00, 0x100200);
 				vr.line(0x100F10, 0x100200, 0x100F10, 0x100220);
-				vr.sort();
+				vr.sort(presorted);
 
 				// ASSERT
 				const vector_rasterizer::cell reference1_row0x1002[] = {
@@ -1164,22 +1194,10 @@ namespace agge
 				assert_equal(reference1_row0x7002, get_scanline_cells(vr, 0x7002));
 			}
 
-
-			test( UncommittedCellIsCommitedAtSort )
+			test( AccessingSortedCells )
 			{
-				// INIT
-				vector_rasterizer vr;
-
-				// ACT
-				vr.line(0x100F00, 0x100210, 0x100F50, 0x100200);
-				vr.sort();
-
-				// ASSERT
-				const vector_rasterizer::cell reference_row0x1002[] = {
-					{ 0x100F, 0x1002, -0x0500, -0x10 },
-				};
-
-				assert_equal(reference_row0x1002, get_scanline_cells(vr, 0x1002));
+				AccessingSortedCellsPre(true);
+				AccessingSortedCellsPre(false);
 			}
 
 
@@ -1193,7 +1211,7 @@ namespace agge
 			}
 
 
-			test( CellsSortedPropertyIsSetAfterSort )
+			void CellsSortedPropertyIsSetAfterSortPre(bool presorted)
 			{
 				// INIT
 				vector_rasterizer vr;
@@ -1201,20 +1219,26 @@ namespace agge
 				vr.line(0x100F00, 0x100210, 0x100F50, 0x100200);
 
 				// ACT
-				vr.sort();
+				vr.sort(presorted);
 
 				// ACT / ASSERT
 				assert_is_true(vr.sorted());
 			}
 
+			test( CellsSortedPropertyIsSetAfterSort )
+			{
+				CellsSortedPropertyIsSetAfterSortPre(true);
+				CellsSortedPropertyIsSetAfterSortPre(false);
+			}
 
-			test( SortedPropertyIsSetToUnsortedOnReset )
+
+			void SortedPropertyIsSetToUnsortedOnResetPre(bool presorted)
 			{
 				// INIT
 				vector_rasterizer vr;
 
 				vr.line(0x100F00, 0x100210, 0x100F50, 0x100200);
-				vr.sort();
+				vr.sort(presorted);
 
 				// ACT
 				vr.reset();
@@ -1223,14 +1247,20 @@ namespace agge
 				assert_is_false(vr.sorted());
 			}
 
+			test( SortedPropertyIsSetToUnsortedOnReset )
+			{
+				SortedPropertyIsSetToUnsortedOnResetPre(true);
+				SortedPropertyIsSetToUnsortedOnResetPre(false);
+			}
 
-			test( SortedPropertyIsResetOnDrawLine )
+
+			void SortedPropertyIsResetOnDrawLinePre(bool presorted)
 			{
 				// INIT
 				vector_rasterizer vr;
 
 				vr.line(0x100F00, 0x100210, 0x100F50, 0x100200);
-				vr.sort();
+				vr.sort(presorted);
 
 				// ACT
 				vr.line(0x100F50, 0x100200, 0x100F50, 0x100100);
@@ -1239,14 +1269,20 @@ namespace agge
 				assert_is_false(vr.sorted());
 			}
 
+			test( SortedPropertyIsResetOnDrawLine )
+			{
+				SortedPropertyIsResetOnDrawLinePre(true);
+				SortedPropertyIsResetOnDrawLinePre(false);
+			}
 
-			test( HorizontalLinesDoNotAffectSortedPropertyAndBox )
+
+			void HorizontalLinesDoNotAffectSortedPropertyAndBoxPre(bool presorted)
 			{
 				// INIT
 				vector_rasterizer vr;
 
 				vr.line(0x100F00, 0x100210, 0x100F50, 0x100200);
-				vr.sort();
+				vr.sort(presorted);
 
 				// ACT
 				vr.line(0x1F50, 0x100200, 0x101F50, 0x100200);
@@ -1259,15 +1295,21 @@ namespace agge
 				assert_equal(1, vr.width());
 			}
 
+			test( HorizontalLinesDoNotAffectSortedPropertyAndBox )
+			{
+				HorizontalLinesDoNotAffectSortedPropertyAndBoxPre(true);
+				HorizontalLinesDoNotAffectSortedPropertyAndBoxPre(false);
+			}
 
-			test( LongAlmostHorizontalLinesProduceCorrectCells )
+
+			void LongAlmostHorizontalLinesProduceCorrectCellsPre(bool presorted)
 			{
 				// INIT
 				vector_rasterizer vr;
 
 				// ACT
 				vr.line(-0x7FFFFF, -0x2, +0x7FFFFF, +0x2);
-				vr.sort();
+				vr.sort(presorted);
 
 				// ASSERT
 				assert_equal(2, vr.height());
@@ -1278,7 +1320,7 @@ namespace agge
 
 				// ACT
 				vr.line(-0x7FFFFF, +0xFF, +0x7FFFFF, -0xFF);
-				vr.sort();
+				vr.sort(presorted);
 
 				// ASSERT
 				assert_equal(2, vr.height());
@@ -1289,7 +1331,7 @@ namespace agge
 
 				// ACT
 				vr.line(+0x7FFFFF, -0xFF, -0x7FFFFF, +0xFF);
-				vr.sort();
+				vr.sort(presorted);
 
 				// ASSERT
 				assert_equal(2, vr.height());
@@ -1300,11 +1342,17 @@ namespace agge
 
 				// ACT
 				vr.line(+0x7FFFFF, +0xFF, -0x7FFFFF, -0xFF);
-				vr.sort();
+				vr.sort(presorted);
 
 				// ASSERT
 				assert_equal(2, vr.height());
 				assert_hslope(vr, -0x1FE);
+			}
+
+			test( LongAlmostHorizontalLinesProduceCorrectCells )
+			{
+				LongAlmostHorizontalLinesProduceCorrectCellsPre(true);
+				LongAlmostHorizontalLinesProduceCorrectCellsPre(false);
 			}
 
 
@@ -1365,13 +1413,13 @@ namespace agge
 			}
 
 
-			test( RasterizerBecomesUnsortedAfterAppend )
+			void RasterizerBecomesUnsortedAfterAppendPre(bool presorted)
 			{
 				// INIT
 				vector_rasterizer vr1, vr2;
 
 				rectangle(vr1, -0.9, 2.9, 1.9, 1.1);
-				vr1.sort();
+				vr1.sort(presorted);
 				rectangle(vr2, -0.9, 2.9, 1.9, 1.1);
 
 				// ACT
@@ -1379,6 +1427,12 @@ namespace agge
 
 				// ASSERT
 				assert_is_false(vr1.sorted());
+			}
+
+			test( RasterizerBecomesUnsortedAfterAppend )
+			{
+				RasterizerBecomesUnsortedAfterAppendPre(true);
+				RasterizerBecomesUnsortedAfterAppendPre(false);
 			}
 
 
