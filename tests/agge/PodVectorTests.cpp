@@ -534,6 +534,33 @@ namespace agge
 				// ASSERT
 				assert_equal(19, *(v2.end() - 1));
 			}
+
+
+			test( SwappingVectorsOnlySwapsTheirBaseIterators )
+			{
+				// INIT
+				pod_vector<int> v1, v2;
+
+				v1.assign(7, 139911);
+				v2.assign(131, 11);
+
+				const pod_vector<int>::iterator begin1 = v1.begin(), end1 = v1.end();
+				const pod_vector<int>::iterator begin2 = v2.begin(), end2 = v2.end();
+				const count_t capacity1 = v1.capacity();
+				const count_t capacity2 = v2.capacity();
+
+				// ACT
+				v1.swap(v2);
+
+				// ASSERT
+				assert_equal(begin1, v2.begin());
+				assert_equal(end1, v2.end());
+				assert_equal(capacity1, v2.capacity());
+
+				assert_equal(begin2, v1.begin());
+				assert_equal(end2, v1.end());
+				assert_equal(capacity2, v1.capacity());
+			}
 		end_test_suite
 	}
 }

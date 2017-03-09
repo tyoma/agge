@@ -23,6 +23,7 @@ namespace agge
 		void clear();
 		void resize(count_t size);
 		void assign(count_t size, const T &value);
+		void swap(pod_vector &other);
 
 		const T *data() const;
 		bool empty() const;
@@ -107,6 +108,15 @@ namespace agge
 
 		for (T *i = _begin; size_; --size_, ++i)
 			*i = value;
+	}
+
+	template <typename T>
+	inline void pod_vector<T>::swap(pod_vector &other)
+	{
+		iterator t;
+		t = _begin, _begin = other._begin, other._begin = t;
+		t = _end, _end = other._end, other._end = t;
+		t = _limit, _limit = other._limit, other._limit = t;
 	}
 
 	template <typename T>
