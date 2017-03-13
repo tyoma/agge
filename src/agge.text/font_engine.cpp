@@ -18,6 +18,42 @@ namespace agge
 			bool operator ()(wchar_t lhs, wchar_t rhs) const
 			{	return toupper(lhs) == toupper(rhs);	}
 		};
+
+		class cached_outline_accessor : public font::accessor, noncopyable
+		{
+		public:
+			cached_outline_accessor(const font::accessor_ptr &underlying)
+				: _underlying(underlying)
+			{	}
+
+		private:
+			typedef hash_map< uint16_t, pair<glyph::outline_ptr, glyph::glyph_metrics> > glyphs;
+
+		private:
+			virtual font::metrics get_metrics() const
+			{	return _underlying->get_metrics();	}
+
+			virtual uint16_t get_glyph_index(wchar_t character) const
+			{	return _underlying->get_glyph_index(character);	}
+
+			virtual glyph::outline_ptr load_glyph(uint16_t index, glyph::glyph_metrics &m) const
+			{
+				glyphs::iterator i = _glyphs.find(index);
+
+				if (_glyphs.end() == i)
+				{
+					glyph::outline_ptr o = _underlying->load_glyph(index, m);
+					
+					_glyphs.insert(index, make_pair(o, m), i);
+				}
+				m = i->second.second;
+				return i->second.first;
+			}
+
+		private:
+			const font::accessor_ptr _underlying;
+			mutable glyphs _glyphs;
+		};
 	}
 
 	struct font_engine::font_key
@@ -76,9 +112,8 @@ namespace agge
 				factor = static_cast<real_t>(height) / c_rescalable_height;
 				skey.height = c_rescalable_height;
 				if (_scalable_fonts->insert(skey, font::accessor_ptr(), i))
-					a = i->second = _loader.load(typeface, skey.height, bold, italic, gf);
-				else
-					a = i->second;
+					i->second.reset(new cached_outline_accessor(_loader.load(typeface, skey.height, bold, italic, gf)));
+				a = i->second;
 			}
 			else
 			{

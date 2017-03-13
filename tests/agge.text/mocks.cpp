@@ -48,6 +48,7 @@ namespace agge
 				const font_accessor::glyph &myg = _glyphs[index];
 				agge::glyph::outline_ptr o(new agge::glyph::outline_storage);
 
+				++*glyphs_loaded;
 				m.advance_x = static_cast<real_t>(myg.metrics.dx), m.advance_y = static_cast<real_t>(myg.metrics.dy);
 				for (vector<agge::glyph::path_point>::const_iterator i = myg.outline.begin(); i != myg.outline.end(); ++i)
 					o->push_back(*i);
@@ -64,7 +65,7 @@ namespace agge
 				font_descriptor fd(typeface, height, bold, italic, grid_fit);
 
 				created_log.push_back(fd);
-				return font::accessor_ptr(new font_accessor(_fonts[fd]));
+				return font::accessor_ptr(new font_accessor(fonts[fd]));
 			}
 		}
 	}
