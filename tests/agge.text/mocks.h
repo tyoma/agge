@@ -42,6 +42,7 @@ namespace agge
 
 			public:
 				mutable int glyph_mapping_calls;
+				shared_ptr<size_t> glyphs_loaded;
 
 			private:
 				typedef std::map<wchar_t, uint16_t> indices_map_t;
@@ -66,13 +67,11 @@ namespace agge
 
 			public:
 				std::vector<font_descriptor> created_log;
+				std::map<font_descriptor, font_accessor> fonts;
 
 			private:
 				virtual font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic,
 					font_engine::grid_fit grid_fit);
-
-			private:
-				std::map<font_descriptor, font_accessor> _fonts;
 			};
 
 			struct font_accessor::char_to_index
@@ -100,14 +99,14 @@ namespace agge
 			template <size_t indices_n, size_t glyphs_n>
 			inline font_accessor::font_accessor(const font::metrics &metrics_, const char_to_index (&indices)[indices_n],
 					glyph (&glyphs)[glyphs_n])
-				: glyph_mapping_calls(0), _metrics(metrics_), _indices(indices, indices + indices_n),
-					_glyphs(glyphs, glyphs + glyphs_n)
+				: glyph_mapping_calls(0), glyphs_loaded(new size_t(0)), _metrics(metrics_),
+					_indices(indices, indices + indices_n), _glyphs(glyphs, glyphs + glyphs_n)
 			{	}
 
 
 			template <typename T, size_t n>
 			inline fonts_loader::fonts_loader(T (&fonts)[n])
-				: _fonts(fonts, fonts + n)
+				: fonts(fonts, fonts + n)
 			{	}
 
 

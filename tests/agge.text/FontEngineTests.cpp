@@ -158,6 +158,55 @@ namespace agge
 			}
 
 
+			test( ScalableFontsReuseOutlinesReturnedByFontAccessor )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L'A', 0 }, { L'B', 1 }, { L'C', 2 }, };
+				glyph::path_point outline1[] = { { 1, 1.1f, 2.4f }, { 2, 4.1f, 7.5f }, };
+				glyph::path_point outline2[] = { { 3, 1.1f, 4.2f }, { 7, 1.4f, 5.7f }, };
+				glyph::path_point outline3[] = { { 3, 1.1f, 4.2f }, { 7, 1.4f, 5.7f }, { 7, 2.4f, 2.7f }, };
+				mocks::font_accessor::glyph glyphs[] = {
+					mocks::glyph(1.1, 1.2, outline1), mocks::glyph(1.3, 1.4, outline2), mocks::glyph(2.3, 2.4, outline3),
+				};
+				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
+					make_pair(mocks::font_descriptor(L"Arial", 1000, false, false, font_engine::gf_none),
+						mocks::font_accessor(c_fm1, indices, glyphs)),
+				};
+				mocks::fonts_loader loader(fonts);
+				mocks::font_accessor &arial_accessor = loader.fonts[mocks::font_descriptor(L"Arial", 1000, false, false,
+					font_engine::gf_none)];
+				font_engine e(loader);
+				font::ptr f1 = e.create_font(L"Arial", 17, false, false, font_engine::gf_none);
+				font::ptr f2 = e.create_font(L"Arial", 210, false, false, font_engine::gf_none);
+
+				// ACT
+				f1->get_glyph(0);
+				f2->get_glyph(1);
+
+				// ASSERT
+				assert_equal(2u, *arial_accessor.glyphs_loaded);
+
+				// ACT
+				f2->get_glyph(0);
+				f1->get_glyph(1);
+
+				// ASSERT
+				assert_equal(2u, *arial_accessor.glyphs_loaded);
+
+				// ACT
+				f1->get_glyph(2);
+
+				// ASSERT
+				assert_equal(3u, *arial_accessor.glyphs_loaded);
+
+				// ACT
+				f2->get_glyph(2);
+
+				// ASSERT
+				assert_equal(3u, *arial_accessor.glyphs_loaded);
+			}
+
+
 			test( FontCreatedReceivesTheAccessorAndTheScalingNecessary )
 			{
 				// INIT
