@@ -17,7 +17,7 @@ namespace agge
 		typedef PixelT pixel;
 
 	public:
-		bitmap(count_t width, count_t height);
+		bitmap(count_t width, count_t height, count_t row_extra_bytes = 16u);
 
 		pixel *row_ptr(count_t y);
 		const pixel *row_ptr(count_t y) const;
@@ -43,8 +43,8 @@ namespace agge
 
 
 	template <typename PixelT, typename RawBitmapT>
-	inline bitmap<PixelT, RawBitmapT>::bitmap(count_t width, count_t height)
-		: RawBitmapT(width, height, pixel_bpp<PixelT>::bpp)
+	inline bitmap<PixelT, RawBitmapT>::bitmap(count_t width, count_t height, count_t row_extra_bytes)
+		: RawBitmapT(width, height, pixel_bpp<PixelT>::bpp, row_extra_bytes)
 	{	}
 
 	template <typename PixelT, typename RawBitmapT>

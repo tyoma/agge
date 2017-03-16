@@ -337,6 +337,52 @@ namespace agge
 					assert_is_false(s.is_valid_handle(h2));
 				}
 
+
+				test( BitmapIsAllocatedWithAtLeastRequestedExtraSpace )
+				{
+					// INIT / ACT
+					raw_bitmap b8(7, 5, bpp8, 13);
+					raw_bitmap b8_2(7, 5, bpp8, 1);
+					raw_bitmap b16(6, 5, bpp16, 13);
+					raw_bitmap b16_2(6, 5, bpp16, 1);
+					raw_bitmap b24(7, 5, bpp24, 13);
+					raw_bitmap b24_2(7, 5, bpp24, 1);
+					raw_bitmap b32(7, 5, bpp32, 13);
+					raw_bitmap b32_2(7, 5, bpp32, 1);
+
+					// ASSERT
+					assert_equal(20, get_stride(b8));
+					assert_equal(8, get_stride(b8_2));
+					assert_equal(28, get_stride(b16));
+					assert_equal(16, get_stride(b16_2));
+					assert_equal(36, get_stride(b24));
+					assert_equal(24, get_stride(b24_2));
+					assert_equal(44, get_stride(b32));
+					assert_equal(32, get_stride(b32_2));
+				}
+
+
+				test( BitmapIsReAllocatedWithAtLeastExtraSpaceSpecifiedAtConstruction )
+				{
+					// INIT
+					raw_bitmap b8(1, 5, bpp8, 2);
+					raw_bitmap b16(1, 5, bpp16, 2);
+					raw_bitmap b24(1, 5, bpp24, 2);
+					raw_bitmap b32(1, 5, bpp32, 2);
+
+					// ACT
+					b8.resize(40, 5);
+					b16.resize(40, 5);
+					b24.resize(40, 5);
+					b32.resize(40, 5);
+
+					// ASSERT
+					assert_equal(44, get_stride(b8));
+					assert_equal(84, get_stride(b16));
+					assert_equal(124, get_stride(b24));
+					assert_equal(164, get_stride(b32));
+				}
+
 			end_test_suite
 		}
 	}

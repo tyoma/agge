@@ -15,7 +15,7 @@ namespace agge
 		class raw_bitmap : noncopyable
 		{
 		public: // General
-			raw_bitmap(count_t width, count_t height, bits_per_pixel bpp);
+			raw_bitmap(count_t width, count_t height, bits_per_pixel bpp, count_t row_extra_bytes = 0);
 			~raw_bitmap();
 
 			void resize(count_t width, count_t height);
@@ -39,6 +39,7 @@ namespace agge
 			count_t _width, _max_width, _height, _max_height;
 			const bits_per_pixel _bpp;
 			HBITMAP _native;
+			const count_t _extra_pixels;
 		};
 
 

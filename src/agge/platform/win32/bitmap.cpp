@@ -31,8 +31,9 @@ namespace agge
 			};
 		}
 
-		raw_bitmap::raw_bitmap(count_t width, count_t height, bits_per_pixel bpp)
-			: _memory(0), _max_width(0), _max_height(0), _bpp(bpp), _native(0)
+		raw_bitmap::raw_bitmap(count_t width, count_t height, bits_per_pixel bpp, count_t row_extra_bytes)
+			: _memory(0), _max_width(0), _max_height(0), _bpp(bpp), _native(0),
+				_extra_pixels((row_extra_bytes + bpp / 8 - 1) / (bpp / 8))
 		{	resize(width, height);	}
 
 		raw_bitmap::~raw_bitmap()
@@ -44,7 +45,7 @@ namespace agge
 			{
 				dc memdc;
 
-				const count_t max_width = agge_max(width, _max_width);
+				const count_t max_width = agge_max(width, _max_width) + _extra_pixels;
 				const count_t max_height = agge_max(height, _max_height);
 				const count_t stride = calculate_stride(max_width, _bpp);
 				void *memory = 0;

@@ -30,8 +30,9 @@ namespace agge
 			class raw_bitmap
 			{
 			public:
-				raw_bitmap(count_t width, count_t height, bits_per_pixel bpp)
-					: _width(width), _height(height), _bpp(bpp), data(width * height * ((int)bpp / 8))
+				raw_bitmap(count_t width, count_t height, bits_per_pixel bpp, count_t row_extra_bytes)
+					: _width(width), _height(height), _bpp(bpp), data(width * height * ((int)bpp / 8)),
+						extra_bytes(row_extra_bytes)
 				{	}
 
 				count_t width() const
@@ -50,6 +51,7 @@ namespace agge
 				{	return &data[y * _width * ((int)_bpp / 8)];	}
 
 				vector<uint8_t> data;
+				count_t extra_bytes;
 
 			public:
 				count_t _width, _height;
@@ -63,12 +65,22 @@ namespace agge
 				// INIT / ACT
 				bitmap<pixel32, mocks::raw_bitmap> b1(640, 480);
 				bitmap<pixel32, mocks::raw_bitmap> b2(1200, 800);
+				bitmap<pixel32, mocks::raw_bitmap> b3(640, 480, 15);
+				bitmap<uint8_t, mocks::raw_bitmap> b4(1200, 800, 7);
 
 				// ASSERT
 				assert_equal(640u, static_cast<mocks::raw_bitmap &>(b1).width());
 				assert_equal(480u, static_cast<mocks::raw_bitmap &>(b1).height());
+				assert_equal(16u, b1.extra_bytes);
 				assert_equal(1200u, b2.width());
 				assert_equal(800u, b2.height());
+				assert_equal(16u, b2.extra_bytes);
+				assert_equal(640u, b3.width());
+				assert_equal(480u, b3.height());
+				assert_equal(15u, b3.extra_bytes);
+				assert_equal(1200u, b4.width());
+				assert_equal(800u, b4.height());
+				assert_equal(7u, b4.extra_bytes);
 			}
 
 			
