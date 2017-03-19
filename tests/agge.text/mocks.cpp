@@ -9,7 +9,7 @@ namespace agge
 		namespace mocks
 		{
 			font_descriptor::font_descriptor(const wstring &typeface_, int height_, bool bold_, bool italic_,
-					font_engine::grid_fit grid_fit_)
+					font_engine_base::grid_fit grid_fit_)
 				: typeface(typeface_), height(height_), bold(bold_), italic(italic_), grid_fit(grid_fit_)
 			{	}
 
@@ -60,7 +60,7 @@ namespace agge
 			{	}
 
 			font::accessor_ptr fonts_loader::load(const wchar_t *typeface, int height, bool bold, bool italic,
-				font_engine::grid_fit grid_fit)
+				font_engine_base::grid_fit grid_fit)
 			{
 				font_descriptor fd(typeface, height, bold, italic, grid_fit);
 

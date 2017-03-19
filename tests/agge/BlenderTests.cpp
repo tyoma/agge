@@ -2,6 +2,7 @@
 
 #include "helpers.h"
 
+#include <tests/common/helpers.h>
 #include <ut/assert.h>
 #include <ut/test.h>
 

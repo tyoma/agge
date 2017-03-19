@@ -1,10 +1,12 @@
 #pragma once
 
+#include <agge/vector_rasterizer.h>
 #include <agge.text/font.h>
 #include <agge.text/font_engine.h>
 
 #include <map>
 #include <string>
+#include <tests/common/helpers.h>
 #include <vector>
 
 namespace agge
@@ -16,7 +18,7 @@ namespace agge
 			struct font_descriptor
 			{
 				font_descriptor(const std::wstring &typeface, int height, bool bold, bool italic,
-					font_engine::grid_fit grid_fit);
+					font_engine_base::grid_fit grid_fit);
 
 				bool operator <(const font_descriptor &rhs) const;
 				bool operator ==(const font_descriptor &rhs) const;
@@ -25,7 +27,7 @@ namespace agge
 				int height;
 				bool bold;
 				bool italic;
-				font_engine::grid_fit grid_fit;
+				font_engine_base::grid_fit grid_fit;
 			};
 
 			class font_accessor : public font::accessor
@@ -58,7 +60,7 @@ namespace agge
 				std::vector<glyph> _glyphs;
 			};
 
-			class fonts_loader : public font_engine::loader
+			class fonts_loader : public font_engine_base::loader
 			{
 			public:
 				template <typename T, size_t n>
@@ -71,7 +73,7 @@ namespace agge
 
 			private:
 				virtual font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic,
-					font_engine::grid_fit grid_fit);
+					font_engine_base::grid_fit grid_fit);
 			};
 
 			struct font_accessor::char_to_index
@@ -92,6 +94,41 @@ namespace agge
 					double dy;
 				} metrics;
 				std::vector<agge::glyph::path_point> outline;
+			};
+
+			class rasterizer
+			{
+			public:
+				void move_to(real_t x, real_t y)
+				{
+					glyph::path_point p = { path_command_move_to, x, y };
+					_path.push_back(p);
+				}
+
+				void line_to(real_t x, real_t y)
+				{
+					glyph::path_point p = { path_command_line_to, x, y };
+					_path.push_back(p);
+				}
+
+				void close_polygon()
+				{	_path.back().command |= path_flag_close;	}
+
+				void sort();
+
+				template <typename T>
+				void append(const T &source, int dx, int dy)
+				{
+					references.push_back(mkpoint(dx, dy));
+					path.insert(path.end(), source._path.begin(), source._path.end());
+				}
+
+			public:
+				std::vector< point<int> > references;
+				std::vector<glyph::path_point> path;
+
+			private:
+				std::vector<glyph::path_point> _path;
 			};
 
 

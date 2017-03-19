@@ -16,7 +16,6 @@
     </ClCompile>
     <ClCompile Include="BitmapTests.cpp" />
     <ClCompile Include="PodVectorTests.cpp" />
-    <ClCompile Include="helpers.cpp" />
     <ClCompile Include="StrokeFeaturesTests.cpp" />
     <ClCompile Include="RasterizerTests.cpp" />
     <ClCompile Include="PathTests.cpp" />

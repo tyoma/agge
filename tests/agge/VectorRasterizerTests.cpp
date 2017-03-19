@@ -2,6 +2,7 @@
 
 #include "helpers.h"
 
+#include <tests/common/helpers.h>
 #include <ut/assert.h>
 #include <ut/test.h>
 
@@ -20,12 +21,6 @@ namespace ut
 
 namespace agge
 {
-	bool operator ==(const vector_rasterizer::cell &lhs, const vector_rasterizer::cell &rhs)
-	{	return lhs.x == rhs.x && lhs.y == rhs.y && lhs.cover == rhs.cover && lhs.area == rhs.area;	}
-
-	bool operator ==(const vector_rasterizer::cells_container &lhs, const vector_rasterizer::cells_container &rhs)
-	{	return lhs.size() == rhs.size() && equal(lhs.begin(), lhs.end(), rhs.begin());	}
-
 	namespace
 	{
 		int fp(double value)

@@ -3,7 +3,6 @@ set(AGGE_TEST_SOURCES
 	BlenderTests.cpp
 	ClipperTests.cpp
 	DashTests.cpp
-	helpers.cpp
 	main.cpp
 	MiscTests.cpp
 	ParallelExecutionTests.cpp
