@@ -1,5 +1,7 @@
 #pragma once
 
+#include "helpers.h"
+
 #include <agge/vector_rasterizer.h>
 #include <agge.text/font.h>
 #include <agge.text/font_engine.h>
@@ -99,36 +101,27 @@ namespace agge
 			class rasterizer
 			{
 			public:
+				typedef std::pair<const rasterizer * /*source*/, point<int> /*d*/> appended;
+
+			public:
 				void move_to(real_t x, real_t y)
-				{
-					glyph::path_point p = { path_command_move_to, x, y };
-					_path.push_back(p);
-				}
+				{	path.push_back(mkppoint(path_command_move_to, x, y));	}
 
 				void line_to(real_t x, real_t y)
-				{
-					glyph::path_point p = { path_command_line_to, x, y };
-					_path.push_back(p);
-				}
+				{	path.push_back(mkppoint(path_command_line_to, x, y));	}
 
 				void close_polygon()
-				{	_path.back().command |= path_flag_close;	}
+				{	path.back().command |= path_flag_close;	}
 
 				void sort();
 
 				template <typename T>
 				void append(const T &source, int dx, int dy)
-				{
-					references.push_back(mkpoint(dx, dy));
-					path.insert(path.end(), source._path.begin(), source._path.end());
-				}
+				{	append_log.push_back(std::make_pair(&source, mkpoint(dx, dy)));	}
 
 			public:
-				std::vector< point<int> > references;
+				std::vector<appended> append_log;
 				std::vector<glyph::path_point> path;
-
-			private:
-				std::vector<glyph::path_point> _path;
 			};
 
 

@@ -278,34 +278,65 @@ namespace agge
 				e.render_glyph(target, *f, 1, 19.0f, 3.0f);
 
 				// ASSERT
-				point<int> reference_point1[] = { { 19, 3 }, };
-				
-				assert_equal(c_outline_2, target.path);
-				assert_equal(reference_point1, target.references);
-
-				// INIT
-				target.path.clear();
+				assert_equal(1u, target.append_log.size());
+				assert_equal(c_outline_2, target.append_log[0].first->path);
+				assert_equal(mkpoint(19, 3), target.append_log[0].second);
 
 				// ACT
 				e.render_glyph(target, *f, 1, 119.0f, -30.0f);
 
 				// ASSERT
-				point<int> reference_point2[] = { { 19, 3 }, { 119, -30 }, };
-				
-				assert_equal(c_outline_2, target.path);
-				assert_equal(reference_point2, target.references);
-
-				// INIT
-				target.path.clear();
+				assert_equal(2u, target.append_log.size());
+				assert_equal(c_outline_2, target.append_log[1].first->path);
+				assert_equal(mkpoint(119, -30), target.append_log[1].second);
 
 				// ACT
 				e.render_glyph(target, *f, 2, -1719.0f, 29.0f);
 
 				// ASSERT
-				point<int> reference_point3[] = { { 19, 3 }, { 119, -30 }, { -1719, 29 }, };
-				
-				assert_equal(c_outline_diamond, target.path);
-				assert_equal(reference_point3, target.references);
+				assert_equal(3u, target.append_log.size());
+				assert_equal(c_outline_diamond, target.append_log[2].first->path);
+				assert_equal(mkpoint(-1719, 29), target.append_log[2].second);
+			}
+
+
+			test( GlyphRastersAreCachedAcrossCalls )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, { L'b', 1 }, { L'c', 2 }, };
+				mocks::font_accessor::glyph glyphs[] = {
+					mocks::glyph(0, 0, c_outline_1), mocks::glyph(0, 0, c_outline_2), mocks::glyph(0, 0, c_outline_diamond),
+				};
+				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
+					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, font_engine_base::gf_strong),
+						mocks::font_accessor(c_fm1, indices, glyphs)),
+				};
+				mocks::fonts_loader loader(fonts);
+				font_engine<mocks::rasterizer> e(loader);
+				mocks::rasterizer target;
+				font::ptr f = e.create_font(L"Arial", 10, false, false, font_engine_base::gf_strong);
+
+				e.render_glyph(target, *f, 1, 19.0f, 3.0f);
+				e.render_glyph(target, *f, 0, 1.0f, 2.0f);
+				e.render_glyph(target, *f, 2, 0.0f, 0.0f);
+
+				// ACT
+				e.render_glyph(target, *f, 1, 29.0f, -113.0f);
+				e.render_glyph(target, *f, 0, 19.0f, -13.0f);
+
+				// ASSERT
+				assert_equal(5u, target.append_log.size());
+				assert_equal(target.append_log[0].first, target.append_log[3].first);
+				assert_equal(target.append_log[1].first, target.append_log[4].first);
+
+				// ACT
+				e.render_glyph(target, *f, 1, 29.0f, -113.0f);
+				e.render_glyph(target, *f, 2, 19.0f, -13.0f);
+
+				// ASSERT
+				assert_equal(7u, target.append_log.size());
+				assert_equal(target.append_log[0].first, target.append_log[5].first);
+				assert_equal(target.append_log[2].first, target.append_log[6].first);
 			}
 
 		end_test_suite

@@ -34,6 +34,12 @@ namespace agge
 		font_engine(loader &loader_);
 
 		void render_glyph(RasterizerT &target, const font &font_, uint16_t glyph_index, real_t x, real_t y);
+
+	private:
+		typedef hash_map<uint16_t, RasterizerT> rasters_map;
+
+	private:
+		rasters_map _glyph_rasters;
 	};
 
 	struct font_engine_base::loader
@@ -53,13 +59,18 @@ namespace agge
 	inline void font_engine<RasterizerT>::render_glyph(RasterizerT &target, const font &font_, uint16_t glyph_index,
 		real_t x, real_t y)
 	{
-		RasterizerT r;
-		const glyph *g = font_.get_glyph(glyph_index);
-		glyph::path_iterator i = g->get_outline();
-		real_t xx, yy;
+		typename rasters_map::iterator i = _glyph_rasters.find(glyph_index);
 
-		for (int command; command = i.vertex(&xx, &yy), path_command_stop != command; )
-			add_polyline_vertex(r, xx, yy, command);
-		target.append(r, (int)x, (int)y);
+		if (_glyph_rasters.end() == i)
+		{
+			const glyph *g = font_.get_glyph(glyph_index);
+			glyph::path_iterator pi = g->get_outline();
+			real_t xx, yy;
+
+			_glyph_rasters.insert(glyph_index, RasterizerT(), i);
+			for (int command; command = pi.vertex(&xx, &yy), path_command_stop != command; )
+				add_polyline_vertex(i->second, xx, yy, command);
+		}
+		target.append(i->second, (int)x, (int)y);
 	}
 }

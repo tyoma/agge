@@ -14,6 +14,12 @@ namespace agge
 		inline std::vector<typename std::iterator_traits<Iterator>::value_type> mkvector(Iterator begin, Iterator end)
 		{	return std::vector<typename std::iterator_traits<Iterator>::value_type>(begin, end);	}
 
+		inline glyph::path_point mkppoint(int command, real_t x, real_t y)
+		{
+			glyph::path_point p = { command, x, y };
+			return p;
+		}
+
 		template <typename IteratorT>
 		pod_vector<glyph::path_point> convert(IteratorT &i)
 		{
@@ -21,10 +27,7 @@ namespace agge
 			pod_vector<glyph::path_point> result;
 
 			for (int command; command = i.vertex(&x, &y), path_command_stop != command; )
-			{
-				glyph::path_point p = { command, x, y };
-				result.push_back(p);
-			}
+				result.push_back(mkppoint(command, x, y));
 			return result;
 		}
 
