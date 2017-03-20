@@ -56,7 +56,7 @@ namespace agge
 		};
 	}
 
-	struct font_engine::font_key
+	struct font_engine_base::font_key
 	{
 		wstring typeface;
 		unsigned height : 20;
@@ -75,20 +75,20 @@ namespace agge
 		}
 	};
 
-	struct font_engine::font_key_hasher
+	struct font_engine_base::font_key_hasher
 	{
-		size_t operator ()(const font_engine::font_key &/*key*/) const
+		size_t operator ()(const font_engine_base::font_key &/*key*/) const
 		{
 			return 1;
 		}
 	};
 
-	font_engine::font_engine(loader &loader_)
+	font_engine_base::font_engine_base(loader &loader_)
 		: _loader(loader_), _fonts(new fonts_cache), _scalable_fonts(new scalabale_fonts_cache)
 	{
 	}
 
-	font::ptr font_engine::create_font(const wchar_t *typeface, int height, bool bold, bool italic, grid_fit gf)
+	font::ptr font_engine_base::create_font(const wchar_t *typeface, int height, bool bold, bool italic, grid_fit gf)
 	{
 		font_key key = { typeface };
 		

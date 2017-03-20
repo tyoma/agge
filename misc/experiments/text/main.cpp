@@ -92,56 +92,11 @@ namespace demo
 		real_t _dx, _dy;
 	};
 
-	class glyph_rasters_cache : noncopyable
-	{
-	private:
-		enum {
-			precision = 8
-		};
-
-	public:
-		void draw_glyph(my_rasterizer &r, const agge::font &font_, uint16_t index, real_t x, real_t y)
-		{
-			const real_t original_x = x;
-			const real_t original_y = y;
-
-			x -= floorf(x);
-			y -= floorf(y);
-
-			int precise_index = static_cast<int>(x * precision)
-				+ static_cast<int>(y * precision) * precision + index * precision * precision;
-			glyph_rasters_cache_t::iterator i = _glyph_rasters.find(precise_index);
-
-			if (_glyph_rasters.end() == i)
-			{
-				x = static_cast<real_t>(static_cast<int>(x * precision)) / precision;
-				y = static_cast<real_t>(static_cast<int>(y * precision)) / precision;
-				_glyph_rasters.insert(precise_index, my_rasterizer(), i);
-				
-				if (const glyph *g = font_.get_glyph(index))
-				{
-					offset_conv<glyph::path_iterator> outline(g->get_outline(), x, y);
-
-					add_path(i->second, outline);
-					i->second.sort();
-				}
-			}
-			if (i->second.height())
-				r.append(i->second, original_x, original_y);
-		}
-
-	private:
-		typedef hash_map<int, my_rasterizer> glyph_rasters_cache_t;
-
-	private:
-		glyph_rasters_cache_t _glyph_rasters;
-	};
-
 	class TextDrawerGDI : public Drawer
 	{
 	public:
 		TextDrawerGDI()
-			: _font_accessor(new win32_font_accessor(14, L"tahoma", false, false, font_engine::gf_none)),
+			: _font_accessor(new win32_font_accessor(14, L"tahoma", false, false, font_engine_base::gf_none)),
 				_font(new font(_font_accessor)), _layout(c_text_long.c_str(), _font), _ddx(0.0f)
 		{	}
 
@@ -206,9 +161,9 @@ namespace demo
 	class TextDrawer : public Drawer
 	{
 	public:
-		TextDrawer(font_engine &e)
-			: _renderer(1), _font(e.create_font(L"tahoma", 14, false, false, font_engine::gf_strong)),
-				_layout(c_text_long.c_str(), _font), _ddx(0.0f)
+		TextDrawer(font_engine<my_rasterizer> &e)
+			: _renderer(1), _font(e.create_font(L"tahoma", 14, false, false, font_engine_base::gf_strong)),
+				_layout(c_text_long.c_str(), _font), _ddx(0.0f), _font_engine(e)
 		{	}
 
 	private:
@@ -241,7 +196,7 @@ namespace demo
 				for (layout::positioned_glyphs_container::const_iterator j = i->begin; j != i->end; ++j)
 				{
 					x += j->dx;
-					_glyph_rasters.draw_glyph(_rasterizer, *i->glyph_run_font, j->index, x, i->reference.y);
+					_font_engine.render_glyph(_rasterizer, *i->glyph_run_font, j->index, x, i->reference.y);
 				}
 			}
 
@@ -273,14 +228,14 @@ namespace demo
 		shared_ptr<font> _font;
 		layout _layout;
 		float _ddx;
-		glyph_rasters_cache _glyph_rasters;
+		font_engine<my_rasterizer> &_font_engine;
 	};
 }
 
 int main()
 {
 	demo::win32_font_loader loader;
-	font_engine e(loader);
+	font_engine<my_rasterizer> e(loader);
 	demo::TextDrawer d(e);
 	demo::TextDrawerGDI d2;
 	MainDialog dlg(d);

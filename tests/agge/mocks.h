@@ -4,6 +4,7 @@
 
 #include <agge/path.h>
 #include <agge/tools.h>
+#include <tests/common/helpers.h>
 
 #include <ut/assert.h>
 #include <utility>

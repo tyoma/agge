@@ -3,27 +3,20 @@
 #include <agge.text/font.h>
 #include <agge.text/layout.h>
 #include <iterator>
+#include <tests/common/helpers.h>
 #include <vector>
 
 namespace agge
 {
 	namespace tests
 	{
-		template <typename T>
-		inline bool equal(const T &lhs, const T &rhs)
-		{	return lhs == rhs;	}
-
-		template <>
-		bool equal(const real_t &lhs, const real_t &rhs);
-
 		template <typename Iterator>
 		inline std::vector<typename std::iterator_traits<Iterator>::value_type> mkvector(Iterator begin, Iterator end)
 		{	return std::vector<typename std::iterator_traits<Iterator>::value_type>(begin, end);	}
 
-		template <typename T>
-		inline point<T> mkpoint(T x, T y)
+		inline glyph::path_point mkppoint(int command, real_t x, real_t y)
 		{
-			point<T> p = { x, y };
+			glyph::path_point p = { command, x, y };
 			return p;
 		}
 
@@ -34,31 +27,17 @@ namespace agge
 			pod_vector<glyph::path_point> result;
 
 			for (int command; command = i.vertex(&x, &y), path_command_stop != command; )
-			{
-				glyph::path_point p = { command, x, y };
-				result.push_back(p);
-			}
+				result.push_back(mkppoint(command, x, y));
 			return result;
 		}
 
 		template <typename IteratorT>
 		pod_vector<glyph::path_point> convert_copy(IteratorT i)
 		{	return convert(i);	}
-
-		template <typename T, size_t n>
-		inline T *begin(T (&p)[n])
-		{	return p;	}
-
-		template <typename T, size_t n>
-		inline T *end(T (&p)[n])
-		{	return p + n;	}
 	}
 
 	inline bool operator ==(const layout::positioned_glyph &lhs, const layout::positioned_glyph &rhs)
 	{	return tests::equal(lhs.dx, rhs.dx) && tests::equal(lhs.dy, rhs.dy) && lhs.index == rhs.index;	}
-
-	inline bool operator ==(const point_r &lhs, const point_r &rhs)
-	{	return tests::equal(lhs.x, rhs.x) && tests::equal(lhs.y, rhs.y);	}
 
 	inline bool operator ==(const glyph::path_point &lhs, const glyph::path_point &rhs)
 	{	return lhs.command == rhs.command && tests::equal(lhs.x, rhs.x) && tests::equal(lhs.y, rhs.y);	}

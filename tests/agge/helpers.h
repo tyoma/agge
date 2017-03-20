@@ -96,27 +96,12 @@ namespace agge
 		inline std::vector<T> mkvector(T (&p)[N])
 		{	return std::vector<T>(p, p + N);	}
 
-		template <typename T, size_t N>
-		inline T *begin(T (&p)[N])
-		{	return p;	}
-
-		template <typename T, size_t N>
-		inline T *end(T (&p)[N])
-		{	return p + N;	}
-
 		template <typename CoordT>
 		inline rect<CoordT> mkrect_sized(CoordT left, CoordT top, CoordT width, CoordT height)
 		{
 			rect<CoordT> rc = { left, top, left + width, top + height };
 			return rc;
 		}
-
-		template <typename T>
-		inline bool equal(const T &lhs, const T &rhs)
-		{	return lhs == rhs;	}
-
-		template <>
-		bool equal(const real_t &lhs, const real_t &rhs);
 
 		template <typename T>
 		inline bool is_on_segment(const point<T>& t, const point<T>& segment_a, const point<T>& segment_b)
@@ -141,19 +126,4 @@ namespace agge
 		inline void end_poly(T &acceptor, bool close)
 		{	acceptor.add_vertex(0.0f, 0.0f, path_command_end_poly | (close ? path_flag_close : 0));	}
 	}
-
-	inline bool operator ==(const pixel32 &lhs, const pixel32 &rhs)
-	{	return lhs.c0 == rhs.c0 && lhs.c1 == rhs.c1 && lhs.c2 == rhs.c2 && lhs.c3 == rhs.c3;	}
-
-	template <typename T>
-	inline bool operator ==(const point<T> &lhs, const point<T> &rhs)
-	{	return tests::equal(lhs.x, rhs.x) && tests::equal(lhs.y, rhs.y);	}
-
-	template <typename T>
-	inline bool operator ==(const agge_vector<T> &lhs, const agge_vector<T> &rhs)
-	{	return tests::equal(lhs.dx, rhs.dx) && tests::equal(lhs.dy, rhs.dy);	}
-
-	template <typename T>
-	inline bool operator ==(const std::vector<T> &lhs, const pod_vector<T> &rhs)
-	{	return lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());	}
 }

@@ -11,7 +11,7 @@ namespace demo
 	{
 	public:
 		win32_font_accessor(int height, const wchar_t *typeface, bool bold, bool italic,
-			agge::font_engine::grid_fit grid_fit);
+			agge::font_engine_base::grid_fit grid_fit);
 
 		HFONT native() const;
 
@@ -22,13 +22,13 @@ namespace demo
 
 	private:
 		agge::shared_ptr<void> _native;
-		agge::font_engine::grid_fit _grid_fit;
+		agge::font_engine_base::grid_fit _grid_fit;
 	};		 
 
-	class win32_font_loader : public agge::font_engine::loader
+	class win32_font_loader : public agge::font_engine_base::loader
 	{
 		virtual agge::font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic,
-			agge::font_engine::grid_fit grid_fit)
+			agge::font_engine_base::grid_fit grid_fit)
 		{
 			return agge::font::accessor_ptr(new win32_font_accessor(height, typeface, bold, italic, grid_fit));
 		}

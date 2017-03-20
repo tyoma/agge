@@ -1,10 +1,13 @@
 #pragma once
 
+#include "helpers.h"
+
 #include <agge.text/font.h>
 #include <agge.text/font_engine.h>
 
 #include <map>
 #include <string>
+#include <tests/common/helpers.h>
 #include <vector>
 
 namespace agge
@@ -16,7 +19,7 @@ namespace agge
 			struct font_descriptor
 			{
 				font_descriptor(const std::wstring &typeface, int height, bool bold, bool italic,
-					font_engine::grid_fit grid_fit);
+					font_engine_base::grid_fit grid_fit);
 
 				bool operator <(const font_descriptor &rhs) const;
 				bool operator ==(const font_descriptor &rhs) const;
@@ -25,7 +28,7 @@ namespace agge
 				int height;
 				bool bold;
 				bool italic;
-				font_engine::grid_fit grid_fit;
+				font_engine_base::grid_fit grid_fit;
 			};
 
 			class font_accessor : public font::accessor
@@ -58,7 +61,7 @@ namespace agge
 				std::vector<glyph> _glyphs;
 			};
 
-			class fonts_loader : public font_engine::loader
+			class fonts_loader : public font_engine_base::loader
 			{
 			public:
 				template <typename T, size_t n>
@@ -71,7 +74,7 @@ namespace agge
 
 			private:
 				virtual font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic,
-					font_engine::grid_fit grid_fit);
+					font_engine_base::grid_fit grid_fit);
 			};
 
 			struct font_accessor::char_to_index
@@ -92,6 +95,28 @@ namespace agge
 					double dy;
 				} metrics;
 				std::vector<agge::glyph::path_point> outline;
+			};
+
+			class rasterizer
+			{
+			public:
+				typedef std::pair<const rasterizer * /*source*/, point<int> /*d*/> appended;
+
+			public:
+				rasterizer();
+
+				void move_to(real_t x, real_t y);
+				void line_to(real_t x, real_t y);
+				void close_polygon();
+
+				void sort();
+
+				void append(const rasterizer &source, int dx, int dy);
+
+			public:
+				bool _sorted;
+				std::vector<appended> append_log;
+				std::vector<glyph::path_point> path;
 			};
 
 
