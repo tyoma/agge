@@ -70,6 +70,7 @@ namespace agge
 			_glyph_rasters.insert(glyph_index, RasterizerT(), i);
 			for (int command; command = pi.vertex(&xx, &yy), path_command_stop != command; )
 				add_polyline_vertex(i->second, xx, yy, command);
+			i->second.sort();
 		}
 		target.append(i->second, (int)x, (int)y);
 	}

@@ -2,7 +2,6 @@
 
 #include "helpers.h"
 
-#include <agge/vector_rasterizer.h>
 #include <agge.text/font.h>
 #include <agge.text/font_engine.h>
 
@@ -104,22 +103,18 @@ namespace agge
 				typedef std::pair<const rasterizer * /*source*/, point<int> /*d*/> appended;
 
 			public:
-				void move_to(real_t x, real_t y)
-				{	path.push_back(mkppoint(path_command_move_to, x, y));	}
+				rasterizer();
 
-				void line_to(real_t x, real_t y)
-				{	path.push_back(mkppoint(path_command_line_to, x, y));	}
-
-				void close_polygon()
-				{	path.back().command |= path_flag_close;	}
+				void move_to(real_t x, real_t y);
+				void line_to(real_t x, real_t y);
+				void close_polygon();
 
 				void sort();
 
-				template <typename T>
-				void append(const T &source, int dx, int dy)
-				{	append_log.push_back(std::make_pair(&source, mkpoint(dx, dy)));	}
+				void append(const rasterizer &source, int dx, int dy);
 
 			public:
+				bool _sorted;
 				std::vector<appended> append_log;
 				std::vector<glyph::path_point> path;
 			};

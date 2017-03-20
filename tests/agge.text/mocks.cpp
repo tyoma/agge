@@ -1,5 +1,7 @@
 #include "mocks.h"
 
+#include <ut/assert.h>
+
 using namespace std;
 
 namespace agge
@@ -66,6 +68,29 @@ namespace agge
 
 				created_log.push_back(fd);
 				return font::accessor_ptr(new font_accessor(fonts[fd]));
+			}
+
+
+			rasterizer::rasterizer()
+				: _sorted(false)
+			{	}
+
+			void rasterizer::move_to(real_t x, real_t y)
+			{	path.push_back(mkppoint(path_command_move_to, x, y));	}
+
+			void rasterizer::line_to(real_t x, real_t y)
+			{	path.push_back(mkppoint(path_command_line_to, x, y));	}
+
+			void rasterizer::close_polygon()
+			{	path.back().command |= path_flag_close;	}
+
+			void rasterizer::sort()
+			{	_sorted = true;	}
+
+			void rasterizer::append(const rasterizer &source, int dx, int dy)
+			{
+				assert_is_true(source._sorted);
+				append_log.push_back(std::make_pair(&source, mkpoint(dx, dy)));
 			}
 		}
 	}
