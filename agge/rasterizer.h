@@ -26,8 +26,7 @@ namespace agge
 		void line_to(real_t x, real_t y);
 		void close_polygon();
 
-		template <typename OtherT>
-		void append(const OtherT &source, int x, int y);
+		void append(const rasterizer &other, int dx, int dy);
 
 		using vector_rasterizer::sort;
 		using vector_rasterizer::operator [];
@@ -112,10 +111,12 @@ namespace agge
 	{	_clipper.line_to(*this, _start_x, _start_y);	}
 
 	template <typename ClipperT, typename ScalingT>
-	template <typename OtherT>
-	inline void rasterizer<ClipperT, ScalingT>::append(const OtherT &source, int x, int y)
+	inline void rasterizer<ClipperT, ScalingT>::append(const rasterizer &other, int dx, int dy)
 	{
-		vector_rasterizer::append(source, x, y);
+		int cx, cy, unused;
+
+		ScalingT::scale2(dx, dy, 0, 0, cx, cy, unused, unused);
+		vector_rasterizer::append(other, cx, cy);
 	}
 
 	template <typename ClipperT, typename ScalingT>
