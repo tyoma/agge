@@ -51,16 +51,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\common\MainDialog.cpp" />
-    <ClCompile Include="..\common\timing.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\common\MainDialog.h" />
-    <ClInclude Include="..\common\timing.h" />
     <ClInclude Include="text.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\samples\common\src\samples-common.vcxproj">
+      <Project>{d89a569e-5c54-22b2-a9d4-52e907c821ad}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\src\agge\agge.vcxproj">
       <Project>{f849e92c-248a-46b2-9eab-f86578a21316}</Project>
     </ProjectReference>

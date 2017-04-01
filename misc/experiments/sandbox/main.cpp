@@ -1,9 +1,7 @@
 #include "../common/blenders.h"
 #include "../common/bouncing.h"
 #include "../common/ellipse.h"
-#include "../common/MainDialog.h"
 #include "../common/paths.h"
-#include "../common/timing.h"
 
 #include <agge/blenders_simd.h>
 #include <agge/clipper.h>
@@ -14,6 +12,9 @@
 #include <agge/renderer_parallel.h>
 #include <agge/stroke.h>
 #include <agge/stroke_features.h>
+
+#include <samples/common/shell.h>
+#include <samples/common/timing.h>
 
 using namespace agge;
 using namespace std;

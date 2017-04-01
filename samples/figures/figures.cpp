@@ -3,7 +3,8 @@
 #include <agge/renderer.h>
 #include <agge/rasterizer.h>
 #include <agge/blenders_simd.h>
-#include <common/MainDialog.h>
+
+#include <samples/common/shell.h>
 
 using namespace agge;
 
@@ -50,9 +51,9 @@ namespace
 		{
 			ras.reset();
 
-			ras.move_to(10.0f, 12.0f);
+			ras.move_to(10.0f, 10.0f);
 			ras.line_to(190.0f, 20.0f);
-			ras.line_to(80.0f, 150.0f);
+			ras.line_to(20.0f, 90.0f);
 			ras.close_polygon();
 
 			ras.sort();

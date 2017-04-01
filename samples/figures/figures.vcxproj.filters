@@ -2,24 +2,5 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="figures.cpp" />
-    <ClCompile Include="..\..\misc\experiments\common\MainDialog.cpp">
-      <Filter>common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\misc\experiments\common\timing.cpp">
-      <Filter>common</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="common">
-      <UniqueIdentifier>{1ff2ab0c-ca99-451c-a1ed-99e0b4b45083}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\misc\experiments\common\MainDialog.h">
-      <Filter>common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\misc\experiments\common\timing.h">
-      <Filter>common</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

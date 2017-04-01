@@ -2,13 +2,13 @@
 #include "glyph_access.h"
 
 #include "../common/color.h"
-#include "../common/MainDialog.h"
-#include "../common/timing.h"
 
 #include <agge/blenders_simd.h>
 #include <agge/clipper.h>
 #include <agge/rasterizer.h>
 #include <functional>
+#include <samples/common/shell.h>
+#include <samples/common/timing.h>
 #include <tchar.h>
 #include <unordered_map>
 #include <vector>

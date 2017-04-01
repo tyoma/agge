@@ -5,24 +5,12 @@
     <ClCompile Include="..\common\balls.cpp">
       <Filter>common</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\MainDialog.cpp">
-      <Filter>common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\timing.cpp">
-      <Filter>common</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\paths.h">
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="..\common\bouncing.h">
-      <Filter>common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\timing.h">
-      <Filter>common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\MainDialog.h">
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="..\common\color.h">
