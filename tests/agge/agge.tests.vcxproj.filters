@@ -30,6 +30,7 @@
     <ClCompile Include="platform\linux\mt.cpp">
       <Filter>platform\linux</Filter>
     </ClCompile>
+    <ClCompile Include="FillingRulesTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />

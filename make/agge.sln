@@ -37,6 +37,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "text", "..\misc\experiments
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freetype", "..\libraries\freetype2\builds\windows\vc2010\freetype.vcxproj", "{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "figures", "..\samples\figures\figures.vcxproj", "{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{202D9A95-7B05-479F-999C-FD540D3CD169}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Android = Debug|Android
@@ -167,6 +171,16 @@ Global
 		{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}.Release|Win32.Build.0 = Release Multithreaded|Win32
 		{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}.Release|x64.ActiveCfg = Release Multithreaded|x64
 		{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}.Release|x64.Build.0 = Release Multithreaded|x64
+		{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}.Debug|Android.ActiveCfg = Debug|Win32
+		{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}.Debug|Win32.Build.0 = Debug|Win32
+		{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}.Debug|x64.ActiveCfg = Debug|x64
+		{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}.Debug|x64.Build.0 = Debug|x64
+		{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}.Release|Android.ActiveCfg = Release|Win32
+		{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}.Release|Win32.ActiveCfg = Release|Win32
+		{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}.Release|Win32.Build.0 = Release|Win32
+		{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}.Release|x64.ActiveCfg = Release|x64
+		{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -181,5 +195,6 @@ Global
 		{8D284FFF-6B35-4F6A-ADCE-CFCF759D6BC3} = {0247C00D-043A-4781-8E4A-F174B9B2CE29}
 		{70EB93F3-E425-46B1-B592-B50167CBBB46} = {0247C00D-043A-4781-8E4A-F174B9B2CE29}
 		{DB87CDE1-0CC5-4D11-B5BC-142C21FE17E2} = {0247C00D-043A-4781-8E4A-F174B9B2CE29}
+		{9E29AA8B-FE90-493E-9B72-41AFAEC11A09} = {202D9A95-7B05-479F-999C-FD540D3CD169}
 	EndGlobalSection
 EndGlobal

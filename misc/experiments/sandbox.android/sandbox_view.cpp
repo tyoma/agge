@@ -19,6 +19,7 @@
 #include "../common/paths.h"
 
 #include <agge/clipper.h>
+#include <agge/filling_rules.h>
 #include <agge/path.h>
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
@@ -51,20 +52,6 @@ namespace
 		blenderx(rgba8 color)
 			: BlenderT(make_pixel(color), color.a)
 		{	}
-	};
-
-	template <int precision>
-	struct calculate_alpha
-	{
-		unsigned int operator ()(int area) const
-		{
-			area >>= precision + 1;
-			if (area < 0)
-				area = -area;
-			if (area > 255)
-				area = 255;
-			return area;
-		}
 	};
 
 	template <typename LinesSinkT, typename PathT>
@@ -180,7 +167,7 @@ try
 	agg->rasterizer.reset();
 	add_path(agg->rasterizer, stroke_path);
 	agg->rasterizer.sort();
-	agg->renderer(bm, 0, agg->rasterizer, blender(rgba8(0, 154, 255, 255)), calculate_alpha<8>());
+	agg->renderer(bm, 0, agg->rasterizer, blender(rgba8(0, 154, 255, 255)), agge::winding<>());
 }
 catch (...)
 {

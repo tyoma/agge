@@ -77,5 +77,6 @@
     <ClInclude Include="..\..\agge\platform\win32\bitmap.h">
       <Filter>platform\win32</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\agge\filling_rules.h" />
   </ItemGroup>
 </Project>

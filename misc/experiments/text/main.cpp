@@ -9,6 +9,7 @@
 
 #include <agge/blenders_simd.h>
 #include <agge/clipper.h>
+#include <agge/filling_rules.h>
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
 #include <agge.text/layout.h>
@@ -36,20 +37,6 @@ namespace demo
 		{
 			typename BlenderT::pixel p = { color.b, color.g, color.r, 0 };
 			return p;
-		}
-	};
-
-	template <int precision>
-	struct calculate_alpha
-	{
-		uint8_t operator ()(int area) const
-		{
-			area >>= precision + 1;
-			if (area < 0)
-				area = -area;
-			if (area > 255)
-				area = 255;
-			return static_cast<uint8_t>(area);
 		}
 	};
 
@@ -206,7 +193,7 @@ namespace demo
 
 			double sort = stopwatch(counter);
 
-			_renderer(surface, 0, _rasterizer, solid_color_brush(rgba8(0, 0, 0, 255)), calculate_alpha<vector_rasterizer::_1_shift>());
+			_renderer(surface, 0, _rasterizer, solid_color_brush(rgba8(0, 0, 0, 255)), winding<>());
 
 			double render = stopwatch(counter);
 
