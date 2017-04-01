@@ -3,57 +3,34 @@
 #include <agge/bitmap.h>
 #include <agge/platform/win32/bitmap.h>
 
-#include <memory>
+typedef agge::bitmap<agge::pixel32, agge::platform::raw_bitmap> platform_bitmap;
 
-struct HWND__;
-typedef HWND__ *HWND;
-
-typedef agge::bitmap<agge::pixel32, agge::platform::raw_bitmap> bitmap;
-
-struct Timings
+struct shell
 {
-	double clearing;
-	double stroking;
-	double rasterization;
-	double rendition;
-	double blitting;
+	struct application;
+
+	virtual void present(application &app) = 0;
 };
 
-struct Drawer
+struct shell::application
 {
-	virtual void draw(bitmap &surface, Timings &timings) = 0;
+	struct timings
+	{
+		double clearing;
+		double stroking;
+		double rasterization;
+		double rendition;
+		double blitting;
+	};
+
+	virtual void draw(platform_bitmap &surface, timings &timings_) = 0;
 	virtual void resize(int width, int height);
 };
 
-class MainDialog
-{
-public:
-	MainDialog(Drawer &drawer);
-	~MainDialog();
-
-	void UpdateText();
-
-	static void PumpMessages();
-
-private:
-	static uintptr_t __stdcall windowProcProxy(HWND hwnd, unsigned int message, uintptr_t wparam, uintptr_t lparam);
-	uintptr_t windowProc(unsigned int message, uintptr_t wparam, uintptr_t lparam);
-
-	void onDestroy();
-
-	void destroy();
-
-private:
-	HWND _window;
-	uintptr_t _previousWindowProc;
-	bitmap _bitmap;
-	Drawer &_drawer;
-
-	int _cycles;
-	Timings _timings;
-};
+// AGGE sample application entry point.
+void agge_sample_main(shell &sh);
 
 
 
-inline void Drawer::resize(int /*width*/, int /*height*/)
+inline void shell::application::resize(int /*width*/, int /*height*/)
 {	}

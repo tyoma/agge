@@ -96,13 +96,13 @@ namespace
 	}
 
 
-	class agge_drawer : public Drawer
+	class sandbox_app : public shell::application
 	{
 	public:
 		typedef blender2<blender_used> solid_color_brush;
 
 	public:
-		agge_drawer()
+		sandbox_app()
 			: _renderer(c_thread_count), _balls(c_balls)
 		{
 			_balls.resize(c_balls_number);
@@ -111,7 +111,7 @@ namespace
 		}
 
 	private:
-		virtual void draw(::bitmap &surface, Timings &timings)
+		virtual void draw(platform_bitmap &surface, timings &timings)
 		{
 			long long counter;
 			const float dt = 0.3f * (float)stopwatch(_balls_timer);
@@ -170,7 +170,7 @@ namespace
 				add_path(_rasterizer, e);
 				_rasterizer.sort();
 				timings.rasterization += stopwatch(counter);
-				_renderer(surface, 0, _rasterizer, agge_drawer::solid_color_brush(i->color), winding<>());
+				_renderer(surface, 0, _rasterizer, sandbox_app::solid_color_brush(i->color), winding<>());
 				timings.rendition += stopwatch(counter);
 			}
 		}
@@ -193,11 +193,9 @@ namespace
 }
 
 
-int main()
+void agge_sample_main(shell &sh)
 {
-	agge_drawer d;
+	sandbox_app app;
 
-	MainDialog dlg(d);
-
-	MainDialog::PumpMessages();
+	sh.present(app);
 }

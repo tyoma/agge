@@ -44,10 +44,10 @@ namespace
 		return r;
 	}
 
-	class Figures : public Drawer
+	class Figures : public shell::application
 	{
 	private:
-		virtual void draw(::bitmap &surface, Timings &/*timings*/)
+		virtual void draw(platform_bitmap &surface, timings &/*timings*/)
 		{
 			ras.reset();
 
@@ -68,10 +68,9 @@ namespace
 	};
 }
 
-int main()
+void agge_sample_main(shell &sh)
 {
-	Figures d;
-	MainDialog dialog(d);
+	Figures app;
 
-	MainDialog::PumpMessages();
+	sh.present(app);
 }

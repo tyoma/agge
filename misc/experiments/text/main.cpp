@@ -50,7 +50,7 @@ namespace
 			: _dc(::CreateCompatibleDC(NULL), &DeleteDC)
 		{	}
 
-		MemDC(::bitmap &surface)
+		MemDC(platform_bitmap &surface)
 			: _dc(::CreateCompatibleDC(NULL), &DeleteDC)
 		{	_selector = select(*this, surface.native());	}
 
@@ -111,7 +111,7 @@ namespace
 		glyphs_cache_t _glyphs;
 	};
 
-	class TextDrawerGDI : public Drawer
+	class TextDrawerGDI : public shell::application
 	{
 	public:
 		TextDrawerGDI()
@@ -119,7 +119,7 @@ namespace
 		{	}
 
 	private:
-		virtual void draw(::bitmap &surface, Timings &timings)
+		virtual void draw(platform_bitmap &surface, timings &timings)
 		{
 			const basic_string<TCHAR> &text = c_text2;
 			long long timer;
@@ -153,7 +153,7 @@ namespace
 		shared_ptr<void> m_font;
 	};
 
-	class TextDrawer : public Drawer
+	class TextDrawer : public shell::application
 	{
 	public:
 		TextDrawer()
@@ -161,7 +161,7 @@ namespace
 		{	}
 
 	private:
-		virtual void draw(::bitmap &/*surface*/, Timings &timings)
+		virtual void draw(platform_bitmap &/*surface*/, timings &timings)
 		{
 			long long counter;
 //			const rect_i area = { 0, 0, surface.width(), surface.height() };
@@ -190,10 +190,9 @@ namespace
 	};
 }
 
-int main()
+void agge_sample_main(shell &sh)
 {
 	TextDrawer d;
-	MainDialog dlg(d);
 
-	MainDialog::PumpMessages();
+	sh.present(d);
 }
