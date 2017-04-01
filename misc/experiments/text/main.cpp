@@ -4,8 +4,6 @@
 #include "../common/blenders.h"
 #include "../common/color.h"
 #include "../common/dc.h"
-#include "../common/MainDialog.h"
-#include "../common/timing.h"
 
 #include <agge/blenders_simd.h>
 #include <agge/clipper.h>
@@ -13,6 +11,8 @@
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
 #include <agge.text/layout.h>
+#include <samples/common/shell.h>
+#include <samples/common/timing.h>
 #include <windows.h>
 
 using namespace agge;
@@ -79,7 +79,7 @@ namespace demo
 		real_t _dx, _dy;
 	};
 
-	class TextDrawerGDI : public Drawer
+	class TextDrawerGDI : public shell::application
 	{
 	public:
 		TextDrawerGDI()
@@ -88,7 +88,7 @@ namespace demo
 		{	}
 
 	private:
-		virtual void draw(::bitmap &surface, Timings &timings)
+		virtual void draw(platform_bitmap &surface, timings &timings)
 		{
 			long long counter;
 			const rect_i area = { 0, 0, surface.width(), surface.height() };
@@ -145,7 +145,7 @@ namespace demo
 		vector<uint16_t> _glyph_indices;
 	};
 
-	class TextDrawer : public Drawer
+	class TextDrawer : public shell::application
 	{
 	public:
 		TextDrawer(font_engine<my_rasterizer> &e)
@@ -154,7 +154,7 @@ namespace demo
 		{	}
 
 	private:
-		virtual void draw(::bitmap &surface, Timings &timings)
+		virtual void draw(platform_bitmap &surface, timings &timings)
 		{
 			long long counter;
 			const rect_i area = { 0, 0, surface.width(), surface.height() };
@@ -219,13 +219,12 @@ namespace demo
 	};
 }
 
-int main()
+void agge_sample_main(shell &sh)
 {
 	demo::win32_font_loader loader;
 	font_engine<my_rasterizer> e(loader);
 	demo::TextDrawer d(e);
 	demo::TextDrawerGDI d2;
-	MainDialog dlg(d);
 
-	MainDialog::PumpMessages();
+	sh.present(d);
 }

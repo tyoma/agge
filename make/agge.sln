@@ -41,6 +41,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "figures", "..\samples\figur
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{202D9A95-7B05-479F-999C-FD540D3CD169}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "samples-common", "..\samples\common\src\samples-common.vcxproj", "{D89A569E-5C54-22B2-A9D4-52E907C821AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Android = Debug|Android
@@ -181,6 +183,18 @@ Global
 		{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}.Release|Win32.Build.0 = Release|Win32
 		{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}.Release|x64.ActiveCfg = Release|x64
 		{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}.Release|x64.Build.0 = Release|x64
+		{D89A569E-5C54-22B2-A9D4-52E907C821AD}.Debug|Android.ActiveCfg = Debug|Android
+		{D89A569E-5C54-22B2-A9D4-52E907C821AD}.Debug|Android.Build.0 = Debug|Android
+		{D89A569E-5C54-22B2-A9D4-52E907C821AD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D89A569E-5C54-22B2-A9D4-52E907C821AD}.Debug|Win32.Build.0 = Debug|Win32
+		{D89A569E-5C54-22B2-A9D4-52E907C821AD}.Debug|x64.ActiveCfg = Debug|x64
+		{D89A569E-5C54-22B2-A9D4-52E907C821AD}.Debug|x64.Build.0 = Debug|x64
+		{D89A569E-5C54-22B2-A9D4-52E907C821AD}.Release|Android.ActiveCfg = Release|Android
+		{D89A569E-5C54-22B2-A9D4-52E907C821AD}.Release|Android.Build.0 = Release|Android
+		{D89A569E-5C54-22B2-A9D4-52E907C821AD}.Release|Win32.ActiveCfg = Release|Win32
+		{D89A569E-5C54-22B2-A9D4-52E907C821AD}.Release|Win32.Build.0 = Release|Win32
+		{D89A569E-5C54-22B2-A9D4-52E907C821AD}.Release|x64.ActiveCfg = Release|x64
+		{D89A569E-5C54-22B2-A9D4-52E907C821AD}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -196,5 +210,6 @@ Global
 		{70EB93F3-E425-46B1-B592-B50167CBBB46} = {0247C00D-043A-4781-8E4A-F174B9B2CE29}
 		{DB87CDE1-0CC5-4D11-B5BC-142C21FE17E2} = {0247C00D-043A-4781-8E4A-F174B9B2CE29}
 		{9E29AA8B-FE90-493E-9B72-41AFAEC11A09} = {202D9A95-7B05-479F-999C-FD540D3CD169}
+		{D89A569E-5C54-22B2-A9D4-52E907C821AD} = {202D9A95-7B05-479F-999C-FD540D3CD169}
 	EndGlobalSection
 EndGlobal

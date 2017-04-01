@@ -56,21 +56,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\common\dc.cpp" />
-    <ClCompile Include="..\common\MainDialog.cpp" />
-    <ClCompile Include="..\common\timing.cpp" />
     <ClCompile Include="win32_font.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\dc.h" />
-    <ClInclude Include="..\common\MainDialog.h" />
-    <ClInclude Include="..\common\timing.h" />
     <ClInclude Include="win32_font.h" />
     <ClInclude Include="text.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\agge.text\agge.text.vcxproj">
       <Project>{4b446510-fa62-ad02-51ba-9bde9564ff26}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\samples\common\src\samples-common.vcxproj">
+      <Project>{d89a569e-5c54-22b2-a9d4-52e907c821ad}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\src\agge\agge.vcxproj">
       <Project>{f849e92c-248a-46b2-9eab-f86578a21316}</Project>

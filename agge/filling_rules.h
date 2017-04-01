@@ -7,7 +7,7 @@ namespace agge
 	template <agge::uint8_t area_factor_shift = vector_rasterizer::_1_shift>
 	struct winding
 	{
-		virtual uint8_t operator ()(int area) const;
+		uint8_t operator ()(int area) const;
 	};
 
 
