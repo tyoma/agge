@@ -8,6 +8,7 @@
 #include <agge/blenders_simd.h>
 #include <agge/clipper.h>
 #include <agge/dash.h>
+#include <agge/filling_rules.h>
 #include <agge/math.h>
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
@@ -81,20 +82,6 @@ namespace
 		{	}
 	};
 
-	template <int precision>
-	struct calculate_alpha
-	{
-		uint8_t operator ()(int area) const
-		{
-			area >>= precision + 1;
-			if (area < 0)
-				area = -area;
-			if (area > 255)
-				area = 255;
-			return static_cast<uint8_t>(area);
-		}
-	};
-
 	template <typename LinesSinkT, typename PathT>
 	void add_path(LinesSinkT &sink, PathT &path)
 	{
@@ -165,7 +152,7 @@ namespace
 				add_path(_rasterizer, spiral);
 				_rasterizer.sort();
 				timings.rasterization += stopwatch(counter);
-				_renderer(surface, 0, _rasterizer, brush, calculate_alpha<vector_rasterizer::_1_shift>());
+				_renderer(surface, 0, _rasterizer, brush, winding<>());
 				timings.rendition += stopwatch(counter);
 			}
 
@@ -182,7 +169,7 @@ namespace
 				add_path(_rasterizer, e);
 				_rasterizer.sort();
 				timings.rasterization += stopwatch(counter);
-				_renderer(surface, 0, _rasterizer, agge_drawer::solid_color_brush(i->color), calculate_alpha<vector_rasterizer::_1_shift>());
+				_renderer(surface, 0, _rasterizer, agge_drawer::solid_color_brush(i->color), winding<>());
 				timings.rendition += stopwatch(counter);
 			}
 		}

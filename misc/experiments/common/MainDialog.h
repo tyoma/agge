@@ -42,7 +42,7 @@ struct Timings
 struct Drawer
 {
 	virtual void draw(bitmap &surface, Timings &timings) = 0;
-	virtual void resize(int width, int height) = 0;
+	virtual void resize(int width, int height);
 };
 
 class MainDialog
@@ -72,3 +72,8 @@ private:
 	int _cycles;
 	Timings _timings;
 };
+
+
+
+inline void Drawer::resize(int /*width*/, int /*height*/)
+{	}

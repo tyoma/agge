@@ -40,20 +40,6 @@ namespace
 		{	}
 	};
 
-	template <int precision>
-	struct calculate_alpha
-	{
-		uint8_t operator ()(int area) const
-		{
-			area >>= precision + 1;
-			if (area < 0)
-				area = -area;
-			if (area > 255)
-				area = 255;
-			return static_cast<uint8_t>(area);
-		}
-	};
-
 	shared_ptr<void> select(HDC hdc, HGDIOBJ hobject)
 	{	return shared_ptr<void>(::SelectObject(hdc, hobject), bind(::SelectObject, hdc, _1));	}
 

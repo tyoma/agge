@@ -106,6 +106,7 @@
     <ClInclude Include="..\..\agge\types.h" />
     <ClInclude Include="..\..\agge\vector_rasterizer.h" />
     <ClInclude Include="..\..\agge\vertex_sequence.h" />
+    <ClInclude Include="..\..\agge\filling_rules.h" />
     <ClInclude Include="platform\linux\parallel-inline.h" />
     <ClInclude Include="platform\win32\parallel-inline.h" />
   </ItemGroup>

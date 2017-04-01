@@ -62,6 +62,7 @@
     </ClCompile>
     <ClCompile Include="ClipperTests.cpp" />
     <ClCompile Include="DashTests.cpp" />
+    <ClCompile Include="FillingRulesTests.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MiscTests.cpp" />
     <ClCompile Include="platform\linux\mt.cpp">

@@ -7,6 +7,7 @@
 #include "../common/paths.h"
 
 #include <agge/blenders_simd.h>
+#include <agge/filling_rules.h>
 #include <agge/renderer.h>
 #include <agge/stroke_features.h>
 
@@ -98,20 +99,6 @@ namespace
 		agge::simd::blender_solid_color::pixel p = { color.b, color.g, color.r, 0 };
 		return p;
 	}
-
-	template <int precision>
-	struct calculate_alpha
-	{
-		unsigned int operator ()(int area) const
-		{
-			area >>= precision + 1;
-			if (area < 0)
-				area = -area;
-			if (area > 255)
-				area = 255;
-			return area;
-		}
-	};
 
 	template <typename LinesSinkT, typename PathT>
 	void add_path(LinesSinkT &sink, PathT &path)
@@ -545,8 +532,7 @@ void CChildView::OnPaint()
 				_agg_rasterizer.reset();
 				add_path(_agg_rasterizer, agg_path_adaptor(_agg_path_flatten));
 				_agg_rasterizer.sort();
-				_renderer(_agg_bitmap, 0, _agg_rasterizer, blender(rgba8(0, 150, 255)),
-					calculate_alpha<8>());
+				_renderer(_agg_bitmap, 0, _agg_rasterizer, blender(rgba8(0, 150, 255)), winding<>());
 			}
 		}
 
@@ -804,8 +790,7 @@ void CChildView::drawLines(::bitmap &b, const CSize &client, const std::vector<b
 	});
 
 	_agg_rasterizer.sort();
-	_renderer(_agg_bitmap, 0, _agg_rasterizer, blender(rgba8(0, 0, 0)),
-		calculate_alpha<8>());
+	_renderer(_agg_bitmap, 0, _agg_rasterizer, blender(rgba8(0, 0, 0)), winding<>());
 }
 
 void CChildView::drawBars(::bitmap &b, const CSize &client, const vector<bar> &bars)
@@ -842,8 +827,7 @@ void CChildView::drawBars(::bitmap &b, const CSize &client, const vector<bar> &b
 	});
 
 	_agg_rasterizer.sort();
-	_renderer(_agg_bitmap, 0, _agg_rasterizer, blender(rgba8(0, 0, 0, 96)),
-		calculate_alpha<8>());
+	_renderer(_agg_bitmap, 0, _agg_rasterizer, blender(rgba8(0, 0, 0, 96)), winding<>());
 }
 
 void CChildView::drawEllipses(::bitmap &b, const CSize &client, const vector<ellipse_t> &ellipses)
@@ -857,7 +841,7 @@ void CChildView::drawEllipses(::bitmap &b, const CSize &client, const vector<ell
 		add_path(_agg_rasterizer, ellipse);
 		_agg_rasterizer.sort();
 		_renderer(_agg_bitmap, 0, _agg_rasterizer, CChildView::blender(rgba8(GetRValue(e.second),
-			GetGValue(e.second), GetBValue(e.second), 224)), calculate_alpha<8>());
+			GetGValue(e.second), GetBValue(e.second), 224)), winding<>());
 	});
 }
 
