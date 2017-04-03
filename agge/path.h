@@ -65,6 +65,16 @@ namespace agge
 			acceptor.close_polygon();
 	}
 
+	template <typename SinkT, typename PathIteratorT>
+	inline void add_path(SinkT &sink, PathIteratorT &path)
+	{
+		real_t x, y;
+
+		path.rewind(0);
+		for (int command; command = path.vertex(&x, &y), path_command_stop != command; )
+			add_polyline_vertex(sink, x, y, command);
+	}
+
 
 	template <typename SourceT, typename GeneratorT>
 	inline path_generator_adapter<SourceT, GeneratorT>::path_generator_adapter(SourceT &source, GeneratorT &generator)

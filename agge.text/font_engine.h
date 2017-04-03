@@ -65,11 +65,9 @@ namespace agge
 		{
 			const glyph *g = font_.get_glyph(glyph_index);
 			glyph::path_iterator pi = g->get_outline();
-			real_t xx, yy;
 
 			_glyph_rasters.insert(glyph_index, RasterizerT(), i);
-			for (int command; command = pi.vertex(&xx, &yy), path_command_stop != command; )
-				add_polyline_vertex(i->second, xx, yy, command);
+			add_path(i->second, pi);
 			i->second.sort();
 		}
 		target.append(i->second, (int)x, (int)y);

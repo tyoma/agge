@@ -99,18 +99,6 @@ namespace
 		agge::simd::blender_solid_color::pixel p = { color.b, color.g, color.r, 0 };
 		return p;
 	}
-
-	template <typename LinesSinkT, typename PathT>
-	void add_path(LinesSinkT &sink, PathT &path)
-	{
-		using namespace agge;
-
-		real_t x, y;
-
-		path.rewind(0);
-		for (int command; command = path.vertex(&x, &y), path_command_stop != command; )
-			add_polyline_vertex(sink, x, y, command);
-	}
 }
 
 class CChildView::blender : public agge::simd::blender_solid_color

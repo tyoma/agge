@@ -4,6 +4,9 @@
 
 #include <ut/assert.h>
 #include <ut/test.h>
+#include <vector>
+
+using namespace std;
 
 namespace agge
 {
@@ -256,6 +259,130 @@ namespace agge
 
 				assert_equal(reference2, g.points);
 			}
+
+			class mock_path_sink
+			{
+			public:
+				void move_to(real_t x, real_t y)
+				{
+					mocks::path::point p = { x, y, path_command_move_to };
+					points.push_back(p);
+				}
+
+				void line_to(real_t x, real_t y)
+				{
+					mocks::path::point p = { x, y, path_command_line_to };
+					points.push_back(p);
+				}
+
+				void close_polygon()
+				{
+					mocks::path::point p = { 0.0f, 0.0f, path_flag_close };
+					points.push_back(p);
+				}
+
+			public:
+				vector<mocks::path::point> points;
+			};
+
+			test( AddingPathToSinkTranslateMoves )
+			{
+				// INIT
+				mocks::path::point input1[] = {
+					{ 2.0f, 7.0f, path_command_move_to },
+					{ 11.0f, 23.0f, path_command_move_to },
+				};
+				mocks::path::point input2[] = {
+					{ 17.0f, 13.0f, path_command_move_to },
+					{ 3.0f, 7.0f, path_command_move_to },
+					{ 29.0f, 19.0f, path_command_move_to },
+				};
+				mocks::path p1(input1), p2(input2);
+				mock_path_sink s;
+
+				// ACT
+				add_path(s, p1);
+
+				// ASSERT
+				assert_equal(input1, s.points);
+
+				// INIT
+				s.points.clear();
+
+				// ACT
+				add_path(s, p2);
+
+				// ASSERT
+				assert_equal(input2, s.points);
+			}
+
+
+			test( AddingPathToSinkTranslateLineTo )
+			{
+				// INIT
+				mocks::path::point input[] = {
+					{ 2.0f, 7.0f, path_command_line_to },
+					{ 11.0f, 23.0f, path_command_line_to },
+					{ 3.0f, 7.0f, path_command_line_to },
+				};
+				mocks::path p(input);
+				mock_path_sink s;
+
+				// ACT
+				add_path(s, p);
+
+				// ASSERT
+				assert_equal(input, s.points);
+			}
+
+
+			test( AddingPathToSinkTranslateCloses )
+			{
+				// INIT
+				mocks::path::point input[] = {
+					{ 11.0f, 23.0f, path_command_line_to | path_flag_close },
+					{ 3.0f, 7.0f, path_command_line_to | path_flag_close },
+				};
+				mocks::path p(input);
+				mock_path_sink s;
+
+				// ACT
+				add_path(s, p);
+
+				// ASSERT
+				mocks::path::point reference[] = {
+					{ 11.0f, 23.0f, path_command_line_to },
+					{ 0.0f, 0.0f, path_flag_close },
+					{ 3.0f, 7.0f, path_command_line_to },
+					{ 0.0f, 0.0f, path_flag_close },
+				};
+
+				assert_equal(reference, s.points);
+			}
+
+
+			test( PathIteratorRewoundOnStart )
+			{
+				// INIT
+				mocks::path::point input[] = {
+					{ 10.0f, 13.0f, path_command_move_to },
+					{ 11.0f, 23.0f, path_command_line_to },
+					{ 3.0f, 7.0f, path_command_line_to },
+				};
+				mocks::path p(input);
+				mock_path_sink s;
+				real_t dummy;
+
+				p.vertex(&dummy, &dummy);
+				p.vertex(&dummy, &dummy);
+
+				// ACT
+				add_path(s, p);
+
+				// ASSERT
+				assert_equal(input, s.points);
+			}
+
 		end_test_suite
 	}
 }
