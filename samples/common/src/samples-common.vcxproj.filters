@@ -1,13 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="platform\win32\timing.cpp" />
     <ClCompile Include="platform\win32\shell.cpp">
       <Filter>src\platform\win32</Filter>
     </ClCompile>
-    <ClCompile Include="platform\win32\timing.cpp" />
-    <ClCompile Include="platform\win32\timing.cpp" />
-    <ClCompile Include="platform\win32\timing.cpp" />
     <ClCompile Include="platform\win32\timing.cpp" />
     <ClCompile Include="platform\win32\timing.cpp" />
     <ClCompile Include="platform\win32\shell.cpp">
@@ -21,6 +17,27 @@
     <ClCompile Include="platform\win32\timing.cpp">
       <Filter>src\platform\win32</Filter>
     </ClCompile>
+    <ClCompile Include="platform\win32\timing.cpp">
+      <Filter>src\platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\android\shell.cpp">
+      <Filter>src\platform\android</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\win32\timing.cpp">
+      <Filter>src\platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\android\bitmap.cpp">
+      <Filter>src\platform\android</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\win32\timing.cpp">
+      <Filter>src\platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\win32\timing.cpp">
+      <Filter>src\platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\android\timing.cpp">
+      <Filter>src\platform\android</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -32,9 +49,18 @@
     <Filter Include="src\platform\win32">
       <UniqueIdentifier>{f29e0877-8c61-4eed-ad2b-28cc5633bda5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\platform\android">
+      <UniqueIdentifier>{70754542-77c4-4621-97cb-484e23cce554}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shell.h" />
     <ClInclude Include="..\timing.h" />
+    <ClInclude Include="platform\android\bitmap.h">
+      <Filter>src\platform\android</Filter>
+    </ClInclude>
+    <ClInclude Include="shell-inline.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

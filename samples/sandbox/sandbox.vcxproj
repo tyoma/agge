@@ -27,13 +27,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}</ProjectGuid>
+    <ProjectGuid>{70EB93F3-E425-46B1-B592-B50167CBBB46}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset Condition="'$(Platform)'=='Android'">arm-linux-androideabi-4.8</PlatformToolset>
     <AndroidArch>armv7-a</AndroidArch>
+    <WholeProgramOptimization Condition="'$(Configuration)'=='Release'">true</WholeProgramOptimization>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="PropertySheets">
@@ -55,7 +56,8 @@
     </AntBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="figures.cpp" />
+    <ClCompile Include="balls.cpp" />
+    <ClCompile Include="sandbox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\agge\agge.vcxproj">

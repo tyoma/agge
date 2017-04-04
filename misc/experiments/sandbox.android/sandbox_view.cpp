@@ -54,18 +54,6 @@ namespace
 		{	}
 	};
 
-	template <typename LinesSinkT, typename PathT>
-	void add_path(LinesSinkT &sink, PathT &path)
-	{
-		using namespace agge;
-
-		real_t x, y;
-
-		path.rewind(0);
-		for (int command; command = path.vertex(&x, &y), path_command_stop != command; )
-			add_polyline_vertex(sink, x, y, command);
-	}
-
 	class bitmap_proxy
 	{
 	public:

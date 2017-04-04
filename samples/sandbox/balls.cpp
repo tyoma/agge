@@ -1,4 +1,4 @@
-#include "bouncing.h"
+#include <misc/experiments/common/bouncing.h>
 
 namespace common
 {
@@ -2005,5 +2005,5 @@ namespace common
 		ball(63.764153f, rgba8(77, 243, 69, 83), 0.827235f, 0.555712f, 0.0f, 0.0f),
 	};
 
-	const std::vector<ball> c_balls(c_balls_array, c_balls_array + _countof(c_balls_array));
+	const std::vector<ball> c_balls(c_balls_array, c_balls_array + sizeof(c_balls_array) / sizeof(c_balls_array[0]));
 }

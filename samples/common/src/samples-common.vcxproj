@@ -28,28 +28,17 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(SolutionDir)build.props\agge.props" Condition="exists('$(SolutionDir)build.props\agge.props')" />
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
+  <PropertyGroup Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">arm-linux-androideabi-4.8</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset Condition="'$(Configuration)|$(Platform)'=='Release|Android'">arm-linux-androideabi-4.8</PlatformToolset>
+    <PlatformToolset Condition="'$(Platform)'=='Android'">arm-linux-androideabi-4.8</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>../../..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../..;$(AndroidNdkDir)sources\android\native_app_glue;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GccExceptionHandling>true</GccExceptionHandling>
       <StrictAliasing>true</StrictAliasing>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
@@ -58,13 +47,24 @@
   <ItemGroup>
     <ClInclude Include="..\shell.h" />
     <ClInclude Include="..\timing.h" />
+    <ClInclude Include="platform\android\bitmap.h" />
+    <ClInclude Include="shell-inline.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="platform\android\bitmap.cpp">
+      <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="platform\android\shell.cpp">
+      <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="platform\android\timing.cpp">
+      <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="platform\win32\shell.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Platform)'!='Win32' And '$(Platform)'!='x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="platform\win32\timing.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Platform)'!='Win32' And '$(Platform)'!='x64'">true</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

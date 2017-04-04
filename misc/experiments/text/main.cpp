@@ -111,7 +111,7 @@ namespace
 		glyphs_cache_t _glyphs;
 	};
 
-	class TextDrawerGDI : public shell::application
+	class TextDrawerGDI : public application
 	{
 	public:
 		TextDrawerGDI()
@@ -153,7 +153,7 @@ namespace
 		shared_ptr<void> m_font;
 	};
 
-	class TextDrawer : public shell::application
+	class TextDrawer : public application
 	{
 	public:
 		TextDrawer()
@@ -190,9 +190,5 @@ namespace
 	};
 }
 
-void agge_sample_main(shell &sh)
-{
-	TextDrawer d;
-
-	sh.present(d);
-}
+application *agge_create_application()
+{	return new TextDrawer;	}

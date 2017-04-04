@@ -2,7 +2,6 @@
 #include <agge/clipper.h>
 #include <agge/renderer.h>
 #include <agge/rasterizer.h>
-#include <agge/blenders_simd.h>
 
 #include <samples/common/shell.h>
 
@@ -10,11 +9,11 @@ using namespace agge;
 
 namespace
 {
-	class blender_solid_color : public simd::blender_solid_color
+	class blender_solid_color : public platform_blender_solid_color
 	{
 	public:
 		blender_solid_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)
-			: simd::blender_solid_color(make_pixel(r, g, b, a), a)
+			: platform_blender_solid_color(make_pixel(r, g, b, a), a)
 		{	}
 
 	private:
@@ -32,16 +31,16 @@ namespace
 		return r;
 	}
 
-	class Figures : public shell::application
+	class Figures : public application
 	{
 	private:
 		virtual void draw(platform_bitmap &surface, timings &/*timings*/)
 		{
 			ras.reset();
 
-			ras.move_to(10.0f, 10.0f);
-			ras.line_to(190.0f, 20.0f);
-			ras.line_to(20.0f, 90.0f);
+			ras.move_to(10.0f, 50.0f);
+			ras.line_to(190.0f, 60.0f);
+			ras.line_to(20.0f, 130.0f);
 			ras.close_polygon();
 
 			ras.sort();
@@ -56,9 +55,7 @@ namespace
 	};
 }
 
-void agge_sample_main(shell &sh)
+application *agge_create_application()
 {
-	Figures app;
-
-	sh.present(app);
+	return new Figures;
 }

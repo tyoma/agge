@@ -1,18 +1,33 @@
 #pragma once
 
 #include <agge/bitmap.h>
-#include <agge/platform/win32/bitmap.h>
 
-typedef agge::bitmap<agge::pixel32, agge::platform::raw_bitmap> platform_bitmap;
+#if defined(_M_X64) || defined(_M_IX86) || defined(__x86_64) || defined(__i386)
+	#include <agge/blenders_simd.h>
 
-struct shell
-{
-	struct application;
+	typedef agge::simd::blender_solid_color platform_blender_solid_color;
 
-	virtual void present(application &app) = 0;
-};
+#elif defined(__arm__)
+	#include <misc/experiments/common/blenders.h>
 
-struct shell::application
+	typedef common::blender_solid_color platform_blender_solid_color;
+
+#endif
+
+#if defined(__ANDROID__)
+	#include "src/platform/android/bitmap.h"
+
+	typedef android_native_surface platform_bitmap;
+
+#elif defined(_WIN32)
+	#include <agge/platform/win32/bitmap.h>
+
+	typedef agge::bitmap<agge::pixel32, agge::platform::raw_bitmap> platform_bitmap;
+
+#else
+#endif
+
+struct application
 {
 	struct timings
 	{
@@ -23,14 +38,12 @@ struct shell::application
 		double blitting;
 	};
 
+	application();
+
 	virtual void draw(platform_bitmap &surface, timings &timings_) = 0;
 	virtual void resize(int width, int height);
 };
 
-// AGGE sample application entry point.
-void agge_sample_main(shell &sh);
 
 
-
-inline void shell::application::resize(int /*width*/, int /*height*/)
-{	}
+extern application *agge_create_application();

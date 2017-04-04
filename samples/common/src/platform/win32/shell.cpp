@@ -19,9 +19,11 @@
 //	THE SOFTWARE.
 
 #include <samples/common/shell.h>
-
 #include <samples/common/timing.h>
 
+#include "../../shell-inline.h"
+
+#include <memory>
 #include <stdexcept>
 #include <stdio.h>
 #include <tchar.h>
@@ -31,14 +33,14 @@ using namespace std;
 
 namespace
 {
-	const shell::application::timings c_zero_timings = { 0 };
+	const application::timings c_zero_timings = { 0 };
 	const int c_initial_width = 736;
 	const int c_initial_height = 800;
 
 	class MainDialog
 	{
 	public:
-		MainDialog(shell::application &application_);
+		MainDialog(application &application_);
 		~MainDialog();
 
 		void UpdateText();
@@ -57,15 +59,15 @@ namespace
 		HWND _window;
 		uintptr_t _previousWindowProc;
 		platform_bitmap _bitmap;
-		shell::application &_application;
+		application &_application;
 
 		int _cycles;
-		shell::application::timings _timings;
+		application::timings _timings;
 	};
 
 
 
-	MainDialog::MainDialog(shell::application &application_)
+	MainDialog::MainDialog(application &application_)
 		: _window(::CreateWindow(_T("#32770"), NULL, WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, c_initial_width, c_initial_height, NULL, NULL, NULL, NULL)),
 			_bitmap(1, 1), _application(application_), _cycles(0), _timings(c_zero_timings)
 	{
@@ -203,19 +205,10 @@ namespace
 
 int main()
 {
-	struct Shell : shell
-	{
-		virtual void present(application &app)
-		{
-			MainDialog dialog(app);
-
-			MainDialog::PumpMessages();
-		}
-	};
-
 	::SetProcessDPIAware();
 
-	Shell sh;
+	auto_ptr<application> app(agge_create_application());
+	MainDialog dialog(*app);
 
-	agge_sample_main(sh);
+	MainDialog::PumpMessages();
 }
