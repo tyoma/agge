@@ -3,25 +3,18 @@
 #include <agge/filling_rules.h>
 #include <agge/math.h>
 #include <agge/rasterizer.h>
-#include <agge/renderer_parallel.h>
+#include <agge/renderer.h>
 #include <agge/stroke.h>
 #include <agge/stroke_features.h>
 
-#include <misc/experiments/common/bouncing.h>
-#include <misc/experiments/common/ellipse.h>
 #include <misc/experiments/common/paths.h>
 
 #include <samples/common/shell.h>
 #include <samples/common/timing.h>
 
-#pragma warning(disable: 4324)
-
 using namespace agge;
 using namespace std;
 using namespace common;
-
-const int c_thread_count = 1;
-const int c_balls_number = 0;
 
 namespace
 {
@@ -83,13 +76,11 @@ namespace
 	};
 
 
-	class sandbox_app : public application
+	class Sandbox : public application
 	{
 	public:
-		sandbox_app()
-			: _renderer(c_thread_count), _balls(c_balls)
+		Sandbox()
 		{
-			_balls.resize(c_balls_number);
 			_dash.add_dash(15.0f, 4.0f);
 			_dash.add_dash(4.0f, 4.0f);
 		}
@@ -98,7 +89,6 @@ namespace
 		virtual void draw(platform_bitmap &surface, timings &timings)
 		{
 			long long counter;
-			const float dt = 0.3f * (float)stopwatch(_balls_timer);
 			const rect_i area = { 0, 0, surface.width(), surface.height() };
 
 			_rasterizer.reset();
@@ -107,57 +97,36 @@ namespace
 				fill(surface, area, blender_solid_color(255, 255, 255));
 			timings.clearing += stopwatch(counter);
 
-			if (_balls.empty())
-			{
-				stopwatch(counter);
-					agg_path_adaptor p(_spiral);
-					path_generator_adapter<agg_path_adaptor, stroke> path_stroke1(p, _stroke1);
-					path_generator_adapter<path_generator_adapter<agg_path_adaptor, stroke>, stroke> path_stroke2(path_stroke1, _stroke2);
+			stopwatch(counter);
+				agg_path_adaptor p(_spiral);
+				path_generator_adapter<agg_path_adaptor, stroke> path_stroke1(p, _stroke1);
+				path_generator_adapter<path_generator_adapter<agg_path_adaptor, stroke>, stroke> path_stroke2(path_stroke1, _stroke2);
 
-					path_generator_adapter<agg_path_adaptor, dash> path_stroke3(p, _dash);
-					path_generator_adapter<path_generator_adapter<agg_path_adaptor, dash>, stroke> path_stroke4(path_stroke3, _stroke1);
-					path_generator_adapter<path_generator_adapter<path_generator_adapter<agg_path_adaptor, dash>, stroke>, stroke> path_stroke5(path_stroke4, _stroke2);
+				path_generator_adapter<agg_path_adaptor, dash> path_stroke3(p, _dash);
+				path_generator_adapter<path_generator_adapter<agg_path_adaptor, dash>, stroke> path_stroke4(path_stroke3, _stroke1);
+				path_generator_adapter<path_generator_adapter<path_generator_adapter<agg_path_adaptor, dash>, stroke>, stroke> path_stroke5(path_stroke4, _stroke2);
 
-					_stroke1.width(3.0f);
-					_stroke1.set_cap(caps::butt());
-					_stroke1.set_join(unlimited_miter());
+				_stroke1.width(3.0f);
+				_stroke1.set_cap(caps::butt());
+				_stroke1.set_join(unlimited_miter());
 
-					_stroke2.width(2.0f);
-					_stroke2.set_cap(caps::butt());
-					_stroke2.set_join(joins::bevel());
+				_stroke2.width(2.0f);
+				_stroke2.set_cap(caps::butt());
+				_stroke2.set_join(joins::bevel());
 
-					_spiral_flattened.clear();
-					flatten<real_t>(_spiral_flattened, path_stroke1);
-				timings.stroking += stopwatch(counter);
+				_spiral_flattened.clear();
+				flatten<real_t>(_spiral_flattened, path_stroke1);
+			timings.stroking += stopwatch(counter);
 
-				blender_solid_color brush(0, 154, 255);
-				agg_path_adaptor spiral(_spiral_flattened);
+			blender_solid_color brush(0, 154, 255);
+			agg_path_adaptor spiral(_spiral_flattened);
 
-				stopwatch(counter);
-				add_path(_rasterizer, spiral);
-				_rasterizer.sort();
-				timings.rasterization += stopwatch(counter);
-				_renderer(surface, 0, _rasterizer, brush, winding<>());
-				timings.rendition += stopwatch(counter);
-			}
-
-			for (vector<ball>::iterator i = _balls.begin(); i != _balls.end(); ++i)
-				move_and_bounce(*i, dt, static_cast<real_t>(surface.width()), static_cast<real_t>(surface.height()));
-
-			for (vector<ball>::iterator i = _balls.begin(); i != _balls.end(); ++i)
-			{
-				ellipse e(i->x, i->y, i->radius, i->radius);
-				blender_solid_color brush(i->color.r, i->color.g, i->color.b, i->color.a);
-
-				_rasterizer.reset();
-
-				stopwatch(counter);
-				add_path(_rasterizer, e);
-				_rasterizer.sort();
-				timings.rasterization += stopwatch(counter);
-				_renderer(surface, 0, _rasterizer, brush, winding<>());
-				timings.rendition += stopwatch(counter);
-			}
+			stopwatch(counter);
+			add_path(_rasterizer, spiral);
+			_rasterizer.sort();
+			timings.rasterization += stopwatch(counter);
+			_renderer(surface, 0, _rasterizer, brush, winding<>());
+			timings.rendition += stopwatch(counter);
 		}
 
 		virtual void resize(int width, int height)
@@ -168,10 +137,8 @@ namespace
 
 	private:
 		rasterizer< clipper<int> > _rasterizer;
-		/*__declspec(align(16))*/ renderer_parallel _renderer;
+		renderer _renderer;
 		AggPath _spiral, _spiral_flattened;
-		long long _balls_timer;
-		vector<ball> _balls;
 		stroke _stroke1, _stroke2;
 		dash _dash;
 	};
@@ -179,5 +146,5 @@ namespace
 
 application *agge_create_application()
 {
-	return new sandbox_app;
+	return new Sandbox;
 }
