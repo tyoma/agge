@@ -45,12 +45,15 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\font_loader.h" />
+    <ClInclude Include="..\lipsum.h" />
     <ClInclude Include="..\shell.h" />
     <ClInclude Include="..\timing.h" />
     <ClInclude Include="platform\android\bitmap.h" />
     <ClInclude Include="shell-inline.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="font_loader.cpp" />
     <ClCompile Include="platform\android\bitmap.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
     </ClCompile>
@@ -59,6 +62,12 @@
     </ClCompile>
     <ClCompile Include="platform\android\timing.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="platform\win32\dc.cpp">
+      <ExcludedFromBuild Condition="'$(Platform)'!='Win32' And '$(Platform)'!='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="platform\win32\font.cpp">
+      <ExcludedFromBuild Condition="'$(Platform)'!='Win32' And '$(Platform)'!='x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="platform\win32\shell.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'!='Win32' And '$(Platform)'!='x64'">true</ExcludedFromBuild>
