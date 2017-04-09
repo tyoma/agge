@@ -1,6 +1,6 @@
 #include "win32_font.h"
 
-#include "../common/dc.h"
+#include "dc.h"
 
 #include <windows.h>
 

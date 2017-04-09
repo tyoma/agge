@@ -18,9 +18,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utee-runner", "..\misc\libr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "experiments", "experiments", "{02899CD5-2376-4098-B158-42492A7E0745}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sandbox", "..\misc\experiments\sandbox\sandbox.vcproj", "{F163B375-1168-4AB6-9008-DBA928A91CC3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sandbox", "..\samples\sandbox\sandbox.vcproj", "{F163B375-1168-4AB6-9008-DBA928A91CC3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "text", "..\misc\experiments\text\text.vcproj", "{DA3448AA-73D8-44AB-97EF-89B861B0FB25}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "text", "..\samples\text\text.vcproj", "{DA3448AA-73D8-44AB-97EF-89B861B0FB25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
