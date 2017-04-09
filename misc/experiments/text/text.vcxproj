@@ -43,20 +43,28 @@
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>./../../..;./../../libraries;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./../../..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\dc.cpp" />
+    <ClCompile Include="win32_font.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\dc.h" />
+    <ClInclude Include="win32_font.h" />
     <ClInclude Include="text.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\agge.text\agge.text.vcxproj">
+      <Project>{4b446510-fa62-ad02-51ba-9bde9564ff26}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\samples\common\src\samples-common.vcxproj">
       <Project>{d89a569e-5c54-22b2-a9d4-52e907c821ad}</Project>
     </ProjectReference>
