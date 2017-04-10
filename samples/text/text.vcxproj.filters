@@ -3,4 +3,20 @@
   <ItemGroup>
     <ClCompile Include="text.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Filter Include="android">
+      <UniqueIdentifier>{e764482c-e2d3-4c6d-96f2-31ed302c36e1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AndroidManifest.xml">
+      <Filter>android</Filter>
+    </None>
+    <None Include="build.xml">
+      <Filter>android</Filter>
+    </None>
+    <None Include="project.properties">
+      <Filter>android</Filter>
+    </None>
+  </ItemGroup>
 </Project>

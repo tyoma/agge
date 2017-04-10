@@ -46,9 +46,6 @@
     <ClCompile Include="platform\win32\font.cpp">
       <Filter>src\platform\win32</Filter>
     </ClCompile>
-    <ClCompile Include="font_loader.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">

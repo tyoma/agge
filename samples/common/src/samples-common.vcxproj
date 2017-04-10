@@ -42,6 +42,7 @@
       <GccExceptionHandling>true</GccExceptionHandling>
       <StrictAliasing>true</StrictAliasing>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <AdditionalOptions Condition="'$(Platform)'=='Android'">-std=c++11 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -53,7 +54,6 @@
     <ClInclude Include="shell-inline.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="font_loader.cpp" />
     <ClCompile Include="platform\android\bitmap.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
     </ClCompile>

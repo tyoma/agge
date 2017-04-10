@@ -1,5 +1,6 @@
 #include <samples/common/platform/win32/font_accessor.h>
 
+#include <samples/common/font_loader.h>
 #include <samples/common/platform/win32/dc.h>
 
 #include <windows.h>
@@ -150,3 +151,6 @@ glyph::outline_ptr font_accessor::load_glyph(uint16_t index, glyph::glyph_metric
 	return o;
 }
 
+font::accessor_ptr font_loader::load(const wchar_t *typeface, int height, bool bold, bool italic,
+	font_engine_base::grid_fit grid_fit)
+{	return font::accessor_ptr(new font_accessor(height, typeface, bold, italic, grid_fit));	}
