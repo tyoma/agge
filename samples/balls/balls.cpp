@@ -14,8 +14,8 @@ using namespace agge;
 using namespace std;
 using namespace common;
 
-const int c_thread_count = 4;
-const int c_balls_number = 2000;
+const int c_thread_count = 1;
+const int c_balls_number = 200;
 
 namespace
 {

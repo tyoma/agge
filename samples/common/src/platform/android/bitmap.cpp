@@ -6,9 +6,8 @@ android_native_surface::android_native_surface(ANativeWindow &window)
 	: _window(window)
 {
 	ANativeWindow_Buffer descriptor = { 0 };
-	ARect bounds = { 0 };
 	
-	if (ANativeWindow_lock(&_window, &descriptor, &bounds) < 0)
+	if (ANativeWindow_lock(&_window, &descriptor, 0) < 0)
 		throw 0;
 
 	switch (descriptor.format)

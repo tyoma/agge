@@ -1,6 +1,12 @@
 #include <samples/common/timing.h>
 
-double stopwatch(long long &)
+#include <time.h>
+
+double stopwatch(long long &counter)
 {
-	return 0;
+	auto c = clock();
+
+	const auto dt = 1000.0f * (c - counter) / CLOCKS_PER_SEC;
+	counter = c;
+	return dt;
 }

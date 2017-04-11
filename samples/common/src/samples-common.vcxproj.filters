@@ -4,15 +4,12 @@
     <ClCompile Include="platform\win32\shell.cpp">
       <Filter>src\platform\win32</Filter>
     </ClCompile>
-    <ClCompile Include="platform\win32\timing.cpp" />
     <ClCompile Include="platform\win32\shell.cpp">
       <Filter>src\platform\win32</Filter>
     </ClCompile>
-    <ClCompile Include="platform\win32\timing.cpp" />
     <ClCompile Include="platform\win32\shell.cpp">
       <Filter>src\platform\win32</Filter>
     </ClCompile>
-    <ClCompile Include="platform\win32\timing.cpp" />
     <ClCompile Include="platform\win32\timing.cpp">
       <Filter>src\platform\win32</Filter>
     </ClCompile>
@@ -46,6 +43,9 @@
     <ClCompile Include="platform\win32\font.cpp">
       <Filter>src\platform\win32</Filter>
     </ClCompile>
+    <ClCompile Include="platform\win32\timing.cpp">
+      <Filter>src\platform\win32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -60,6 +60,9 @@
     <Filter Include="src\platform\android">
       <UniqueIdentifier>{70754542-77c4-4621-97cb-484e23cce554}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\platform\android\sys">
+      <UniqueIdentifier>{c22b6085-6eed-497a-b4a6-4ec0de04b561}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shell.h" />
@@ -72,5 +75,8 @@
     </ClInclude>
     <ClInclude Include="..\font_loader.h" />
     <ClInclude Include="..\lipsum.h" />
+    <ClInclude Include="platform\android\sys\timerfd.h">
+      <Filter>src\platform\android\sys</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
