@@ -23,3 +23,5 @@ ren(surface, 0 /*no windowing*/, ras /*mask*/, solid_color_blender(0, 128, 255),
 // ... and, if on Windows:
 surface.blit(hdc, 0, 0, 150, 100);
 ```
+
+Note: to build for Android vs-android is required. This is planned to change.
