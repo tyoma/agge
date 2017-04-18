@@ -126,4 +126,20 @@ namespace agge
 		}
 		return i->second;
 	}
+
+
+	font_engine_base::offset_conv::offset_conv(const glyph::path_iterator &source, real_t dx, real_t dy)
+		: _source(source), _dx(dx), _dy(dy)
+	{	}
+
+	void font_engine_base::offset_conv::rewind(unsigned /*id*/)
+	{	}
+
+	int font_engine_base::offset_conv::vertex(real_t *x, real_t *y)
+	{
+		int command = _source.vertex(x, y);
+
+		*x += _dx, *y += _dy;
+		return command;
+	}
 }

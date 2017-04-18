@@ -15,6 +15,9 @@ namespace agge
 
 		font::ptr create_font(const wchar_t *typeface, int height, bool bold, bool italic, grid_fit gf);
 
+	protected:
+		class offset_conv;
+
 	private:
 		struct font_key;
 		struct font_key_hasher;
@@ -27,19 +30,35 @@ namespace agge
 		shared_ptr<scalabale_fonts_cache> _scalable_fonts;
 	};
 
+	class font_engine_base::offset_conv
+	{
+	public:
+		offset_conv(const glyph::path_iterator &source, real_t dx, real_t dy);
+
+		void rewind(unsigned id);
+		int vertex(real_t *x, real_t *y);
+
+	private:
+		glyph::path_iterator _source;
+		real_t _dx, _dy;
+	};
+
+
 	template <typename RasterizerT>
 	class font_engine : public font_engine_base
 	{
 	public:
-		font_engine(loader &loader_);
+		explicit font_engine(loader &loader_, uint8_t precision = 4);
 
 		void render_glyph(RasterizerT &target, const font &font_, uint16_t glyph_index, real_t x, real_t y);
 
 	private:
-		typedef hash_map<uint16_t, RasterizerT> rasters_map;
+		typedef hash_map<count_t, RasterizerT> rasters_map;
 
 	private:
 		rasters_map _glyph_rasters;
+		const int _precision, _factor;
+		const real_t _rfactor;
 	};
 
 	struct font_engine_base::loader
@@ -51,25 +70,28 @@ namespace agge
 
 
 	template <typename RasterizerT>
-	inline font_engine<RasterizerT>::font_engine(loader &loader_)
-		: font_engine_base(loader_)
+	inline font_engine<RasterizerT>::font_engine(loader &loader_, uint8_t precision)
+		: font_engine_base(loader_), _precision(precision), _factor(1 << precision), _rfactor(1.0f / _factor)
 	{	}
 
 	template <typename RasterizerT>
 	inline void font_engine<RasterizerT>::render_glyph(RasterizerT &target, const font &font_, uint16_t glyph_index,
 		real_t x, real_t y)
 	{
-		typename rasters_map::iterator i = _glyph_rasters.find(glyph_index);
+		const int xi = static_cast<int>(x * _factor) >> _precision, yi = static_cast<int>(y * _factor) >> _precision;
+		const int xf = static_cast<int>((x - xi) * _factor), yf = static_cast<int>((y - yi) * _factor);
+		const int precise_glyph_index = (glyph_index << (2 * _precision)) + (yf << _precision) + xf;
+		typename rasters_map::iterator i = _glyph_rasters.find(precise_glyph_index);
 
 		if (_glyph_rasters.end() == i)
 		{
 			const glyph *g = font_.get_glyph(glyph_index);
-			glyph::path_iterator pi = g->get_outline();
+			offset_conv converted_pi(g->get_outline(), _rfactor * xf, _rfactor * yf);
 
-			_glyph_rasters.insert(glyph_index, RasterizerT(), i);
-			add_path(i->second, pi);
+			_glyph_rasters.insert(precise_glyph_index, RasterizerT(), i);
+			add_path(i->second, converted_pi);
 			i->second.sort();
 		}
-		target.append(i->second, (int)x, (int)y);
+		target.append(i->second, xi, yi);
 	}
 }
