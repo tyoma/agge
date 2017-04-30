@@ -78,5 +78,6 @@
       <Filter>platform\win32</Filter>
     </ClInclude>
     <ClInclude Include="..\..\agge\filling_rules.h" />
+    <ClInclude Include="..\..\agge\pixel.h" />
   </ItemGroup>
 </Project>

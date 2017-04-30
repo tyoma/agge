@@ -93,7 +93,7 @@ namespace agge
 					buffer[0] = black;
 					*covers = (uint8_t)i;
 					whiteness(&buffer[0], 0, 0, 1, covers);
-					diff.push_back(buffer[0].c0 - i);
+					diff.push_back(buffer[0].components[0] - i);
 				}
 
 				diff.clear();
@@ -103,7 +103,7 @@ namespace agge
 					buffer[0] = white;
 					*covers = (uint8_t)i;
 					blackness(&buffer[0], 0, 0, 1, covers);
-					diff.push_back(int(buffer[0].c0) - int(0xFF - i));
+					diff.push_back(int(buffer[0].components[0]) - int(0xFF - i));
 				}
 
 				// ASSERT (manual)

@@ -163,8 +163,8 @@ namespace agge
 				};
 
 				source.data = mkvector(data);
-				destination.data[4].c0 = 0xCD;
-				destination.data[9].c1 = 0xCD;
+				destination.data[4].components[0] = 0xCD;
+				destination.data[9].components[1] = 0xCD;
 
 				// ACT
 				copy(csource, 0, 0, destination, 0, 0, 4, 5);

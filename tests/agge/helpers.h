@@ -2,6 +2,7 @@
 
 #include <agge/math.h>
 #include <agge/path.h>
+#include <agge/pixel.h>
 #include <agge/tools.h>
 #include <agge/types.h>
 

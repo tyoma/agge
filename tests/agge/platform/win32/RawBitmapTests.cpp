@@ -234,11 +234,11 @@ namespace agge
 					pixel32 *p = static_cast<pixel32 *>(b.row_ptr(0));
 					gdi_surface s(5, 4);
 
-					p[0].c0 = 0xFF;
-					p[6].c1 = 0xFF;
-					p[12].c2 = 0xFF;
-					p[13].c3 = 0xFF;
-					p[19].c0 = 0xFF;
+					p[0].components[0] = 0xFF;
+					p[6].components[1] = 0xFF;
+					p[12].components[2] = 0xFF;
+					p[13].components[3] = 0xFF;
+					p[19].components[0] = 0xFF;
 
 					// ACT
 					b.blit(s.lock(), 0, 0, 7, 5);

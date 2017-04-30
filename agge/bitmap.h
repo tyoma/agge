@@ -1,7 +1,7 @@
 #pragma once
 
+#include "pixel.h"
 #include "tools.h"
-#include "types.h"
 
 namespace agge
 {

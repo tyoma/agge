@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <agge/pixel.h>
 #include <agge/vector_rasterizer.h>
 
 namespace agge
@@ -55,7 +56,7 @@ namespace agge
 	{	return lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());	}
 
 	inline bool operator ==(const pixel32 &lhs, const pixel32 &rhs)
-	{	return lhs.c0 == rhs.c0 && lhs.c1 == rhs.c1 && lhs.c2 == rhs.c2 && lhs.c3 == rhs.c3;	}
+	{	return std::equal(tests::begin(lhs.components), tests::end(lhs.components), rhs.components);	}
 
 	template <typename T>
 	inline bool operator ==(const point<T> &lhs, const point<T> &rhs)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <agge/pixel.h>
 #include <agge/types.h>
 
 typedef struct ANativeWindow ANativeWindow;

@@ -26,7 +26,7 @@ namespace common
 
 	inline blender_solid_color::blender_solid_color(const pixel &components, int alpha)
 		: _components(components), _alpha((alpha << 6) + 505 * alpha / 1000)
-	{	_components.c3 = 0xFF;	}
+	{	_components.components[3] = 0xFF;	}
 
 	inline void blender_solid_color::operator ()(pixel *pixels, int /*x*/, int /*y*/, unsigned int n) const
 	{	std::fill_n(pixels, n, _components);	}
@@ -41,9 +41,9 @@ namespace common
 				*pixels = _components;
 			else
 			{
-				pixels->c0 += (_components.c0 - pixels->c0) * alpha >> 22;
-				pixels->c1 += (_components.c1 - pixels->c1) * alpha >> 22;
-				pixels->c2 += (_components.c2 - pixels->c2) * alpha >> 22;
+				pixels->components[0] += (_components.components[0] - pixels->components[0]) * alpha >> 22;
+				pixels->components[1] += (_components.components[1] - pixels->components[1]) * alpha >> 22;
+				pixels->components[2] += (_components.components[2] - pixels->components[2]) * alpha >> 22;
 			}
 		}
 	}

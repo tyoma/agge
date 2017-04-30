@@ -24,27 +24,6 @@ namespace agge
 	typedef rect<int> rect_i;
 	typedef box<real_t> box_r;
 
-	enum bits_per_pixel { bpp32 = 32, bpp24 = 24, bpp16 = 16, bpp8 = 8 };
-
-#pragma pack(push, 1)
-	struct pixel32
-	{
-		uint8_t c0, c1, c2, c3;
-	};
-
-	struct pixel24
-	{
-		uint8_t c0, c1, c2;
-	};
-
-	struct pixel16
-	{
-		unsigned int c0 : 5;
-		unsigned int c1 : 5;
-		unsigned int c2 : 5;
-	};
-#pragma pack(pop)
-
 	template <typename T>
 	struct point
 	{
