@@ -1,9 +1,10 @@
 #pragma once
 
+#include <agge/config.h>
 #include <pthread.h>
 #include <semaphore.h>
 
-#if defined(_M_X64) || defined(_M_IX86) || defined(__x86_64) || defined(__i386)
+#ifdef AGGE_ARCH_INTEL
 	#include <xmmintrin.h>
 #endif
 
@@ -35,9 +36,9 @@ namespace agge
 				for (long i = max_spin; !ready && i; --i)
 				{
 					ready = !!__sync_lock_test_and_set(&_lock_state, 0);
-#if defined(_M_X64) || defined(_M_IX86) || defined(__x86_64) || defined(__i386)
+#if defined(AGGE_ARCH_INTEL)
 					_mm_pause();
-#elif defined(__arm__) && (defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7__))
+#elif AGGE_ARCH_ARM >= 7
 					asm volatile ("yield" ::: "memory");
 #endif
 				}

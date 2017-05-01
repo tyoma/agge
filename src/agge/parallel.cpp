@@ -1,11 +1,13 @@
 #include <agge/parallel.h>
 
+#include <agge/config.h>
 #include <memory>
 
-#ifdef _WIN32
+#if defined(AGGE_PLATFORM_WINDOWS)
 	#include "platform/win32/parallel-inline.h"
-#else
+#elif defined(AGGE_PLATFORM_LINUX)
 	#include "platform/linux/parallel-inline.h"
+#else
 #endif
 
 namespace agge

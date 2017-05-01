@@ -1,6 +1,6 @@
 #pragma once
 
-#include <agge/types.h>
+#include <agge/pixel.h>
 #include <algorithm>
 
 namespace common
