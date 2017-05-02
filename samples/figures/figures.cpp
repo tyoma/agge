@@ -9,21 +9,6 @@ using namespace agge;
 
 namespace
 {
-	class blender_solid_color : public platform_blender_solid_color
-	{
-	public:
-		blender_solid_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)
-			: platform_blender_solid_color(make_pixel(r, g, b, a), a)
-		{	}
-
-	private:
-		pixel make_pixel(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-		{
-			pixel p = { b, g, r, a };
-			return p;
-		}
-	};
-
 	template <typename T>
 	rect<T> mkrect(T x1, T y1, T x2, T y2)
 	{
@@ -45,8 +30,8 @@ namespace
 
 			ras.sort();
 
-			fill(surface, mkrect<int>(0, 0, surface.width(), surface.height()), blender_solid_color(0, 50, 100));
-			ren(surface, 0 /*no windowing*/, ras /*mask*/, blender_solid_color(255, 255, 255), winding<>());
+			fill(surface, mkrect<int>(0, 0, surface.width(), surface.height()), platform_blender_solid_color(0, 50, 100));
+			ren(surface, 0 /*no windowing*/, ras /*mask*/, platform_blender_solid_color(255, 255, 255), winding<>());
 		}
 
 	private:

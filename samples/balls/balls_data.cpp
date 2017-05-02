@@ -1,7 +1,5 @@
 #include "balls_data.h"
 
-using namespace common;
-
 const ball c_balls_array[] = {
 	ball(24.520403f, rgba8(122, 149, 206, 57), 0.563585f, 0.001251f, 0.0f, 0.0f),
 	ball(35.947449f, rgba8(181, 219, 44, 192), 0.822840f, 0.895962f, 0.0f, 0.0f),

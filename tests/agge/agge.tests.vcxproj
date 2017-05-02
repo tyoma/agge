@@ -57,7 +57,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BitmapTests.cpp" />
-    <ClCompile Include="BlenderTests.cpp">
+    <ClCompile Include="BlendersTests.cpp" />
+    <ClCompile Include="GenericBlendersTests.cpp" />
+    <ClCompile Include="SIMDBlendersTests.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="ClipperTests.cpp" />

@@ -85,6 +85,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\agge\bitmap.h" />
+    <ClInclude Include="..\..\agge\blenders.h" />
+    <ClInclude Include="..\..\agge\blenders_generic.h" />
     <ClInclude Include="..\..\agge\blenders_simd.h" />
     <ClInclude Include="..\..\agge\clipper.h" />
     <ClInclude Include="..\..\agge\config.h" />

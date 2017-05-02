@@ -60,21 +60,6 @@ namespace
 		}
 	};
 
-	class blender_solid_color : public platform_blender_solid_color
-	{
-	public:
-		blender_solid_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)
-			: platform_blender_solid_color(make_pixel(r, g, b, a), a)
-		{	}
-
-	private:
-		pixel make_pixel(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-		{
-			pixel p = { b, g, r, a };
-			return p;
-		}
-	};
-
 
 	class Sandbox : public application
 	{
@@ -90,11 +75,12 @@ namespace
 		{
 			long long counter;
 			const rect_i area = { 0, 0, surface.width(), surface.height() };
+			platform_blender_solid_color background(255, 255, 255), brush(0, 154, 255);
 
 			_rasterizer.reset();
 
 			stopwatch(counter);
-				fill(surface, area, blender_solid_color(255, 255, 255));
+				fill(surface, area, background);
 			timings.clearing += stopwatch(counter);
 
 			stopwatch(counter);
@@ -118,7 +104,6 @@ namespace
 				flatten<real_t>(_spiral_flattened, path_stroke1);
 			timings.stroking += stopwatch(counter);
 
-			blender_solid_color brush(0, 154, 255);
 			agg_path_adaptor spiral(_spiral_flattened);
 
 			stopwatch(counter);

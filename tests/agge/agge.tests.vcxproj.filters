@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="VectorRasterizerTests.cpp" />
     <ClCompile Include="RendererTests.cpp" />
-    <ClCompile Include="BlenderTests.cpp" />
     <ClCompile Include="ScanlineAdapterTests.cpp" />
     <ClCompile Include="ParallelExecutionTests.cpp" />
     <ClCompile Include="RendererParallelTests.cpp" />
@@ -31,6 +30,9 @@
       <Filter>platform\linux</Filter>
     </ClCompile>
     <ClCompile Include="FillingRulesTests.cpp" />
+    <ClCompile Include="SIMDBlendersTests.cpp" />
+    <ClCompile Include="BlendersTests.cpp" />
+    <ClCompile Include="GenericBlendersTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />

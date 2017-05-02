@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-#include "../common/blenders.h"
-#include "../common/color.h"
 #include "../common/paths.h"
 
+#include <agge/blenders_generic.h>
 #include <agge/clipper.h>
 #include <agge/filling_rules.h>
 #include <agge/path.h>
@@ -36,24 +35,6 @@ using namespace std;
 
 namespace
 {
-	pixel32 make_pixel(rgba8 color)
-	{
-		pixel32 p = { color.r, color.g, color.b, 0 };
-		return p;
-	}
-
-	template <typename BlenderT>
-	class blenderx : public BlenderT
-	{
-	public:
-		typedef typename BlenderT::cover_type cover_type;
-
-	public:
-		blenderx(rgba8 color)
-			: BlenderT(make_pixel(color), color.a)
-		{	}
-	};
-
 	class bitmap_proxy
 	{
 	public:
@@ -98,8 +79,6 @@ namespace
 		unsigned _width, _height, _stride;
 		void *_memory;
 	};
-
-	typedef blenderx<blender_solid_color> blender;
 
 	struct AGG : noncopyable
 	{
@@ -155,7 +134,7 @@ try
 	agg->rasterizer.reset();
 	add_path(agg->rasterizer, stroke_path);
 	agg->rasterizer.sort();
-	agg->renderer(bm, 0, agg->rasterizer, blender(rgba8(0, 154, 255, 255)), agge::winding<>());
+	agg->renderer(bm, 0, agg->rasterizer, blender_solid_color_rgb<pixel32, order_rgba>(0, 154, 255), agge::winding<>());
 }
 catch (...)
 {

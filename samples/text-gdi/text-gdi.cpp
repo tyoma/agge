@@ -12,22 +12,6 @@ using namespace std;
 
 namespace demo
 {
-	template <typename BlenderT>
-	class blender2 : public BlenderT
-	{
-	public:
-		blender2(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)
-			: BlenderT(make_pixel(r, g, b, a), a)
-		{	}
-
-	private:
-		typename BlenderT::pixel make_pixel(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-		{
-			typename BlenderT::pixel p = { b, g, r, a };
-			return p;
-		}
-	};
-
 	class TextDrawerGDI : public application
 	{
 	public:
@@ -78,7 +62,7 @@ namespace demo
 		}
 
 	private:
-		typedef blender2<platform_blender_solid_color> solid_color_brush;
+		typedef platform_blender_solid_color solid_color_brush;
 
 	private:
 		shared_ptr<font_accessor> _font_accessor;

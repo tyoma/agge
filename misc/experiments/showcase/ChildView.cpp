@@ -2,7 +2,6 @@
 #include "ChildView.h"
 #include "resource.h"
 
-#include "../common/color.h"
 #include "../common/ellipse.h"
 #include "../common/paths.h"
 
@@ -10,6 +9,7 @@
 #include <agge/filling_rules.h>
 #include <agge/renderer.h>
 #include <agge/stroke_features.h>
+#include <samples/common/shell.h>
 
 #include <memory>
 #include <functional>
@@ -93,21 +93,7 @@ namespace
 		b.c = b.l + random(b.h - b.l);
 		return b;
 	};
-
-	agge::simd::blender_solid_color::pixel make_pixel(rgba8 color)
-	{
-		agge::simd::blender_solid_color::pixel p = { color.b, color.g, color.r, 0 };
-		return p;
-	}
 }
-
-class CChildView::blender : public agge::simd::blender_solid_color
-{
-public:
-	blender(rgba8 color)
-		: blender_solid_color(make_pixel(color), color.a)
-	{	}
-};
 
 CChildView::CChildView()
 	: _drawLines(false), _drawBars(true), _drawEllipses(false), _drawSpiral(false),
@@ -499,7 +485,7 @@ void CChildView::OnPaint()
 		{
 			CPerformance p3(_fill_timing);
 			agge::rect_i area = { 0, 0, _agg_bitmap.width(), _agg_bitmap.height() };
-			agge::fill(_agg_bitmap, area, blender(rgba8(240, 255, 255)));
+			agge::fill(_agg_bitmap, area, platform_blender_solid_color(240, 255, 255));
 		}
 
 		{
@@ -520,7 +506,7 @@ void CChildView::OnPaint()
 				_agg_rasterizer.reset();
 				add_path(_agg_rasterizer, agg_path_adaptor(_agg_path_flatten));
 				_agg_rasterizer.sort();
-				_renderer(_agg_bitmap, 0, _agg_rasterizer, blender(rgba8(0, 150, 255)), winding<>());
+				_renderer(_agg_bitmap, 0, _agg_rasterizer, platform_blender_solid_color(0, 150, 255), winding<>());
 			}
 		}
 
@@ -778,7 +764,7 @@ void CChildView::drawLines(::bitmap &b, const CSize &client, const std::vector<b
 	});
 
 	_agg_rasterizer.sort();
-	_renderer(_agg_bitmap, 0, _agg_rasterizer, blender(rgba8(0, 0, 0)), winding<>());
+	_renderer(_agg_bitmap, 0, _agg_rasterizer, platform_blender_solid_color(0, 0, 0), winding<>());
 }
 
 void CChildView::drawBars(::bitmap &b, const CSize &client, const vector<bar> &bars)
@@ -815,7 +801,7 @@ void CChildView::drawBars(::bitmap &b, const CSize &client, const vector<bar> &b
 	});
 
 	_agg_rasterizer.sort();
-	_renderer(_agg_bitmap, 0, _agg_rasterizer, blender(rgba8(0, 0, 0, 96)), winding<>());
+	_renderer(_agg_bitmap, 0, _agg_rasterizer, platform_blender_solid_color(0, 0, 0, 96), winding<>());
 }
 
 void CChildView::drawEllipses(::bitmap &b, const CSize &client, const vector<ellipse_t> &ellipses)
@@ -828,8 +814,8 @@ void CChildView::drawEllipses(::bitmap &b, const CSize &client, const vector<ell
 		_agg_rasterizer.reset();
 		add_path(_agg_rasterizer, ellipse);
 		_agg_rasterizer.sort();
-		_renderer(_agg_bitmap, 0, _agg_rasterizer, CChildView::blender(rgba8(GetRValue(e.second),
-			GetGValue(e.second), GetBValue(e.second), 224)), winding<>());
+		_renderer(_agg_bitmap, 0, _agg_rasterizer, platform_blender_solid_color(GetRValue(e.second),
+			GetGValue(e.second), GetBValue(e.second), 224), winding<>());
 	});
 }
 

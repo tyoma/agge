@@ -1,8 +1,10 @@
 set(AGGE_TEST_SOURCES
 	BitmapTests.cpp
-	BlenderTests.cpp
+	BlendersTests.cpp
 	ClipperTests.cpp
 	DashTests.cpp
+	FillingRulesTests.cpp
+	GenericBlendersTests.cpp
 	main.cpp
 	MiscTests.cpp
 	ParallelExecutionTests.cpp
@@ -13,6 +15,7 @@ set(AGGE_TEST_SOURCES
 	RendererTests.cpp
 	RendererParallelTests.cpp
 	ScanlineAdapterTests.cpp
+	SIMDBlendersTests.cpp
 	StrokeFeaturesTests.cpp
 	StrokeTests.cpp
 	VectorRasterizerTests.cpp

@@ -57,8 +57,9 @@ namespace
 			_timings.blitting += t.blitting;
 			if (++_timings_averaging == c_averaging_n)
 			{
-				LOGI("Render timings: clear=%gms, stroking=%gms, rasterization=%gms, rendition=%gms",
+				LOGI("Render timings: clear=%gms, total=%gms, stroking=%gms, rasterization=%gms, rendition=%gms",
 					_timings.clearing / c_averaging_n,
+					(_timings.stroking + _timings.rasterization + _timings.rendition) / c_averaging_n,
 					_timings.stroking / c_averaging_n,
 					_timings.rasterization / c_averaging_n,
 					_timings.rendition / c_averaging_n);

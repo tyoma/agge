@@ -28,8 +28,6 @@ typedef agge::bitmap<agge::pixel32, agge::platform::raw_bitmap> bitmap;
 
 class CChildView : public CWnd
 {
-	class blender;
-
 	typedef std::pair<RECT, COLORREF> ellipse_t;
 
 	enum BufferType {	bufferNone, bufferDIB, bufferDDB	};

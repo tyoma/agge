@@ -48,6 +48,8 @@
   <ItemGroup>
     <ClInclude Include="..\font_loader.h" />
     <ClInclude Include="..\lipsum.h" />
+    <ClInclude Include="..\platform\win32\dc.h" />
+    <ClInclude Include="..\platform\win32\font_accessor.h" />
     <ClInclude Include="..\shell.h" />
     <ClInclude Include="..\timing.h" />
     <ClInclude Include="platform\android\bitmap.h" />

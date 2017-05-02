@@ -79,5 +79,7 @@
     </ClInclude>
     <ClInclude Include="..\..\agge\filling_rules.h" />
     <ClInclude Include="..\..\agge\pixel.h" />
+    <ClInclude Include="..\..\agge\blenders.h" />
+    <ClInclude Include="..\..\agge\blenders_generic.h" />
   </ItemGroup>
 </Project>
