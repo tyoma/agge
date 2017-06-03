@@ -18,13 +18,13 @@ int main()
 
 	for (registry::const_iterator i = r.tests_begin(); i != r.tests_end(); ++i)
 	{
-		test_result r = (*i)->execute();
+		test_result tr = (*i)->execute();
 
-		if (!r.initialized)
+		if (!tr.initialized)
 			cerr << "Failed to initialize: " << (*i)->fixture_name() << endl;
-		else if (!r.passed)
+		else if (!tr.passed)
 			cerr << "Test failed: " << (*i)->fixture_name() << "::" << (*i)->name() << endl;
-		else if (!r.terminated)
+		else if (!tr.terminated)
 			cerr << "Test teardown failed: " << (*i)->fixture_name() << "::" << (*i)->name() << endl;
 		else
 		{

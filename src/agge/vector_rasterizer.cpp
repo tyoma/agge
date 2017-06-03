@@ -211,20 +211,20 @@ namespace agge
 
 				if (ey1 != ey2)
 				{
-					const int lift = near - far;
+					const int lift_full = near - far;
 
-					ctg_delta.multiply(lift);
+					ctg_delta.multiply(lift_full);
 
 					do
 					{
 						x1 = x_to;
 						x_to += ctg_delta.next();
-						hline(current, tg_delta, ey1, x1, x_to, lift);
+						hline(current, tg_delta, ey1, x1, x_to, lift_full);
 						ey1 += step;
 					} while (ey1 != ey2);
 				}
-				if (int dy = fy2 - far)
-					hline(current, tg_delta, ey1, x_to, x2, dy);
+				if (int dy_rest = fy2 - far)
+					hline(current, tg_delta, ey1, x_to, x2, dy_rest);
 			}
 		}
 		abridge(_cells, ++current);

@@ -3,4 +3,10 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="agge.props" />
   </ImportGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalOptions Condition="'$(Platform)'=='Android'">-std=c++11 %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeTypeInfo Condition="'$(Platform)'=='Android'">true</RuntimeTypeInfo>
+    </ClCompile>
+  </ItemDefinitionGroup>
 </Project>

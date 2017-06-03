@@ -31,7 +31,7 @@ namespace
 		{
 			long long counter;
 			const float dt = 0.3f * (float)stopwatch(_balls_timer);
-			const rect_i area = { 0, 0, surface.width(), surface.height() };
+			const rect_i area = { 0, 0, static_cast<int>(surface.width()), static_cast<int>(surface.height()) };
 
 			_rasterizer.reset();
 

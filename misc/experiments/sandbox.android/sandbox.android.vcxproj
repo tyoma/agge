@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup Label="ProjectConfigurations">
+  <ItemGroup Label="ProjectConfigurations" Condition="'$(VisualStudioVersion)'=='10.0'">
     <ProjectConfiguration Include="Debug|Android">
       <Configuration>Debug</Configuration>
       <Platform>Android</Platform>
@@ -12,34 +12,20 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8D284FFF-6B35-4F6A-ADCE-CFCF759D6BC3}</ProjectGuid>
-    <RootNamespace>bitmapplasma</RootNamespace>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <Import Project="$(SolutionDir)build.props\agge.props" Condition="exists('$(SolutionDir)build.props\agge.props')" />
+  <Import Project="$(SolutionDir)build.props\platform.props" />
   <PropertyGroup Label="Configuration">
-    <AndroidAPILevel>android-9</AndroidAPILevel>
-    <PlatformToolset>arm-linux-androideabi-4.8</PlatformToolset>
-    <AndroidStlType>gnustl_static</AndroidStlType>
-    <AndroidArch>armv7-a</AndroidArch>
+    <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
-    <AntBuild>
-      <AntBuildPath>$(ProjectDir)\AndroidApk</AntBuildPath>
-    </AntBuild>
-    <Link>
-      <AdditionalOptions>-ljnigraphics %(AdditionalOptions)</AdditionalOptions>
-      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-    </Link>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(SolutionDir)build.props\agge.props" Condition="exists('$(SolutionDir)build.props\agge.props')" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalOptions>-fpermissive</AdditionalOptions>
-      <GccExceptionHandling>true</GccExceptionHandling>
-      <OptimizationLevel>O0</OptimizationLevel>
-      <AdditionalIncludeDirectories>./../../libraries;./../../..</AdditionalIncludeDirectories>
-      <OmitFramePointer>false</OmitFramePointer>
+      <AdditionalIncludeDirectories>./../../..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
     <Link>
       <AdditionalOptions>-ljnigraphics %(AdditionalOptions)</AdditionalOptions>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -48,12 +34,6 @@
       <AntBuildPath>$(ProjectDir)\AndroidApk</AntBuildPath>
       <AntBuildType>Debug</AntBuildType>
     </AntBuild>
-    <ClCompile>
-      <AdditionalOptions>-fpermissive -ffast-math</AdditionalOptions>
-      <AdditionalIncludeDirectories>./../../libraries;./../../..</AdditionalIncludeDirectories>
-      <GccExceptionHandling>true</GccExceptionHandling>
-      <StrictAliasing>true</StrictAliasing>
-    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="AndroidApk\AndroidManifest.xml" />

@@ -28,7 +28,7 @@ namespace demo
 		virtual void draw(platform_bitmap &surface, timings &timings)
 		{
 			long long counter;
-			const rect_i area = { 0, 0, surface.width(), surface.height() };
+			const rect_i area = { 0, 0, static_cast<int>(surface.width()), static_cast<int>(surface.height()) };
 			size_t glyphs = 0;
 
 			stopwatch(counter);
@@ -39,7 +39,7 @@ namespace demo
 
 			_rasterizer.reset();
 
-			_layout.limit_width(surface.width());
+			_layout.limit_width(static_cast<real_t>(surface.width()));
 
 			double layouting = stopwatch(counter);
 

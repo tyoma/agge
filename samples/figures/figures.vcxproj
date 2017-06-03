@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup Label="ProjectConfigurations">
+  <ItemGroup Label="ProjectConfigurations" Condition="'$(VisualStudioVersion)'=='10.0'">
     <ProjectConfiguration Include="Debug|Android">
       <Configuration>Debug</Configuration>
       <Platform>Android</Platform>
@@ -29,11 +29,9 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}</ProjectGuid>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(SolutionDir)build.props\platform.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset Condition="'$(Platform)'=='Android'">arm-linux-androideabi-4.8</PlatformToolset>
-    <AndroidArch>armv7-a</AndroidArch>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="PropertySheets">
@@ -43,12 +41,10 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>./../..;./../../misc/experiments;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions Condition="'$(Platform)'=='Android'">-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <SubSystem Condition="'$(Platform)'!='Android'">Console</SubSystem>
-      <AndroidSystemLibs Condition="'$(Platform)'=='Android'">c;m;log;gcc;android</AndroidSystemLibs>
+      <AndroidSystemLibs>c;m;log;gcc;android</AndroidSystemLibs>
     </Link>
     <AntBuild>
       <AntBuildType>Debug</AntBuildType>

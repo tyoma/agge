@@ -106,14 +106,14 @@ namespace agge
 
 			if (gf_none == gf)
 			{
-				scalabale_fonts_cache::iterator i;
+				scalabale_fonts_cache::iterator j;
 				font_key skey = key;
 				
 				factor = static_cast<real_t>(height) / c_rescalable_height;
 				skey.height = c_rescalable_height;
-				if (_scalable_fonts->insert(skey, font::accessor_ptr(), i))
-					i->second.reset(new cached_outline_accessor(_loader.load(typeface, skey.height, bold, italic, gf)));
-				a = i->second;
+				if (_scalable_fonts->insert(skey, font::accessor_ptr(), j))
+					j->second.reset(new cached_outline_accessor(_loader.load(typeface, skey.height, bold, italic, gf)));
+				a = j->second;
 			}
 			else
 			{

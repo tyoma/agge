@@ -58,7 +58,7 @@ font::metrics font_accessor::get_metrics() const
 	return m;
 }
 
-uint16_t font_accessor::get_glyph_index(wchar_t character) const
+agge::uint16_t font_accessor::get_glyph_index(wchar_t character) const
 {
 	dc ctx;
 	dc::handle h(ctx.select(native()));
@@ -68,7 +68,7 @@ uint16_t font_accessor::get_glyph_index(wchar_t character) const
 	return index;
 }
 
-glyph::outline_ptr font_accessor::load_glyph(uint16_t index, glyph::glyph_metrics &m) const
+glyph::outline_ptr font_accessor::load_glyph(agge::uint16_t index, glyph::glyph_metrics &m) const
 {
 	typedef const void *pvoid;
 
@@ -99,19 +99,19 @@ glyph::outline_ptr font_accessor::load_glyph(uint16_t index, glyph::glyph_metric
 	o.reset(new glyph::outline_storage);
 	if (size)
 	{
-		vector<uint8_t> buffer(size);
+		vector<agge::uint8_t> buffer(size);
 		::GetGlyphOutline(ctx, index, format, &gm, size, &buffer[0], &c_identity);
 		for (pvoid p = &buffer[0], end = &buffer[0] + size; p != end; )
 		{
 			const TTPOLYGONHEADER *header = static_cast<const TTPOLYGONHEADER *>(p);
-			const pvoid next_poly = static_cast<const uint8_t *>(p) + header->cb;
+			const pvoid next_poly = static_cast<const agge::uint8_t *>(p) + header->cb;
 
 			p = header + 1;
 			o->push_back(path_point(path_command_move_to,
 				fixed2real(header->pfxStart.x) / xfactor, fixed2real(header->pfxStart.y)));
 
 			for (const TTPOLYCURVE *curve; curve = static_cast<const TTPOLYCURVE *>(p), p != next_poly;
-				p = static_cast<const uint8_t *>(p) + sizeof(TTPOLYCURVE) + (curve->cpfx - 1) * sizeof(POINTFX))
+				p = static_cast<const agge::uint8_t *>(p) + sizeof(TTPOLYCURVE) + (curve->cpfx - 1) * sizeof(POINTFX))
 			{
 				switch (curve->wType)
 				{

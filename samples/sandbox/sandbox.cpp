@@ -7,8 +7,8 @@
 #include <agge/stroke.h>
 #include <agge/stroke_features.h>
 
+#include <algorithm>
 #include <misc/experiments/common/paths.h>
-
 #include <samples/common/shell.h>
 #include <samples/common/timing.h>
 
@@ -74,7 +74,7 @@ namespace
 		virtual void draw(platform_bitmap &surface, timings &timings)
 		{
 			long long counter;
-			const rect_i area = { 0, 0, surface.width(), surface.height() };
+			const rect_i area = { 0, 0, static_cast<int>(surface.width()), static_cast<int>(surface.height()) };
 			platform_blender_solid_color background(255, 255, 255), brush(0, 154, 255);
 
 			_rasterizer.reset();

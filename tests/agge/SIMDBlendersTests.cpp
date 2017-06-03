@@ -304,7 +304,7 @@ namespace agge
 			}
 
 
-			ignore( PixelsAlignmentIsObeyedOnBlending )
+			ignored_test( PixelsAlignmentIsObeyedOnBlending )
 			{
 				// INIT
 				const blender b(white, 0xFF);
@@ -373,7 +373,7 @@ namespace agge
 			}
 
 
-			ignore( NeighboringQuadsAreUpdated )
+			ignored_test( NeighboringQuadsAreUpdated )
 			{
 				// INIT
 				const blender b(white, 0xFF);
