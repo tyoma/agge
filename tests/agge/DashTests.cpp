@@ -9,18 +9,6 @@ namespace agge
 {
 	namespace tests
 	{
-		namespace
-		{
-			template <typename SourceT>
-			mocks::path::point vertex(SourceT &source)
-			{
-				mocks::path::point p = { 0 };
-
-				p.command = source.vertex(&p.x, &p.y);
-				return p;
-			}
-		}
-
 		begin_test_suite( DashTests )
 			test( SegmentAreOutputtedAsIsIfDashIsLong )
 			{

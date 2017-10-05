@@ -47,7 +47,9 @@
     <ClCompile Include="blenders_intel.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="curves.cpp" />
     <ClCompile Include="dash.cpp" />
+    <ClCompile Include="figures.cpp" />
     <ClCompile Include="math.cpp" />
     <ClCompile Include="parallel.cpp">
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
@@ -67,7 +69,9 @@
     <ClInclude Include="..\..\agge\blenders_simd.h" />
     <ClInclude Include="..\..\agge\clipper.h" />
     <ClInclude Include="..\..\agge\config.h" />
+    <ClInclude Include="..\..\agge\curves.h" />
     <ClInclude Include="..\..\agge\dash.h" />
+    <ClInclude Include="..\..\agge\figures.h" />
     <ClInclude Include="..\..\agge\math.h" />
     <ClInclude Include="..\..\agge\memory.h" />
     <ClInclude Include="..\..\agge\parallel.h" />

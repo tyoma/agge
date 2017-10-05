@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.agge.samples.figures"
+	package="com.agge.samples.rasterizer"
 	android:versionCode="1"
 	android:versionName="1.0">
 
 	<uses-sdk android:minSdkVersion="10" />
 
-	<application android:label="AGGE Samples: Curves &amp; Figures" android:hasCode="false">
-		<activity android:name="android.app.NativeActivity" android:label="AGGE Samples: Curves &amp; Figures">
+	<application android:label="AGGE Samples: Rasterizer" android:hasCode="false">
+		<activity android:name="android.app.NativeActivity" android:label="AGGE Samples: Rasterizer">
 			<meta-data android:name="android.app.lib_name" android:value="figures" />
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

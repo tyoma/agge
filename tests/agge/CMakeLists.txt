@@ -2,7 +2,9 @@ set(AGGE_TEST_SOURCES
 	BitmapTests.cpp
 	BlendersTests.cpp
 	ClipperTests.cpp
+	CurvesTests.cpp
 	DashTests.cpp
+	FiguresTests.cpp
 	FillingRulesTests.cpp
 	GenericBlendersTests.cpp
 	main.cpp

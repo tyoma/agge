@@ -16,18 +16,6 @@ namespace agge
 	{
 		namespace
 		{
-			mocks::path::point moveto(real_t x, real_t y)
-			{
-				mocks::path::point p = { x, y, path_command_move_to };
-				return p;
-			}
-
-			mocks::path::point lineto(real_t x, real_t y)
-			{
-				mocks::path::point p = { x, y, path_command_line_to };
-				return p;
-			}
-
 			template <typename BaseT>
 			class counted : public BaseT
 			{
@@ -92,17 +80,6 @@ namespace agge
 					real_t /*d12*/, const point_r &/*v2*/) const
 				{	output.push_back(v1);	}
 			};
-
-
-
-			template <typename SourceT>
-			mocks::path::point vertex(SourceT &source)
-			{
-				mocks::path::point p = { 0 };
-
-				p.command = source.vertex(&p.x, &p.y);
-				return p;
-			}
 		}
 
 

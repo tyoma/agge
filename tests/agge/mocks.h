@@ -296,5 +296,27 @@ namespace agge
 				}
 			};
 		}
+
+
+		inline mocks::path::point moveto(real_t x, real_t y)
+		{
+			mocks::path::point p = { x, y, path_command_move_to };
+			return p;
+		}
+
+		inline mocks::path::point lineto(real_t x, real_t y)
+		{
+			mocks::path::point p = { x, y, path_command_line_to };
+			return p;
+		}
+
+		template <typename SourceT>
+		inline mocks::path::point vertex(SourceT &source)
+		{
+			mocks::path::point p = { 0 };
+
+			p.command = source.vertex(&p.x, &p.y);
+			return p;
+		}
 	}
 }

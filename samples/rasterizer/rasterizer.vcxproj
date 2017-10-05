@@ -27,7 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{3B0A1697-8654-4F78-8EE4-F673002F9BD9}</ProjectGuid>
+    <ProjectGuid>{9E29AA8B-FE90-493E-9B72-41AFAEC11A09}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(SolutionDir)build.props\platform.props" />
   <PropertyGroup Label="Configuration">
@@ -51,7 +51,7 @@
     </AntBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="figures.cpp" />
+    <ClCompile Include="rasterizer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\agge\agge.vcxproj">

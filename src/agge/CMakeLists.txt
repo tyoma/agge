@@ -1,6 +1,8 @@
 set(AGGE_SOURCES
 	blenders_intel.cpp
+	curves.cpp
 	dash.cpp
+	figures.cpp
 	math.cpp
 	parallel.cpp
 	stroke.cpp

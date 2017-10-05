@@ -69,14 +69,14 @@ namespace agge
 
 
 
-	parallel::thread::thread(count_t id)
+	inline parallel::thread::thread(count_t id)
 		: kernel(0), _id(id), _handle(::CreateThread(0, 0, &thread::thread_proc, this, 0, 0))
 	{
 		if (!_handle)
 			throw std::bad_alloc();
 	}
 
-	parallel::thread::~thread()
+	inline parallel::thread::~thread()
 	{
 		kernel = 0;
 		ready.set();
@@ -84,7 +84,7 @@ namespace agge
 		::CloseHandle(_handle);
 	}
 
-	DWORD parallel::thread::thread_proc(void *data)
+	inline DWORD parallel::thread::thread_proc(void *data)
 	{
 		thread *this_ = static_cast<thread *>(data);
 

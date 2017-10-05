@@ -1,11 +1,7 @@
 #include <agge/clipper.h>
-#include <agge/curves.h>
 #include <agge/filling_rules.h>
-#include <agge/path.h>
 #include <agge/renderer.h>
 #include <agge/rasterizer.h>
-#include <agge/stroke.h>
-#include <agge/stroke_features.h>
 
 #include <samples/common/shell.h>
 
@@ -20,25 +16,17 @@ namespace
 		return r;
 	}
 
-	class Figures : public application
+	class Rasterizer : public application
 	{
-	public:
-		Figures()
-		{
-			line_style.width(4.0f);
-			line_style.set_cap(caps::butt());
-			line_style.set_join(joins::bevel());
-		}
-
 	private:
 		virtual void draw(platform_bitmap &surface, timings &/*timings*/)
 		{
 			ras.reset();
 
-			bezier2::iterator bi(10.0f, 150.0f, 440.0f, 300.0f, 200.0f, 150.0f, 0.02f);
-			path_generator_adapter<bezier2::iterator, stroke> bezier_line(bi, line_style);
-
-			add_path(ras, bezier_line);
+			ras.move_to(10.0f, 50.0f);
+			ras.line_to(190.0f, 60.0f);
+			ras.line_to(20.0f, 130.0f);
+			ras.close_polygon();
 
 			ras.sort();
 
@@ -49,11 +37,10 @@ namespace
 	private:
 		rasterizer< clipper<int> > ras;
 		renderer ren;
-		stroke line_style;
 	};
 }
 
 application *agge_create_application()
 {
-	return new Figures;
+	return new Rasterizer;
 }

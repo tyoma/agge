@@ -33,6 +33,7 @@
     <ClCompile Include="SIMDBlendersTests.cpp" />
     <ClCompile Include="BlendersTests.cpp" />
     <ClCompile Include="GenericBlendersTests.cpp" />
+    <ClCompile Include="FiguresTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />
@@ -41,6 +42,7 @@
     <ClInclude Include="platform\win32\surface.h">
       <Filter>platform\win32</Filter>
     </ClInclude>
+    <ClInclude Include="assertex.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="platform">

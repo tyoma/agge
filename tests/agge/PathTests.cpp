@@ -40,17 +40,6 @@ namespace agge
 			public:
 				real_t kx, ky;
 			};
-
-
-
-			template <typename SourceT>
-			mocks::path::point vertex(SourceT &source)
-			{
-				mocks::path::point p = { 0 };
-
-				p.command = source.vertex(&p.x, &p.y);
-				return p;
-			}
 		}
 
 		begin_test_suite( PathGeneratorAdapterTests )

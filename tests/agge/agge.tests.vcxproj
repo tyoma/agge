@@ -46,11 +46,13 @@
   <ItemGroup>
     <ClCompile Include="BitmapTests.cpp" />
     <ClCompile Include="BlendersTests.cpp" />
+    <ClCompile Include="FiguresTests.cpp" />
     <ClCompile Include="GenericBlendersTests.cpp" />
     <ClCompile Include="SIMDBlendersTests.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="ClipperTests.cpp" />
+    <ClCompile Include="CurvesTests.cpp" />
     <ClCompile Include="DashTests.cpp" />
     <ClCompile Include="FillingRulesTests.cpp" />
     <ClCompile Include="main.cpp" />
@@ -88,6 +90,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="assertex.h" />
     <ClInclude Include="helpers.h" />
     <ClInclude Include="mocks.h" />
     <ClInclude Include="mt.h" />
