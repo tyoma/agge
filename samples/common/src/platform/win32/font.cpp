@@ -19,7 +19,7 @@ namespace
 		return p;
 	}
 
-	void bezier2(glyph::outline_storage &outline, real_t x2, real_t y2, real_t x3, real_t y3, real_t d = 0.03f)
+	void qbezier(glyph::outline_storage &outline, real_t x2, real_t y2, real_t x3, real_t y3, real_t d = 0.03f)
 	{
 		const real_t x1 = (outline.end() - 1)->x, y1 = (outline.end() - 1)->y;
 			
@@ -135,7 +135,7 @@ glyph::outline_ptr font_accessor::load_glyph(agge::uint16_t index, glyph::glyph_
 							*(int*)&pnt_c.x = (*(int*)&pnt_b.x + *(int*)&pnt_c.x) / 2;
 							*(int*)&pnt_c.y = (*(int*)&pnt_b.y + *(int*)&pnt_c.y) / 2;
 						}
-						bezier2(*o, fixed2real(pnt_b.x) / xfactor, fixed2real(pnt_b.y),
+						qbezier(*o, fixed2real(pnt_b.x) / xfactor, fixed2real(pnt_b.y),
 							fixed2real(pnt_c.x) / xfactor, fixed2real(pnt_c.y));
 					}
 					break;
