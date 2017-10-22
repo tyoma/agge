@@ -358,6 +358,62 @@ namespace agge
 				assert_equal(reference23, mkvector(gr->begin, gr->end));
 			}
 
+
+			test( BoundingBoxHeightDependsOnFontAscentAndDescend )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L'A', 0 }, };
+				mocks::font_accessor::glyph glyphs[] = {
+					{ { 5, 0 } },
+				};
+				font::ptr f1 = mocks::create_font(c_fm1, indices, glyphs);
+				layout l1(L"AAAAA", f1);
+
+				// ACT
+				box_r box1 = l1.get_box();
+
+				// ASSERT
+				assert_equal(12.0f, box1.h);
+
+				// INIT
+				font::ptr f2 = mocks::create_font(c_fm2, indices, glyphs);
+				layout l2(L"AAAAA", f2);
+
+				// ACT
+				box_r box2 = l2.get_box();
+
+				// ASSERT
+				assert_equal(17.0f, box2.h);
+			}
+
+
+			test( BoundingBoxHeightOfMultilineTextIsMultipleOfAscendDescendLeadingAndLineCountMinusOneLeading )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L'A', 0 }, };
+				mocks::font_accessor::glyph glyphs[] = {
+					{ { 5, 0 } },
+				};
+				font::ptr f1 = mocks::create_font(c_fm1, indices, glyphs);
+				layout l1(L"AAAAA\nAA", f1);
+
+				// ACT
+				box_r box1 = l1.get_box();
+
+				// ASSERT
+				assert_equal(26.0f, box1.h);
+
+				// INIT
+				font::ptr f2 = mocks::create_font(c_fm2, indices, glyphs);
+				layout l2(L"AAAAA\nA\nA", f2);
+
+				// ACT
+				box_r box2 = l2.get_box();
+
+				// ASSERT
+				assert_equal(53.0f, box2.h);
+			}
+
 		end_test_suite
 	}
 }

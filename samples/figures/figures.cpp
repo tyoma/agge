@@ -35,8 +35,8 @@ namespace
 		{
 			ras.reset();
 
-			bezier2::iterator bi(10.0f, 150.0f, 440.0f, 300.0f, 200.0f, 150.0f, 0.02f);
-			path_generator_adapter<bezier2::iterator, stroke> bezier_line(bi, line_style);
+			qbezier::iterator bi(10.0f, 150.0f, 440.0f, 300.0f, 200.0f, 150.0f, 0.02f);
+			path_generator_adapter<qbezier::iterator, stroke> bezier_line(bi, line_style);
 
 			add_path(ras, bezier_line);
 

@@ -3,7 +3,7 @@
 #include "helpers.h"
 
 #include <agge.text/font.h>
-#include <agge.text/font_engine.h>
+#include <agge.text/text_engine.h>
 
 #include <map>
 #include <string>
@@ -19,7 +19,7 @@ namespace agge
 			struct font_descriptor
 			{
 				font_descriptor(const std::wstring &typeface, int height, bool bold, bool italic,
-					font_engine_base::grid_fit grid_fit);
+					text_engine_base::grid_fit grid_fit);
 
 				bool operator <(const font_descriptor &rhs) const;
 				bool operator ==(const font_descriptor &rhs) const;
@@ -28,7 +28,7 @@ namespace agge
 				int height;
 				bool bold;
 				bool italic;
-				font_engine_base::grid_fit grid_fit;
+				text_engine_base::grid_fit grid_fit;
 			};
 
 			class font_accessor : public font::accessor
@@ -61,7 +61,7 @@ namespace agge
 				std::vector<glyph> _glyphs;
 			};
 
-			class fonts_loader : public font_engine_base::loader
+			class fonts_loader : public text_engine_base::loader
 			{
 			public:
 				template <typename T, size_t n>
@@ -74,7 +74,7 @@ namespace agge
 
 			private:
 				virtual font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic,
-					font_engine_base::grid_fit grid_fit);
+					text_engine_base::grid_fit grid_fit);
 			};
 
 			struct font_accessor::char_to_index

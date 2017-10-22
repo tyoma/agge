@@ -59,8 +59,14 @@ namespace agge
 	{
 		box_r box = {};
 
+		if (_glyph_runs.empty())
+			return box;
+
+		font::metrics m = _font->get_metrics();
+
 		for (const_iterator i = begin(); i != end(); ++i)
 			box.w = agge_max(box.w, i->width);
+		box.h = (end() - begin()) * height(m) - m.leading;
 		return box;
 	}
 

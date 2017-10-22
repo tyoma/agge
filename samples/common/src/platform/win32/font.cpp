@@ -36,7 +36,7 @@ namespace
 }
 
 font_accessor::font_accessor(int height, const wchar_t *typeface, bool bold, bool italic,
-		agge::font_engine_base::grid_fit grid_fit)
+		agge::text_engine_base::grid_fit grid_fit)
 	: _native(::CreateFontW(height, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, !!italic, FALSE, FALSE, 0,
 		ANTIALIASED_QUALITY, 0, 0, 0, typeface), &::DeleteObject), _grid_fit(grid_fit)
 {	}
@@ -73,8 +73,8 @@ glyph::outline_ptr font_accessor::load_glyph(agge::uint16_t index, glyph::glyph_
 	typedef const void *pvoid;
 
 	const UINT format = GGO_GLYPH_INDEX | GGO_NATIVE | GGO_METRICS
-		| (font_engine_base::gf_none == _grid_fit ? GGO_UNHINTED : 0);
-	const int xfactor = font_engine_base::gf_vertical == _grid_fit ? 48 : 1;
+		| (text_engine_base::gf_none == _grid_fit ? GGO_UNHINTED : 0);
+	const int xfactor = text_engine_base::gf_vertical == _grid_fit ? 48 : 1;
 	const MAT2 c_identity = { { 0, (short)xfactor }, { 0, 0 }, { 0, 0 }, { 0, -1 }, };
 
 	GLYPHMETRICS gm;
@@ -86,7 +86,7 @@ glyph::outline_ptr font_accessor::load_glyph(agge::uint16_t index, glyph::glyph_
 	if (size == GDI_ERROR)
 		return o;
 
-	if (_grid_fit == font_engine_base::gf_strong)
+	if (_grid_fit == text_engine_base::gf_strong)
 	{
 		ABC abc;
 
@@ -152,5 +152,5 @@ glyph::outline_ptr font_accessor::load_glyph(agge::uint16_t index, glyph::glyph_
 }
 
 font::accessor_ptr font_loader::load(const wchar_t *typeface, int height, bool bold, bool italic,
-	font_engine_base::grid_fit grid_fit)
+	text_engine_base::grid_fit grid_fit)
 {	return font::accessor_ptr(new font_accessor(height, typeface, bold, italic, grid_fit));	}

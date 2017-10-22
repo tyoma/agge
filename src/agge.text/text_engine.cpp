@@ -1,4 +1,4 @@
-#include <agge.text/font_engine.h>
+#include <agge.text/text_engine.h>
 
 #include <cctype>
 #include <string>
@@ -56,7 +56,7 @@ namespace agge
 		};
 	}
 
-	struct font_engine_base::font_key
+	struct text_engine_base::font_key
 	{
 		wstring typeface;
 		unsigned height : 20;
@@ -75,20 +75,20 @@ namespace agge
 		}
 	};
 
-	struct font_engine_base::font_key_hasher
+	struct text_engine_base::font_key_hasher
 	{
-		size_t operator ()(const font_engine_base::font_key &/*key*/) const
+		size_t operator ()(const text_engine_base::font_key &/*key*/) const
 		{
 			return 1;
 		}
 	};
 
-	font_engine_base::font_engine_base(loader &loader_)
+	text_engine_base::text_engine_base(loader &loader_)
 		: _loader(loader_), _fonts(new fonts_cache), _scalable_fonts(new scalabale_fonts_cache)
 	{
 	}
 
-	font::ptr font_engine_base::create_font(const wchar_t *typeface, int height, bool bold, bool italic, grid_fit gf)
+	font::ptr text_engine_base::create_font(const wchar_t *typeface, int height, bool bold, bool italic, grid_fit gf)
 	{
 		font_key key = { typeface };
 		
@@ -128,14 +128,14 @@ namespace agge
 	}
 
 
-	font_engine_base::offset_conv::offset_conv(const glyph::path_iterator &source, real_t dx, real_t dy)
+	text_engine_base::offset_conv::offset_conv(const glyph::path_iterator &source, real_t dx, real_t dy)
 		: _source(source), _dx(dx), _dy(dy)
 	{	}
 
-	void font_engine_base::offset_conv::rewind(unsigned /*id*/)
+	void text_engine_base::offset_conv::rewind(unsigned /*id*/)
 	{	}
 
-	int font_engine_base::offset_conv::vertex(real_t *x, real_t *y)
+	int text_engine_base::offset_conv::vertex(real_t *x, real_t *y)
 	{
 		int command = _source.vertex(x, y);
 

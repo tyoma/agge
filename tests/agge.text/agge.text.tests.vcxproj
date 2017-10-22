@@ -44,7 +44,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FontEngineTests.cpp" />
+    <ClCompile Include="TextEngineTests.cpp" />
     <ClCompile Include="FontTests.cpp" />
     <ClCompile Include="LayoutTests.cpp" />
     <ClCompile Include="main.cpp" />

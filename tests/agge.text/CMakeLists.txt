@@ -1,9 +1,9 @@
 set(AGGE_TEXT_TEST_SOURCES
-	FontEngineTests.cpp
 	FontTests.cpp
 	LayoutTests.cpp
 	main.cpp
 	mocks.cpp
+	TextEngineTests.cpp
 )
 
 add_executable(agge.text.tests ${AGGE_TEXT_TEST_SOURCES})

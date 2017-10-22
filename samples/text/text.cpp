@@ -19,8 +19,8 @@ namespace demo
 	{
 	public:
 		TextDrawer()
-			: _renderer(1), _font_engine(_font_loader),
-				_font(_font_engine.create_font(L"tahoma", 14, false, false, font_engine_base::gf_strong)),
+			: _renderer(1), _text_engine(_font_loader),
+				_font(_text_engine.create_font(L"tahoma", 14, false, false, text_engine_base::gf_strong)),
 				_layout(c_text_long.c_str(), _font), _ddx(0.0f)
 		{	}
 
@@ -29,34 +29,20 @@ namespace demo
 		{
 			long long counter;
 			const rect_i area = { 0, 0, static_cast<int>(surface.width()), static_cast<int>(surface.height()) };
-			size_t glyphs = 0;
 
 			stopwatch(counter);
 				agge::fill(surface, area, solid_color_brush(255, 255, 255));
 			timings.clearing += stopwatch(counter);
 
-//			_ddx += 0.01f;
+			_ddx += 0.01f;
 
 			_rasterizer.reset();
 
 			_layout.limit_width(static_cast<real_t>(surface.width()));
 
-			double layouting = stopwatch(counter);
+			stopwatch(counter);
 
-			for (layout::const_iterator i = _layout.begin(); i != _layout.end(); ++i)
-			{
-				real_t x = i->reference.x + _ddx;
-
-				if (i->reference.y > surface.height())
-					break;
-
-				glyphs += distance(i->begin, i->end);
-				for (layout::positioned_glyphs_container::const_iterator j = i->begin; j != i->end; ++j)
-				{
-					x += j->dx;
-					_font_engine.render_glyph(_rasterizer, *i->glyph_run_font, j->index, x, i->reference.y);
-				}
-			}
+			_text_engine.render_layout(_rasterizer, _layout, _ddx, 0.0f);
 
 			double append = stopwatch(counter);
 
@@ -68,7 +54,6 @@ namespace demo
 
 			double render = stopwatch(counter);
 
-			timings.stroking += (layouting + append + sort + render) / glyphs;
 			timings.rasterization += append + sort;
 			timings.rendition += render;
 		}
@@ -80,7 +65,7 @@ namespace demo
 		my_rasterizer _rasterizer;
 		renderer_parallel _renderer;
 		font_loader _font_loader;
-		font_engine<my_rasterizer> _font_engine;
+		text_engine<my_rasterizer> _text_engine;
 		shared_ptr<font> _font;
 		layout _layout;
 		float _ddx;

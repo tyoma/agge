@@ -46,12 +46,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="font.cpp" />
-    <ClCompile Include="font_engine.cpp" />
+    <ClCompile Include="text_engine.cpp" />
     <ClCompile Include="layout.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\agge.text\font.h" />
-    <ClInclude Include="..\..\agge.text\font_engine.h" />
+    <ClInclude Include="..\..\agge.text\text_engine.h" />
     <ClInclude Include="..\..\agge.text\hash_map.h" />
     <ClInclude Include="..\..\agge.text\layout.h" />
     <ClInclude Include="..\..\agge.text\shared_ptr.h" />

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <agge.text/font_engine.h>
+#include <agge.text/text_engine.h>
 
 struct HFONT__;
 typedef struct HFONT__ *HFONT;
@@ -9,7 +9,7 @@ class font_accessor : public agge::font::accessor
 {
 public:
 	font_accessor(int height, const wchar_t *typeface, bool bold, bool italic,
-		agge::font_engine_base::grid_fit grid_fit);
+		agge::text_engine_base::grid_fit grid_fit);
 
 	HFONT native() const;
 
@@ -20,5 +20,5 @@ private:
 
 private:
 	agge::shared_ptr<void> _native;
-	agge::font_engine_base::grid_fit _grid_fit;
+	agge::text_engine_base::grid_fit _grid_fit;
 };		 
