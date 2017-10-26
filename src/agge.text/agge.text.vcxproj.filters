@@ -22,5 +22,6 @@
     <ClInclude Include="..\..\agge.text\shared_ptr.h" />
     <ClInclude Include="..\..\agge.text\hash_map.h" />
     <ClInclude Include="..\..\agge.text\text_engine.h" />
+    <ClInclude Include="..\..\agge.text\functional.h" />
   </ItemGroup>
 </Project>

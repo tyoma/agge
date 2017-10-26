@@ -1,11 +1,11 @@
 #pragma once
 
-#include <memory>
+#include <functional>
 
 namespace std { namespace tr1 {} using namespace tr1; }
 
 namespace agge
 {
-	using std::shared_ptr;
-	using std::weak_ptr;
+	using std::bind;
+	using namespace std::placeholders;
 }

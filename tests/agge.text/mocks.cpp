@@ -31,6 +31,19 @@ namespace agge
 			font_accessor::font_accessor()
 			{	}
 
+			font_accessor::~font_accessor()
+			{
+				if (_allocated)
+					--*_allocated;
+			}
+
+			void font_accessor::track(shared_ptr<size_t> allocated)
+			{
+				_allocated = allocated;
+				if (_allocated)
+					++*_allocated;
+			}
+
 			font::metrics font_accessor::get_metrics() const
 			{	return _metrics;	}
 
@@ -59,15 +72,18 @@ namespace agge
 
 
 			fonts_loader::fonts_loader()
+				: allocated(new size_t())
 			{	}
 
 			font::accessor_ptr fonts_loader::load(const wchar_t *typeface, int height, bool bold, bool italic,
 				text_engine_base::grid_fit grid_fit)
 			{
 				font_descriptor fd(typeface, height, bold, italic, grid_fit);
+				shared_ptr<font_accessor> a(new font_accessor(fonts[fd]));
 
-				created_log.push_back(fd);
-				return font::accessor_ptr(new font_accessor(fonts[fd]));
+				created_log.push_back(make_pair(fd, a));
+				a->track(allocated);
+				return a;
 			}
 
 
@@ -90,7 +106,7 @@ namespace agge
 			void rasterizer::append(const rasterizer &source, int dx, int dy)
 			{
 				assert_is_true(source._sorted);
-				append_log.push_back(std::make_pair(&source, mkpoint(dx, dy)));
+				append_log.push_back(make_pair(&source, mkpoint(dx, dy)));
 			}
 		}
 	}

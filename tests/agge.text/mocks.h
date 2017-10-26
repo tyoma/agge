@@ -42,6 +42,9 @@ namespace agge
 				template <size_t indices_n, size_t glyphs_n>
 				font_accessor(const font::metrics &metrics_, const char_to_index (&indices)[indices_n],
 					glyph (&glyphs)[glyphs_n]);
+				~font_accessor();
+
+				void track(shared_ptr<size_t> allocated);
 
 			public:
 				mutable int glyph_mapping_calls;
@@ -59,6 +62,7 @@ namespace agge
 				font::metrics _metrics;
 				indices_map_t _indices;
 				std::vector<glyph> _glyphs;
+				shared_ptr<size_t> _allocated;
 			};
 
 			class fonts_loader : public text_engine_base::loader
@@ -68,9 +72,12 @@ namespace agge
 				explicit fonts_loader(T (&fonts)[n]);
 				fonts_loader();
 
+				size_t allocated_accessors() const;
+
 			public:
-				std::vector<font_descriptor> created_log;
+				std::vector< std::pair<font_descriptor, weak_ptr<font::accessor> > > created_log;
 				std::map<font_descriptor, font_accessor> fonts;
+				shared_ptr<size_t> allocated;
 
 			private:
 				virtual font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic,
@@ -125,13 +132,17 @@ namespace agge
 			inline font_accessor::font_accessor(const font::metrics &metrics_, const char_to_index (&indices)[indices_n],
 					glyph (&glyphs)[glyphs_n])
 				: glyph_mapping_calls(0), glyphs_loaded(new size_t(0)), _metrics(metrics_),
-					_indices(indices, indices + indices_n), _glyphs(glyphs, glyphs + glyphs_n)
-			{	}
+					_indices(indices, indices + indices_n), _glyphs(glyphs, glyphs + glyphs_n)/*,
+					_allocated(allocated)*/
+			{
+				if (_allocated)
+					++*_allocated;
+			}
 
 
 			template <typename T, size_t n>
 			inline fonts_loader::fonts_loader(T (&fonts)[n])
-				: fonts(fonts, fonts + n)
+				: fonts(fonts, fonts + n), allocated(new size_t())
 			{	}
 
 
@@ -148,10 +159,7 @@ namespace agge
 			template <size_t indices_n, size_t glyphs_n>
 			inline font::ptr create_font(const font::metrics &metrics_,
 				const font_accessor::char_to_index (&indices)[indices_n], font_accessor::glyph (&glyphs)[glyphs_n])
-			{
-				font::accessor_ptr a(new font_accessor(metrics_, indices,glyphs));
-				return font::ptr(new font(a));
-			}
+			{	return font::ptr(new font(font::accessor_ptr(new font_accessor(metrics_, indices,glyphs))));	}
 		}
 	}
 }

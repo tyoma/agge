@@ -20,6 +20,16 @@ namespace agge
 		{
 			font::metrics c_fm1 = { 1.1f, 2.2f, 3.3f };
 			font::metrics c_fm2 = { 4.4f, 5.6f, 7.1f };
+
+			template <typename ContainerT>
+			vector<mocks::font_descriptor> get_descriptors(const ContainerT &created_log)
+			{
+				vector<mocks::font_descriptor> result;
+
+				for (typename ContainerT::const_iterator i = created_log.begin(); i != created_log.end(); ++i)
+					result.push_back(i->first);
+				return result;
+			}
 		}
 
 		begin_test_suite( TextEngineTests )
@@ -103,7 +113,7 @@ namespace agge
 					mocks::font_descriptor(L"helvetica", 1000, false, true, text_engine_base::gf_none),
 				};
 
-				assert_equal(fd1, loader.created_log);
+				assert_equal(fd1, get_descriptors(loader.created_log));
 
 				// INIT
 				loader.created_log.clear();
@@ -119,7 +129,7 @@ namespace agge
 					mocks::font_descriptor(L"arial", 1000, true, true, text_engine_base::gf_none),
 				};
 
-				assert_equal(fd2, loader.created_log);
+				assert_equal(fd2, get_descriptors(loader.created_log));
 			}
 
 
@@ -142,7 +152,7 @@ namespace agge
 					mocks::font_descriptor(L"arial", 1000, false, true, text_engine_base::gf_none),
 				};
 
-				assert_equal(fd1, loader.created_log);
+				assert_equal(fd1, get_descriptors(loader.created_log));
 
 				// ACT
 				font::ptr fonts2[] = {
@@ -157,7 +167,7 @@ namespace agge
 					mocks::font_descriptor(L"times", 1000, true, false, text_engine_base::gf_none),
 				};
 
-				assert_equal(fd2, loader.created_log);
+				assert_equal(fd2, get_descriptors(loader.created_log));
 			}
 
 
@@ -631,6 +641,166 @@ namespace agge
 				assert_equal(18, target.append_log[2].second.x);
 				assert_equal(17, target.append_log[2].second.y);
 				assert_equal(c_outline_1, target.append_log[2].first->path);
+			}
+
+
+			class logging_text_engine : public text_engine_base
+			{
+			public:
+				logging_text_engine(loader &loader_, unsigned collection_cycles)
+					: text_engine_base(loader_, collection_cycles)
+				{	}
+
+			public:
+				vector<void *> deletion_log;
+
+			private:
+				virtual void on_before_removed(font *font_)
+				{	deletion_log.push_back(font_);	}
+			};
+
+			test( ReleasedFontIsNotifiedAboutImmidiatelyWhenNoCollectionIsRequired )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
+				mocks::font_accessor::glyph glyphs[] = { mocks::glyph(5.2, 0, c_outline_1), };
+				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
+					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+						mocks::font_accessor(c_fm2, indices, glyphs)),
+				};
+				mocks::fonts_loader loader(fonts);
+				logging_text_engine e(loader, 0);
+				font::ptr f = e.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
+				void *pvf = f.get();
+
+				// ACT
+				f.reset();
+
+				// ASSERT
+				void *reference[] = { pvf, };
+
+				assert_equal(reference, e.deletion_log);
+			}
+
+
+			test( DestroyedFontReleasesUnderlyingAccessor )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
+				mocks::font_accessor::glyph glyphs[] = { mocks::glyph(5.2, 0, c_outline_1), };
+				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
+					make_pair(mocks::font_descriptor(L"Arial", 1000, false, false, text_engine_base::gf_none),
+						mocks::font_accessor(c_fm2, indices, glyphs)),
+					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+						mocks::font_accessor(c_fm2, indices, glyphs)),
+				};
+				mocks::fonts_loader loader(fonts);
+				logging_text_engine e(loader, 0);
+				font::ptr f[] = {
+					e.create_font(L"Arial", 10, false, false, text_engine_base::gf_none),
+					e.create_font(L"Arial", 11, false, false, text_engine_base::gf_none),
+					e.create_font(L"Arial", 11, false, false, text_engine_base::gf_strong),
+				};
+
+				// ACT
+				f[0].reset();
+
+				// ASSERT
+				assert_equal(2u, *loader.allocated);
+
+				// ACT
+				f[1].reset();
+
+				// ASSERT
+				assert_equal(1u, *loader.allocated);
+
+				// ACT
+				f[2].reset();
+
+				// ASSERT
+				assert_equal(0u, *loader.allocated);
+			}
+
+
+			test( DestroyedAccessorGetsReacquiredOnFontReCreation )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
+				mocks::font_accessor::glyph glyphs[] = { mocks::glyph(5.2, 0, c_outline_1), };
+				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
+					make_pair(mocks::font_descriptor(L"Arial", 1000, false, false, text_engine_base::gf_none),
+						mocks::font_accessor(c_fm2, indices, glyphs)),
+					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+						mocks::font_accessor(c_fm2, indices, glyphs)),
+				};
+				mocks::fonts_loader loader(fonts);
+				logging_text_engine e(loader, 0);
+				font::ptr f = e.create_font(L"Arial", 10, false, false, text_engine_base::gf_none);
+
+				f.reset();
+
+				// ACT
+				f = e.create_font(L"Arial", 10, false, false, text_engine_base::gf_none);
+
+				// ASSERT
+				mocks::font_descriptor fd[] = {
+					mocks::font_descriptor(L"Arial", 1000, false, false, text_engine_base::gf_none),
+					mocks::font_descriptor(L"Arial", 1000, false, false, text_engine_base::gf_none),
+				};
+
+				assert_equal(fd, get_descriptors(loader.created_log));
+			}
+
+
+			ignored_test( ReleasedFontIsNotifiedAboutOnPredefinedCollectionCycle )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
+				mocks::font_accessor::glyph glyphs[] = { mocks::glyph(5.2, 0, c_outline_1), };
+				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
+					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+						mocks::font_accessor(c_fm2, indices, glyphs)),
+				};
+				mocks::fonts_loader loader(fonts);
+				logging_text_engine e1(loader, 2);
+				font::ptr f1 = e1.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
+				void *pvf1 = f1.get();
+				logging_text_engine e2(loader, 5);
+				font::ptr f2 = e2.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
+				void *pvf2 = f2.get();
+
+				// ACT
+				f1.reset();
+				e1.collect();
+
+				// ASSERT
+				assert_is_empty(e1.deletion_log);
+
+				// ACT
+				e1.collect();
+
+				// ASSERT
+				void *reference1[] = { pvf1, };
+
+				assert_equal(reference1, e1.deletion_log);
+
+				// ACT
+				f2.reset();
+				e2.collect();
+				e2.collect();
+				e2.collect();
+				e2.collect();
+
+				// ASSERT
+				assert_is_empty(e1.deletion_log);
+
+				// ACT
+				e2.collect();
+
+				// ASSERT
+				void *reference2[] = { pvf2, };
+
+				assert_equal(reference2, e2.deletion_log);
 			}
 
 		end_test_suite

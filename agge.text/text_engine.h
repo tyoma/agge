@@ -12,18 +12,27 @@ namespace agge
 		enum grid_fit { gf_none = 0, gf_vertical = 1, gf_strong = 2 };
 
 	public:
-		explicit text_engine_base(loader &loader_);
+		explicit text_engine_base(loader &loader_, unsigned collection_cycles = 5);
 
+		void collect();
 		font::ptr create_font(const wchar_t *typeface, int height, bool bold, bool italic, grid_fit gf);
 
 	protected:
 		class offset_conv;
 
 	private:
+		class cached_outline_accessor;
 		struct font_key;
 		struct font_key_hasher;
-		typedef hash_map<font_key, font::ptr, font_key_hasher> fonts_cache;
-		typedef hash_map<font_key, font::accessor_ptr, font_key_hasher> scalabale_fonts_cache;
+		typedef hash_map<font_key, weak_ptr<font>, font_key_hasher> fonts_cache;
+		typedef hash_map<font_key, weak_ptr<font::accessor>, font_key_hasher> scalabale_fonts_cache;
+
+	private:
+		std::pair<font::accessor_ptr, real_t> create_font_accessor(font_key fk);
+
+		void on_font_released(font *font_);
+
+		virtual void on_before_removed(font * /*font_*/) {	}
 
 	private:
 		loader &_loader;
@@ -61,7 +70,7 @@ namespace agge
 		void render_layout(RasterizerT &target, const layout &layout_, real_t x, real_t y);
 
 	private:
-		typedef hash_map<count_t, RasterizerT> rasters_map;
+		typedef hash_map<int, RasterizerT> rasters_map;
 
 	private:
 		rasters_map _glyph_rasters;
