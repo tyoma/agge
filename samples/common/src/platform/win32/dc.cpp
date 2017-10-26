@@ -6,8 +6,14 @@
 using namespace std;
 using namespace std::placeholders;
 
+namespace
+{
+	HGDIOBJ select_object(HDC hdc, HGDIOBJ hobject)
+	{	return ::SelectObject(hdc, hobject);	}
+}
+
 dc::dc(platform_bitmap *surface)
-	: _dc(::CreateCompatibleDC(NULL)), _bitmap_selector(surface ? select(surface->native()) : 0)
+	: _dc(::CreateCompatibleDC(NULL)), _bitmap_selector(surface ? select(surface->native()) : agge::shared_ptr<void>())
 {	}
 
 dc::~dc()
@@ -17,4 +23,4 @@ dc::~dc()
 }
 
 dc::handle dc::select(HGDIOBJ obj)
-{	return handle(::SelectObject(_dc, obj), bind(&::SelectObject, _dc, _1));	}
+{	return handle(select_object(_dc, obj), bind(&select_object, _dc, _1));	}

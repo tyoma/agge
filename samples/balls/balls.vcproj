@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="text"
-	ProjectGUID="{B06A402A-2A38-4C1F-BB98-1F7C8C2DCFCE}"
-	RootNamespace="text"
+	Name="balls"
+	ProjectGUID="{85948F33-2EFC-458E-B95A-CA01935E8049}"
+	RootNamespace="balls"
 	TargetFrameworkVersion="0"
 	>
 	<Platforms>
@@ -292,14 +292,18 @@
 			ReferencedProjectIdentifier="{A213FBA4-8D98-4399-BC92-BA9B61E2B693}"
 			RelativePathToProject="..\samples\common\src\samples-common.vcproj"
 		/>
-		<ProjectReference
-			ReferencedProjectIdentifier="{85898FAE-4EEA-4EB7-A719-48BA960CE380}"
-			RelativePathToProject="..\src\agge.text\agge.text.vcproj"
-		/>
 	</References>
 	<Files>
 		<File
-			RelativePath="text.cpp"
+			RelativePath="balls.cpp"
+			>
+		</File>
+		<File
+			RelativePath="balls_data.cpp"
+			>
+		</File>
+		<File
+			RelativePath="balls_data.h"
 			>
 		</File>
 	</Files>

@@ -10,6 +10,10 @@
 	<Tool
 		Name="VCCLCompilerTool"
 		AdditionalIncludeDirectories="../.."
-		PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
+		PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS"
+		WarningLevel="4"
+		DebugInformationFormat="3"
+		DisableLanguageExtensions="true"
+		UsePrecompiledHeader="0"
 	/>
 </VisualStudioPropertySheet>
