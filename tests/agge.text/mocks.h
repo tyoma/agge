@@ -18,6 +18,7 @@ namespace agge
 		{
 			struct font_descriptor
 			{
+				font_descriptor();
 				font_descriptor(const std::wstring &typeface, int height, bool bold, bool italic,
 					text_engine_base::grid_fit grid_fit);
 

@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="agge.tests"
-	ProjectGUID="{B3315418-4D30-4931-9424-E984483042F9}"
-	RootNamespace="agge::tests"
+	Name="agge.text.tests"
+	ProjectGUID="{C7C02621-D9D8-4ECE-BD93-A7393F02532E}"
+	RootNamespace="agge.text.tests"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -313,8 +313,8 @@
 	</Configurations>
 	<References>
 		<ProjectReference
-			ReferencedProjectIdentifier="{57FBC384-0804-406F-B0F6-E1B3B5E1FFA2}"
-			RelativePathToProject="..\src\agge\agge.vcproj"
+			ReferencedProjectIdentifier="{85898FAE-4EEA-4EB7-A719-48BA960CE380}"
+			RelativePathToProject="..\src\agge.text\agge.text.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}"
@@ -322,128 +322,8 @@
 		/>
 	</References>
 	<Files>
-		<Filter
-			Name="platform"
-			>
-			<Filter
-				Name="win32"
-				>
-				<File
-					RelativePath=".\platform\win32\mt.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							DisableLanguageExtensions="false"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							DisableLanguageExtensions="false"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							DisableLanguageExtensions="false"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							DisableLanguageExtensions="false"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\platform\win32\RawBitmapTests.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\platform\win32\surface.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							DisableLanguageExtensions="false"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							DisableLanguageExtensions="false"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							DisableLanguageExtensions="false"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							DisableLanguageExtensions="false"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\platform\win32\surface.h"
-					>
-				</File>
-			</Filter>
-		</Filter>
 		<File
-			RelativePath=".\assertex.h"
-			>
-		</File>
-		<File
-			RelativePath=".\BitmapTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\BlendersTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\ClipperTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\CurvesTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\DashTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\FiguresTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\FillingRulesTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\GenericBlendersTests.cpp"
+			RelativePath=".\FontTests.cpp"
 			>
 		</File>
 		<File
@@ -451,11 +331,15 @@
 			>
 		</File>
 		<File
+			RelativePath=".\LayoutTests.cpp"
+			>
+		</File>
+		<File
 			RelativePath=".\main.cpp"
 			>
 		</File>
 		<File
-			RelativePath=".\MiscTests.cpp"
+			RelativePath=".\mocks.cpp"
 			>
 		</File>
 		<File
@@ -463,55 +347,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\mt.h"
+			RelativePath=".\outlines.h"
 			>
 		</File>
 		<File
-			RelativePath=".\ParallelExecutionTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\PathTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\PodVectorTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\PreciseDeltaTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\RasterizerTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\RendererParallelTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\RendererTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\ScanlineAdapterTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\SIMDBlendersTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\StrokeFeaturesTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\StrokeTests.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\VectorRasterizerTests.cpp"
+			RelativePath=".\TextEngineTests.cpp"
 			>
 		</File>
 	</Files>

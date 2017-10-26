@@ -2,10 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="agge"
-	ProjectGUID="{57FBC384-0804-406F-B0F6-E1B3B5E1FFA2}"
-	RootNamespace="agge"
-	Keyword="Win32Proj"
+	Name="agge.text"
+	ProjectGUID="{85898FAE-4EEA-4EB7-A719-48BA960CE380}"
+	RootNamespace="agge.text"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -273,216 +272,40 @@
 			Name="src"
 			>
 			<File
-				RelativePath=".\blenders_intel.cpp"
+				RelativePath=".\font.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\curves.cpp"
+				RelativePath=".\layout.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\dash.cpp"
+				RelativePath=".\text_engine.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\figures.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\math.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\parallel.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						DisableLanguageExtensions="false"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						DisableLanguageExtensions="false"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						DisableLanguageExtensions="false"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						DisableLanguageExtensions="false"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\stroke.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\stroke_features.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\vector_rasterizer.cpp"
-				>
-			</File>
-			<Filter
-				Name="platform"
-				>
-				<Filter
-					Name="win32"
-					>
-					<File
-						RelativePath=".\platform\win32\bitmap.cpp"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								DisableLanguageExtensions="false"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug|x64"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								DisableLanguageExtensions="false"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								DisableLanguageExtensions="false"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|x64"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								DisableLanguageExtensions="false"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath=".\platform\win32\parallel-inline.h"
-						>
-					</File>
-				</Filter>
-			</Filter>
-		</Filter>
-		<Filter
-			Name="platform"
-			>
-			<Filter
-				Name="win32"
-				>
-				<File
-					RelativePath="..\..\agge\platform\win32\bitmap.h"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<File
-			RelativePath="..\..\agge\bitmap.h"
+			RelativePath="..\..\agge.text\font.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\agge\blenders_simd.h"
+			RelativePath="..\..\agge.text\functional.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\agge\clipper.h"
+			RelativePath="..\..\agge.text\hash_map.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\agge\config.h"
+			RelativePath="..\..\agge.text\layout.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\agge\dash.h"
+			RelativePath="..\..\agge.text\shared_ptr.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\agge\math.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\agge\memory.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\agge\parallel.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\agge\path.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\agge\pod_vector.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\agge\precise_delta.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\agge\rasterizer.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\agge\renderer.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\agge\renderer_parallel.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\agge\scanline.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\agge\stroke.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\agge\stroke_features.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\agge\tools.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\agge\types.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\agge\vector_rasterizer.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\agge\vertex_sequence.h"
+			RelativePath="..\..\agge.text\text_engine.h"
 			>
 		</File>
 	</Files>

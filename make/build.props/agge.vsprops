@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<VisualStudioPropertySheet 
+	ProjectType="Visual C++" 
+	Version="8.00" 
+	Name="agge"
+	OutputDirectory="$(SolutionDir)_bin\$(ConfigurationName)_$(PlatformName)\"
+	IntermediateDirectory="$(SolutionDir)_obj\$(ConfigurationName)_$(PlatformName)\$(ProjectName)\"
+	>
+	
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="../.."
+		PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS"
+	/>
+</VisualStudioPropertySheet>
