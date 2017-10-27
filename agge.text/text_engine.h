@@ -13,6 +13,7 @@ namespace agge
 
 	public:
 		explicit text_engine_base(loader &loader_, unsigned collection_cycles = 5);
+		virtual ~text_engine_base();
 
 		void collect();
 		font::ptr create_font(const wchar_t *typeface, int height, bool bold, bool italic, grid_fit gf);
@@ -26,18 +27,21 @@ namespace agge
 		struct font_key_hasher;
 		typedef hash_map<font_key, weak_ptr<font>, font_key_hasher> fonts_cache;
 		typedef hash_map<font_key, weak_ptr<font::accessor>, font_key_hasher> scalabale_fonts_cache;
+		typedef hash_map<font_key, std::pair<font*, unsigned /*age*/>, font_key_hasher> garbage_container;
 
 	private:
 		std::pair<font::accessor_ptr, real_t> create_font_accessor(font_key fk);
+		void on_released(const std::pair< font_key, weak_ptr<font> > &entry, font *font_);
+		void destroy(font *font_) throw();
 
-		void on_font_released(font *font_);
-
-		virtual void on_before_removed(font * /*font_*/) {	}
+		virtual void on_before_removed(font * /*font_*/) throw() {	}
 
 	private:
 		loader &_loader;
+		const unsigned _collection_cycles;
 		shared_ptr<fonts_cache> _fonts;
 		shared_ptr<scalabale_fonts_cache> _scalable_fonts;
+		shared_ptr<garbage_container> _garbage;
 	};
 
 	struct text_engine_base::loader

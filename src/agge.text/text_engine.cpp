@@ -86,33 +86,52 @@ namespace agge
 		}
 	};
 
-	text_engine_base::text_engine_base(loader &loader_, unsigned /*collection_cycles*/)
-		: _loader(loader_), _fonts(new fonts_cache), _scalable_fonts(new scalabale_fonts_cache)
+	text_engine_base::text_engine_base(loader &loader_, unsigned collection_cycles)
+		: _loader(loader_), _collection_cycles(collection_cycles), _fonts(new fonts_cache),
+			_scalable_fonts(new scalabale_fonts_cache), _garbage(new garbage_container)
+	{	}
+
+	text_engine_base::~text_engine_base()
 	{
+		for (garbage_container::iterator i = _garbage->begin(); i != _garbage->end(); ++i)
+			destroy(i->second.first);
 	}
 
 	void text_engine_base::collect()
 	{
+		for (garbage_container::iterator i = _garbage->begin(); i != _garbage->end(); )
+			i = !--i->second.second ? destroy(i->second.first), _garbage->erase(i) : ++i;
 	}
 
 	font::ptr text_engine_base::create_font(const wchar_t *typeface, int height, bool bold, bool italic, grid_fit gf)
 	{
+		fonts_cache::iterator i;
 		font_key key = { typeface };
-		
+
 		key.height = height;
 		key.bold = !!bold;
 		key.italic = !!italic;
 		key.grid_fit = gf;
-
-		fonts_cache::iterator i = _fonts->find(key);
-
-		if (i != _fonts->end() && !i->second.expired())
+		if (!_fonts->insert(key, weak_ptr<font>(), i) && !i->second.expired())
 			return i->second.lock();
-		_fonts->insert(key, weak_ptr<font>(), i);
 
-		pair<font::accessor_ptr, real_t> acc = create_font_accessor(key);
-		font::ptr f(new font(acc.first, acc.second), bind(&text_engine_base::on_font_released, this, _1));
-		
+		garbage_container::const_iterator gi = _garbage->find(key);
+		auto_ptr<font> pre_f;
+
+		if (_garbage->end() != gi)
+		{
+			pre_f.reset(gi->second.first);
+			_garbage->erase(gi);
+		}
+		else
+		{
+			pair<font::accessor_ptr, real_t> acc = create_font_accessor(key);
+			pre_f.reset(new font(acc.first, acc.second));
+		}
+
+		font::ptr f(pre_f.get(), bind(&text_engine_base::on_released, this, cref(*i), _1));
+
+		pre_f.release();
 		i->second = f;
 		return f;
 	}
@@ -124,23 +143,30 @@ namespace agge
 
 		scalabale_fonts_cache::iterator i;
 		const real_t factor = static_cast<real_t>(fk.height) / c_rescalable_height;
-		font::accessor_ptr a;
 
 		fk.height = c_rescalable_height;
 		if (_scalable_fonts->insert(fk, weak_ptr<font::accessor>(), i) || i->second.expired())
 		{
-			a.reset(new cached_outline_accessor(_loader.load(fk.typeface.c_str(), fk.height, fk.bold, fk.italic,
-				fk.grid_fit)));
+			font::accessor_ptr a(new cached_outline_accessor(_loader.load(fk.typeface.c_str(), fk.height, fk.bold,
+				fk.italic, fk.grid_fit)));
+
 			i->second = a;
+			return make_pair(a, factor);
 		}
-		else
-		{
-			a = i->second.lock();
-		}
-		return make_pair(a, factor);
+		return make_pair(i->second.lock(), factor);
 	}
 
-	void text_engine_base::on_font_released(font *font_)
+	void text_engine_base::on_released(const pair< font_key, weak_ptr<font> > &entry, font *font_)
+	{
+		garbage_container::iterator i ;
+
+		if (_collection_cycles)
+			_garbage->insert(entry.first, make_pair(font_, _collection_cycles), i);
+		else
+			destroy(font_);
+	}
+
+	void text_engine_base::destroy(font *font_) throw()
 	{
 		on_before_removed(font_);
 		delete font_;

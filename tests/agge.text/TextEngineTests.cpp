@@ -655,7 +655,7 @@ namespace agge
 				vector<void *> deletion_log;
 
 			private:
-				virtual void on_before_removed(font *font_)
+				virtual void on_before_removed(font *font_) throw()
 				{	deletion_log.push_back(font_);	}
 			};
 
@@ -752,7 +752,7 @@ namespace agge
 			}
 
 
-			ignored_test( ReleasedFontIsNotifiedAboutOnPredefinedCollectionCycle )
+			test( ReleasedFontIsNotifiedUponOnPredefinedCollectionCycle )
 			{
 				// INIT
 				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
@@ -760,14 +760,18 @@ namespace agge
 				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
 					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
 						mocks::font_accessor(c_fm2, indices, glyphs)),
+					make_pair(mocks::font_descriptor(L"Tahoma", 10, true, false, text_engine_base::gf_strong),
+						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				logging_text_engine e1(loader, 2);
 				font::ptr f1 = e1.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
+				font::ptr f2 = e1.create_font(L"Tahoma", 10, true, false, text_engine_base::gf_strong);
 				void *pvf1 = f1.get();
-				logging_text_engine e2(loader, 5);
-				font::ptr f2 = e2.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
 				void *pvf2 = f2.get();
+				logging_text_engine e2(loader, 5);
+				font::ptr f3 = e2.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
+				void *pvf3 = f3.get();
 
 				// ACT
 				f1.reset();
@@ -775,32 +779,115 @@ namespace agge
 
 				// ASSERT
 				assert_is_empty(e1.deletion_log);
+				assert_equal(3u, *loader.allocated);
 
 				// ACT
+				f2.reset();
 				e1.collect();
 
 				// ASSERT
 				void *reference1[] = { pvf1, };
 
 				assert_equal(reference1, e1.deletion_log);
+				assert_equal(2u, *loader.allocated);
 
 				// ACT
+				e1.collect();
+
+				// ASSERT
+				void *reference2[] = { pvf1, pvf2, };
+
+				assert_equal(reference2, e1.deletion_log);
+				assert_equal(1u, *loader.allocated);
+
+				// ACT
+				f3.reset();
+				e2.collect();
+				e2.collect();
+				e2.collect();
+				e2.collect();
+
+				// ASSERT
+				assert_is_empty(e2.deletion_log);
+				assert_equal(1u, *loader.allocated);
+
+				// ACT
+				e2.collect();
+
+				// ASSERT
+				void *reference3[] = { pvf3, };
+
+				assert_equal(reference3, e2.deletion_log);
+				assert_equal(0u, *loader.allocated);
+			}
+
+
+			test( GarbageFontIsReusedForTheSameRequest )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
+				mocks::font_accessor::glyph glyphs[] = { mocks::glyph(5.2, 0, c_outline_1), };
+				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
+					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+						mocks::font_accessor(c_fm2, indices, glyphs)),
+					make_pair(mocks::font_descriptor(L"Tahoma", 10, true, false, text_engine_base::gf_strong),
+						mocks::font_accessor(c_fm2, indices, glyphs)),
+				};
+				mocks::fonts_loader loader(fonts);
+				logging_text_engine e(loader, 1);
+				font::ptr f1 = e.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
+				font::ptr f2 = e.create_font(L"Tahoma", 10, true, false, text_engine_base::gf_strong);
+				void *pvf1 = f1.get();
+				void *pvf2 = f2.get();
+
+				loader.created_log.clear();
+				f1.reset();
 				f2.reset();
-				e2.collect();
-				e2.collect();
-				e2.collect();
-				e2.collect();
-
-				// ASSERT
-				assert_is_empty(e1.deletion_log);
 
 				// ACT
-				e2.collect();
+				f2 = e.create_font(L"Tahoma", 10, true, false, text_engine_base::gf_strong);
 
 				// ASSERT
-				void *reference2[] = { pvf2, };
+				assert_equal(pvf2, f2.get());
+				assert_is_empty(loader.created_log);
 
-				assert_equal(reference2, e2.deletion_log);
+				// ACT
+				f1 = e.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
+
+				// ASSERT
+				assert_equal(pvf1, f1.get());
+				assert_is_empty(loader.created_log);
+
+				// ACT
+				e.collect();
+
+				// ASSERT
+				assert_equal(2u, *loader.allocated);
+			}
+
+
+			test( DestructionOfEngineWithNonEmptyGarbageDestroysGarbageFonts )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
+				mocks::font_accessor::glyph glyphs[] = { mocks::glyph(5.2, 0, c_outline_1), };
+				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
+					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_none),
+						mocks::font_accessor(c_fm2, indices, glyphs)),
+				};
+				mocks::fonts_loader loader(fonts);
+				auto_ptr<logging_text_engine> e(new logging_text_engine(loader, 1));
+				font::ptr f1 = e->create_font(L"Arial", 101, false, false, text_engine_base::gf_none);
+				font::ptr f2 = e->create_font(L"Arial", 15, false, false, text_engine_base::gf_none);
+
+				f1.reset();
+				f2.reset();
+
+				// ACT
+				e.reset();
+
+				// ASSERT
+				assert_equal(0u, *loader.allocated);
 			}
 
 		end_test_suite

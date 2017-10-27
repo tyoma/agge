@@ -24,6 +24,7 @@ namespace agge
 		using base_t::find;
 		using base_t::begin;
 		using base_t::end;
+		using base_t::erase;
 
 		bool insert(const KeyT &key, const ValueT &value, iterator &i);
 	};
