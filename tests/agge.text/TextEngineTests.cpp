@@ -22,9 +22,9 @@ namespace agge
 			font::metrics c_fm2 = { 4.4f, 5.6f, 7.1f };
 
 			template <typename ContainerT>
-			vector<mocks::font_descriptor> get_descriptors(const ContainerT &created_log)
+			vector<font::key> get_descriptors(const ContainerT &created_log)
 			{
-				vector<mocks::font_descriptor> result;
+				vector<font::key> result;
 
 				for (typename ContainerT::const_iterator i = created_log.begin(); i != created_log.end(); ++i)
 					result.push_back(i->first);
@@ -42,15 +42,15 @@ namespace agge
 
 				// ACT
 				font::ptr fonts[] = {
-					e.create_font(L"arial", 13, false, false, text_engine_base::gf_strong),
-					e.create_font(L"helvetica", 13, false, false, text_engine_base::gf_strong),
-					e.create_font(L"tahoma", 13, false, false, text_engine_base::gf_strong),
-					e.create_font(L"tahoma", 14, false, false, text_engine_base::gf_strong),
-					e.create_font(L"helvetica", 13, true, false, text_engine_base::gf_strong),
-					e.create_font(L"helvetica", 13, false, true, text_engine_base::gf_strong),
-					e.create_font(L"helvetica", 13, true, true, text_engine_base::gf_strong),
-					e.create_font(L"helvetica", 13, true, true, text_engine_base::gf_vertical),
-					e.create_font(L"helvetica", 13, true, true, text_engine_base::gf_none),
+					e.create_font(L"arial", 13, false, false, font::key::gf_strong),
+					e.create_font(L"helvetica", 13, false, false, font::key::gf_strong),
+					e.create_font(L"tahoma", 13, false, false, font::key::gf_strong),
+					e.create_font(L"tahoma", 14, false, false, font::key::gf_strong),
+					e.create_font(L"helvetica", 13, true, false, font::key::gf_strong),
+					e.create_font(L"helvetica", 13, false, true, font::key::gf_strong),
+					e.create_font(L"helvetica", 13, true, true, font::key::gf_strong),
+					e.create_font(L"helvetica", 13, true, true, font::key::gf_vertical),
+					e.create_font(L"helvetica", 13, true, true, font::key::gf_none),
 				};
 
 				// ASSERT
@@ -68,14 +68,14 @@ namespace agge
 
 				// ACT
 				font::ptr fonts[] = {
-					e.create_font(L"arial", 13, false, false, text_engine_base::gf_strong),
-					e.create_font(L"ARial", 13, false, false, text_engine_base::gf_strong),
-					e.create_font(L"arial", 15, false, false, text_engine_base::gf_vertical),
-					e.create_font(L"Arial", 15, false, false, text_engine_base::gf_vertical),
-					e.create_font(L"arial", 13, false, true, text_engine_base::gf_none),
-					e.create_font(L"arial", 13, false, true, text_engine_base::gf_none),
-					e.create_font(L"tahoma", 143, true, false, text_engine_base::gf_strong),
-					e.create_font(L"taHOMA", 143, true, false, text_engine_base::gf_strong),
+					e.create_font(L"arial", 13, false, false, font::key::gf_strong),
+					e.create_font(L"ARial", 13, false, false, font::key::gf_strong),
+					e.create_font(L"arial", 15, false, false, font::key::gf_vertical),
+					e.create_font(L"Arial", 15, false, false, font::key::gf_vertical),
+					e.create_font(L"arial", 13, false, true, font::key::gf_none),
+					e.create_font(L"arial", 13, false, true, font::key::gf_none),
+					e.create_font(L"tahoma", 143, true, false, font::key::gf_strong),
+					e.create_font(L"taHOMA", 143, true, false, font::key::gf_strong),
 				};
 
 				// ASSERT
@@ -85,7 +85,7 @@ namespace agge
 				assert_equal(fonts[6], fonts[7]);
 
 				// ACT
-				font::ptr f2 = e.create_font(L"arial", 13, false, false, text_engine_base::gf_strong);
+				font::ptr f2 = e.create_font(L"arial", 13, false, false, font::key::gf_strong);
 
 				// ASSERT
 				assert_equal(fonts[0], f2);
@@ -100,17 +100,17 @@ namespace agge
 
 				// ACT
 				font::ptr fonts1[] = {
-					e.create_font(L"arial", 13, false, false, text_engine_base::gf_strong),
-					e.create_font(L"tahoma", 29, true, false, text_engine_base::gf_vertical),
-					e.create_font(L"helvetica", 15, false, true, text_engine_base::gf_none /* freely scalable */),
+					e.create_font(L"arial", 13, false, false, font::key::gf_strong),
+					e.create_font(L"tahoma", 29, true, false, font::key::gf_vertical),
+					e.create_font(L"helvetica", 15, false, true, font::key::gf_none /* freely scalable */),
 				};
 				fonts1;
 
 				// ASSERT
-				mocks::font_descriptor fd1[] = {
-					mocks::font_descriptor(L"arial", 13, false, false, text_engine_base::gf_strong),
-					mocks::font_descriptor(L"tahoma", 29, true, false, text_engine_base::gf_vertical),
-					mocks::font_descriptor(L"helvetica", 1000, false, true, text_engine_base::gf_none),
+				font::key fd1[] = {
+					font::key(L"arial", 13, false, false, font::key::gf_strong),
+					font::key(L"tahoma", 29, true, false, font::key::gf_vertical),
+					font::key(L"helvetica", 1000, false, true, font::key::gf_none),
 				};
 
 				assert_equal(fd1, get_descriptors(loader.created_log));
@@ -120,13 +120,13 @@ namespace agge
 
 				// ACT
 				font::ptr fonts2[] = {
-					e.create_font(L"arial", 15, true, true, text_engine_base::gf_none /* freely scalable */),
+					e.create_font(L"arial", 15, true, true, font::key::gf_none /* freely scalable */),
 				};
 				fonts2;
 
 				// ASSERT
-				mocks::font_descriptor fd2[] = {
-					mocks::font_descriptor(L"arial", 1000, true, true, text_engine_base::gf_none),
+				font::key fd2[] = {
+					font::key(L"arial", 1000, true, true, font::key::gf_none),
 				};
 
 				assert_equal(fd2, get_descriptors(loader.created_log));
@@ -141,30 +141,30 @@ namespace agge
 
 				// ACT
 				font::ptr fonts1[] = {
-					e.create_font(L"arial", 13, false, true, text_engine_base::gf_none),
-					e.create_font(L"arial", 29, false, true, text_engine_base::gf_none),
-					e.create_font(L"arial", 140, false, true, text_engine_base::gf_none),
+					e.create_font(L"arial", 13, false, true, font::key::gf_none),
+					e.create_font(L"arial", 29, false, true, font::key::gf_none),
+					e.create_font(L"arial", 140, false, true, font::key::gf_none),
 				};
 				fonts1;
 
 				// ASSERT
-				mocks::font_descriptor fd1[] = {
-					mocks::font_descriptor(L"arial", 1000, false, true, text_engine_base::gf_none),
+				font::key fd1[] = {
+					font::key(L"arial", 1000, false, true, font::key::gf_none),
 				};
 
 				assert_equal(fd1, get_descriptors(loader.created_log));
 
 				// ACT
 				font::ptr fonts2[] = {
-					e.create_font(L"times", 31, true, false, text_engine_base::gf_none),
-					e.create_font(L"times", 91, true, false, text_engine_base::gf_none),
+					e.create_font(L"times", 31, true, false, font::key::gf_none),
+					e.create_font(L"times", 91, true, false, font::key::gf_none),
 				};
 				fonts2;
 
 				// ASSERT
-				mocks::font_descriptor fd2[] = {
-					mocks::font_descriptor(L"arial", 1000, false, true, text_engine_base::gf_none),
-					mocks::font_descriptor(L"times", 1000, true, false, text_engine_base::gf_none),
+				font::key fd2[] = {
+					font::key(L"arial", 1000, false, true, font::key::gf_none),
+					font::key(L"times", 1000, true, false, font::key::gf_none),
 				};
 
 				assert_equal(fd2, get_descriptors(loader.created_log));
@@ -180,16 +180,16 @@ namespace agge
 					mocks::glyph(1.3, 1.4, c_outline_2),
 					mocks::glyph(2.3, 2.4, c_outline_diamond),
 				};
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Arial", 1000, false, false, text_engine_base::gf_none),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 1000, false, false, font::key::gf_none),
 						mocks::font_accessor(c_fm1, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
-				mocks::font_accessor &arial_accessor = loader.fonts[mocks::font_descriptor(L"Arial", 1000, false, false,
-					text_engine_base::gf_none)];
+				mocks::font_accessor &arial_accessor = loader.fonts[font::key(L"Arial", 1000, false, false,
+					font::key::gf_none)];
 				text_engine_base e(loader);
-				font::ptr f1 = e.create_font(L"Arial", 17, false, false, text_engine_base::gf_none);
-				font::ptr f2 = e.create_font(L"Arial", 210, false, false, text_engine_base::gf_none);
+				font::ptr f1 = e.create_font(L"Arial", 17, false, false, font::key::gf_none);
+				font::ptr f2 = e.create_font(L"Arial", 210, false, false, font::key::gf_none);
 
 				// ACT
 				f1->get_glyph(0);
@@ -229,17 +229,17 @@ namespace agge
 				mocks::font_accessor::glyph glyphs2[] = {
 					mocks::glyph(2.1, 2.2, c_outline_2), mocks::glyph(3.3, 3.4, c_outline_1),
 				};
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Tahoma", 1000, false, false, text_engine_base::gf_none),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Tahoma", 1000, false, false, font::key::gf_none),
 						mocks::font_accessor(c_fm1, indices, glyphs1)),
-					make_pair(mocks::font_descriptor(L"Verdana", 1000, true, false, text_engine_base::gf_none),
+					make_pair(font::key(L"Verdana", 1000, true, false, font::key::gf_none),
 						mocks::font_accessor(c_fm2, indices, glyphs2)),
 				};
 				mocks::fonts_loader loader(fonts);
 				text_engine_base e(loader);
 
 				// ACT
-				font::ptr f = e.create_font(L"Tahoma", 17, false, false, text_engine_base::gf_none);
+				font::ptr f = e.create_font(L"Tahoma", 17, false, false, font::key::gf_none);
 				const glyph *g1 = f->get_glyph(0);
 				pod_vector<glyph::path_point> o1 = convert_copy(g1->get_outline());
 				const glyph *g2 = f->get_glyph(1);
@@ -255,7 +255,7 @@ namespace agge
 				assert_equal(c_outline_2, (1 / 0.017) * o2);
 
 				// ACT
-				f = e.create_font(L"Verdana", 710, true, false, text_engine_base::gf_none);
+				f = e.create_font(L"Verdana", 710, true, false, font::key::gf_none);
 				g1 = f->get_glyph(0);
 				pod_vector<glyph::path_point> o3 = convert_copy(g1->get_outline());
 				g2 = f->get_glyph(1);
@@ -275,14 +275,14 @@ namespace agge
 				mocks::font_accessor::glyph glyphs[] = {
 					mocks::glyph(0, 0, c_outline_1), mocks::glyph(0, 0, c_outline_2), mocks::glyph(0, 0, c_outline_diamond),
 				};
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
 						mocks::font_accessor(c_fm1, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				text_engine<mocks::rasterizer> e(loader);
 				mocks::rasterizer target;
-				font::ptr f = e.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
+				font::ptr f = e.create_font(L"Arial", 10, false, false, font::key::gf_strong);
 
 				// ACT
 				e.render_glyph(target, *f, 1, 19.0f, 3.0f);
@@ -317,14 +317,14 @@ namespace agge
 				mocks::font_accessor::glyph glyphs[] = {
 					mocks::glyph(0, 0, c_outline_1), mocks::glyph(0, 0, c_outline_2), mocks::glyph(0, 0, c_outline_diamond),
 				};
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
 						mocks::font_accessor(c_fm1, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				text_engine<mocks::rasterizer> e(loader);
 				mocks::rasterizer target;
-				font::ptr f = e.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
+				font::ptr f = e.create_font(L"Arial", 10, false, false, font::key::gf_strong);
 
 				e.render_glyph(target, *f, 1, 19.0f, 3.0f);
 				e.render_glyph(target, *f, 0, 1.0f, 2.0f);
@@ -357,14 +357,14 @@ namespace agge
 				mocks::font_accessor::glyph glyphs[] = {
 					mocks::glyph(0, 0, c_outline_2),
 				};
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
 						mocks::font_accessor(c_fm1, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				text_engine<mocks::rasterizer> e(loader, 1);
 				mocks::rasterizer target;
-				font::ptr f = e.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
+				font::ptr f = e.create_font(L"Arial", 10, false, false, font::key::gf_strong);
 
 				// ACT
 				e.render_glyph(target, *f, 0, 1.0f, 1.0f);
@@ -469,16 +469,16 @@ namespace agge
 				mocks::font_accessor::glyph glyphs[] = {
 					mocks::glyph(0, 0, c_outline_2),
 				};
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
 						mocks::font_accessor(c_fm1, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				text_engine<mocks::rasterizer> e1(loader, 2);
 				text_engine<mocks::rasterizer> e2(loader, 3);
 				mocks::rasterizer target;
-				font::ptr f1 = e1.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
-				font::ptr f2 = e2.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
+				font::ptr f1 = e1.create_font(L"Arial", 10, false, false, font::key::gf_strong);
+				font::ptr f2 = e2.create_font(L"Arial", 10, false, false, font::key::gf_strong);
 
 				// ACT
 				e1.render_glyph(target, *f1, 0, 1.15f, 1.3f);
@@ -507,14 +507,14 @@ namespace agge
 					mocks::glyph(5, 0, c_outline_1),
 					mocks::glyph(7, 0, c_outline_2),
 				};
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				text_engine<mocks::rasterizer> e(loader, 0);
 				mocks::rasterizer target;
-				layout l1(L"aww", e.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong));
+				layout l1(L"aww", e.create_font(L"Arial", 10, false, false, font::key::gf_strong));
 
 				// ACT
 				e.render_layout(target, l1, 0.0f, 0.0f);
@@ -541,14 +541,14 @@ namespace agge
 					mocks::glyph(5, 0, c_outline_1),
 					mocks::glyph(7, 0, c_outline_2),
 				};
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
 						mocks::font_accessor(c_fm1, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				text_engine<mocks::rasterizer> e(loader, 0);
 				mocks::rasterizer target;
-				layout l(L"wa", e.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong));
+				layout l(L"wa", e.create_font(L"Arial", 10, false, false, font::key::gf_strong));
 
 				// ACT
 				e.render_layout(target, l, 0.0f, 0.0f);
@@ -573,14 +573,14 @@ namespace agge
 					mocks::glyph(5, 0, c_outline_1),
 					mocks::glyph(7, 0, c_outline_2),
 				};
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				text_engine<mocks::rasterizer> e(loader, 0);
 				mocks::rasterizer target;
-				layout l(L"aww\nww\na", e.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong));
+				layout l(L"aww\nww\na", e.create_font(L"Arial", 10, false, false, font::key::gf_strong));
 
 				// ACT
 				e.render_layout(target, l, 0.0f, 0.0f);
@@ -618,14 +618,14 @@ namespace agge
 				mocks::font_accessor::glyph glyphs[] = {
 					mocks::glyph(5.2, 0, c_outline_1),
 				};
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				text_engine<mocks::rasterizer> e(loader, 0);
 				mocks::rasterizer target;
-				layout l(L"aaa", e.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong));
+				layout l(L"aaa", e.create_font(L"Arial", 10, false, false, font::key::gf_strong));
 
 				// ACT
 				e.render_layout(target, l, 7.7f, 13.2f);
@@ -664,13 +664,13 @@ namespace agge
 				// INIT
 				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
 				mocks::font_accessor::glyph glyphs[] = { mocks::glyph(5.2, 0, c_outline_1), };
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				logging_text_engine e(loader, 0);
-				font::ptr f = e.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
+				font::ptr f = e.create_font(L"Arial", 10, false, false, font::key::gf_strong);
 				void *pvf = f.get();
 
 				// ACT
@@ -688,18 +688,18 @@ namespace agge
 				// INIT
 				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
 				mocks::font_accessor::glyph glyphs[] = { mocks::glyph(5.2, 0, c_outline_1), };
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Arial", 1000, false, false, text_engine_base::gf_none),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 1000, false, false, font::key::gf_none),
 						mocks::font_accessor(c_fm2, indices, glyphs)),
-					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				logging_text_engine e(loader, 0);
 				font::ptr f[] = {
-					e.create_font(L"Arial", 10, false, false, text_engine_base::gf_none),
-					e.create_font(L"Arial", 11, false, false, text_engine_base::gf_none),
-					e.create_font(L"Arial", 11, false, false, text_engine_base::gf_strong),
+					e.create_font(L"Arial", 10, false, false, font::key::gf_none),
+					e.create_font(L"Arial", 11, false, false, font::key::gf_none),
+					e.create_font(L"Arial", 11, false, false, font::key::gf_strong),
 				};
 
 				// ACT
@@ -727,25 +727,25 @@ namespace agge
 				// INIT
 				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
 				mocks::font_accessor::glyph glyphs[] = { mocks::glyph(5.2, 0, c_outline_1), };
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Arial", 1000, false, false, text_engine_base::gf_none),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 1000, false, false, font::key::gf_none),
 						mocks::font_accessor(c_fm2, indices, glyphs)),
-					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				logging_text_engine e(loader, 0);
-				font::ptr f = e.create_font(L"Arial", 10, false, false, text_engine_base::gf_none);
+				font::ptr f = e.create_font(L"Arial", 10, false, false, font::key::gf_none);
 
 				f.reset();
 
 				// ACT
-				f = e.create_font(L"Arial", 10, false, false, text_engine_base::gf_none);
+				f = e.create_font(L"Arial", 10, false, false, font::key::gf_none);
 
 				// ASSERT
-				mocks::font_descriptor fd[] = {
-					mocks::font_descriptor(L"Arial", 1000, false, false, text_engine_base::gf_none),
-					mocks::font_descriptor(L"Arial", 1000, false, false, text_engine_base::gf_none),
+				font::key fd[] = {
+					font::key(L"Arial", 1000, false, false, font::key::gf_none),
+					font::key(L"Arial", 1000, false, false, font::key::gf_none),
 				};
 
 				assert_equal(fd, get_descriptors(loader.created_log));
@@ -757,20 +757,20 @@ namespace agge
 				// INIT
 				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
 				mocks::font_accessor::glyph glyphs[] = { mocks::glyph(5.2, 0, c_outline_1), };
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
 						mocks::font_accessor(c_fm2, indices, glyphs)),
-					make_pair(mocks::font_descriptor(L"Tahoma", 10, true, false, text_engine_base::gf_strong),
+					make_pair(font::key(L"Tahoma", 10, true, false, font::key::gf_strong),
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				logging_text_engine e1(loader, 2);
-				font::ptr f1 = e1.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
-				font::ptr f2 = e1.create_font(L"Tahoma", 10, true, false, text_engine_base::gf_strong);
+				font::ptr f1 = e1.create_font(L"Arial", 10, false, false, font::key::gf_strong);
+				font::ptr f2 = e1.create_font(L"Tahoma", 10, true, false, font::key::gf_strong);
 				void *pvf1 = f1.get();
 				void *pvf2 = f2.get();
 				logging_text_engine e2(loader, 5);
-				font::ptr f3 = e2.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
+				font::ptr f3 = e2.create_font(L"Arial", 10, false, false, font::key::gf_strong);
 				void *pvf3 = f3.get();
 
 				// ACT
@@ -827,16 +827,16 @@ namespace agge
 				// INIT
 				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
 				mocks::font_accessor::glyph glyphs[] = { mocks::glyph(5.2, 0, c_outline_1), };
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_strong),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
 						mocks::font_accessor(c_fm2, indices, glyphs)),
-					make_pair(mocks::font_descriptor(L"Tahoma", 10, true, false, text_engine_base::gf_strong),
+					make_pair(font::key(L"Tahoma", 10, true, false, font::key::gf_strong),
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				logging_text_engine e(loader, 1);
-				font::ptr f1 = e.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
-				font::ptr f2 = e.create_font(L"Tahoma", 10, true, false, text_engine_base::gf_strong);
+				font::ptr f1 = e.create_font(L"Arial", 10, false, false, font::key::gf_strong);
+				font::ptr f2 = e.create_font(L"Tahoma", 10, true, false, font::key::gf_strong);
 				void *pvf1 = f1.get();
 				void *pvf2 = f2.get();
 
@@ -845,14 +845,14 @@ namespace agge
 				f2.reset();
 
 				// ACT
-				f2 = e.create_font(L"Tahoma", 10, true, false, text_engine_base::gf_strong);
+				f2 = e.create_font(L"Tahoma", 10, true, false, font::key::gf_strong);
 
 				// ASSERT
 				assert_equal(pvf2, f2.get());
 				assert_is_empty(loader.created_log);
 
 				// ACT
-				f1 = e.create_font(L"Arial", 10, false, false, text_engine_base::gf_strong);
+				f1 = e.create_font(L"Arial", 10, false, false, font::key::gf_strong);
 
 				// ASSERT
 				assert_equal(pvf1, f1.get());
@@ -871,14 +871,14 @@ namespace agge
 				// INIT
 				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
 				mocks::font_accessor::glyph glyphs[] = { mocks::glyph(5.2, 0, c_outline_1), };
-				pair<mocks::font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(mocks::font_descriptor(L"Arial", 10, false, false, text_engine_base::gf_none),
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_none),
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				auto_ptr<logging_text_engine> e(new logging_text_engine(loader, 1));
-				font::ptr f1 = e->create_font(L"Arial", 101, false, false, text_engine_base::gf_none);
-				font::ptr f2 = e->create_font(L"Arial", 15, false, false, text_engine_base::gf_none);
+				font::ptr f1 = e->create_font(L"Arial", 101, false, false, font::key::gf_none);
+				font::ptr f2 = e->create_font(L"Arial", 15, false, false, font::key::gf_none);
 
 				f1.reset();
 				f2.reset();

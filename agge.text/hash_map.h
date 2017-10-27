@@ -19,6 +19,7 @@ namespace agge
 	public:
 		using typename base_t::const_iterator;
 		using typename base_t::iterator;
+		using typename base_t::value_type;
 
 	public:
 		using base_t::find;

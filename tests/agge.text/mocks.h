@@ -16,22 +16,6 @@ namespace agge
 	{
 		namespace mocks
 		{
-			struct font_descriptor
-			{
-				font_descriptor();
-				font_descriptor(const std::wstring &typeface, int height, bool bold, bool italic,
-					text_engine_base::grid_fit grid_fit);
-
-				bool operator <(const font_descriptor &rhs) const;
-				bool operator ==(const font_descriptor &rhs) const;
-
-				std::wstring typeface;
-				int height;
-				bool bold;
-				bool italic;
-				text_engine_base::grid_fit grid_fit;
-			};
-
 			class font_accessor : public font::accessor
 			{
 			public:
@@ -76,13 +60,13 @@ namespace agge
 				size_t allocated_accessors() const;
 
 			public:
-				std::vector< std::pair<font_descriptor, weak_ptr<font::accessor> > > created_log;
-				std::map<font_descriptor, font_accessor> fonts;
+				std::vector< std::pair<font::key, weak_ptr<font::accessor> > > created_log;
+				std::map<font::key, font_accessor> fonts;
 				shared_ptr<size_t> allocated;
 
 			private:
 				virtual font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic,
-					text_engine_base::grid_fit grid_fit);
+					font::key::grid_fit grid_fit);
 			};
 
 			struct font_accessor::char_to_index
@@ -163,4 +147,6 @@ namespace agge
 			{	return font::ptr(new font(font::accessor_ptr(new font_accessor(metrics_, indices,glyphs))));	}
 		}
 	}
+
+	bool operator <(const font::key &lhs, const font::key &rhs);
 }

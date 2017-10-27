@@ -107,6 +107,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\agge.text\glyph.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\agge.text\hash_map.h"
 			>
 		</File>

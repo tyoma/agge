@@ -16,7 +16,7 @@ namespace demo
 	{
 	public:
 		TextDrawerGDI()
-			: _font_accessor(new font_accessor(14, L"tahoma", false, false, text_engine_base::gf_none)),
+			: _font_accessor(new font_accessor(14, L"tahoma", false, false, font::key::gf_none)),
 				_font(new font(_font_accessor)), _layout(c_text_long.c_str(), _font), _ddx(0.0f)
 		{	}
 

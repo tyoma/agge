@@ -10,27 +10,6 @@ namespace agge
 	{
 		namespace mocks
 		{
-			font_descriptor::font_descriptor()
-			{	}
-
-			font_descriptor::font_descriptor(const wstring &typeface_, int height_, bool bold_, bool italic_,
-					text_engine_base::grid_fit grid_fit_)
-				: typeface(typeface_), height(height_), bold(bold_), italic(italic_), grid_fit(grid_fit_)
-			{	}
-
-			bool font_descriptor::operator <(const font_descriptor &rhs) const
-			{
-				return typeface < rhs.typeface ? true : rhs.typeface < typeface ? false :
-					height < rhs.height ? true : rhs.height < height ? false :
-					bold < rhs.bold ? true : rhs.bold < bold ? false :
-					italic < rhs.italic ? true : rhs.italic < italic ? false :
-					grid_fit < rhs.grid_fit;
-			}
-
-			bool font_descriptor::operator ==(const font_descriptor &rhs) const
-			{	return !(*this < rhs) && !(rhs < *this);	}
-
-
 			font_accessor::font_accessor()
 			{	}
 
@@ -79,9 +58,9 @@ namespace agge
 			{	}
 
 			font::accessor_ptr fonts_loader::load(const wchar_t *typeface, int height, bool bold, bool italic,
-				text_engine_base::grid_fit grid_fit)
+				font::key::grid_fit grid_fit)
 			{
-				font_descriptor fd(typeface, height, bold, italic, grid_fit);
+				font::key fd(typeface, height, bold, italic, grid_fit);
 				shared_ptr<font_accessor> a(new font_accessor(fonts[fd]));
 
 				created_log.push_back(make_pair(fd, a));
@@ -112,5 +91,14 @@ namespace agge
 				append_log.push_back(make_pair(&source, mkpoint(dx, dy)));
 			}
 		}
+	}
+
+	bool operator <(const font::key &lhs, const font::key &rhs)
+	{
+		return lhs.typeface < rhs.typeface ? true : rhs.typeface < lhs.typeface ? false :
+			lhs.height < rhs.height ? true : rhs.height < lhs.height ? false :
+			lhs.bold < rhs.bold ? true : rhs.bold < lhs.bold ? false :
+			lhs.italic < rhs.italic ? true : rhs.italic < lhs.italic ? false :
+			lhs.grid_fit_ < rhs.grid_fit_;
 	}
 }

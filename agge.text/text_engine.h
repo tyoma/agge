@@ -9,29 +9,32 @@ namespace agge
 	{
 	public:
 		struct loader;
-		enum grid_fit { gf_none = 0, gf_vertical = 1, gf_strong = 2 };
 
 	public:
 		explicit text_engine_base(loader &loader_, unsigned collection_cycles = 5);
 		virtual ~text_engine_base();
 
 		void collect();
-		font::ptr create_font(const wchar_t *typeface, int height, bool bold, bool italic, grid_fit gf);
+		font::ptr create_font(const wchar_t *typeface, int height, bool bold, bool italic, font::key::grid_fit grid_fit);
 
 	protected:
 		class offset_conv;
 
 	private:
 		class cached_outline_accessor;
-		struct font_key;
-		struct font_key_hasher;
-		typedef hash_map<font_key, weak_ptr<font>, font_key_hasher> fonts_cache;
-		typedef hash_map<font_key, weak_ptr<font::accessor>, font_key_hasher> scalabale_fonts_cache;
-		typedef hash_map<font_key, std::pair<font*, unsigned /*age*/>, font_key_hasher> garbage_container;
+
+		struct font_key_hasher
+		{
+			size_t operator ()(const font::key &key) const;
+		};
+
+		typedef hash_map<font::key, weak_ptr<font>, font_key_hasher> fonts_cache;
+		typedef hash_map<font::key, weak_ptr<font::accessor>, font_key_hasher> scalabale_fonts_cache;
+		typedef hash_map<font::key, std::pair<font*, unsigned /*age*/>, font_key_hasher> garbage_container;
 
 	private:
-		std::pair<font::accessor_ptr, real_t> create_font_accessor(font_key fk);
-		void on_released(const std::pair< font_key, weak_ptr<font> > &entry, font *font_);
+		std::pair<font::accessor_ptr, real_t> create_font_accessor(font::key fk);
+		void on_released(const fonts_cache::value_type *entry, font *font_);
 		void destroy(font *font_) throw();
 
 		virtual void on_before_removed(font * /*font_*/) throw() {	}
@@ -39,15 +42,15 @@ namespace agge
 	private:
 		loader &_loader;
 		const unsigned _collection_cycles;
-		shared_ptr<fonts_cache> _fonts;
-		shared_ptr<scalabale_fonts_cache> _scalable_fonts;
-		shared_ptr<garbage_container> _garbage;
+		fonts_cache _fonts;
+		scalabale_fonts_cache _scalable_fonts;
+		garbage_container _garbage;
 	};
 
 	struct text_engine_base::loader
 	{
 		virtual font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic,
-			text_engine_base::grid_fit grid_fit) = 0;
+			font::key::grid_fit grid_fit) = 0;
 	};
 
 	class text_engine_base::offset_conv

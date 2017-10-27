@@ -9,7 +9,7 @@ class font_accessor : public agge::font::accessor
 {
 public:
 	font_accessor(int height, const wchar_t *typeface, bool bold, bool italic,
-		agge::text_engine_base::grid_fit grid_fit);
+		agge::font::key::grid_fit grid_fit);
 
 	HFONT native() const;
 
@@ -20,5 +20,5 @@ private:
 
 private:
 	agge::shared_ptr<void> _native;
-	agge::text_engine_base::grid_fit _grid_fit;
+	agge::font::key::grid_fit _grid_fit;
 };		 
