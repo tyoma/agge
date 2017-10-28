@@ -8,7 +8,8 @@ namespace agge
 {
 	struct knuth_hash
 	{
-		std::size_t operator ()(int key) const { return key * 2654435761; }
+		std::size_t operator ()(unsigned int key) const { return key * 2654435761u; }
+		std::size_t operator ()(const void* key) const { return (*this)(static_cast<unsigned int>(reinterpret_cast<std::size_t>(key))); }
 	};
 
 	template <typename KeyT, typename ValueT, typename HashF = knuth_hash>

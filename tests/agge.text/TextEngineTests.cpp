@@ -350,7 +350,7 @@ namespace agge
 			}
 
 
-			test( GlyphRastersAtAllowedAreCachedPresetFractionalPrecisionX2 )
+			test( GlyphRastersAreCachedAtAllowedPresetFractionalPrecisionX2 )
 			{
 				// INIT
 				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
@@ -562,7 +562,6 @@ namespace agge
 				assert_equal(1, target.append_log[1].second.y);
 				assert_equal(c_outline_1, target.append_log[1].first->path);
 			}
-
 
 
 			test( MultiLineLayoutGlyphsAreRenderedInTheProperOrder )
@@ -888,6 +887,35 @@ namespace agge
 
 				// ASSERT
 				assert_equal(0u, *loader.allocated);
+			}
+
+
+			test( DifferentFontsHaveDistinctRasterCaches )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
+				mocks::font_accessor::glyph glyphs[] = { mocks::glyph(5.2, 0, c_outline_1), };
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 1000, false, false, font::key::gf_none),
+						mocks::font_accessor(c_fm2, indices, glyphs)),
+				};
+				mocks::fonts_loader loader(fonts);
+				text_engine<mocks::rasterizer> e(loader, 1);
+				mocks::rasterizer target;
+				font::ptr f1 = e.create_font(L"Arial", 101, false, false, font::key::gf_none);
+				font::ptr f2 = e.create_font(L"Arial", 15, false, false, font::key::gf_none);
+				font::ptr f3 = e.create_font(L"Arial", 10, false, false, font::key::gf_none);
+
+				// ACT
+				e.render_glyph(target, *f1, 0, 19.0f, -13.49f);
+				e.render_glyph(target, *f2, 0, 19.0f, -13.0f);
+				e.render_glyph(target, *f3, 0, 19.0f, -13.0f);
+
+				// ASSERT
+				assert_equal(3u, target.append_log.size());
+				assert_not_equal(target.append_log[1].first, target.append_log[0].first);
+				assert_not_equal(target.append_log[2].first, target.append_log[1].first);
+				assert_not_equal(target.append_log[2].first, target.append_log[0].first);
 			}
 
 		end_test_suite
