@@ -232,6 +232,9 @@ namespace agge
 
 	void vector_rasterizer::append(const vector_rasterizer &source, int dx_, int dy_)
 	{
+		if (source.empty())
+			return;
+
 		const short dx = static_cast<short>(dx_), dy = static_cast<short>(dy_);
 		const cell &last = *(_cells.end() - 1); // Relying on a guarantee that we had at least one cell prior this call.
 		const int shift_back = !(last.area | last.cover);
@@ -255,7 +258,7 @@ namespace agge
 
 	void vector_rasterizer::sort(bool was_presorted)
 	{
-		if (_sorted || _min_y > _max_y)
+		if (_sorted || empty())
 			return;
 
 		_x_sorted_cells.resize(_cells.size());

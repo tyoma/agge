@@ -477,7 +477,8 @@ namespace agge
 				assert_equal(17u, v2.size());
 				assert_equal(v2.end(), find_if(v2.begin(), v2.end(), bind1st(not_equal_to<char>(), 'r')));
 				assert_equal(29u, v3.size());
-				assert_equal(v3.end(), find_if(v3.begin(), v3.end(), bind1st(not_equal_to<unsigned char>(), 191)));
+				assert_equal(v3.end(), find_if(v3.begin(), v3.end(), bind1st(not_equal_to<unsigned char>(),
+					static_cast<unsigned char>(191))));
 
 				// ACT
 				v1.assign(5, 3.15114926f);
@@ -490,7 +491,8 @@ namespace agge
 				assert_equal(918u, v2.size());
 				assert_equal(v2.end(), find_if(v2.begin(), v2.end(), bind1st(not_equal_to<char>(), 'Z')));
 				assert_equal(18u, v3.size());
-				assert_equal(v3.end(), find_if(v3.begin(), v3.end(), bind1st(not_equal_to<unsigned char>(), 23)));
+				assert_equal(v3.end(), find_if(v3.begin(), v3.end(), bind1st(not_equal_to<unsigned char>(),
+					static_cast<unsigned char>(23))));
 			}
 
 

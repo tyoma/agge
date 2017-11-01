@@ -41,6 +41,7 @@ namespace agge
 		void append(const vector_rasterizer &source, int dx, int dy);
 		const cells_container &cells() const;
 		void sort(bool was_presorted = false);
+		bool empty() const;
 		bool sorted() const;
 
 		scanline_cells operator [](int y) const;
@@ -73,6 +74,9 @@ namespace agge
 	inline const vector_rasterizer::cells_container &vector_rasterizer::cells() const
 	{	return _cells;	}
 
+	inline bool vector_rasterizer::empty() const
+	{	return _min_y > _max_y;	}
+
 	inline bool vector_rasterizer::sorted() const
 	{	return !!_sorted;	}
 
@@ -86,11 +90,11 @@ namespace agge
 	}
 
 	inline int vector_rasterizer::width() const
-	{	return _max_x >= _min_x ? _max_x - _min_x + 1 : 0;	}
+	{	return empty() ? 0 : _max_x - _min_x + 1;	}
 
 	inline int vector_rasterizer::min_y() const
 	{	return _min_y;	}
 
 	inline int vector_rasterizer::height() const
-	{	return _max_y >= _min_y ? _max_y - _min_y + 1 : 0;	}
+	{	return empty() ? 0 : _max_y - _min_y + 1;	}
 }

@@ -70,6 +70,7 @@ namespace agge
 				// ACT
 				assert_equal(0, vr.width());
 				assert_equal(0, vr.height());
+				assert_is_true(vr.empty());
 			}
 
 
@@ -86,6 +87,7 @@ namespace agge
 				assert_equal(1, vr1.width());
 				assert_equal(17, vr1.min_y());
 				assert_equal(1, vr1.height());
+				assert_is_false(vr1.empty());
 
 				assert_equal(1, vr2.width());
 				assert_equal(-37, vr2.min_y());
@@ -137,6 +139,7 @@ namespace agge
 				assert_equal(148, vr1.width());
 				assert_equal(17, vr1.min_y());
 				assert_equal(121, vr1.height());
+				assert_is_false(vr1.empty());
 
 				assert_equal(469, vr2.width());
 				assert_equal(-336, vr2.min_y());
@@ -1481,6 +1484,25 @@ namespace agge
 				assert_equal(1126, vr1.width());
 				assert_equal(-233, vr1.min_y());
 				assert_equal(1137, vr1.height());
+			}
+
+
+			test( AppendingEmptyDoesNotAffectCurrentRasterizer )
+			{
+				// INIT
+				vector_rasterizer vr, empty;
+
+				rectangle(vr, 1, 1, 3, -4);
+				vr.sort();
+
+				pod_vector<vector_rasterizer::cell> cells = vr.cells();
+
+				// ACT
+				vr.append(empty, 0, 0);
+
+				// ASSERT
+				assert_equal(cells, vr.cells());
+				assert_is_true(vr.sorted());
 			}
 
 		end_test_suite
