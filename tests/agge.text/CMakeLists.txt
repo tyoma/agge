@@ -1,11 +1,10 @@
 set(AGGE_TEXT_TEST_SOURCES
 	FontTests.cpp
 	LayoutTests.cpp
-	main.cpp
 	mocks.cpp
 	TextEngineTests.cpp
 )
 
-add_executable(agge.text.tests ${AGGE_TEXT_TEST_SOURCES})
+add_library(agge.text.tests SHARED ${AGGE_TEXT_TEST_SOURCES})
 
 target_link_libraries(agge.text.tests agge.text utee)

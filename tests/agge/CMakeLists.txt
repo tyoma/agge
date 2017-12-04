@@ -7,7 +7,6 @@ set(AGGE_TEST_SOURCES
 	FiguresTests.cpp
 	FillingRulesTests.cpp
 	GenericBlendersTests.cpp
-	main.cpp
 	MiscTests.cpp
 	ParallelExecutionTests.cpp
 	PathTests.cpp
@@ -31,6 +30,6 @@ endif()
 
 find_package(Threads)
 
-add_executable(agge.tests ${AGGE_TEST_SOURCES})
+add_library(agge.tests SHARED ${AGGE_TEST_SOURCES})
 
 target_link_libraries(agge.tests agge utee ${CMAKE_THREAD_LIBS_INIT})

@@ -12,5 +12,5 @@ script:
  - cd _build
  - cmake ..
  - make
- - tests/agge/agge.tests
- - tests/agge.text/agge.text.tests
+ - bin/utee-runner bin/libagge.tests.so
+ - bin/utee-runner bin/libagge.text.tests.so
