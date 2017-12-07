@@ -22,7 +22,6 @@
     <ClCompile Include="DashTests.cpp" />
     <ClCompile Include="StrokeTests.cpp" />
     <ClCompile Include="PreciseDeltaTests.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="platform\win32\mt.cpp">
       <Filter>platform\win32</Filter>
     </ClCompile>
@@ -34,6 +33,7 @@
     <ClCompile Include="BlendersTests.cpp" />
     <ClCompile Include="GenericBlendersTests.cpp" />
     <ClCompile Include="FiguresTests.cpp" />
+    <ClCompile Include="CurvesTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />

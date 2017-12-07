@@ -55,7 +55,6 @@
     <ClCompile Include="CurvesTests.cpp" />
     <ClCompile Include="DashTests.cpp" />
     <ClCompile Include="FillingRulesTests.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="MiscTests.cpp" />
     <ClCompile Include="platform\linux\mt.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
