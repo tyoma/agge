@@ -47,7 +47,6 @@
     <ClCompile Include="TextEngineTests.cpp" />
     <ClCompile Include="FontTests.cpp" />
     <ClCompile Include="LayoutTests.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="mocks.cpp" />
   </ItemGroup>
   <ItemGroup>
