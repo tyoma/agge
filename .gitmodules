@@ -2,3 +2,7 @@
 	path = libraries/utee
 	url = ../utee.git
 	branch = master
+[submodule "libraries/strmd"]
+	path = libraries/strmd
+	url = ../strmd.git
+	branch = master

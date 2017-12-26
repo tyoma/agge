@@ -1,5 +1,5 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8B1C0537-2027-4D8C-82BD-72E0E69DB827}"
 EndProject
@@ -18,7 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "experiments", "experiments"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libraries", "libraries", "{2C76886C-5670-49D2-B817-719075E29647}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "showcase", "..\misc\experiments\showcase\gdi-performance.vcxproj", "{9D242F15-F57C-4B3F-B6F2-532DEAC68E71}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gdi-performance", "..\misc\experiments\showcase\gdi-performance.vcxproj", "{9D242F15-F57C-4B3F-B6F2-532DEAC68E71}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sandbox.android", "..\misc\experiments\sandbox.android\sandbox.android.vcxproj", "{8D284FFF-6B35-4F6A-ADCE-CFCF759D6BC3}"
 EndProject
@@ -46,6 +46,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "text-gdi", "..\samples\text-gdi\text-gdi.vcxproj", "{350126F7-175E-49FC-ADF7-E5B56392EF8C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "figures", "..\samples\figures\figures.vcxproj", "{3B0A1697-8654-4F78-8EE4-F673002F9BD9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "font-extractor", "..\misc\font-extractor\font-extractor.vcxproj", "{5F8C37C0-1768-46ED-99D0-F0D25C904C49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -229,6 +231,18 @@ Global
 		{3B0A1697-8654-4F78-8EE4-F673002F9BD9}.Release|Win32.Build.0 = Release|Win32
 		{3B0A1697-8654-4F78-8EE4-F673002F9BD9}.Release|x64.ActiveCfg = Release|x64
 		{3B0A1697-8654-4F78-8EE4-F673002F9BD9}.Release|x64.Build.0 = Release|x64
+		{5F8C37C0-1768-46ED-99D0-F0D25C904C49}.Debug|Android.ActiveCfg = Debug|Android
+		{5F8C37C0-1768-46ED-99D0-F0D25C904C49}.Debug|Android.Build.0 = Debug|Android
+		{5F8C37C0-1768-46ED-99D0-F0D25C904C49}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5F8C37C0-1768-46ED-99D0-F0D25C904C49}.Debug|Win32.Build.0 = Debug|Win32
+		{5F8C37C0-1768-46ED-99D0-F0D25C904C49}.Debug|x64.ActiveCfg = Debug|x64
+		{5F8C37C0-1768-46ED-99D0-F0D25C904C49}.Debug|x64.Build.0 = Debug|x64
+		{5F8C37C0-1768-46ED-99D0-F0D25C904C49}.Release|Android.ActiveCfg = Release|Android
+		{5F8C37C0-1768-46ED-99D0-F0D25C904C49}.Release|Android.Build.0 = Release|Android
+		{5F8C37C0-1768-46ED-99D0-F0D25C904C49}.Release|Win32.ActiveCfg = Release|Win32
+		{5F8C37C0-1768-46ED-99D0-F0D25C904C49}.Release|Win32.Build.0 = Release|Win32
+		{5F8C37C0-1768-46ED-99D0-F0D25C904C49}.Release|x64.ActiveCfg = Release|x64
+		{5F8C37C0-1768-46ED-99D0-F0D25C904C49}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -247,5 +261,6 @@ Global
 		{F8831217-77AD-C993-42B5-05773A935835} = {202D9A95-7B05-479F-999C-FD540D3CD169}
 		{350126F7-175E-49FC-ADF7-E5B56392EF8C} = {202D9A95-7B05-479F-999C-FD540D3CD169}
 		{3B0A1697-8654-4F78-8EE4-F673002F9BD9} = {202D9A95-7B05-479F-999C-FD540D3CD169}
+		{5F8C37C0-1768-46ED-99D0-F0D25C904C49} = {627993FB-EB88-4D04-AA8F-CEE4EB9BD850}
 	EndGlobalSection
 EndGlobal
