@@ -1,3 +1,4 @@
+#include <samples/common/services.h>
 #include <samples/common/shell.h>
 
 #include "../../shell-inline.h"
@@ -21,14 +22,12 @@ namespace
 	const int c_averaging_n = 100;
 	application::timings c_zero_timings = { 0 };
 
-	class shell
+	class shell : services
 	{
 	public:
-		shell()
-			: _application(agge_create_application()), _window(0), _timings(c_zero_timings), _timings_averaging(0)
-		{	}
-
-		~shell()
+		shell(ANativeActivity *activity)
+			: _activity(activity), _application(agge_create_application(*this)), _window(0), _timings(c_zero_timings),
+				_timings_averaging(0)
 		{	}
 
 		void onWindowCreated(ANativeWindow *window)
@@ -103,6 +102,28 @@ namespace
 		}
 
 	private:
+		virtual stream *open_file(const char *path)
+		{
+			class asset_stream : public stream
+			{
+			public:
+				asset_stream(AAssetManager *amanager, const char *path)
+					: _stream(AAssetManager_open(amanager, path, AASSET_MODE_STREAMING), &AAsset_close)
+				{
+					LOGI("Loaded %s at %X...", path, _stream.get());
+				}
+
+				virtual void read(void *buffer, size_t size)
+				{	AAsset_read(_stream.get(), buffer, size);	}
+
+			private:
+				shared_ptr<AAsset> _stream;
+			};
+
+			return new asset_stream(_activity->assetManager, path);
+		}
+
+	private:
 		static int onMessageS(int fd, int events, void* data)
 		{	return static_cast<shell *>(data)->onMessage(fd, events);	}
 
@@ -130,6 +151,7 @@ namespace
 		}
 
 	private:
+		ANativeActivity *_activity;
 		unique_ptr<application> _application;
 		shared_ptr<AInputQueue> _queue;
 		ANativeWindow *_window;
@@ -161,7 +183,7 @@ namespace
 
 extern "C" void ANativeActivity_onCreate(ANativeActivity *activity, void * /*savedState*/, size_t /*savedStateSize*/)
 {
-	unique_ptr<shell> s(new shell());
+	unique_ptr<shell> s(new shell(activity));
 
 	activity->instance = s.release();
 	activity->callbacks->onDestroy = &onDestroy;

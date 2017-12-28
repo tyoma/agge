@@ -30,7 +30,9 @@
 	typedef agge::blender_solid_color_rgb<agge::pixel32, platform_pixel_order> platform_blender_solid_color;
 #endif
 
-struct application
+struct services;
+
+struct application : agge::noncopyable
 {
 	struct timings
 	{
@@ -41,7 +43,7 @@ struct application
 		double blitting;
 	};
 
-	application();
+	virtual ~application();
 
 	virtual void draw(platform_bitmap &surface, timings &timings_) = 0;
 	virtual void resize(int width, int height);
@@ -49,4 +51,4 @@ struct application
 
 
 
-extern application *agge_create_application();
+extern application *agge_create_application(services &/*s*/);

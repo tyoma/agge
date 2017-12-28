@@ -7,6 +7,9 @@
     <Filter Include="android">
       <UniqueIdentifier>{e764482c-e2d3-4c6d-96f2-31ed302c36e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="assets">
+      <UniqueIdentifier>{3fcd698c-9f35-404c-8809-f4e114d66fd2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="AndroidManifest.xml">
@@ -20,6 +23,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="arial-1000.fnt" />
+    <CustomBuild Include="assets\arial-1000.fnt">
+      <Filter>assets</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

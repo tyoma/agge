@@ -18,8 +18,8 @@ namespace demo
 	class TextDrawer : public application
 	{
 	public:
-		TextDrawer()
-			: _renderer(1), _text_engine(_font_loader), _ddx(0.0f)
+		TextDrawer(services &s)
+			: _renderer(1), _font_loader(s), _text_engine(_font_loader), _ddx(0.0f)
 		{	}
 
 	private:
@@ -36,7 +36,7 @@ namespace demo
 
 			_rasterizer.reset();
 
-			font::ptr f = _text_engine.create_font(L"Arial", 16, false, false, font::key::gf_none);
+			font::ptr f = _text_engine.create_font(L"arial", 16, false, false, font::key::gf_none);
 			layout l(c_text_long.c_str(), f);
 
 			l.limit_width(static_cast<real_t>(surface.width()));
@@ -71,7 +71,7 @@ namespace demo
 	};
 }
 
-application *agge_create_application()
+application *agge_create_application(services &s)
 {
-	return new demo::TextDrawer;
+	return new demo::TextDrawer(s);
 }

@@ -1,9 +1,7 @@
 #pragma once
 
-application::application()
-{
-}
+application::~application()
+{	}
 
 void application::resize(int /*width*/, int /*height*/)
-{
-}
+{	}

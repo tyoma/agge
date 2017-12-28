@@ -3,6 +3,7 @@
 #include <agge.text/font.h>
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 namespace std { namespace tr1 { } using namespace tr1; }
 

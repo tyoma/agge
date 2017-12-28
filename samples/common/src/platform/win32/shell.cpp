@@ -18,6 +18,7 @@
 //	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //	THE SOFTWARE.
 
+#include <samples/common/services.h>
 #include <samples/common/shell.h>
 #include <samples/common/timing.h>
 
@@ -36,6 +37,11 @@ namespace
 	const application::timings c_zero_timings = { 0 };
 	const int c_initial_width = 736;
 	const int c_initial_height = 800;
+
+	class desktop_services : public services
+	{
+		virtual stream *open_file(const char *path);
+	};
 
 	class MainDialog
 	{
@@ -65,6 +71,26 @@ namespace
 		application::timings _timings;
 	};
 
+
+
+	stream *desktop_services::open_file(const char *path)
+	{
+		class file_stream : public stream
+		{
+		public:
+			file_stream(const char *path)
+				: _stream(fopen(path, "rb"), &fclose)
+			{	}
+
+			virtual void read(void *buffer, size_t size)
+			{	fread(buffer, 1, size, _stream.get());	}
+
+		private:
+			shared_ptr<FILE> _stream;
+		};
+
+		return new file_stream(path);
+	}
 
 
 	MainDialog::MainDialog(application &application_)
@@ -207,7 +233,8 @@ int main()
 {
 	::SetProcessDPIAware();
 
-	auto_ptr<application> app(agge_create_application());
+	desktop_services s;
+	auto_ptr<application> app(agge_create_application(s));
 	MainDialog dialog(*app);
 
 	MainDialog::PumpMessages();

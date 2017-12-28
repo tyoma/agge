@@ -82,9 +82,6 @@
     <ClInclude Include="platform\android\bitmap.h">
       <Filter>src\platform\android</Filter>
     </ClInclude>
-    <ClInclude Include="shell-inline.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\font_loader.h" />
     <ClInclude Include="..\lipsum.h" />
     <ClInclude Include="platform\android\sys\timerfd.h">
@@ -97,5 +94,9 @@
       <Filter>platform\win32</Filter>
     </ClInclude>
     <ClInclude Include="..\truetype.h" />
+    <ClInclude Include="..\services.h" />
+    <ClInclude Include="shell-inline.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

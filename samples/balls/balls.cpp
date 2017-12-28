@@ -66,7 +66,7 @@ namespace
 	};
 }
 
-application *agge_create_application()
+application *agge_create_application(services &/*s*/)
 {
 	return new Balls;
 }

@@ -51,6 +51,7 @@
     <ClInclude Include="..\lipsum.h" />
     <ClInclude Include="..\platform\win32\dc.h" />
     <ClInclude Include="..\platform\win32\font_accessor.h" />
+    <ClInclude Include="..\services.h" />
     <ClInclude Include="..\shell.h" />
     <ClInclude Include="..\timing.h" />
     <ClInclude Include="..\truetype.h" />
