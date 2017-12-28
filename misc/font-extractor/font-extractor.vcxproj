@@ -42,15 +42,13 @@
     <ClCompile>
       <AdditionalIncludeDirectories>./../..;./../../libraries/strmd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="font-extractor.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\samples\common\src\samples-common.vcxproj">

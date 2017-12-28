@@ -1,14 +1,14 @@
-#include "truetype.h"
+#include <samples/common/serialization.h>
+#include <samples/common/truetype.h>
 
 #include <agge.text/font.h>
 #include <fcntl.h>
 #include <io.h>
+#include <numeric>
 #include <samples/common/platform/win32/dc.h>
 #include <stdio.h>
 #include <strmd/serializer.h>
 #include <windows.h>
-
-#pragma warning(disable:4996)
 
 using namespace agge;
 using namespace std;
@@ -71,7 +71,7 @@ namespace
 
 				p = header + 1;
 				poly.start.x = real2fint(fixed2real(header->pfxStart.x) / xfactor);
-				poly.start.y = real2fint(fixed2real(header->pfxStart.y) / xfactor);
+				poly.start.y = fixed2fint(header->pfxStart.y);
 
 				for (const TTPOLYCURVE *curve; curve = static_cast<const TTPOLYCURVE *>(p), p != next_poly;
 					p = static_cast<const agge::uint8_t *>(p) + sizeof(TTPOLYCURVE) + (curve->cpfx - 1) * sizeof(POINTFX))
@@ -111,16 +111,45 @@ namespace
 	};
 }
 
-int main(int /*argc*/, const char * /*argv*/[])
+int main(int argc, const char *argv[])
 {
+	int height = 10;
+	bool italic = false, bold = false;
+	string typeface = "Arial";
+
+	for (int i = 1; i != argc; ++i)
+	{
+		int theight;
+		string arg = argv[i];
+
+		errno = 0;
+		if (arg == "bold")
+			bold = true;
+		else if (arg == "italic")
+			italic = true;
+		else if (theight = atoi(arg.c_str()), theight)
+			height = theight;
+		else
+			typeface = arg;
+	}
+	
 	dc ctx;
-	shared_ptr<void> hfont(::CreateFontA(10, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, 0, ANTIALIASED_QUALITY, 0, 0, 0,
-		"Calibri"), &delete_object);
+	shared_ptr<void> hfont(::CreateFontA(height, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, !!italic, FALSE, FALSE, 0,
+		ANTIALIASED_QUALITY, 0, 0, 0, typeface.c_str()), &delete_object);
 	shared_ptr<void> selector = ctx.select(hfont.get());
 	truetype::glyph g;
 	truetype::font f;
+	TEXTMETRIC tm;
 
-	for (agge::uint16_t index = 0; load_glyph(ctx, font::key::gf_none, index, g); ++index)
+	::GetTextMetrics(ctx, &tm);
+	f.metrics.ascent = real2fint(static_cast<real_t>(tm.tmAscent));
+	f.metrics.descent = real2fint(static_cast<real_t>(tm.tmDescent));
+	f.metrics.leading = real2fint(static_cast<real_t>(tm.tmExternalLeading));
+
+	for (wchar_t c = 0; c != (numeric_limits<wchar_t>::max)(); ++c)
+		::GetGlyphIndicesW(ctx, &c, 1, &f.char_to_glyph[c], GGI_MARK_NONEXISTING_GLYPHS);
+
+	for (agge::uint16_t index = 0; load_glyph(ctx, font::key::gf_strong, index, g); ++index)
 	{
 		f.glyphs.push_back(g);
 		g = truetype::glyph();

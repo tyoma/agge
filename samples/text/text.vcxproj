@@ -67,6 +67,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="AndroidManifest.xml" />
+    <CustomBuild Include="arial-1000.fnt">
+      <FileType>Document</FileType>
+      <Command>copy "%(FullPath)" "$(OutDir)%(Filename)%(Extension)"</Command>
+      <Outputs>$(OutDir)%(Filename)%(Extension)</Outputs>
+    </CustomBuild>
     <None Include="build.xml" />
     <None Include="project.properties" />
   </ItemGroup>

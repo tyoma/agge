@@ -19,4 +19,7 @@
       <Filter>android</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="arial-1000.fnt" />
+  </ItemGroup>
 </Project>

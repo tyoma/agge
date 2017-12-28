@@ -36,7 +36,7 @@ namespace demo
 
 			_rasterizer.reset();
 
-			font::ptr f = _text_engine.create_font(L"tahoma", 14, false, false, font::key::gf_strong);
+			font::ptr f = _text_engine.create_font(L"Arial", 16, false, false, font::key::gf_none);
 			layout l(c_text_long.c_str(), f);
 
 			l.limit_width(static_cast<real_t>(surface.width()));

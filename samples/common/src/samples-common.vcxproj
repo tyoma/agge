@@ -40,9 +40,10 @@
   </ImportGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>../../..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../..;./../../../libraries/strmd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <AdditionalOptions Condition="'$(Platform)'=='Android'">-std=c++11 %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -52,11 +53,13 @@
     <ClInclude Include="..\platform\win32\font_accessor.h" />
     <ClInclude Include="..\shell.h" />
     <ClInclude Include="..\timing.h" />
+    <ClInclude Include="..\truetype.h" />
     <ClInclude Include="platform\android\bitmap.h" />
     <ClInclude Include="platform\android\sys\timerfd.h" />
     <ClInclude Include="shell-inline.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="font_loader.cpp" />
     <ClCompile Include="platform\android\bitmap.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
     </ClCompile>
@@ -78,6 +81,7 @@
     <ClCompile Include="platform\win32\timing.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'!='Win32' And '$(Platform)'!='x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="truetype.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
