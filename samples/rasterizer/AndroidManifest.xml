@@ -9,7 +9,7 @@
 
 	<application android:label="AGGE Samples: Rasterizer" android:hasCode="false">
 		<activity android:name="android.app.NativeActivity" android:label="AGGE Samples: Rasterizer">
-			<meta-data android:name="android.app.lib_name" android:value="figures" />
+			<meta-data android:name="android.app.lib_name" android:value="rasterizer" />
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
