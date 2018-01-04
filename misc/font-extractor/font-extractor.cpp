@@ -13,11 +13,6 @@
 using namespace agge;
 using namespace std;
 
-namespace strmd
-{
-	template <> struct is_arithmetic<wchar_t> { static const bool value = true; };
-}
-
 namespace
 {
 	using agge::uint16_t;

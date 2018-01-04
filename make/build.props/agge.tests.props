@@ -3,6 +3,9 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="agge.props" />
   </ImportGroup>
+  <PropertyGroup Label="UserMacros">
+    <TestRunnerExe>$(SolutionDir)_bin\Release_$(PlatformName)\utee-runner.exe</TestRunnerExe>
+  </PropertyGroup>
 
   <ItemDefinitionGroup>
     <ClCompile>

@@ -9,11 +9,6 @@ using namespace agge;
 using namespace std;
 using namespace strmd;
 
-namespace strmd
-{
-	template <> struct is_arithmetic<wchar_t> { static const bool value = true; };
-}
-
 namespace
 {
 	string convert_mb(const wstring &from)

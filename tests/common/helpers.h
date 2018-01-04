@@ -25,7 +25,7 @@ namespace agge
 			if (lhs == rhs)
 				return true;
 
-			const real_t tolerance = 2e-6f;
+			const real_t tolerance = 2e-5f;
 			const real_t d = (lhs - rhs) / (lhs + rhs);
 			
 			return -tolerance <= d && d <= tolerance;
