@@ -7,8 +7,8 @@
 	#include "platform/win32/parallel-inline.h"
 #elif defined(AGGE_PLATFORM_LINUX)
 	#include "platform/linux/parallel-inline.h"
-#else
-	#include "platform/linux/parallel-inline.h"
+#elif defined(AGGE_PLATFORM_APPLE)
+	#include "platform/apple/parallel-inline.h"
 #endif
 
 namespace agge

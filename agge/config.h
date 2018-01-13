@@ -31,6 +31,8 @@
 	#define AGGE_PLATFORM_ANDROID
 #elif defined(__linux__)
 	#define AGGE_PLATFORM_LINUX
+#elif defined(__APPLE__)
+	#define AGGE_PLATFORM_APPLE
 #elif defined(_WIN32)
 	#define AGGE_PLATFORM_WINDOWS
 #else
