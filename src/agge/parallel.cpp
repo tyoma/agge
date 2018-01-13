@@ -8,6 +8,7 @@
 #elif defined(AGGE_PLATFORM_LINUX)
 	#include "platform/linux/parallel-inline.h"
 #else
+	#include "platform/linux/parallel-inline.h"
 #endif
 
 namespace agge

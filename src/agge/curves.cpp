@@ -20,7 +20,7 @@ namespace agge
 	}
 
 	qbezier::iterator::iterator(real_t xb, real_t yb, real_t xc, real_t yc, real_t xe, real_t ye, real_t step)
-		: _xb(xb), _yb(yb), _xc(xc), _yc(yc), _xe(xe), _ye(ye), _t(0.0f), _stage(path_command_move_to), _step(step)
+		: _xb(xb), _yb(yb), _xc(xc), _yc(yc), _xe(xe), _ye(ye), _t(0.0f), _step(step), _stage(path_command_move_to)
 	{	}
 
 	int qbezier::iterator::vertex(real_t *x, real_t *y)
@@ -56,7 +56,8 @@ namespace agge
 
 
 	cbezier::iterator::iterator(real_t xb, real_t yb, real_t xc1, real_t yc1, real_t xc2, real_t yc2, real_t xe, real_t ye, real_t step)
-		: _xb(xb), _yb(yb), _xc1(xc1), _yc1(yc1), _xc2(xc2), _yc2(yc2), _xe(xe), _ye(ye), _t(0.0f), _stage(path_command_move_to), _step(step)
+		: _xb(xb), _yb(yb), _xc1(xc1), _yc1(yc1), _xc2(xc2), _yc2(yc2), _xe(xe), _ye(ye), _t(0.0f), _step(step),
+			_stage(path_command_move_to)
 	{	}
 
 	int cbezier::iterator::vertex(real_t *x, real_t *y)

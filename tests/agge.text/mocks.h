@@ -134,7 +134,7 @@ namespace agge
 			template <typename T, size_t n>
 			inline font_accessor::glyph glyph(double dx, double dy, T (&outline)[n])
 			{
-				font_accessor::glyph g = { dx, dy };
+				font_accessor::glyph g = { { dx, dy } };
 
 				for (size_t i = 0; i != n; ++i)
 					g.outline.push_back(outline[i]);

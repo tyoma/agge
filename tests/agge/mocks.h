@@ -215,7 +215,7 @@ namespace agge
 
 			public:
 				bitmap(count_t width, count_t height)
-					: _width(width), _height(height), data((width + x_guard) * (height + y_guard))
+					: data((width + x_guard) * (height + y_guard)), _width(width), _height(height)
 				{	}
 
 				pixel *row_ptr(count_t y)
@@ -313,7 +313,7 @@ namespace agge
 		template <typename SourceT>
 		inline mocks::path::point vertex(SourceT &source)
 		{
-			mocks::path::point p = { 0 };
+			mocks::path::point p = { };
 
 			p.command = source.vertex(&p.x, &p.y);
 			return p;

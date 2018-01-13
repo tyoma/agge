@@ -77,7 +77,7 @@ namespace agge
 	inline parallel::thread::thread(count_t id)
 		: kernel(0), _id(id)
 	{
-		if (int error = pthread_create(&_thread, 0, &parallel::thread::thread_proc, this))
+		if (pthread_create(&_thread, 0, &parallel::thread::thread_proc, this))
 			throw std::bad_alloc();
 	}
 

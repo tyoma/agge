@@ -89,7 +89,7 @@ namespace agge
 
 		inline pixel32 make_pixel(uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c3)
 		{
-			pixel32 p = { c0, c1, c2, c3 };
+			pixel32 p = { { c0, c1, c2, c3 } };
 			return p;
 		}
 

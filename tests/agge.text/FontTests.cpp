@@ -16,7 +16,6 @@ namespace agge
 		namespace
 		{
 			font::metrics c_fm1 = { 10.0f, 2.0f, 2.0f };
-			font::metrics c_fm2 = { 14.0f, 3.0f, 1.0f };
 		}
 
 		begin_test_suite( FontTests )
@@ -110,7 +109,7 @@ namespace agge
 				mocks::font_accessor::char_to_index indices[] = {
 					{ L'A', 0 }, { L'b', 13 }, { L'h', 1130 }, { L'!', 7 }, { L'"', 19 },
 				};
-				mocks::font_accessor::glyph glyphs[] = { { 0, 0 }, };
+				mocks::font_accessor::glyph glyphs[] = { { { 0, 0 } }, };
 				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
 
 				// ACT / ASSERT
@@ -128,7 +127,7 @@ namespace agge
 				mocks::font_accessor::char_to_index indices[] = {
 					{ L'a', 19 }, { L'B', 13111 },
 				};
-				mocks::font_accessor::glyph glyphs[] = { { 0, 0 }, };
+				mocks::font_accessor::glyph glyphs[] = { { { 0, 0 } }, };
 				shared_ptr<mocks::font_accessor> a(new mocks::font_accessor(c_fm1, indices, glyphs));
 				font::ptr f(new font(a));
 

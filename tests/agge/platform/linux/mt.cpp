@@ -30,6 +30,6 @@ namespace agge
 
 
 		thread_id this_thread_id()
-		{ return pthread_self(); }
+		{ return reinterpret_cast<thread_id>(pthread_self()); }
 	}
 }

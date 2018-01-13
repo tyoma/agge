@@ -98,10 +98,6 @@ namespace agge
 					assert_equal(reference, output);
 				}
 			end_test_suite
-
-
-			begin_test_suite( MiterJoinTests )
-			end_test_suite
 		}
 	}
 }

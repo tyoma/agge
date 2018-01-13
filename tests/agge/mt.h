@@ -1,10 +1,12 @@
 #pragma once
 
+#include <stddef.h>
+
 namespace agge
 {
 	namespace tests
 	{
-		typedef unsigned int thread_id;
+		typedef size_t thread_id;
 
 		class mutex
 		{

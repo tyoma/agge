@@ -14,4 +14,6 @@ if (WIN32)
 	set(AGGE_SOURCES ${AGGE_SOURCES} platform/win32/bitmap.cpp)
 endif()
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++03")
+
 add_library(agge STATIC ${AGGE_SOURCES})

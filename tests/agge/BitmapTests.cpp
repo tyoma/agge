@@ -31,8 +31,8 @@ namespace agge
 			{
 			public:
 				raw_bitmap(count_t width, count_t height, bits_per_pixel bpp, count_t row_extra_bytes)
-					: _width(width), _height(height), _bpp(bpp), data(width * height * ((int)bpp / 8)),
-						extra_bytes(row_extra_bytes)
+					: data(width * height * ((int)bpp / 8)), extra_bytes(row_extra_bytes), _width(width), _height(height),
+						_bpp(bpp)
 				{	}
 
 				count_t width() const

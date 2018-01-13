@@ -4,6 +4,8 @@
 #include "hash_map.h"
 #include "shared_ptr.h"
 
+#include <string>
+
 namespace agge
 {
 	class font : noncopyable

@@ -96,9 +96,6 @@ namespace agge
 				r.line_to(x2, y1),
 				r.close_polygon();
 			}
-
-			extern const mocks::coords_pair<int> c_box1 = { 0x0080, 0x0A4, 0x238, 0x2C0 };
-			extern const mocks::coords_pair<real_t> c_box2 = { 0.5f, 0.640625f, 2.21875f, 2.75f };
 		}
 
 		begin_test_suite( RasterizerTests )

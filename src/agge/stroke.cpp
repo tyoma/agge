@@ -7,7 +7,7 @@
 namespace agge
 {
 	stroke::stroke()
-		: _cap(0), _join(0), _o(_output.end()), _state(0)
+		: _o(_output.end()), _cap(0), _join(0), _state(0)
 	{	}
 
 	stroke::~stroke()
