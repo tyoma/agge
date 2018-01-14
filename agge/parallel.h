@@ -19,7 +19,7 @@ namespace agge
 		struct thread;
 
 	private:
-		void destroy_threads();
+		void destroy_threads() throw();
 
 	private:
 		raw_memory_object _threads;

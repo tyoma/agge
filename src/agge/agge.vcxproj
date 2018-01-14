@@ -41,6 +41,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>../..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Warnings Condition="'$(Platform)'=='Android'">AllWarnings</Warnings>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -50,13 +51,37 @@
     <ClCompile Include="curves.cpp" />
     <ClCompile Include="dash.cpp" />
     <ClCompile Include="figures.cpp" />
+    <ClCompile Include="hybrid_event.cpp" />
     <ClCompile Include="math.cpp" />
     <ClCompile Include="parallel.cpp">
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
     </ClCompile>
+    <ClCompile Include="platform\apple\semaphore.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="platform\linux\semaphore.cpp">
+      <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="platform\unix\intrinsic.cpp">
+      <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="platform\unix\thread.cpp">
+      <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="platform\win32\bitmap.cpp">
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="platform\win32\intrinsic.cpp">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="platform\win32\semaphore.cpp">
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="platform\win32\thread.cpp">
+      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
     </ClCompile>
     <ClCompile Include="stroke.cpp" />
     <ClCompile Include="stroke_features.cpp" />
@@ -91,8 +116,10 @@
     <ClInclude Include="..\..\agge\vector_rasterizer.h" />
     <ClInclude Include="..\..\agge\vertex_sequence.h" />
     <ClInclude Include="..\..\agge\filling_rules.h" />
-    <ClInclude Include="platform\linux\parallel-inline.h" />
-    <ClInclude Include="platform\win32\parallel-inline.h" />
+    <ClInclude Include="intrinsic.h" />
+    <ClInclude Include="handle.h" />
+    <ClInclude Include="hybrid_event.h" />
+    <ClInclude Include="thread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

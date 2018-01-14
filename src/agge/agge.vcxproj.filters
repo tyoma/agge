@@ -19,6 +19,12 @@
     <Filter Include="src\platform\linux">
       <UniqueIdentifier>{62dfc468-0909-425b-b5f3-66f1e1f2dd0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\platform\apple">
+      <UniqueIdentifier>{9d828ab1-97fd-4f3e-bbb1-1836dc67a08c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\platform\unix">
+      <UniqueIdentifier>{a8ab7650-4d75-403b-9c81-c63347e9a3af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vector_rasterizer.cpp">
@@ -51,14 +57,32 @@
     <ClCompile Include="curves.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="hybrid_event.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\win32\semaphore.cpp">
+      <Filter>src\platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\win32\intrinsic.cpp">
+      <Filter>src\platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\linux\semaphore.cpp">
+      <Filter>src\platform\linux</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\unix\intrinsic.cpp">
+      <Filter>src\platform\unix</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\apple\semaphore.cpp">
+      <Filter>src\platform\apple</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\win32\thread.cpp">
+      <Filter>src\platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\unix\thread.cpp">
+      <Filter>src\platform\unix</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="platform\win32\parallel-inline.h">
-      <Filter>src\platform\win32</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\linux\parallel-inline.h">
-      <Filter>src\platform\linux</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\agge\bitmap.h" />
     <ClInclude Include="..\..\agge\blenders_simd.h" />
     <ClInclude Include="..\..\agge\clipper.h" />
@@ -89,5 +113,17 @@
     <ClInclude Include="..\..\agge\blenders_generic.h" />
     <ClInclude Include="..\..\agge\figures.h" />
     <ClInclude Include="..\..\agge\curves.h" />
+    <ClInclude Include="hybrid_event.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="handle.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="intrinsic.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="thread.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

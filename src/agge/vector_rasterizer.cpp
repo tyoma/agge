@@ -68,7 +68,7 @@ namespace agge
 
 		void jump_xy(cells_iterator &current, int x, int y)
 		{
-			if (current->x ^ x | current->y ^ y)
+			if ((current->x ^ x) | (current->y ^ y))
 			{
 				if (current->cover | current->area)
 				{

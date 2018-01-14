@@ -1,6 +1,6 @@
 #include "../../mt.h"
 
-#include <memory>
+#include <new>
 #include <pthread.h>
 
 namespace agge
@@ -30,6 +30,6 @@ namespace agge
 
 
 		thread_id this_thread_id()
-		{ return reinterpret_cast<thread_id>(pthread_self()); }
+		{ return (thread_id)pthread_self(); }
 	}
 }
