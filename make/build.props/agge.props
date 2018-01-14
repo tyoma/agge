@@ -14,6 +14,7 @@
       <GccExceptionHandling>true</GccExceptionHandling>
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions Condition="'$(Platform)'=='Android'">-Wall %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

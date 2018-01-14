@@ -49,7 +49,7 @@ namespace agge
 				const count_t max_height = agge_max(height, _max_height);
 				const count_t stride = calculate_stride(max_width, _bpp);
 				void *memory = 0;
-				BITMAPINFO bi = { 0 };
+				BITMAPINFO bi = { };
 
 				bi.bmiHeader.biSize           = sizeof(BITMAPINFOHEADER);
 				bi.bmiHeader.biWidth          = max_width;

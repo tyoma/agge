@@ -14,7 +14,7 @@ namespace agge
 			gdi_surface::gdi_surface(count_t width_, count_t height_)
 				: width(width_), height(height_), _context(::CreateCompatibleDC(0)), _previous_bitmap(0)
 			{
-				BITMAPINFO bi = { 0 };
+				BITMAPINFO bi = { };
 
 				bi.bmiHeader.biSize           = sizeof(BITMAPINFOHEADER);
 				bi.bmiHeader.biWidth          = width;

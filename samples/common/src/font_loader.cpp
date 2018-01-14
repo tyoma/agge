@@ -26,7 +26,7 @@ namespace
 
 	string to_string(int value)
 	{
-		char buffer[20] = { 0 };
+		char buffer[20] = { };
 
 		sprintf(buffer, "%d", value);
 		return buffer;

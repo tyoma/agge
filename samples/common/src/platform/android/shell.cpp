@@ -20,7 +20,7 @@ using namespace std;
 namespace
 {
 	const int c_averaging_n = 100;
-	application::timings c_zero_timings = { 0 };
+	application::timings c_zero_timings = { };
 
 	class shell : services
 	{
@@ -46,7 +46,7 @@ namespace
 		void redrawWindow(ANativeWindow *window)
 		{
 			platform_bitmap surface(*window);
-			application::timings t = { 0 };
+			application::timings t = { };
 
 			_application->draw(surface, t);
 			_timings.clearing += t.clearing;

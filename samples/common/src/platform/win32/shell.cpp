@@ -34,7 +34,7 @@ using namespace std;
 
 namespace
 {
-	const application::timings c_zero_timings = { 0 };
+	const application::timings c_zero_timings = { };
 	const int c_initial_width = 736;
 	const int c_initial_height = 800;
 
@@ -197,7 +197,7 @@ namespace
 	{
 		if (_cycles > 100)
 		{
-			TCHAR caption[1000] = { 0 };
+			TCHAR caption[1000] = { };
 			RECT rc;
 
 			::GetClientRect(_window, &rc);

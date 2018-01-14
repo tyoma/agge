@@ -5,7 +5,7 @@
 android_native_surface::android_native_surface(ANativeWindow &window)
 	: _window(window)
 {
-	ANativeWindow_Buffer descriptor = { 0 };
+	ANativeWindow_Buffer descriptor = { };
 	
 	if (ANativeWindow_lock(&_window, &descriptor, 0) < 0)
 		throw 0;

@@ -12,7 +12,7 @@ namespace ut
 {
 	inline void is_empty(const agge::vector_rasterizer::cells_container& i_container, const LocationInfo &i_location)
 	{
-		agge::vector_rasterizer::cell empty = { 0 };
+		agge::vector_rasterizer::cell empty = { };
 
 		are_equal(1u, i_container.size(), i_location);
 		are_equal(empty, i_container[0], i_location);
@@ -157,7 +157,7 @@ namespace agge
 
 				// ASSERT
 				const vector_rasterizer::cell reference[] = {
-					{ 0 },
+					{ },
 				};
 
 				assert_equal(reference, vr.cells());

@@ -117,7 +117,7 @@ namespace agge
 
 	void vector_rasterizer::reset()
 	{
-		const cell empty_cell = { 0 };
+		const cell empty_cell = { };
 
 		_cells.assign(1, empty_cell);
 		_histogram_y.clear();

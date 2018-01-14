@@ -62,7 +62,7 @@ namespace truetype
 			virtual agge::glyph::outline_ptr load_glyph(uint16_t index, agge::glyph::glyph_metrics &m) const
 			{
 				agge::glyph::outline_ptr o(new agge::glyph::outline_storage);
-				agge::glyph::glyph_metrics empty = { 0 };
+				agge::glyph::glyph_metrics empty = { };
 
 				m = empty;
 				if (index < _tt_font->glyphs.size())
