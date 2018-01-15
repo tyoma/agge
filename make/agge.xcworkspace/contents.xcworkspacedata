@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:../tests/agge.text/agge.text.tests.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:../src/agge.text/agge.text.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:../libraries/utee/make/utee.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:../libraries/utee/make/utee-runner.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:../tests/agge/agge.tests.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:../src/agge/agge.xcodeproj">
+   </FileRef>
+</Workspace>
