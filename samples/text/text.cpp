@@ -19,7 +19,7 @@ namespace demo
 	{
 	public:
 		TextDrawer(services &s)
-			: _renderer(1), _font_loader(s), _text_engine(_font_loader), _ddx(0.0f)
+			: _renderer(3), _font_loader(s), _text_engine(_font_loader), _ddx(0.0f)
 		{	}
 
 	private:

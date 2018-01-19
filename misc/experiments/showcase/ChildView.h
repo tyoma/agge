@@ -2,7 +2,7 @@
 
 #include <agge/bitmap.h>
 #include <agge/clipper.h>
-#include <agge/platform/win32/bitmap.h>
+#include <agge/platform/bitmap.h>
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
 #include <agge/stroke.h>

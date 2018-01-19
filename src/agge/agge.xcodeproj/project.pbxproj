@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A01738CD200D7E500020AE71 /* bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A01738CC200D7E500020AE71 /* bitmap.cpp */; };
 		A08B57FC200D2E3400EB0790 /* vector_rasterizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A08B57EE200D2E3300EB0790 /* vector_rasterizer.cpp */; };
 		A08B57FD200D2E3400EB0790 /* thread.h in Headers */ = {isa = PBXBuildFile; fileRef = A08B57EF200D2E3300EB0790 /* thread.h */; };
 		A08B57FE200D2E3400EB0790 /* parallel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A08B57F0200D2E3400EB0790 /* parallel.cpp */; };
@@ -51,9 +52,11 @@
 		A08B5846200D2F7D00EB0790 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = A08B582B200D2F7C00EB0790 /* types.h */; };
 		A08B5847200D2F7D00EB0790 /* clipper.h in Headers */ = {isa = PBXBuildFile; fileRef = A08B582C200D2F7C00EB0790 /* clipper.h */; };
 		A08B5848200D2F7D00EB0790 /* parallel.h in Headers */ = {isa = PBXBuildFile; fileRef = A08B582D200D2F7C00EB0790 /* parallel.h */; };
+		A094BE762011B1A1003C4A15 /* bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = A094BE752011B1A1003C4A15 /* bitmap.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A01738CC200D7E500020AE71 /* bitmap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = bitmap.cpp; path = platform/apple/bitmap.cpp; sourceTree = SOURCE_ROOT; };
 		A08B57E6200D2D7200EB0790 /* libagge.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libagge.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A08B57EE200D2E3300EB0790 /* vector_rasterizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vector_rasterizer.cpp; sourceTree = SOURCE_ROOT; };
 		A08B57EF200D2E3300EB0790 /* thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = thread.h; sourceTree = SOURCE_ROOT; };
@@ -99,6 +102,7 @@
 		A08B582B200D2F7C00EB0790 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = types.h; path = ../../agge/types.h; sourceTree = "<group>"; };
 		A08B582C200D2F7C00EB0790 /* clipper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = clipper.h; path = ../../agge/clipper.h; sourceTree = "<group>"; };
 		A08B582D200D2F7C00EB0790 /* parallel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = parallel.h; path = ../../agge/parallel.h; sourceTree = "<group>"; };
+		A094BE752011B1A1003C4A15 /* bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bitmap.h; path = ../../agge/platform/bitmap.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,6 +169,7 @@
 			isa = PBXGroup;
 			children = (
 				A08B580C200D2F1400EB0790 /* semaphore.cpp */,
+				A01738CC200D7E500020AE71 /* bitmap.cpp */,
 			);
 			name = apple;
 			sourceTree = "<group>";
@@ -216,16 +221,9 @@
 		A08B584A200D307C00EB0790 /* platform */ = {
 			isa = PBXGroup;
 			children = (
-				A08B584B200D30DA00EB0790 /* apple */,
+				A094BE752011B1A1003C4A15 /* bitmap.h */,
 			);
 			name = platform;
-			sourceTree = "<group>";
-		};
-		A08B584B200D30DA00EB0790 /* apple */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = apple;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -244,6 +242,7 @@
 				A08B5839200D2F7D00EB0790 /* blenders_generic.h in Headers */,
 				A08B5834200D2F7D00EB0790 /* filling_rules.h in Headers */,
 				A08B5837200D2F7D00EB0790 /* tools.h in Headers */,
+				A094BE762011B1A1003C4A15 /* bitmap.h in Headers */,
 				A08B5803200D2E3400EB0790 /* hybrid_event.h in Headers */,
 				A08B5835200D2F7D00EB0790 /* path.h in Headers */,
 				A08B583B200D2F7D00EB0790 /* math.h in Headers */,
@@ -334,6 +333,7 @@
 				A08B57FC200D2E3400EB0790 /* vector_rasterizer.cpp in Sources */,
 				A08B5802200D2E3400EB0790 /* math.cpp in Sources */,
 				A08B5811200D2F4500EB0790 /* thread.cpp in Sources */,
+				A01738CD200D7E500020AE71 /* bitmap.cpp in Sources */,
 				A08B5812200D2F4500EB0790 /* intrinsic.cpp in Sources */,
 				A08B5805200D2E3400EB0790 /* stroke.cpp in Sources */,
 				A08B5806200D2E3400EB0790 /* blenders_intel.cpp in Sources */,

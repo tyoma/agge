@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A01738C2200D6EA80020AE71 /* RawBitmapTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A01738BF200D6EA80020AE71 /* RawBitmapTests.cpp */; };
+		A01738C3200D6EA80020AE71 /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A01738C0200D6EA80020AE71 /* surface.cpp */; };
+		A01738C4200D6EA80020AE71 /* surface.h in Headers */ = {isa = PBXBuildFile; fileRef = A01738C1200D6EA80020AE71 /* surface.h */; };
+		A01738CB200D7D250020AE71 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A01738CA200D7D250020AE71 /* CoreGraphics.framework */; };
 		A01F8781200D55DC00DDCE51 /* libutee.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A01F8782200D55DC00DDCE51 /* libutee.a */; };
 		A01F8784200D565700DDCE51 /* BitmapTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A01F8783200D565700DDCE51 /* BitmapTests.cpp */; };
 		A08B58A4200D37EF00EB0790 /* PreciseDeltaTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A08B588C200D37EC00EB0790 /* PreciseDeltaTests.cpp */; };
@@ -38,6 +42,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A01738BF200D6EA80020AE71 /* RawBitmapTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RawBitmapTests.cpp; path = platform/apple/RawBitmapTests.cpp; sourceTree = "<group>"; wrapsLines = 0; };
+		A01738C0200D6EA80020AE71 /* surface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = surface.cpp; path = platform/apple/surface.cpp; sourceTree = "<group>"; wrapsLines = 0; };
+		A01738C1200D6EA80020AE71 /* surface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = surface.h; path = platform/apple/surface.h; sourceTree = "<group>"; };
+		A01738CA200D7D250020AE71 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		A01F8782200D55DC00DDCE51 /* libutee.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libutee.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A01F8783200D565700DDCE51 /* BitmapTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapTests.cpp; sourceTree = "<group>"; };
 		A08B5855200D36CE00EB0790 /* libagge.tests.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libagge.tests.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -74,6 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A01738CB200D7D250020AE71 /* CoreGraphics.framework in Frameworks */,
 				A01F8781200D55DC00DDCE51 /* libutee.a in Frameworks */,
 				A08B58BD200D388600EB0790 /* libagge.a in Frameworks */,
 			);
@@ -82,6 +91,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A01738BE200D5DD00020AE71 /* apple */ = {
+			isa = PBXGroup;
+			children = (
+				A01738BF200D6EA80020AE71 /* RawBitmapTests.cpp */,
+				A01738C0200D6EA80020AE71 /* surface.cpp */,
+				A01738C1200D6EA80020AE71 /* surface.h */,
+			);
+			name = apple;
+			sourceTree = "<group>";
+		};
 		A08B584C200D36CE00EB0790 = {
 			isa = PBXGroup;
 			children = (
@@ -127,6 +146,7 @@
 		A08B58BC200D388600EB0790 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A01738CA200D7D250020AE71 /* CoreGraphics.framework */,
 				A01F8782200D55DC00DDCE51 /* libutee.a */,
 				A08B58BE200D388600EB0790 /* libagge.a */,
 			);
@@ -136,6 +156,7 @@
 		A08B58BF200D3B4300EB0790 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				A01738BE200D5DD00020AE71 /* apple */,
 				A08B58C0200D3B4E00EB0790 /* unix */,
 			);
 			name = platform;
@@ -160,6 +181,7 @@
 				A08B58A8200D37EF00EB0790 /* helpers.h in Headers */,
 				A08B58AC200D37EF00EB0790 /* assertex.h in Headers */,
 				A08B58B5200D37EF00EB0790 /* mt.h in Headers */,
+				A01738C4200D6EA80020AE71 /* surface.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,6 +246,7 @@
 				A01F8784200D565700DDCE51 /* BitmapTests.cpp in Sources */,
 				A08B58A6200D37EF00EB0790 /* RasterizerTests.cpp in Sources */,
 				A08B58B0200D37EF00EB0790 /* FiguresTests.cpp in Sources */,
+				A01738C3200D6EA80020AE71 /* surface.cpp in Sources */,
 				A08B58B8200D37EF00EB0790 /* BlendersTests.cpp in Sources */,
 				A08B58A7200D37EF00EB0790 /* RendererParallelTests.cpp in Sources */,
 				A08B58B3200D37EF00EB0790 /* PathTests.cpp in Sources */,
@@ -231,6 +254,7 @@
 				A08B58AE200D37EF00EB0790 /* ScanlineAdapterTests.cpp in Sources */,
 				A08B58A4200D37EF00EB0790 /* PreciseDeltaTests.cpp in Sources */,
 				A08B58AA200D37EF00EB0790 /* DashTests.cpp in Sources */,
+				A01738C2200D6EA80020AE71 /* RawBitmapTests.cpp in Sources */,
 				A08B58A5200D37EF00EB0790 /* SIMDBlendersTests.cpp in Sources */,
 				A08B58BA200D37EF00EB0790 /* StrokeTests.cpp in Sources */,
 				A08B58BB200D37EF00EB0790 /* PodVectorTests.cpp in Sources */,

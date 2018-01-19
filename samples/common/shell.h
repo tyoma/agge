@@ -12,7 +12,7 @@
 	typedef agge::order_rgba platform_pixel_order;
 
 #elif defined(AGGE_PLATFORM_WINDOWS)
-	#include <agge/platform/win32/bitmap.h>
+	#include <agge/platform/bitmap.h>
 
 	typedef agge::bitmap<agge::pixel32, agge::platform::raw_bitmap> platform_bitmap;
 	typedef agge::order_bgra platform_pixel_order;

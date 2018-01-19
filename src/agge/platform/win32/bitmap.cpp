@@ -1,4 +1,4 @@
-#include <agge/platform/win32/bitmap.h>
+#include <agge/platform/bitmap.h>
 
 #include <agge/tools.h>
 
@@ -31,23 +31,18 @@ namespace agge
 			};
 		}
 
-		raw_bitmap::raw_bitmap(count_t width, count_t height, bits_per_pixel bpp, count_t row_extra_bytes)
-			: _memory(0), _max_width(0), _max_height(0), _bpp(bpp), _native(0),
-				_extra_pixels((row_extra_bytes + bpp / 8 - 1) / (bpp / 8))
-		{	resize(width, height);	}
-
 		raw_bitmap::~raw_bitmap()
 		{	::DeleteObject(_native);	}
 
 		void raw_bitmap::resize(count_t width, count_t height)
 		{
-			if (width > _max_width || height > _max_height)
+			if (width > _allocated_width || height > _allocated_height)
 			{
 				dc memdc;
 
-				const count_t max_width = agge_max(width, _max_width) + _extra_pixels;
-				const count_t max_height = agge_max(height, _max_height);
-				const count_t stride = calculate_stride(max_width, _bpp);
+				const count_t max_width = agge_max(width + _extra_pixels, _allocated_width);
+				const count_t max_height = agge_max(height, _allocated_height);
+				const count_t stride = calculate_stride(max_width);
 				void *memory = 0;
 				BITMAPINFO bi = { };
 
@@ -66,9 +61,9 @@ namespace agge
 
 				::DeleteObject(_native);
 				_native = native;
-				_memory = memory;
-				_max_width = max_width;
-				_max_height = max_height;
+				_memory = static_cast<uint8_t *>(memory);
+				_allocated_width = max_width;
+				_allocated_height = max_height;
 				_stride = stride;
 			}
 			_width = width, _height = height;
@@ -82,8 +77,5 @@ namespace agge
 			::BitBlt(hdc, x, y, w, h, memdc, 0, 0, SRCCOPY);
 			::SelectObject(memdc, prev);
 		}
-
-		count_t raw_bitmap::calculate_stride(count_t width, bits_per_pixel bpp)
-		{	return (width * (bpp / 8) + 3) & ~3;	}
 	}
 }
