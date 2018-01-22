@@ -15,8 +15,6 @@
 #include <functional>
 #include <algorithm>
 
-namespace std { namespace tr1 { } using namespace tr1; }
-
 using namespace agge;
 using namespace std;
 using namespace Gdiplus;

@@ -2,8 +2,6 @@
 
 #include <unordered_map>
 
-namespace std { namespace tr1 {} using namespace tr1; }
-
 namespace agge
 {
 	struct knuth_hash

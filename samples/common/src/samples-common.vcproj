@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../.."
+				AdditionalIncludeDirectories="../../..;../../../libraries/strmd"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -99,7 +99,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../.."
+				AdditionalIncludeDirectories="../../..;../../../libraries/strmd"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -161,7 +161,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../.."
+				AdditionalIncludeDirectories="../../..;../../../libraries/strmd"
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				EnableEnhancedInstructionSet="2"
@@ -223,7 +223,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../.."
+				AdditionalIncludeDirectories="../../..;../../../libraries/strmd"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
@@ -282,7 +282,15 @@
 			Name="src"
 			>
 			<File
+				RelativePath=".\font_loader.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\shell-inline.h"
+				>
+			</File>
+			<File
+				RelativePath=".\truetype.cpp"
 				>
 			</File>
 			<Filter

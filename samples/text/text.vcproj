@@ -298,6 +298,54 @@
 		/>
 	</References>
 	<Files>
+		<Filter
+			Name="assets"
+			>
+			<File
+				RelativePath=".\assets\arial-1000.fnt"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying $(InputFileName)"
+						CommandLine="copy $(InputPath) $(OutDir)"
+						Outputs="$(OutDir)$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying $(InputFileName)"
+						CommandLine="copy $(InputPath) $(OutDir)"
+						Outputs="$(OutDir)$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying $(InputFileName)"
+						CommandLine="copy $(InputPath) $(OutDir)"
+						Outputs="$(OutDir)$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|x64"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying $(InputFileName)"
+						CommandLine="copy $(InputPath) $(OutDir)"
+						Outputs="$(OutDir)$(InputFileName)"
+					/>
+				</FileConfiguration>
+			</File>
+		</Filter>
 		<File
 			RelativePath="text.cpp"
 			>

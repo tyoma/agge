@@ -14,6 +14,7 @@
 		UsePrecompiledHeader="0"
 		WarningLevel="4"
 		DebugInformationFormat="3"
+		ForcedIncludeFiles="$(SolutionDir)build.props\emit-tr1-to-std.h"
 	/>
 	<Tool
 		Name="VCLinkerTool"

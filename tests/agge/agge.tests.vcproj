@@ -249,10 +249,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\main.cpp"
-			>
-		</File>
-		<File
 			RelativePath=".\MiscTests.cpp"
 			>
 		</File>

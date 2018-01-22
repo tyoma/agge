@@ -141,10 +141,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\main.cpp"
-			>
-		</File>
-		<File
 			RelativePath=".\mocks.cpp"
 			>
 		</File>

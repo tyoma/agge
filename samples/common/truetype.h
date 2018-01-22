@@ -5,8 +5,6 @@
 #include <unordered_map>
 #include <vector>
 
-namespace std { namespace tr1 { } using namespace tr1; }
-
 namespace truetype
 {
 	struct segment
