@@ -10,9 +10,6 @@
     <Filter Include="src\platform">
       <UniqueIdentifier>{dd2df885-a4ae-4302-bf56-86f6d038f30a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="platform\win32">
-      <UniqueIdentifier>{e17d7403-557c-42f8-93e9-80ee20eb0a90}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\platform\win32">
       <UniqueIdentifier>{04d19b1d-2bbd-494f-8851-c45c5b27c6b8}</UniqueIdentifier>
     </Filter>
@@ -104,9 +101,6 @@
     <ClInclude Include="..\..\agge\types.h" />
     <ClInclude Include="..\..\agge\vector_rasterizer.h" />
     <ClInclude Include="..\..\agge\vertex_sequence.h" />
-    <ClInclude Include="..\..\agge\platform\win32\bitmap.h">
-      <Filter>platform\win32</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\agge\filling_rules.h" />
     <ClInclude Include="..\..\agge\pixel.h" />
     <ClInclude Include="..\..\agge\blenders.h" />
@@ -124,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="thread.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\agge\platform\bitmap.h">
+      <Filter>platform</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
