@@ -53,13 +53,13 @@ namespace truetype
 				return m;
 			}
 
-			virtual uint16_t get_glyph_index(wchar_t character) const
+			virtual agge::uint16_t get_glyph_index(wchar_t character) const
 			{
-				unordered_map<wchar_t, uint16_t>::const_iterator i = _tt_font->char_to_glyph.find(character);
+				unordered_map<wchar_t, agge::uint16_t>::const_iterator i = _tt_font->char_to_glyph.find(character);
 				return i != _tt_font->char_to_glyph.end() ? i->second : 0;
 			}
 
-			virtual agge::glyph::outline_ptr load_glyph(uint16_t index, agge::glyph::glyph_metrics &m) const
+			virtual agge::glyph::outline_ptr load_glyph(agge::uint16_t index, agge::glyph::glyph_metrics &m) const
 			{
 				agge::glyph::outline_ptr o(new agge::glyph::outline_storage);
 				agge::glyph::glyph_metrics empty = { };
