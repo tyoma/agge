@@ -3,6 +3,8 @@
 #include "font.h"
 #include "layout.h"
 
+#include <agge/config.h>
+
 namespace agge
 {
 	class text_engine_base : noncopyable
@@ -81,7 +83,11 @@ namespace agge
 		typedef hash_map<const font *, rasters_map> font_rasters_map;
 
 	private:
-		virtual void on_before_removed(font * font_) throw();
+		void render_glyph(RasterizerT &target, const font &font_, rasters_map &rasters, uint16_t glyph_index,
+			real_t x, real_t y);
+		void load_glyph_precise(const font &font_, uint16_t glyph_index, unsigned int precise_glyph_index, int xf, int yf,
+			rasters_map &rasters, typename rasters_map::iterator &glyph_iterator);
+		virtual void on_before_removed(font *font_) throw();
 
 	private:
 		font_rasters_map _cached_fonts;
@@ -104,22 +110,7 @@ namespace agge
 
 		if (_cached_fonts.end() == rasters)
 			_cached_fonts.insert(&font_, rasters_map(), rasters);
-
-		const int xi = static_cast<int>(x * _factor) >> _precision, yi = static_cast<int>(y * _factor) >> _precision;
-		const int xf = static_cast<int>((x - xi) * _factor), yf = static_cast<int>((y - yi) * _factor);
-		const int precise_glyph_index = (glyph_index << (2 * _precision)) + (yf << _precision) + xf;
-		typename rasters_map::iterator i = rasters->second.find(precise_glyph_index);
-
-		if (rasters->second.end() == i)
-		{
-			const glyph *g = font_.get_glyph(glyph_index);
-			offset_conv converted_pi(g->get_outline(), _rfactor * xf, _rfactor * yf);
-
-			rasters->second.insert(precise_glyph_index, RasterizerT(), i);
-			add_path(i->second, converted_pi);
-			i->second.sort();
-		}
-		target.append(i->second, xi, yi);
+		render_glyph(target, font_, rasters->second, glyph_index, x, y);
 	}
 
 	template <typename RasterizerT>
@@ -130,16 +121,49 @@ namespace agge
 			real_t rx = x;
 			const real_t ry = gr->reference.y + y;
 			const font &f = *layout_.begin()->glyph_run_font;
+			typename font_rasters_map::iterator ri = _cached_fonts.find(&f);
+
+			if (_cached_fonts.end() == ri)
+				_cached_fonts.insert(&f, rasters_map(), ri);
+
+			rasters_map &rasters = ri->second;
 
 			for (layout::positioned_glyphs_container::const_iterator g = gr->begin; g != gr->end; ++g)
 			{
 				rx += g->dx;
-				render_glyph(target, f, g->index, rx, ry);
+				render_glyph(target, f, rasters, g->index, rx, ry);
 			}
 		}
 	}
 
 	template <typename RasterizerT>
-	inline void text_engine<RasterizerT>::on_before_removed(font * font_) throw()
+	AGGE_INLINE void text_engine<RasterizerT>::render_glyph(RasterizerT &target, const font &font_, rasters_map &rasters,
+		uint16_t glyph_index, real_t x, real_t y)
+	{
+		const int xi = static_cast<int>(x * _factor) >> _precision, yi = static_cast<int>(y * _factor) >> _precision;
+		const int xf = static_cast<int>((x - xi) * _factor), yf = static_cast<int>((y - yi) * _factor);
+		const int precise_glyph_index = (glyph_index << (2 * _precision)) + (yf << _precision) + xf;
+		typename rasters_map::iterator i = rasters.find(precise_glyph_index);
+
+		if (rasters.end() == i)
+			load_glyph_precise(font_, glyph_index, precise_glyph_index, xf, yf, rasters, i);
+		target.append(i->second, xi, yi);
+	}
+
+	template <typename RasterizerT>
+	inline void text_engine<RasterizerT>::load_glyph_precise(const font &font_, uint16_t glyph_index,
+		unsigned int precise_glyph_index, int xf, int yf, rasters_map &rasters,
+		typename rasters_map::iterator &glyph_iterator)
+	{
+		const glyph *g = font_.get_glyph(glyph_index);
+		offset_conv converted_pi(g->get_outline(), _rfactor * xf, _rfactor * yf);
+
+		rasters.insert(precise_glyph_index, RasterizerT(), glyph_iterator);
+		add_path(glyph_iterator->second, converted_pi);
+		glyph_iterator->second.sort();
+	}
+
+	template <typename RasterizerT>
+	inline void text_engine<RasterizerT>::on_before_removed(font *font_) throw()
 	{	_cached_fonts.erase(font_);	}
 }

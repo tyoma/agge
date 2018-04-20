@@ -230,30 +230,31 @@ namespace agge
 		abridge(_cells, ++current);
 	}
 
-	void vector_rasterizer::append(const vector_rasterizer &source, int dx_, int dy_)
+	void vector_rasterizer::append(const vector_rasterizer &source, int dx, int dy)
 	{
 		if (source.empty())
 			return;
 
-		const short dx = static_cast<short>(dx_), dy = static_cast<short>(dy_);
 		const cell &last = *(_cells.end() - 1); // Relying on a guarantee that we had at least one cell prior this call.
 		const int shift_back = !(last.area | last.cover);
-		cells_container::iterator w = resize_by(_cells, source._cells.size() - shift_back) - shift_back;
+		count_t n = source._cells.size();
+		const_cells_iterator src = source._cells.begin();
+		cells_container::iterator dst = resize_by(_cells, n - shift_back) - shift_back;
 
 		_sorted = 0;
 
-		for (const_cells_iterator i = source._cells.begin(), end = source._cells.end(); i != end; ++w, ++i)
+		while (n--)
 		{
-			w->x = i->x + dx;
-			w->y = i->y + dy;
-			w->area = i->area;
-			w->cover = i->cover;
+			dst->x = static_cast<short>(src->x + dx);
+			dst->y = static_cast<short>(src->y + dy);
+			dst->area = src->area;
+			dst++->cover = src++->cover;
 		}
 
-		update_min(_min_x, source._min_x + dx_);
-		update_min(_min_y, source._min_y + dy_);
-		update_max(_max_x, source._max_x + dx_);
-		update_max(_max_y, source._max_y + dy_);
+		update_min(_min_x, source._min_x + dx);
+		update_min(_min_y, source._min_y + dy);
+		update_max(_max_x, source._max_x + dx);
+		update_max(_max_y, source._max_y + dy);
 	}
 
 	void vector_rasterizer::sort(bool was_presorted)
