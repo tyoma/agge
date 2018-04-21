@@ -563,6 +563,32 @@ namespace agge
 				assert_equal(end2, v1.end());
 				assert_equal(capacity2, v1.capacity());
 			}
+
+
+			test( NewEndIsReturnedAfterSetting )
+			{
+				// INIT
+				pod_vector<int> v;
+
+				v.assign(7, 139911);
+
+				count_t c = v.capacity();
+
+				// ACT
+				v.set_end(v.begin() + 5);
+
+				// ASSERT
+				assert_equal(5u, v.size());
+				assert_equal(v.begin() + 5, v.end());
+				assert_equal(c, v.capacity());
+
+				// ACT
+				v.set_end(v.begin() + 3);
+
+				// ASSERT
+				assert_equal(3u, v.size());
+				assert_equal(v.begin() + 3, v.end());
+			}
 		end_test_suite
 	}
 }

@@ -47,18 +47,16 @@ namespace agge
 	}
 
 	template <typename RendererT>
-	AGGE_INLINE void scanline_adapter<RendererT>::add_span(int x, unsigned int length, cover_type cover)
+	AGGE_INLINE void scanline_adapter<RendererT>::add_span(int x, count_t length, cover_type cover)
 	{
 		if (x != _x)
 			commit(x);
-		
+
 		cover_type *p = _cover;
-		
+
 		_x += length;
 		_cover += length;
-
-		while (length--)
-			*p++ = cover;
+		memset(p, cover, length);		
 	}
 
 	template <typename RendererT>

@@ -4,6 +4,9 @@
 
 namespace agge
 {
+	template <typename T>
+	void memset(T *buffer, T value, count_t count);
+
 	class raw_memory_object : noncopyable
 	{
 	public:
@@ -39,9 +42,28 @@ namespace agge
 			delete []_buffer;
 			_buffer = buffer;
 			_size = size;
-			while (size--)
-				*buffer++ = 0;
+			memset(buffer, uint8_t(), size);
 		}
 		return reinterpret_cast<T *>(_buffer);
+	}
+
+
+	template <typename T>
+	inline void memset(T *buffer, T value, count_t count)
+	{
+		if (0 == (count & ~0x03))
+		{
+			if (count--)
+				*buffer++ = value;
+			if (count--)
+				*buffer++ = value;
+			if (count--)
+				*buffer++ = value;
+		}
+		else
+		{
+			while (count--)
+				*buffer++ = value;
+		}
 	}
 }

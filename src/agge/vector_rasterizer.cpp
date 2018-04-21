@@ -32,12 +32,6 @@ namespace agge
 			return container.begin() + n;
 		}
 
-		template <typename T>
-		AGGE_INLINE void abridge(T &container, typename T::const_iterator end)
-		{
-			container.resize(static_cast<count_t>(end - container.begin()));
-		}
-
 		template <typename IteratorT>
 		void sort_cells_x_ascending(IteratorT begin, IteratorT end)
 		{
@@ -227,7 +221,7 @@ namespace agge
 					hline(current, tg_delta, ey1, x_to, x2, dy_rest);
 			}
 		}
-		abridge(_cells, ++current);
+		_cells.set_end(++current);
 	}
 
 	void vector_rasterizer::append(const vector_rasterizer &source, int dx, int dy)

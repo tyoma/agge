@@ -22,6 +22,7 @@ namespace agge
 		void pop_back();
 		void clear();
 		void resize(count_t size);
+		void set_end(iterator end);
 		void assign(count_t size, const T &value);
 		void swap(pod_vector &other);
 
@@ -100,6 +101,10 @@ namespace agge
 			grow(size_ - capacity());
 		_end = _begin + size_;
 	}
+
+	template <typename T>
+	inline void pod_vector<T>::set_end(iterator end)
+	{	_end = end;	}
 
 	template <typename T>
 	inline void pod_vector<T>::assign(count_t size_, const T &value)
