@@ -3,6 +3,7 @@
   <ItemGroup>
     <ClCompile Include="balls.cpp" />
     <ClCompile Include="balls_data.cpp" />
+    <ClCompile Include="..\..\tests\agge\platform\win32\mt.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="balls_data.h" />

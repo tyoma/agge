@@ -22,14 +22,14 @@ namespace agge
 	class hybrid_event
 	{
 	public:
-		enum { max_spin = 20000 };
-		enum { state_free, state_set, state_blocked };
-
-	public:
 		hybrid_event();
 
 		void signal();
 		void wait();
+
+	private:
+		enum { max_spin = 20000 };
+		enum { state_free, state_set, state_blocked };
 
 	private:
 		volatile long _state;
