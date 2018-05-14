@@ -51,6 +51,7 @@
     <ClCompile Include="BlendersTests.cpp" />
     <ClCompile Include="FiguresTests.cpp" />
     <ClCompile Include="GenericBlendersTests.cpp" />
+    <ClCompile Include="QueueTests.cpp" />
     <ClCompile Include="SIMDBlendersTests.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
     </ClCompile>

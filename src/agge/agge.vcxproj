@@ -104,7 +104,9 @@
     <ClInclude Include="..\..\agge\pixel.h" />
     <ClInclude Include="..\..\agge\platform\bitmap.h" />
     <ClInclude Include="..\..\agge\pod_vector.h" />
+    <ClInclude Include="..\..\agge\poly_buffer.h" />
     <ClInclude Include="..\..\agge\precise_delta.h" />
+    <ClInclude Include="..\..\agge\queue.h" />
     <ClInclude Include="..\..\agge\rasterizer.h" />
     <ClInclude Include="..\..\agge\renderer.h" />
     <ClInclude Include="..\..\agge\renderer_parallel.h" />
