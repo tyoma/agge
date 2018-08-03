@@ -6,3 +6,7 @@
 	path = libraries/strmd
 	url = ../strmd.git
 	branch = master
+[submodule "libraries/poly-queue"]
+	path = libraries/poly-queue
+	url = ../poly-queue.git
+	branch = master

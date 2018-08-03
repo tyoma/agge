@@ -40,7 +40,8 @@
   </ImportGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>./../..;./../../misc/experiments;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./../..;./../../misc/experiments;$(SolutionDir)..\libraries\poly-queue;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions Condition="'$(Platform)'=='Android'">-std=c++11 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AndroidSystemLibs>c;m;log;gcc;android</AndroidSystemLibs>
@@ -51,12 +52,6 @@
     </AntBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\tests\agge\platform\win32\mt.cpp">
-      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DisableLanguageExtensions>
-      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</DisableLanguageExtensions>
-      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DisableLanguageExtensions>
-      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DisableLanguageExtensions>
-    </ClCompile>
     <ClCompile Include="balls.cpp" />
     <ClCompile Include="balls_data.cpp" />
   </ItemGroup>
