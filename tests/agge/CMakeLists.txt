@@ -12,7 +12,6 @@ set(AGGE_TEST_SOURCES
 	PathTests.cpp
 	PodVectorTests.cpp
 	PreciseDeltaTests.cpp
-	QueueTests.cpp
 	RasterizerTests.cpp
 	RendererTests.cpp
 	RendererParallelTests.cpp

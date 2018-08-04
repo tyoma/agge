@@ -122,7 +122,5 @@
     <ClInclude Include="..\..\agge\platform\bitmap.h">
       <Filter>platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\agge\queue.h" />
-    <ClInclude Include="..\..\agge\poly_buffer.h" />
   </ItemGroup>
 </Project>
