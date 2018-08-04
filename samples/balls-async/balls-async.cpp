@@ -22,7 +22,7 @@ using namespace std;
 using namespace common;
 
 const int c_render_thread_count = 2;
-const int c_balls_number = 2000;
+const int c_balls_number = 1000;
 
 namespace
 {

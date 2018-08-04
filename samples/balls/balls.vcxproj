@@ -27,7 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F8831217-77AD-C993-42B5-05773A935835}</ProjectGuid>
+    <ProjectGuid>{40B65003-8942-46BE-BC07-90A21119CA59}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(SolutionDir)build.props\platform.props" />
   <PropertyGroup Label="Configuration">
@@ -40,8 +40,7 @@
   </ImportGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>./../..;./../../misc/experiments;$(SolutionDir)..\libraries\poly-queue;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions Condition="'$(Platform)'=='Android'">-std=c++11 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>./../..;./../../misc/experiments;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AndroidSystemLibs>c;m;log;gcc;android</AndroidSystemLibs>
@@ -52,7 +51,7 @@
     </AntBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="balls-async.cpp" />
+    <ClCompile Include="balls.cpp" />
     <ClCompile Include="balls_data.cpp" />
   </ItemGroup>
   <ItemGroup>
