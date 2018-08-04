@@ -23,7 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{7CC7
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "samples-common", "..\samples\common\src\samples-common.vcproj", "{A213FBA4-8D98-4399-BC92-BA9B61E2B693}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "balls", "..\samples\balls\balls.vcproj", "{85948F33-2EFC-458E-B95A-CA01935E8049}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "balls-async", "..\samples\balls\balls-async.vcproj", "{85948F33-2EFC-458E-B95A-CA01935E8049}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "figures", "..\samples\figures\figures.vcproj", "{749A7F37-AB6F-4BB7-B86D-79E74C9E8EBD}"
 EndProject

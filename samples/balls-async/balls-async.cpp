@@ -21,7 +21,7 @@ using namespace agge;
 using namespace std;
 using namespace common;
 
-const int c_thread_count = 4;
+const int c_render_thread_count = 2;
 const int c_balls_number = 2000;
 
 namespace
@@ -92,7 +92,7 @@ namespace
 
 	template <typename RasterizerT>
 	async<RasterizerT>::async(count_t n)
-		: _renderer(2), _unsorted(10000), _sorted(10000), _sorter_thread(&sorter_proc, this), _renderer_thread(&rendition_proc, this), _n(n)
+		: _renderer(c_render_thread_count), _unsorted(10000), _sorted(10000), _sorter_thread(&sorter_proc, this), _renderer_thread(&rendition_proc, this), _n(n)
 	{
 		while (n--)
 		{
@@ -127,7 +127,7 @@ namespace
 		rendition_pack pack(rasterizer_, surface, window, blender);
 
 		_unsorted.produce(pack, [this](int n) {
-			if (-1 == n)
+			if (!n)
 				_unsorted_ready.signal();
 		});
 	}
@@ -148,7 +148,7 @@ namespace
 			self->_unsorted.consume([self](rendition_pack &o) {
 				o.rasterizer->sort();
 				self->_sorted.produce(o, [self](int n) {
-					if (-1 == n)
+					if (!n)
 						self->_sorted_ready.signal();
 				});
 			}, [self](int n) {
@@ -168,13 +168,13 @@ namespace
 			self->_sorted.consume([self](rendition_pack &o) {
 				o.render(self->_renderer);
 				self->_free.produce(o.rasterizer, [self](int n) {
-					if (-1 == n)
+					if (!n)
 						self->_free_ready.signal();
-					if (self->_n - 1 == n)
+					if (self->_n == n)
 						self->_complete.signal();
 				});
 			}, [self](int n) {
-				if (n == 0)
+				if (!n)
 					self->_sorted_ready.wait();
 				return true;
 			});

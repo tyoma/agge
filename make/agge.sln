@@ -41,7 +41,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{202D
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "samples-common", "..\samples\common\src\samples-common.vcxproj", "{D89A569E-5C54-22B2-A9D4-52E907C821AD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "balls", "..\samples\balls\balls.vcxproj", "{F8831217-77AD-C993-42B5-05773A935835}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "balls-async", "..\samples\balls-async\balls-async.vcxproj", "{F8831217-77AD-C993-42B5-05773A935835}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "text-gdi", "..\samples\text-gdi\text-gdi.vcxproj", "{350126F7-175E-49FC-ADF7-E5B56392EF8C}"
 EndProject
