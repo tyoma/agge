@@ -2,13 +2,12 @@
 
 #include <agge/clipper.h>
 #include <agge/filling_rules.h>
+#include <agge/hybrid_event.h>
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
+#include <agge/thread.h>
 #include <memory>
 #include <poly-queue/circular.h>
-#include <src/agge/hybrid_event.h>
-#include <src/agge/thread.h>
-#include <tests/agge/mt.h>
 
 #include <misc/experiments/common/ellipse.h>
 

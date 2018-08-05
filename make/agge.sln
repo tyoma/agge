@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2043
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8B1C0537-2027-4D8C-82BD-72E0E69DB827}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agge", "..\src\agge\agge.vcxproj", "{F849E92C-248A-46B2-9EAB-F86578A21316}"
@@ -50,6 +52,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "font-extractor", "..\misc\font-extractor\font-extractor.vcxproj", "{5F8C37C0-1768-46ED-99D0-F0D25C904C49}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "balls", "..\samples\balls\balls.vcxproj", "{40B65003-8942-46BE-BC07-90A21119CA59}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agge.async.tests", "..\tests\agge.async\agge.async.tests.vcxproj", "{2074BC70-93A5-43F8-8003-D3ACC25274DF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests.common", "..\tests\common\src\tests.common.vcxproj", "{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -255,6 +261,30 @@ Global
 		{40B65003-8942-46BE-BC07-90A21119CA59}.Release|Win32.Build.0 = Release|Win32
 		{40B65003-8942-46BE-BC07-90A21119CA59}.Release|x64.ActiveCfg = Release|x64
 		{40B65003-8942-46BE-BC07-90A21119CA59}.Release|x64.Build.0 = Release|x64
+		{2074BC70-93A5-43F8-8003-D3ACC25274DF}.Debug|Android.ActiveCfg = Debug|Android
+		{2074BC70-93A5-43F8-8003-D3ACC25274DF}.Debug|Android.Build.0 = Debug|Android
+		{2074BC70-93A5-43F8-8003-D3ACC25274DF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2074BC70-93A5-43F8-8003-D3ACC25274DF}.Debug|Win32.Build.0 = Debug|Win32
+		{2074BC70-93A5-43F8-8003-D3ACC25274DF}.Debug|x64.ActiveCfg = Debug|x64
+		{2074BC70-93A5-43F8-8003-D3ACC25274DF}.Debug|x64.Build.0 = Debug|x64
+		{2074BC70-93A5-43F8-8003-D3ACC25274DF}.Release|Android.ActiveCfg = Release|Android
+		{2074BC70-93A5-43F8-8003-D3ACC25274DF}.Release|Android.Build.0 = Release|Android
+		{2074BC70-93A5-43F8-8003-D3ACC25274DF}.Release|Win32.ActiveCfg = Release|Win32
+		{2074BC70-93A5-43F8-8003-D3ACC25274DF}.Release|Win32.Build.0 = Release|Win32
+		{2074BC70-93A5-43F8-8003-D3ACC25274DF}.Release|x64.ActiveCfg = Release|x64
+		{2074BC70-93A5-43F8-8003-D3ACC25274DF}.Release|x64.Build.0 = Release|x64
+		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}.Debug|Android.ActiveCfg = Debug|Android
+		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}.Debug|Android.Build.0 = Debug|Android
+		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}.Debug|Win32.Build.0 = Debug|Win32
+		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}.Debug|x64.ActiveCfg = Debug|x64
+		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}.Debug|x64.Build.0 = Debug|x64
+		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}.Release|Android.ActiveCfg = Release|Android
+		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}.Release|Android.Build.0 = Release|Android
+		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}.Release|Win32.ActiveCfg = Release|Win32
+		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}.Release|Win32.Build.0 = Release|Win32
+		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}.Release|x64.ActiveCfg = Release|x64
+		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -275,6 +305,8 @@ Global
 		{3B0A1697-8654-4F78-8EE4-F673002F9BD9} = {202D9A95-7B05-479F-999C-FD540D3CD169}
 		{5F8C37C0-1768-46ED-99D0-F0D25C904C49} = {627993FB-EB88-4D04-AA8F-CEE4EB9BD850}
 		{40B65003-8942-46BE-BC07-90A21119CA59} = {202D9A95-7B05-479F-999C-FD540D3CD169}
+		{2074BC70-93A5-43F8-8003-D3ACC25274DF} = {8B1C0537-2027-4D8C-82BD-72E0E69DB827}
+		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD} = {8B1C0537-2027-4D8C-82BD-72E0E69DB827}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {66796483-41AE-4556-A500-BAC9B2C3919C}

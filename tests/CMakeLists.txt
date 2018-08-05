@@ -6,3 +6,5 @@ endif()
 
 add_subdirectory(agge)
 add_subdirectory(agge.text)
+add_subdirectory(agge.async)
+add_subdirectory(common/src)

@@ -75,9 +75,7 @@
     <ClCompile Include="platform\win32\thread.cpp">
       <Filter>src\platform\win32</Filter>
     </ClCompile>
-    <ClCompile Include="platform\unix\thread.cpp">
-      <Filter>src\platform\unix</Filter>
-    </ClCompile>
+    <ClCompile Include="platform\unix\thread.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\agge\bitmap.h" />
@@ -107,20 +105,16 @@
     <ClInclude Include="..\..\agge\blenders_generic.h" />
     <ClInclude Include="..\..\agge\figures.h" />
     <ClInclude Include="..\..\agge\curves.h" />
-    <ClInclude Include="hybrid_event.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="handle.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="intrinsic.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="thread.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\agge\platform\bitmap.h">
       <Filter>platform</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\agge\hybrid_event.h" />
+    <ClInclude Include="..\..\agge\thread.h" />
   </ItemGroup>
 </Project>

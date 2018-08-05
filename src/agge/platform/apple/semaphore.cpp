@@ -1,4 +1,4 @@
-#include "../../hybrid_event.h"
+#include "../../semaphore.h"
 
 #include <dispatch/dispatch.h>
 

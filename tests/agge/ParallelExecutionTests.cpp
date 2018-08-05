@@ -1,6 +1,6 @@
 #include <agge/parallel.h>
 
-#include "mt.h"
+#include <tests/common/mt.h>
 
 #include <ut/assert.h>
 #include <ut/test.h>

@@ -1,4 +1,4 @@
-#include "../../thread.h"
+#include <agge/thread.h>
 
 #include <new>
 #include <pthread.h>
