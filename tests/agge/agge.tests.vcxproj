@@ -59,14 +59,6 @@
     <ClCompile Include="DashTests.cpp" />
     <ClCompile Include="FillingRulesTests.cpp" />
     <ClCompile Include="MiscTests.cpp" />
-    <ClCompile Include="platform\linux\mt.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="platform\win32\mt.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-    </ClCompile>
     <ClCompile Include="ParallelExecutionTests.cpp" />
     <ClCompile Include="PathTests.cpp" />
     <ClCompile Include="platform\win32\RawBitmapTests.cpp">
@@ -90,12 +82,14 @@
     <ProjectReference Include="..\..\src\agge\agge.vcxproj">
       <Project>{f849e92c-248a-46b2-9eab-f86578a21316}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\common\src\tests.common.vcxproj">
+      <Project>{01f120a2-7e71-4c3a-b4a8-1f396da7a0ad}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="assertex.h" />
     <ClInclude Include="helpers.h" />
     <ClInclude Include="mocks.h" />
-    <ClInclude Include="mt.h" />
     <ClInclude Include="platform\win32\surface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

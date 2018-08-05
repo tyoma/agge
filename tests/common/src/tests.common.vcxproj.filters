@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4d412356-ab5f-4160-97bb-46406ccaaabf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\platform">
+      <UniqueIdentifier>{f55c1c00-df44-4205-9d67-7fd8377d3d37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\platform\linux">
+      <UniqueIdentifier>{6cb27b2a-dace-4019-bcb4-bc1f8a7f7349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\platform\win32">
+      <UniqueIdentifier>{e24ca77a-eed8-4849-ad8a-fb733e3a1f11}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="platform\win32\mt.cpp">
+      <Filter>src\platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\linux\mt.cpp">
+      <Filter>src\platform\linux</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\helpers.h" />
+    <ClInclude Include="..\mt.h" />
+  </ItemGroup>
+</Project>

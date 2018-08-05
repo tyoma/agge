@@ -1,4 +1,4 @@
-#include "../../thread.h"
+#include <agge/thread.h>
 
 #include <new>
 #include <pthread.h>
@@ -6,7 +6,7 @@
 namespace agge
 {
 	thread::thread(thread_function_t thread_function, void *argument)
-		: _thread(pthread_t()), _thread_function(thread_function), _argument(argument)
+		: _thread(reinterpret_cast<void *>(pthread_t())), _thread_function(thread_function), _argument(argument)
 	{
 		struct starter
 		{
@@ -17,10 +17,10 @@ namespace agge
 			}
 		};
 
-		if (::pthread_create(_thread.address_of<pthread_t>(), 0, &starter::thread_proc, this))
+		if (::pthread_create(reinterpret_cast<pthread_t *>(&_thread), 0, &starter::thread_proc, this))
 			throw std::bad_alloc();
 	}
 
 	thread::~thread()
-	{	::pthread_join(_thread, 0);	}
+	{	::pthread_join(reinterpret_cast<pthread_t>(_thread), 0);	}
 }

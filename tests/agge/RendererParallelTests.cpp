@@ -2,7 +2,8 @@
 
 #include "helpers.h"
 #include "mocks.h"
-#include "mt.h"
+
+#include <tests/common/mt.h>
 
 #include <map>
 #include <ut/assert.h>

@@ -14,3 +14,4 @@ script:
  - make
  - bin/utee-runner bin/libagge.tests.so
  - bin/utee-runner bin/libagge.text.tests.so
+ - bin/utee-runner bin/libagge.async.tests.so

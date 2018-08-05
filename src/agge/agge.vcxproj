@@ -97,6 +97,7 @@
     <ClInclude Include="..\..\agge\curves.h" />
     <ClInclude Include="..\..\agge\dash.h" />
     <ClInclude Include="..\..\agge\figures.h" />
+    <ClInclude Include="..\..\agge\hybrid_event.h" />
     <ClInclude Include="..\..\agge\math.h" />
     <ClInclude Include="..\..\agge\memory.h" />
     <ClInclude Include="..\..\agge\parallel.h" />
@@ -111,6 +112,7 @@
     <ClInclude Include="..\..\agge\scanline.h" />
     <ClInclude Include="..\..\agge\stroke.h" />
     <ClInclude Include="..\..\agge\stroke_features.h" />
+    <ClInclude Include="..\..\agge\thread.h" />
     <ClInclude Include="..\..\agge\tools.h" />
     <ClInclude Include="..\..\agge\types.h" />
     <ClInclude Include="..\..\agge\vector_rasterizer.h" />
@@ -118,8 +120,6 @@
     <ClInclude Include="..\..\agge\filling_rules.h" />
     <ClInclude Include="intrinsic.h" />
     <ClInclude Include="handle.h" />
-    <ClInclude Include="hybrid_event.h" />
-    <ClInclude Include="thread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

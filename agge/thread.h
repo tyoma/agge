@@ -1,7 +1,5 @@
 #pragma once
 
-#include "handle.h"
-
 #include <agge/types.h>
 
 namespace agge
@@ -16,7 +14,7 @@ namespace agge
 		~thread();
 
 	private:
-		handle _thread;
+		void *_thread;
 		const thread_function_t _thread_function;
 		void * const _argument;
 	};
