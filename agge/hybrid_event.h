@@ -16,8 +16,8 @@ namespace agge
 		void wait();
 
 	private:
-		enum { max_spin = 20000 };
-		enum { state_free, state_set, state_blocked };
+		enum { max_spin = 5000 };
+		enum { state_reset, state_set, state_blocked };
 		
 	private:
 		volatile long _state;
