@@ -179,6 +179,30 @@ namespace agge
 				output.consume(consume_into(ovalue), waiter(output_ready));
 				assert_equal(5, ovalue.value);
 			}
+
+			test( AdditionalEventIsSignalledIfExpectedValueIsSignalled )
+			{
+				// INIT
+				processor<work1>::input_queue_t input1, input2;
+				processor<work1>::output_queue_t output1, output2;
+				hybrid_event has_input1, output_ready1, has_input2, output_ready2;
+				hybrid_event additional1, additional2;
+
+				// INIT / ACT
+				processor<work1> p1(input1, has_input1, output1, output_ready1, 2, &additional1);
+				processor<work1> p2(input2, has_input2, output2, output_ready2, 3, &additional2);
+
+				// ACT
+				input1.produce(work1(7), signaler(has_input1));
+				input1.produce(work1(13), signaler(has_input1));
+				input2.produce(work1(7), signaler(has_input2));
+				input2.produce(work1(13), signaler(has_input2));
+				input2.produce(work1(13), signaler(has_input2));
+
+				// ACT / ASSERT (must not block)
+				additional1.wait();
+				additional2.wait();
+			}
 		end_test_suite
 	}
 }

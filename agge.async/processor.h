@@ -16,7 +16,8 @@ namespace agge
 		typedef pq::circular_buffer< WorkT, pq::poly_entry<WorkT> > output_queue_t;
 
 	public:
-		processor(input_queue_t &input, hybrid_event &has_input, output_queue_t &output, hybrid_event &output_ready);
+		processor(input_queue_t &input, hybrid_event &has_input, output_queue_t &output, hybrid_event &output_ready,
+			int limit = 0, hybrid_event *limit_reached = 0);
 		~processor();
 
 	private:
@@ -32,7 +33,9 @@ namespace agge
 		hybrid_event &_has_input;
 		output_queue_t &_output;
 		hybrid_event &_output_ready;
+		hybrid_event *_limit_reached;
 		thread _thread;
+		int _limit;
 		bool _continue;
 	};
 
@@ -79,26 +82,30 @@ namespace agge
 	class processor<WorkT>::postproducer : noncopyable
 	{
 	public:
-		postproducer(hybrid_event &e)
-			: _e(e)
+		postproducer(hybrid_event &e, int limit, hybrid_event *limit_reached)
+			: _e(e), _limit_reached(limit_reached), _limit(limit_reached ? limit : -1)
 		{	}
 
 		void operator ()(int n) const
 		{
 			if (!n)
 				_e.signal();
+			if (n == _limit)
+				_limit_reached->signal();
 		}
 
 	private:
 		hybrid_event &_e;
+		hybrid_event *_limit_reached;
+		int _limit;
 	};
 
 
 	template <typename WorkT>
 	inline processor<WorkT>::processor(input_queue_t &input, hybrid_event &has_input,
-			output_queue_t &output, hybrid_event &output_ready)
-		: _input(input), _has_input(has_input), _output(output), _output_ready(output_ready), _thread(&worker, this),
-			_continue(true)
+			output_queue_t &output, hybrid_event &output_ready, int limit, hybrid_event *limit_reached)
+		: _input(input), _has_input(has_input), _output(output), _output_ready(output_ready),
+			_limit_reached(limit_reached), _thread(&worker, this), _limit(limit), _continue(true)
 	{	}
 
 	template <typename WorkT>
@@ -113,7 +120,7 @@ namespace agge
 	{
 		processor &self = *static_cast<processor *>(self_);
 		preconsumer pc(self._has_input, self._continue);
-		postproducer pp(self._output_ready);
+		postproducer pp(self._output_ready, self._limit, self._limit_reached);
 		consumer c(self._output, pp);
 
 		while (self._input.consume(c, pc))
