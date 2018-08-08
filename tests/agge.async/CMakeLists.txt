@@ -2,6 +2,7 @@ include_directories(${AGGE_SOURCE_DIR}/libraries/poly-queue)
 
 set(AGGE_ASYNC_TEST_SOURCES
 	ProcessorTests.cpp
+	QueueTests.cpp
 )
 
 find_package(Threads)

@@ -56,6 +56,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ProcessorTests.cpp" />
+    <ClCompile Include="QueueTests.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\agge.async\processor.h" />
+    <ClInclude Include="..\..\agge.async\queue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
