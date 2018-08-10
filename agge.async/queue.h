@@ -13,6 +13,9 @@ namespace agge
 		template <typename FinalT>
 		void produce(const FinalT &object);
 
+		template <typename FinalT>
+		void produce(FinalT &object);
+
 		template <typename ConsumerT>
 		bool consume(const ConsumerT &consumer);
 
@@ -93,10 +96,16 @@ namespace agge
 		: _preconsumer(ready), _postproducer(ready, additional_limit, additional_event)
 	{	}
 
-	template <typename T, typename EventT>
-	template <typename FinalT>
-	inline void queue<T, EventT>::produce(const FinalT &object)
-	{	_inner.produce(object, _postproducer);	}
+#define QUEUE_PRODUCE_DEF(cv)\
+	template <typename T, typename EventT>\
+	template <typename FinalT>\
+	inline void queue<T, EventT>::produce(FinalT cv object)\
+	{	_inner.produce(object, _postproducer);	}\
+
+	QUEUE_PRODUCE_DEF(const &);
+	QUEUE_PRODUCE_DEF(&);
+
+#undef QUEUE_PRODUCE_DEF
 
 	template <typename T, typename EventT>
 	template <typename ConsumerT>

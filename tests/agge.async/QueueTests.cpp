@@ -72,6 +72,25 @@ namespace agge
 				int _multiplier;
 			};
 
+			template <int N>
+			class real_work_nc : public work
+			{
+			public:
+				real_work_nc(int multiplier = 0)
+					: _multiplier(multiplier)
+				{	}
+
+				real_work_nc(real_work_nc &other)
+					: _multiplier(other._multiplier)
+				{	}
+
+				virtual void operator ()(int &result)
+				{	result = N * _multiplier;	}
+
+			private:
+				int _multiplier;
+			};
+
 			class consumer
 			{
 			public:
@@ -333,6 +352,41 @@ namespace agge
 				// ASSERT
 				assert_equal(1u, additional1.signalled);
 				assert_equal(1u, additional2.signalled);
+			}
+
+
+			test( ObjectConstructedFromNonConstRefCanBeProduced )
+			{
+				// INIT
+				mocks::event e;
+				queue<work, mocks::event> q(e);
+				consumer c;
+				real_work_nc<13> v1(2);
+				real_work_nc<17> v2(3);
+				real_work_nc<19> v3(1);
+
+				// ACT
+				q.produce(v1);
+				q.produce(v2);
+				q.produce(v3);
+
+				// ACT / ASSERT
+				assert_is_true(q.consume(c));
+
+				// ASSERT
+				assert_equal(26, c.result);
+
+				// ACT / ASSERT
+				assert_is_true(q.consume(c));
+
+				// ASSERT
+				assert_equal(51, c.result);
+
+				// ACT / ASSERT
+				assert_is_true(q.consume(c));
+
+				// ASSERT
+				assert_equal(19, c.result);
 			}
 		end_test_suite
 	}
