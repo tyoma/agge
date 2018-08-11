@@ -55,10 +55,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CircularBufferTests.cpp" />
+    <ClCompile Include="PolyEntryTests.cpp" />
     <ClCompile Include="QueueTests.cpp" />
     <ClCompile Include="WorkerTests.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\agge.async\circular.h" />
+    <ClInclude Include="..\..\agge.async\entry.h" />
     <ClInclude Include="..\..\agge.async\queue.h" />
     <ClInclude Include="..\..\agge.async\worker.h" />
   </ItemGroup>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <poly-queue/circular.h>
+#include "circular.h"
 
 namespace agge
 {
@@ -50,7 +50,7 @@ namespace agge
 		};
 
 	private:
-		pq::circular_buffer< T, pq::poly_entry<T> > _inner;
+		circular_buffer< T, poly_entry<T> > _inner;
 		preconsumer _preconsumer;
 		postproducer _postproducer;
 	};
