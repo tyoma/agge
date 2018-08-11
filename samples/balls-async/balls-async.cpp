@@ -2,19 +2,15 @@
 
 #include <agge/clipper.h>
 #include <agge/filling_rules.h>
-#include <agge/hybrid_event.h>
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
-#include <agge/thread.h>
+#include <agge.async/worker.h>
 #include <memory>
-#include <poly-queue/circular.h>
 
 #include <misc/experiments/common/ellipse.h>
 
 #include <samples/common/shell.h>
 #include <samples/common/timing.h>
-
-#pragma warning(disable:4355)
 
 using namespace agge;
 using namespace std;
@@ -25,6 +21,38 @@ const int c_balls_number = 1000;
 
 namespace
 {
+	template <typename T, unsigned align_by_order = 4>
+	class aligned
+	{
+	public:
+		aligned(const T &from)
+		{	new(address()) T(from);	}
+
+		aligned(aligned &other)
+		{	new(address()) T(*other);	}
+
+		~aligned()
+		{	(**this).~T();	}
+
+		T &operator *()
+		{	return *static_cast<T *>(address());	}
+
+	private:
+		enum {
+			align_by = 1 << align_by_order,
+			align_mask = align_by - 1,
+		};
+
+	private:
+		void operator =(const aligned &rhs);
+
+		void *address()
+		{	return _buffer + align_by - (((unsigned)(size_t)_buffer) & align_mask);	}
+
+	private:
+		uint8_t _buffer[sizeof(T) + align_by];
+	};
+
 	template <typename RasterizerT>
 	class async
 	{
@@ -34,150 +62,115 @@ namespace
 	public:
 		async(count_t n);
 
-		rasterizer_type* acquire();
+		auto_ptr<rasterizer_type> acquire();
 
 		template <typename SurfaceT, typename BlenderT>
-		void submit(rasterizer_type *rasterizer_, SurfaceT &surface, rect_i *window, const BlenderT &blender);
+		void submit(auto_ptr<rasterizer_type> &rasterizer_, SurfaceT &surface, const BlenderT &blender);
 
 		void wait_completion();
 
 	private:
-		class rendition_pack;
-
 		typedef renderer_parallel renderer_type;
+		typedef typename worker< auto_ptr<rasterizer_type> > render_worker;
+		typedef typename render_worker::work_in render_work;
+		typedef typename worker<render_work> sorter_worker;
+		typedef typename sorter_worker::work_in sort_work;
 
-	private:
-		static void sorter_proc(void *p);
-		static void rendition_proc(void *p);
+		template <typename SurfaceT, typename BlenderT>
+		struct sorter_work_impl;
+
+		template <typename SurfaceT, typename BlenderT>
+		struct renderer_no_window_work_impl;
 
 	private:
 		renderer_type _renderer;
-		pq::circular_buffer<rendition_pack> _unsorted;
-		hybrid_event _unsorted_ready;
-		pq::circular_buffer<rendition_pack> _sorted;
-		hybrid_event _sorted_ready;
-		pq::circular_buffer<rasterizer_type *> _free;
-		hybrid_event _free_ready;
-		hybrid_event _complete;
-		thread _sorter_thread;
-		thread _renderer_thread;
-		int _n;
-	};
 
-#pragma pack(1)
+		hybrid_event _filled_ready, _sorted_ready, _complete_ready, _all_ready;
+		typename sorter_worker::in_queue_type _filled_rasterizers;
+		typename sorter_worker::out_queue_type _sorted_rasterizers;
+		typename render_worker::out_queue_type _complete_rasterizers;
+		sorter_worker _sorter_w;
+		render_worker _renderer_w;
+	};
 
 	template <typename RasterizerT>
-	class async<RasterizerT>::rendition_pack
+	template <typename SurfaceT, typename BlenderT>
+	struct async<RasterizerT>::renderer_no_window_work_impl : async<RasterizerT>::render_work
 	{
-	public:
-		rendition_pack(rasterizer_type *rasterizer_, platform_bitmap &surface, rect_i * /*window*/, const platform_blender_solid_color &blender)
-			: _surface(surface), _blender(blender)
-		{	this->rasterizer = move(rasterizer_);	}
+		renderer_no_window_work_impl(auto_ptr<typename async::rasterizer_type> &ras_, SurfaceT &surface_,
+				const BlenderT &blender_, typename async::renderer_type &ren_)
+			: ras(ras_), surface(surface_), blender(blender_), ren(ren_)
+		{	}
 
-		void render(renderer_type &ren)
-		{	ren(_surface, 0, *this->rasterizer, _blender, winding<>());	}
+		virtual void run(typename async::render_worker::out_queue_type &output)
+		{
+			ren(surface, 0, *ras, *blender, winding<>());
+			output.produce(ras);
+		}
 
-	public:
-		rasterizer_type * rasterizer;
-
-	private:
-		void operator =(const rendition_pack&);
-
-	private:
-		platform_bitmap & _surface;
-		char b[8];
-		const platform_blender_solid_color _blender;
+		auto_ptr<typename async::rasterizer_type> ras;
+		SurfaceT &surface;
+		aligned<BlenderT> blender;
+		typename async::renderer_type &ren;
 	};
+
+	template <typename RasterizerT>
+	template <typename SurfaceT, typename BlenderT>
+	struct async<RasterizerT>::sorter_work_impl : async<RasterizerT>::sort_work
+	{
+		sorter_work_impl(auto_ptr<typename async::rasterizer_type> &ras, SurfaceT &surface, const BlenderT &blender,
+				typename async::renderer_type &ren)
+			: inner(ras, surface, blender, ren)
+		{	}
+
+		virtual void run(typename async::sorter_worker::out_queue_type &output)
+		{
+			inner.ras->sort();
+			output.produce(inner);
+		}
+
+		async<RasterizerT>::renderer_no_window_work_impl<SurfaceT, BlenderT> inner;
+	};
+
 
 	template <typename RasterizerT>
 	async<RasterizerT>::async(count_t n)
-		: _renderer(c_render_thread_count), _unsorted(10000), _sorted(10000), _sorter_thread(&sorter_proc, this), _renderer_thread(&rendition_proc, this), _n(n)
+		: _renderer(c_render_thread_count), _filled_rasterizers(_filled_ready), _sorted_rasterizers(_sorted_ready),
+			_complete_rasterizers(_complete_ready, (int)n, &_all_ready),
+			_sorter_w(_filled_rasterizers, _sorted_rasterizers), _renderer_w(_sorted_rasterizers, _complete_rasterizers)
 	{
 		while (n--)
 		{
-			auto p = new rasterizer_type;
-			unique_ptr<rasterizer_type> ras(p);
-
-			_free.produce(p, [](int) {});
-			ras.release();
+			auto_ptr<rasterizer_type> r(new rasterizer_type);
+			_complete_rasterizers.produce(r);
 		}
-		_complete.signal();
 	}
 
 	template <typename RasterizerT>
-	RasterizerT *async<RasterizerT>::acquire()
+	auto_ptr<RasterizerT> async<RasterizerT>::acquire()
 	{
-		rasterizer_type *ras = 0;
+		auto_ptr<RasterizerT> ras;
 
-		_free.consume([&](rasterizer_type *o) { ras = o; }, [this](int n) {
-			if (n == 0)
-				_free_ready.wait();
-			if (n == _n)
-				_complete.wait();
-			return true;
+		_complete_rasterizers.consume([&](auto_ptr<RasterizerT> &o) {
+			ras = o;
 		});
+		ras->reset();
 		return ras;
 	}
 
 	template <typename RasterizerT>
 	template <typename SurfaceT, typename BlenderT>
-	void async<RasterizerT>::submit(rasterizer_type *rasterizer_, SurfaceT &surface, rect_i *window, const BlenderT &blender)
+	void async<RasterizerT>::submit(auto_ptr<rasterizer_type> &rasterizer_, SurfaceT &surface, const BlenderT &blender)
 	{
-		rendition_pack pack(rasterizer_, surface, window, blender);
-
-		_unsorted.produce(pack, [this](int n) {
-			if (!n)
-				_unsorted_ready.signal();
-		});
+		sorter_work_impl<SurfaceT, BlenderT> s(rasterizer_, surface, blender, _renderer);
+		_filled_rasterizers.produce(s);
 	}
 
 	template <typename RasterizerT>
 	void async<RasterizerT>::wait_completion()
 	{
-		_complete.wait();
-		_complete.signal(); // acquire & wait_completion must be called from the same thread/queue.
-	}
-
-	template <typename RasterizerT>
-	void async<RasterizerT>::sorter_proc(void *p)
-	{
-		async *self = static_cast<async *>(p);
-		for (;;)
-		{
-			self->_unsorted.consume([self](rendition_pack &o) {
-				o.rasterizer->sort();
-				self->_sorted.produce(o, [self](int n) {
-					if (!n)
-						self->_sorted_ready.signal();
-				});
-			}, [self](int n) {
-				if (n == 0)
-					self->_unsorted_ready.wait();
-				return true;
-			});
-		}
-	}
-
-	template <typename RasterizerT>
-	void async<RasterizerT>::rendition_proc(void *p)
-	{
-		async *self = static_cast<async *>(p);
-		for (;;)
-		{
-			self->_sorted.consume([self](rendition_pack &o) {
-				o.render(self->_renderer);
-				self->_free.produce(o.rasterizer, [self](int n) {
-					if (!n)
-						self->_free_ready.signal();
-					if (self->_n == n)
-						self->_complete.signal();
-				});
-			}, [self](int n) {
-				if (!n)
-					self->_sorted_ready.wait();
-				return true;
-			});
-		}
+		_all_ready.wait();
+		_all_ready.signal(); // acquire & wait_completion must be called from the same thread/queue.
 	}
 
 
@@ -185,7 +178,7 @@ namespace
 	{
 	public:
 		Balls()
-			: _async(30), _balls(c_balls)
+			: _async(10), _balls(c_balls)
 		{	_balls.resize(c_balls_number);	}
 
 	private:
@@ -207,12 +200,10 @@ namespace
 			{
 				ellipse e(i->x, i->y, i->radius, i->radius);
 				platform_blender_solid_color brush(i->color.r, i->color.g, i->color.b, i->color.a);
-				unique_ptr<async_t::rasterizer_type> ras(_async.acquire());
-
-				ras->reset();
+				auto_ptr<async_t::rasterizer_type> ras = _async.acquire();
 
 				add_path(*ras, e);
-				_async.submit(ras.get(), surface, 0, brush);
+				_async.submit(ras, surface, brush);
 				ras.release();
 			}
 			_async.wait_completion();
@@ -230,6 +221,4 @@ namespace
 }
 
 application *agge_create_application(services &/*s*/)
-{
-	return new Balls;
-}
+{	return new Balls;	}

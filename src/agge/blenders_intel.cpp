@@ -38,8 +38,8 @@ namespace agge
 			n = (n + 3) >> 2;
 
 			const __m128i zero = _mm_setzero_si128();
-			const __m128i alpha_u16 = _mm_loadu_si128(&_alpha_u16);
-			const __m128i color_u16 = _mm_loadu_si128(&_color_u16);
+			const __m128i alpha_u16 = _mm_load_si128(&_alpha_u16);
+			const __m128i color_u16 = _mm_load_si128(&_color_u16);
 
 			for (__m128i *p = reinterpret_cast<__m128i *>(pixels); n; --n, ++p, covers += 4)
 			{

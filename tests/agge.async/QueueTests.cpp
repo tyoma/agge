@@ -343,15 +343,56 @@ namespace agge
 
 				// ASSERT
 				assert_equal(0u, additional1.signalled);
-				assert_equal(0u, additional2.signalled);
+				assert_equal(0u, additional1.signalled);
 
 				// ACT
 				q1.produce(real_work<1>());
 				q2.produce(real_work<2>());
 
 				// ASSERT
+				assert_equal(0u, additional1.waited);
 				assert_equal(1u, additional1.signalled);
+				assert_equal(0u, additional2.waited);
 				assert_equal(1u, additional2.signalled);
+			}
+
+
+			test( AdditionalEventIsWaitedWhenDroppingFromTheLimit )
+			{
+				// INIT
+				mocks::event e, additional1, additional2;
+				queue<work, mocks::event> q1(e, 3, &additional1), q2(e, 2, &additional2);
+				consumer c;
+
+				q1.produce(real_work<1>());
+				q1.produce(real_work<2>());
+				q1.produce(real_work<2>());
+				q2.produce(real_work<2>());
+				q2.produce(real_work<2>());
+
+				// ACT
+				q1.consume(c);
+
+				// ASSERT
+				assert_equal(1u, additional1.waited);
+
+				// ACT
+				q1.consume(c);
+
+				// ASSERT
+				assert_equal(1u, additional1.waited);
+
+				// ACT
+				q2.consume(c);
+
+				// ASSERT
+				assert_equal(1u, additional2.waited);
+
+				// ACT
+				q2.consume(c);
+
+				// ASSERT
+				assert_equal(1u, additional2.waited);
 			}
 
 

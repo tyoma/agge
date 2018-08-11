@@ -25,13 +25,15 @@ namespace agge
 		struct preconsumer
 		{
 		public:
-			preconsumer(EventT &ready);
+			preconsumer(EventT &ready, int additional_limit, EventT *additional_event);
 
 			bool operator ()(int n) const;
 			void stop();
 
 		private:
 			EventT &_ready;
+			EventT *_additional_event;
+			int _additional_limit;
 			bool _continue;
 		};
 
@@ -56,8 +58,8 @@ namespace agge
 
 
 	template <typename T, typename EventT>
-	inline queue<T, EventT>::preconsumer::preconsumer(EventT &ready)
-		: _ready(ready), _continue(true)
+	inline queue<T, EventT>::preconsumer::preconsumer(EventT &ready, int additional_limit, EventT *additional_event)
+		: _ready(ready), _additional_event(additional_event), _additional_limit(additional_limit), _continue(true)
 	{	}
 
 	template <typename T, typename EventT>
@@ -65,6 +67,8 @@ namespace agge
 	{
 		if (!n)
 			_ready.wait();
+		if (n == _additional_limit)
+			_additional_event->wait();
 		return _continue;
 	}
 
@@ -78,7 +82,7 @@ namespace agge
 
 	template <typename T, typename EventT>
 	inline queue<T, EventT>::postproducer::postproducer(EventT &ready, int additional_limit, EventT *additional_event)
-		: _ready(ready), _additional_event(additional_event), _additional_limit(!additional_event ? -1 : additional_limit)
+		: _ready(ready), _additional_event(additional_event), _additional_limit(additional_limit)
 	{	}
 
 	template <typename T, typename EventT>
@@ -93,7 +97,8 @@ namespace agge
 
 	template <typename T, typename EventT>
 	inline queue<T, EventT>::queue(EventT &ready, int additional_limit, EventT *additional_event)
-		: _preconsumer(ready), _postproducer(ready, additional_limit, additional_event)
+		: _inner(0x1000), _preconsumer(ready, additional_limit, additional_event),
+			_postproducer(ready, additional_limit, additional_event)
 	{	}
 
 #define QUEUE_PRODUCE_DEF(cv)\
