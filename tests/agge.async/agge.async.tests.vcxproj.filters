@@ -3,6 +3,8 @@
   <ItemGroup>
     <ClCompile Include="QueueTests.cpp" />
     <ClCompile Include="WorkerTests.cpp" />
+    <ClCompile Include="CircularBufferTests.cpp" />
+    <ClCompile Include="PolyEntryTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Library Headers">
@@ -14,6 +16,12 @@
       <Filter>Library Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\agge.async\worker.h">
+      <Filter>Library Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\agge.async\circular.h">
+      <Filter>Library Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\agge.async\entry.h">
       <Filter>Library Headers</Filter>
     </ClInclude>
   </ItemGroup>
