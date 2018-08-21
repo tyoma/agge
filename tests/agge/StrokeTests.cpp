@@ -5,6 +5,7 @@
 #include "helpers.h"
 #include "mocks.h"
 
+#include <memory>
 #include <ut/assert.h>
 #include <ut/test.h>
 
