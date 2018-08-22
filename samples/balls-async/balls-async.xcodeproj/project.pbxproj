@@ -1,0 +1,313 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A08D9F9E212D3445009D4A4B /* balls-async.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A08D9F98212D3444009D4A4B /* balls-async.cpp */; };
+		A08D9F9F212D3445009D4A4B /* main.xib in Resources */ = {isa = PBXBuildFile; fileRef = A08D9F99212D3444009D4A4B /* main.xib */; };
+		A08D9FA0212D3445009D4A4B /* balls_data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A08D9F9B212D3444009D4A4B /* balls_data.cpp */; };
+		A08D9FA1212D3445009D4A4B /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A08D9F9C212D3445009D4A4B /* Info.plist */; };
+		A08D9FA4212D3598009D4A4B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A08D9FA3212D3598009D4A4B /* Cocoa.framework */; };
+		A08D9FA5212D35A4009D4A4B /* libagge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A08D9FA7212D35A4009D4A4B /* libagge.a */; };
+		A08D9FA6212D35A4009D4A4B /* libsamples-common.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A08D9FA8212D35A4009D4A4B /* libsamples-common.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A08D9F98212D3444009D4A4B /* balls-async.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "balls-async.cpp"; sourceTree = "<group>"; };
+		A08D9F99212D3444009D4A4B /* main.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = main.xib; sourceTree = "<group>"; };
+		A08D9F9A212D3444009D4A4B /* balls_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = balls_data.h; sourceTree = "<group>"; };
+		A08D9F9B212D3444009D4A4B /* balls_data.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = balls_data.cpp; sourceTree = "<group>"; };
+		A08D9F9C212D3445009D4A4B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A08D9F9D212D3445009D4A4B /* balls-async.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "balls-async.entitlements"; sourceTree = "<group>"; };
+		A08D9FA3212D3598009D4A4B /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		A08D9FA7212D35A4009D4A4B /* libagge.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libagge.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A08D9FA8212D35A4009D4A4B /* libsamples-common.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libsamples-common.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0D04182212D31E9000259CD /* balls-async.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "balls-async.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A0D0417F212D31E9000259CD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A08D9FA5212D35A4009D4A4B /* libagge.a in Frameworks */,
+				A08D9FA6212D35A4009D4A4B /* libsamples-common.a in Frameworks */,
+				A08D9FA4212D3598009D4A4B /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A08D9FA2212D3598009D4A4B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A08D9FA7212D35A4009D4A4B /* libagge.a */,
+				A08D9FA8212D35A4009D4A4B /* libsamples-common.a */,
+				A08D9FA3212D3598009D4A4B /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A0D04179212D31E9000259CD = {
+			isa = PBXGroup;
+			children = (
+				A08D9F9B212D3444009D4A4B /* balls_data.cpp */,
+				A08D9F9A212D3444009D4A4B /* balls_data.h */,
+				A08D9F98212D3444009D4A4B /* balls-async.cpp */,
+				A08D9F9C212D3445009D4A4B /* Info.plist */,
+				A08D9F99212D3444009D4A4B /* main.xib */,
+				A08D9F9D212D3445009D4A4B /* balls-async.entitlements */,
+				A0D04183212D31E9000259CD /* Products */,
+				A08D9FA2212D3598009D4A4B /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		A0D04183212D31E9000259CD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A0D04182212D31E9000259CD /* balls-async.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A0D04181212D31E9000259CD /* balls-async */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A0D04193212D31E9000259CD /* Build configuration list for PBXNativeTarget "balls-async" */;
+			buildPhases = (
+				A0D0417E212D31E9000259CD /* Sources */,
+				A0D0417F212D31E9000259CD /* Frameworks */,
+				A0D04180212D31E9000259CD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "balls-async";
+			productName = "balls-async";
+			productReference = A0D04182212D31E9000259CD /* balls-async.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A0D0417A212D31E9000259CD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0920;
+				ORGANIZATIONNAME = "Artem G.";
+				TargetAttributes = {
+					A0D04181212D31E9000259CD = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = A0D0417D212D31E9000259CD /* Build configuration list for PBXProject "balls-async" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A0D04179212D31E9000259CD;
+			productRefGroup = A0D04183212D31E9000259CD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A0D04181212D31E9000259CD /* balls-async */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A0D04180212D31E9000259CD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A08D9FA1212D3445009D4A4B /* Info.plist in Resources */,
+				A08D9F9F212D3445009D4A4B /* main.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A0D0417E212D31E9000259CD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A08D9FA0212D3445009D4A4B /* balls_data.cpp in Sources */,
+				A08D9F9E212D3445009D4A4B /* balls-async.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A0D04191212D31E9000259CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		A0D04192212D31E9000259CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		A0D04194212D31E9000259CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "balls-async.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				HEADER_SEARCH_PATHS = ../..;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.agge.balls-async";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A0D04195212D31E9000259CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "balls-async.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				HEADER_SEARCH_PATHS = ../..;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.agge.balls-async";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A0D0417D212D31E9000259CD /* Build configuration list for PBXProject "balls-async" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A0D04191212D31E9000259CD /* Debug */,
+				A0D04192212D31E9000259CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A0D04193212D31E9000259CD /* Build configuration list for PBXNativeTarget "balls-async" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A0D04194212D31E9000259CD /* Debug */,
+				A0D04195212D31E9000259CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A0D0417A212D31E9000259CD /* Project object */;
+}
