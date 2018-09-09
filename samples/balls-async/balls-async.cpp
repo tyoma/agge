@@ -71,9 +71,9 @@ namespace
 
 	private:
 		typedef renderer_parallel renderer_type;
-		typedef typename agge::worker< auto_ptr<rasterizer_type> > render_worker;
+		typedef agge::worker< auto_ptr<rasterizer_type> > render_worker;
 		typedef typename render_worker::work_in render_work;
-		typedef typename agge::worker<render_work> sorter_worker;
+		typedef agge::worker<render_work> sorter_worker;
 		typedef typename sorter_worker::work_in sort_work;
 
 		template <typename SurfaceT, typename BlenderT>
