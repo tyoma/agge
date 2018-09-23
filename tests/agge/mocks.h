@@ -310,6 +310,12 @@ namespace agge
 			return p;
 		}
 
+		inline mocks::path::point stop()
+		{
+			mocks::path::point p = { 0.0f, 0.0f, path_command_stop };
+			return p;
+		}
+
 		template <typename SourceT>
 		inline mocks::path::point vertex(SourceT &source)
 		{

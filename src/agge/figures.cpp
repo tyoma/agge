@@ -5,6 +5,7 @@
 namespace agge
 {
 	rectangle::rectangle(real_t x1, real_t y1, real_t x2, real_t y2)
+		: _step(0)
 	{
 		_rect.x1 = x1;
 		_rect.y1 = y1;
@@ -12,15 +13,10 @@ namespace agge
 		_rect.y2 = y2;
 	}
 
-	rectangle::iterator rectangle::iterate() const
-	{	return iterator(_rect);	}
+	void rectangle::rewind(unsigned /*id*/)
+	{	_step = 0;	}
 
-
-	rectangle::iterator::iterator(const rect<real_t> &r)
-		: _rect(r), _step(0)
-	{	}
-
-	int rectangle::iterator::vertex(real_t *x, real_t *y)
+	int rectangle::vertex(real_t *x, real_t *y)
 	{
 		switch (_step++)
 		{

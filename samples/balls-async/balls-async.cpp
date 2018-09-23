@@ -198,11 +198,10 @@ namespace
 			stopwatch(counter);
 			for (vector<ball>::iterator i = _balls.begin(); i != _balls.end(); ++i)
 			{
-				ellipse e(i->x, i->y, i->radius, i->radius);
 				platform_blender_solid_color brush(i->color.r, i->color.g, i->color.b, i->color.a);
 				auto_ptr<async_t::rasterizer_type> ras = _async.acquire();
 
-				add_path(*ras, e);
+				add_path(*ras, ellipse(i->x, i->y, i->radius, i->radius));
 				_async.submit(ras, surface, brush);
 				ras.release();
 			}

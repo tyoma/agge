@@ -75,7 +75,9 @@
     <ClCompile Include="platform\win32\thread.cpp">
       <Filter>src\platform\win32</Filter>
     </ClCompile>
-    <ClCompile Include="platform\unix\thread.cpp" />
+    <ClCompile Include="platform\unix\thread.cpp">
+      <Filter>src\platform\unix</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\agge\bitmap.h" />

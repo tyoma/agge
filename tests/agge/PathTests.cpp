@@ -46,12 +46,12 @@ namespace agge
 			test( EmptySourcePathAddsNothingToGenerator )
 			{
 				// INIT
-				mocks::path empty;
+				const mocks::path empty;
 				passthrough_generator g(1.0f, 1.0f);
 				real_t x, y;
 
 				// INIT / ACT
-				path_generator_adapter<mocks::path, passthrough_generator> pg(empty, g);
+				path_generator_adapter<mocks::path, passthrough_generator> pg = assist(empty, g);
 
 				// ACT / ASSERT
 				assert_equal(path_command_stop, (int)pg.vertex(&x, &y));
@@ -79,13 +79,13 @@ namespace agge
 					{ 11.0f, 23.0f, path_command_line_to },
 					{ 1.0f, 17.0f, path_command_line_to },
 				};
-				mocks::path p1(input1);
-				mocks::path p2(input2);
+				const mocks::path p1(input1);
+				const mocks::path p2(input2);
 				passthrough_generator g1(2.0f, 1.0f);
 				passthrough_generator g2(1.0f, 2.0f);
 
-				path_generator_adapter<mocks::path, passthrough_generator> pg1(p1, g1);
-				path_generator_adapter<mocks::path, passthrough_generator> pg2(p2, g2);
+				path_generator_adapter<mocks::path, passthrough_generator> pg1 = assist(p1, g1);
+				path_generator_adapter<mocks::path, passthrough_generator> pg2 = assist(p2, g2);
 
 				// ACT
 				mocks::path::point points1[] = { vertex(pg1), vertex(pg1), vertex(pg1), vertex(pg1), vertex(pg1), };
@@ -131,7 +131,7 @@ namespace agge
 				mocks::path p1(input1);
 				passthrough_generator g;
 
-				path_generator_adapter<mocks::path, passthrough_generator> pg1(p1, g);
+				path_generator_adapter<mocks::path, passthrough_generator> pg1 = assist(p1, g);
 
 				// ACT
 				mocks::path::point points1[] = { vertex(pg1), vertex(pg1), };
@@ -175,7 +175,7 @@ namespace agge
 				};
 				mocks::path p2(input2);
 
-				path_generator_adapter<mocks::path, passthrough_generator> pg2(p2, g);
+				path_generator_adapter<mocks::path, passthrough_generator> pg2 = assist(p2, g);
 
 				// ACT
 				mocks::path::point points3[] = {
@@ -210,7 +210,7 @@ namespace agge
 				};
 				mocks::path p(input);
 				passthrough_generator g;
-				path_generator_adapter<mocks::path, passthrough_generator> pg(p, g);
+				path_generator_adapter<mocks::path, passthrough_generator> pg = assist(p, g);
 
 				g.points.resize(3); // Resize to check if its cleared.
 
@@ -286,7 +286,7 @@ namespace agge
 					{ 3.0f, 7.0f, path_command_move_to },
 					{ 29.0f, 19.0f, path_command_move_to },
 				};
-				mocks::path p1(input1), p2(input2);
+				const mocks::path p1(input1), p2(input2);
 				mock_path_sink s;
 
 				// ACT
@@ -314,7 +314,7 @@ namespace agge
 					{ 11.0f, 23.0f, path_command_line_to },
 					{ 3.0f, 7.0f, path_command_line_to },
 				};
-				mocks::path p(input);
+				const mocks::path p(input);
 				mock_path_sink s;
 
 				// ACT
@@ -332,7 +332,7 @@ namespace agge
 					{ 11.0f, 23.0f, path_command_line_to | path_flag_close },
 					{ 3.0f, 7.0f, path_command_line_to | path_flag_close },
 				};
-				mocks::path p(input);
+				const mocks::path p(input);
 				mock_path_sink s;
 
 				// ACT

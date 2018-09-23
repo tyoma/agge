@@ -23,7 +23,7 @@ namespace common
 
 	typedef std::vector< std::pair<std::pair<agge::real_t, agge::real_t>, unsigned> > AggPath;
 
-	class agg_path_adaptor : agge::noncopyable
+	class agg_path_adaptor
 	{
 	public:
 		agg_path_adaptor(const AggPath &path)
@@ -43,6 +43,9 @@ namespace common
 			else
 				return *x = _position->first.first, *y = _position->first.second, _position++->second;
 		}
+
+	private:
+		const agg_path_adaptor &operator =(const agg_path_adaptor &rhs);
 
 	private:
 		const AggPath &_path;
@@ -98,7 +101,7 @@ namespace common
 	{	path.push_back(std::make_pair(std::make_pair(0.0f, 0.0f), agge::path_command_stop));	}
 
 	template <typename RealT, typename TargetT, typename PathT>
-	inline void flatten(TargetT &destination, PathT &source)
+	inline void flatten(TargetT &destination, PathT source)
 	{
 		unsigned cmd;
 		RealT x, y;

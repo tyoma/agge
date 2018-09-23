@@ -37,6 +37,9 @@ namespace agge
 			{
 				virtual ~Foo() { }
 				virtual string get_type() const = 0;
+
+			private:
+				const Foo &operator =(const Foo &rhs);
 			};
 
 			class Bar : public Foo

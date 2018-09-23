@@ -84,14 +84,6 @@ namespace
 			timings.clearing += stopwatch(counter);
 
 			stopwatch(counter);
-				agg_path_adaptor p(_spiral);
-				path_generator_adapter<agg_path_adaptor, stroke> path_stroke1(p, _stroke1);
-				path_generator_adapter<path_generator_adapter<agg_path_adaptor, stroke>, stroke> path_stroke2(path_stroke1, _stroke2);
-
-				path_generator_adapter<agg_path_adaptor, dash> path_stroke3(p, _dash);
-				path_generator_adapter<path_generator_adapter<agg_path_adaptor, dash>, stroke> path_stroke4(path_stroke3, _stroke1);
-				path_generator_adapter<path_generator_adapter<path_generator_adapter<agg_path_adaptor, dash>, stroke>, stroke> path_stroke5(path_stroke4, _stroke2);
-
 				_stroke1.width(3.0f);
 				_stroke1.set_cap(caps::butt());
 				_stroke1.set_join(unlimited_miter());
@@ -101,16 +93,17 @@ namespace
 				_stroke2.set_join(joins::bevel());
 
 				_spiral_flattened.clear();
-				flatten<real_t>(_spiral_flattened, path_stroke1);
+				flatten<real_t>(_spiral_flattened, assist(agg_path_adaptor(_spiral), _stroke1));
+//				flatten<real_t>(_spiral_flattened, assist(assist(agg_path_adaptor(_spiral), _stroke1), _stroke2));
+//				flatten<real_t>(_spiral_flattened, assist(assist(assist(agg_path_adaptor(_spiral), _dash), _stroke1), _stroke2));
 			timings.stroking += stopwatch(counter);
 
-			agg_path_adaptor spiral(_spiral_flattened);
-
 			stopwatch(counter);
-			add_path(_rasterizer, spiral);
-			_rasterizer.sort();
-			timings.rasterization += stopwatch(counter);
-			_renderer(surface, 0, _rasterizer, brush, winding<>());
+				add_path(_rasterizer, agg_path_adaptor(_spiral_flattened));
+//				add_path(_rasterizer, assist(agg_path_adaptor(_spiral), _stroke1));
+				_rasterizer.sort();
+				timings.rasterization += stopwatch(counter);
+				_renderer(surface, 0, _rasterizer, brush, winding<>());
 			timings.rendition += stopwatch(counter);
 		}
 

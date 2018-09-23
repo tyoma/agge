@@ -22,10 +22,10 @@ namespace agge
 
 
 	template <typename SourceT, typename GeneratorT>
-	class path_generator_adapter : noncopyable
+	class path_generator_adapter
 	{
 	public:
-		path_generator_adapter(SourceT &source, GeneratorT &generator);
+		path_generator_adapter(const SourceT &source, GeneratorT &generator);
 
 		void rewind(int /*path_id*/) { /*not implemented*/ }
 		int vertex(real_t *x, real_t *y);
@@ -34,15 +34,22 @@ namespace agge
 		enum state { initial = 0, accumulate = 1, generate = 2, stage_mask = 3, complete = 4 };
 
 	private:
+		const path_generator_adapter &operator =(const path_generator_adapter &rhs);
+
 		void set_stage(state stage, bool force_complete = false);
 
 	private:
-		SourceT &_source;
+		SourceT _source;
 		GeneratorT &_generator;
 		real_t _start_x, _start_y;
 		int _state;
 	};
 
+
+
+	template <typename SourceT, typename GeneratorT>
+	path_generator_adapter<SourceT, GeneratorT> assist(const SourceT &source, GeneratorT &generator)
+	{	return path_generator_adapter<SourceT, GeneratorT>(source, generator);	}
 
 	inline bool is_vertex(int c)
 	{	return 0 != (path_vertex_mask & c);	}
@@ -66,7 +73,7 @@ namespace agge
 	}
 
 	template <typename SinkT, typename PathIteratorT>
-	inline void add_path(SinkT &sink, PathIteratorT &path)
+	inline void add_path(SinkT &sink, PathIteratorT path)
 	{
 		real_t x, y;
 
@@ -77,7 +84,7 @@ namespace agge
 
 
 	template <typename SourceT, typename GeneratorT>
-	inline path_generator_adapter<SourceT, GeneratorT>::path_generator_adapter(SourceT &source, GeneratorT &generator)
+	inline path_generator_adapter<SourceT, GeneratorT>::path_generator_adapter(const SourceT &source, GeneratorT &generator)
 		: _source(source), _generator(generator), _state(initial)
 	{	}
 

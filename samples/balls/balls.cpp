@@ -44,13 +44,12 @@ namespace
 
 			for (vector<ball>::iterator i = _balls.begin(); i != _balls.end(); ++i)
 			{
-				ellipse e(i->x, i->y, i->radius, i->radius);
 				platform_blender_solid_color brush(i->color.r, i->color.g, i->color.b, i->color.a);
 
 				_rasterizer.reset();
 
 				stopwatch(counter);
-				add_path(_rasterizer, e);
+				add_path(_rasterizer, ellipse(i->x, i->y, i->radius, i->radius));
 				_rasterizer.sort();
 				timings.rasterization += stopwatch(counter);
 				_renderer(surface, 0, _rasterizer, brush, winding<>());

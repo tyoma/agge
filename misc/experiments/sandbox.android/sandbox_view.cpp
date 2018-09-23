@@ -123,16 +123,12 @@ try
 
 	bitmap_proxy bm(env, bitmap);
 
-	agg_path_adaptor p(agg->spiral);
-
 	agg->stroke.width(3);
 	agg->stroke.set_cap(agge::caps::butt());
 	agg->stroke.set_join(agge::joins::bevel());
 
-	agge::path_generator_adapter<agg_path_adaptor, agge::stroke> stroke_path(p, agg->stroke);
-
 	agg->rasterizer.reset();
-	add_path(agg->rasterizer, stroke_path);
+	add_path(agg->rasterizer, assist(agg_path_adaptor(agg->spiral), agg->stroke));
 	agg->rasterizer.sort();
 	agg->renderer(bm, 0, agg->rasterizer, blender_solid_color_rgb<pixel32, order_rgba>(0, 154, 255), agge::winding<>());
 }
