@@ -4,17 +4,18 @@
 
 namespace agge
 {
+	extern const real_t distance_epsilon;
+	extern const real_t pi;
+
 	template <typename T>
 	struct limits
 	{
 		static T resolution();
 	};
 
-
-	extern const real_t distance_epsilon;
-
-
 	real_t sqrt(real_t x);
+	real_t sin(real_t a);
+	real_t cos(real_t a);
 
 	inline int iround(real_t v)
 	{	return static_cast<int>(v > real_t() ? v + static_cast<real_t>(0.5) : v - static_cast<real_t>(0.5));	}

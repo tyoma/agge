@@ -32,4 +32,19 @@ namespace agge
 		real_t _t, _step;
 		int _stage;
 	};
+
+
+	class arc
+	{
+	public:
+		arc(real_t cx, real_t cy, real_t r, real_t start, real_t end, real_t da = 0.05f);
+
+		void rewind(unsigned id);
+		int vertex(real_t *x, real_t *y);
+
+	private:
+		real_t _a;
+		int _stage;
+		real_t _cx, _cy, _r, _start, _end, _step;
+	};
 }
