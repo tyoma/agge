@@ -55,6 +55,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agge.async.tests", "..\test
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests.common", "..\tests\common\src\tests.common.vcxproj", "{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "piechart", "..\samples\piechart\piechart.vcxproj", "{66EFFAD5-1056-4E8B-909D-795FB63D202D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Android = Debug|Android
@@ -283,6 +285,20 @@ Global
 		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}.Release|Win32.Build.0 = Release|Win32
 		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}.Release|x64.ActiveCfg = Release|x64
 		{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}.Release|x64.Build.0 = Release|x64
+		{66EFFAD5-1056-4E8B-909D-795FB63D202D}.Debug|Android.ActiveCfg = Debug|Android
+		{66EFFAD5-1056-4E8B-909D-795FB63D202D}.Debug|Android.Build.0 = Debug|Android
+		{66EFFAD5-1056-4E8B-909D-795FB63D202D}.Debug|Android.Deploy.0 = Debug|Android
+		{66EFFAD5-1056-4E8B-909D-795FB63D202D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{66EFFAD5-1056-4E8B-909D-795FB63D202D}.Debug|Win32.Build.0 = Debug|Win32
+		{66EFFAD5-1056-4E8B-909D-795FB63D202D}.Debug|x64.ActiveCfg = Debug|x64
+		{66EFFAD5-1056-4E8B-909D-795FB63D202D}.Debug|x64.Build.0 = Debug|x64
+		{66EFFAD5-1056-4E8B-909D-795FB63D202D}.Release|Android.ActiveCfg = Release|Android
+		{66EFFAD5-1056-4E8B-909D-795FB63D202D}.Release|Android.Build.0 = Release|Android
+		{66EFFAD5-1056-4E8B-909D-795FB63D202D}.Release|Android.Deploy.0 = Release|Android
+		{66EFFAD5-1056-4E8B-909D-795FB63D202D}.Release|Win32.ActiveCfg = Release|Win32
+		{66EFFAD5-1056-4E8B-909D-795FB63D202D}.Release|Win32.Build.0 = Release|Win32
+		{66EFFAD5-1056-4E8B-909D-795FB63D202D}.Release|x64.ActiveCfg = Release|x64
+		{66EFFAD5-1056-4E8B-909D-795FB63D202D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -305,6 +321,7 @@ Global
 		{350126F7-175E-49FC-ADF7-E5B56392EF8C} = {202D9A95-7B05-479F-999C-FD540D3CD169}
 		{3B0A1697-8654-4F78-8EE4-F673002F9BD9} = {202D9A95-7B05-479F-999C-FD540D3CD169}
 		{40B65003-8942-46BE-BC07-90A21119CA59} = {202D9A95-7B05-479F-999C-FD540D3CD169}
+		{66EFFAD5-1056-4E8B-909D-795FB63D202D} = {202D9A95-7B05-479F-999C-FD540D3CD169}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {66796483-41AE-4556-A500-BAC9B2C3919C}
