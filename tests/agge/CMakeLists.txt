@@ -13,6 +13,7 @@ set(AGGE_TEST_SOURCES
 	GenericBlendersTests.cpp
 	MiscTests.cpp
 	ParallelExecutionTests.cpp
+	PathJoiningTests.cpp
 	PathTests.cpp
 	PodVectorTests.cpp
 	PreciseDeltaTests.cpp

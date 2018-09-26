@@ -22,6 +22,7 @@
 			Name="Debug|Win32"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(SolutionDir)build.props\agge.vsprops"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -86,6 +87,7 @@
 			Name="Debug|x64"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(SolutionDir)build.props\agge.vsprops"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -150,6 +152,7 @@
 			Name="Release|Win32"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(SolutionDir)build.props\agge.vsprops"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -218,6 +221,7 @@
 			Name="Release|x64"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(SolutionDir)build.props\agge.vsprops"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"

@@ -118,6 +118,10 @@
 			ReferencedProjectIdentifier="{4DB73ACE-2D47-4A6C-8213-2BE191DD921F}"
 			RelativePathToProject="..\libraries\utee\make\utee.v90.vcproj"
 		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{01F120A2-7E71-4C3A-B4A8-1F396DA7A0AD}"
+			RelativePathToProject="..\tests\common\src\tests.common.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter
@@ -126,42 +130,6 @@
 			<Filter
 				Name="win32"
 				>
-				<File
-					RelativePath=".\platform\win32\mt.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							DisableLanguageExtensions="false"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							DisableLanguageExtensions="false"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							DisableLanguageExtensions="false"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							DisableLanguageExtensions="false"
-						/>
-					</FileConfiguration>
-				</File>
 				<File
 					RelativePath=".\platform\win32\RawBitmapTests.cpp"
 					>
@@ -262,6 +230,10 @@
 		</File>
 		<File
 			RelativePath=".\ParallelExecutionTests.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\PathJoiningTests.cpp"
 			>
 		</File>
 		<File

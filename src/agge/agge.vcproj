@@ -103,7 +103,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\handle.h"
+				>
+			</File>
+			<File
 				RelativePath=".\hybrid_event.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\intrinsic.h"
 				>
 			</File>
 			<File
@@ -112,6 +120,10 @@
 			</File>
 			<File
 				RelativePath=".\parallel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\semaphore.h"
 				>
 			</File>
 			<File
@@ -264,6 +276,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\agge\blenders.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\agge\blenders_generic.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\agge\blenders_simd.h"
 			>
 		</File>
@@ -276,7 +296,23 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\agge\curves.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\agge\dash.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\agge\figures.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\agge\filling_rules.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\agge\hybrid_event.h"
 			>
 		</File>
 		<File
@@ -293,6 +329,10 @@
 		</File>
 		<File
 			RelativePath="..\..\agge\path.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\agge\pixel.h"
 			>
 		</File>
 		<File
@@ -325,6 +365,10 @@
 		</File>
 		<File
 			RelativePath="..\..\agge\stroke_features.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\agge\thread.h"
 			>
 		</File>
 		<File
