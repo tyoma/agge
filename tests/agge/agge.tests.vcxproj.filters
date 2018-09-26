@@ -28,6 +28,7 @@
     <ClCompile Include="GenericBlendersTests.cpp" />
     <ClCompile Include="FiguresTests.cpp" />
     <ClCompile Include="CurvesTests.cpp" />
+    <ClCompile Include="PathJoiningTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />

@@ -108,8 +108,13 @@ namespace agge
 
 		if (stage == path_command_move_to)
 			_stage = path_command_line_to;
+		else if (stage == path_command_stop)
+			return stage;
 		if ((_a < _end) ^ (_end > _start))
-			return path_command_stop;
+		{
+			_a = _end;
+			_stage = path_command_stop;
+		}
 		*x = _cx + _r * cos(_a);
 		*y = _cy + _r * sin(_a);
 		_a += _step;

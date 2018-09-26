@@ -299,6 +299,31 @@ namespace agge
 			}
 
 
+			test( FirstElementIsALineToTheEndPoint )
+			{
+				// INIT
+				arc a1(13.1f, -17.2f, 10.1f, 0.0f * pi, 0.5f * pi);
+				arc a2(-122.3f, 19.4f, 17.3f, 0.5f * pi, 1.0f * pi);
+				real_t prev_x = 0.0f, prev_y = 0.0f;
+
+				// ACT
+				for (real_t x, y; path_command_stop != a1.vertex(&x, &y); )
+					prev_x = x, prev_y = y;
+
+				// ASSERT
+				assert_equal_approx(13.1f, prev_x, 5);
+				assert_equal_approx(-7.1f, prev_y, 5);
+
+				// ACT
+				for (real_t x, y; path_command_stop != a2.vertex(&x, &y); )
+					prev_x = x, prev_y = y;
+
+				// ASSERT
+				assert_equal_approx(-139.6f, prev_x, 5);
+				assert_equal_approx(19.4f, prev_y, 5);
+			}
+
+
 			test( ArcPointsAreOnCircle )
 			{
 				// INIT

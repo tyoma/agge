@@ -46,10 +46,33 @@ namespace agge
 	};
 
 
+	template <typename PathIterator1T, typename PathIterator2T>
+	class joined_path
+	{
+	public:
+		joined_path(const PathIterator1T &path1, const PathIterator2T &path2);
+
+		void rewind(unsigned id);
+		int vertex(real_t *x, real_t *y);
+
+	private:
+		enum state { first_initial, first, second };
+
+	private:
+		PathIterator1T _path1;
+		PathIterator2T _path2;
+		state _state;
+	};
+
+
 
 	template <typename SourceT, typename GeneratorT>
 	path_generator_adapter<SourceT, GeneratorT> assist(const SourceT &source, GeneratorT &generator)
 	{	return path_generator_adapter<SourceT, GeneratorT>(source, generator);	}
+
+	template <typename PathIterator1T, typename PathIterator2T>
+	joined_path<PathIterator1T, PathIterator2T> join(const PathIterator1T &path1, const PathIterator2T &path2)
+	{	return joined_path<PathIterator1T, PathIterator2T>(path1, path2);	}
 
 	inline bool is_vertex(int c)
 	{	return 0 != (path_vertex_mask & c);	}
@@ -137,4 +160,46 @@ namespace agge
 	template <typename SourceT, typename GeneratorT>
 	inline void path_generator_adapter<SourceT, GeneratorT>::set_stage(state stage, bool force_complete)
 	{	_state = (stage & stage_mask) | (force_complete ? complete : (_state & complete));	}
+
+
+	template <typename PathIterator1T, typename PathIterator2T>
+	inline joined_path<PathIterator1T, PathIterator2T>::joined_path(const PathIterator1T &path1, const PathIterator2T &path2)
+		: _path1(path1), _path2(path2), _state(first_initial)
+	{	}
+
+	template <typename PathIterator1T, typename PathIterator2T>
+	inline void joined_path<PathIterator1T, PathIterator2T>::rewind(unsigned /*id*/)
+	{
+		_state = first_initial;
+		_path1.rewind(0);
+		_path2.rewind(0);
+	}
+
+	template <typename PathIterator1T, typename PathIterator2T>
+	inline int joined_path<PathIterator1T, PathIterator2T>::vertex(real_t *x, real_t *y)
+	{
+		int command;
+
+		switch (_state)
+		{
+		case first_initial:
+			command = _path1.vertex(x, y);
+			if (command == path_command_stop)
+				_state = second;
+			else
+				return _state = first, command;
+
+		case second:
+			return _path2.vertex(x, y);
+
+		case first:
+			command = _path1.vertex(x, y);
+			if (command != path_command_stop)
+				return command;
+			_state = second;
+			command = _path2.vertex(x, y);
+			return command == path_command_move_to ? path_command_line_to : command;
+		}
+		return path_command_stop;
+	}
 }

@@ -4,8 +4,6 @@
 #include <agge/path.h>
 #include <agge/renderer.h>
 #include <agge/rasterizer.h>
-#include <agge/stroke.h>
-#include <agge/stroke_features.h>
 
 #include <samples/common/shell.h>
 #include <utility>
@@ -52,16 +50,11 @@ namespace
 		make_pair(0.01f, c_palette[2]),
    };
 
+	joined_path<arc, arc> pie_segment(real_t cx, real_t cy, real_t outer_r, real_t inner_r, real_t start, real_t end)
+	{	return join(arc(cx, cy, outer_r, start, end), arc(cx, cy, inner_r, end, start));	}
+
 	class Figures : public application
 	{
-	public:
-		Figures()
-		{
-			line_style.width(4.0f);
-			line_style.set_cap(caps::butt());
-			line_style.set_join(joins::bevel());
-		}
-
 	private:
       template <typename IteratorT>
       void drawPie(platform_bitmap &surface, real_t cx, real_t cy, real_t r, IteratorT b, IteratorT e)
@@ -70,7 +63,8 @@ namespace
          {
             real_t d = 2 * pi * b->first;
 
-            add_path(ras, assist(arc(cx, cy, r, a, a + d), line_style));
+            add_path(ras, pie_segment(cx, cy, 1.5f * r, 0.5f * r, a, a + d));
+				ras.close_polygon();
             a += d;
             ras.sort();
             ren(surface, 0 /*no windowing*/, ras /*mask*/, b->second, winding<>());
@@ -83,14 +77,12 @@ namespace
 			ras.reset();
 
          fill(surface, mkrect<int>(0, 0, surface.width(), surface.height()), platform_blender_solid_color(0, 50, 100));
-         line_style.width(240.0f);
          drawPie(surface, surface.width() * 0.5f, surface.height() * 0.5f, 220.0f, c_segments, c_segments + 6);
 		}
 
 	private:
 		rasterizer< clipper<int> > ras;
 		renderer ren;
-		stroke line_style;
 	};
 }
 
