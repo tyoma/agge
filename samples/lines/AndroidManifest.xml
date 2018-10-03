@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="com.agge.samples.lines"
+	android:versionCode="1"
+	android:versionName="1.0">
+
+	<uses-sdk android:minSdkVersion="10" />
+
+	<application android:label="AGGE Samples: Line Styles" android:hasCode="false">
+		<activity android:name="android.app.NativeActivity" android:label="AGGE Samples: Line Styles">
+			<meta-data android:name="android.app.lib_name" android:value="lines" />
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+	</application>
+</manifest>

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="lines.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AndroidManifest.xml">
+      <Filter>android</Filter>
+    </None>
+    <None Include="build.xml">
+      <Filter>android</Filter>
+    </None>
+    <None Include="project.properties">
+      <Filter>android</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="android">
+      <UniqueIdentifier>{ded1339e-5ea1-48f7-8b4b-f34440d5b46f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
