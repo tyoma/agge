@@ -33,6 +33,9 @@ namespace agge
 		return sqrt(bx * bx + by * by);
 	}
 
+	inline real_t distance(const point_r &lhs, const point_r &rhs)
+	{	return distance(lhs.x, lhs.y, rhs.x, rhs.y);	}
+
 	template <typename CoordT>
 	inline CoordT distance(const point<CoordT> &a, const point<CoordT> &b)
 	{	return distance(a.x, a.y, b.x, b.y);	}

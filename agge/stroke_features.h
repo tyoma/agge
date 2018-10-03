@@ -11,6 +11,17 @@ namespace agge
 		public:
 			virtual void calc(points &output, real_t w, const point_r &v0, real_t d, const point_r &v1) const;
 		};
+
+		class triangle : public stroke::cap
+		{
+		public:
+			triangle(real_t tip_extension = 1.0f);
+
+			virtual void calc(points &output, real_t w, const point_r &v0, real_t d, const point_r &v1) const;
+
+		private:
+			real_t _tip_extension;
+		};
 	}
 
 	namespace joins

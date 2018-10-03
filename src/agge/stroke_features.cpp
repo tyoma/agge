@@ -14,6 +14,23 @@ namespace agge
 			output.push_back(create_point(v0.x - dx, v0.y + dy));
 			output.push_back(create_point(v0.x + dx, v0.y - dy));
 		}
+
+
+		triangle::triangle(real_t tip_extension)
+			: _tip_extension(tip_extension)
+		{	}
+
+		void triangle::calc(points &output, real_t w, const point_r &v0, real_t d, const point_r &v1) const
+		{
+			d = w / d;
+			
+			const real_t dx = (v1.y - v0.y) * d;
+			const real_t dy = (v1.x - v0.x) * d;
+
+			output.push_back(create_point(v0.x - dx, v0.y + dy));
+			output.push_back(create_point(v0.x - dy * _tip_extension, v0.y - dx * _tip_extension));
+			output.push_back(create_point(v0.x + dx, v0.y - dy));
+		}
 	}
 
 	namespace joins
