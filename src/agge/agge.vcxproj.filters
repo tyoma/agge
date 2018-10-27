@@ -78,6 +78,9 @@
     <ClCompile Include="platform\unix\thread.cpp">
       <Filter>src\platform\unix</Filter>
     </ClCompile>
+    <ClCompile Include="color.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\agge\bitmap.h" />
@@ -118,5 +121,6 @@
     </ClInclude>
     <ClInclude Include="..\..\agge\hybrid_event.h" />
     <ClInclude Include="..\..\agge\thread.h" />
+    <ClInclude Include="..\..\agge\color.h" />
   </ItemGroup>
 </Project>

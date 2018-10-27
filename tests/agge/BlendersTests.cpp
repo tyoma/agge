@@ -30,8 +30,9 @@ namespace agge
 			test( CheckTranspositionR8G8B8X8 )
 			{
 				// INIT / ACT
-				blender_solid_color<mocks::blender<>, order_rgba> b1(1, 50, 150, 200);
-				blender_solid_color<mocks::blender<>, order_rgba> b2(150, 71, 15, 211);
+				blender_solid_color<mocks::blender<>, order_rgba> b1(color::make(1, 50, 150, 200));
+				blender_solid_color<mocks::blender<>, order_rgba> b2(color::make(150, 71, 15, 211));
+				blender_solid_color<mocks::blender<>, order_rgba> b3(color::make(1, 1, 1));
 
 				// ASSERT
 				assert_equal(1, b1.reference.components[0]);
@@ -44,14 +45,20 @@ namespace agge
 				assert_equal(15, b2.reference.components[2]);
 				assert_equal(211, b2.reference.components[3]);
 				assert_equal(211, b2.alpha);
+				assert_equal(1, b3.reference.components[0]);
+				assert_equal(1, b3.reference.components[1]);
+				assert_equal(1, b3.reference.components[2]);
+				assert_equal(255, b3.reference.components[3]);
+				assert_equal(255, b3.alpha);
 			}
 
 
 			test( CheckCustomTranspositionG8R8X8B8 )
 			{
 				// INIT / ACT
-				blender_solid_color<mocks::blender<>, mocks::order_grab> b1(1, 50, 150, 199);
-				blender_solid_color<mocks::blender<>, mocks::order_grab> b2(150, 71, 15, 211);
+				blender_solid_color<mocks::blender<>, mocks::order_grab> b1(color::make(1, 50, 150, 199));
+				blender_solid_color<mocks::blender<>, mocks::order_grab> b2(color::make(150, 71, 15, 211));
+				blender_solid_color<mocks::blender<>, mocks::order_grab> b3(color::make(1, 1, 1));
 
 				// ASSERT
 				assert_equal(50, b1.reference.components[0]);
@@ -64,6 +71,11 @@ namespace agge
 				assert_equal(211, b2.reference.components[2]);
 				assert_equal(15, b2.reference.components[3]);
 				assert_equal(211, b2.alpha);
+				assert_equal(1, b3.reference.components[0]);
+				assert_equal(1, b3.reference.components[1]);
+				assert_equal(255, b3.reference.components[2]);
+				assert_equal(1, b3.reference.components[3]);
+				assert_equal(255, b3.alpha);
 			}
 
 		end_test_suite

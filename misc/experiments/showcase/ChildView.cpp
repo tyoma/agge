@@ -20,6 +20,9 @@ using namespace std;
 using namespace Gdiplus;
 using namespace common;
 
+class __declspec(uuid("ec5ec8a9-c395-4314-9c77-54d7a935ff70")) _IWICImagingFactory;
+extern "C" const IID IID_IWICImagingFactory = __uuidof(_IWICImagingFactory);
+
 namespace common
 {
 	typedef std::pair< std::vector<Gdiplus::PointF>, std::vector<BYTE> > GdipPath;
@@ -483,7 +486,7 @@ void CChildView::OnPaint()
 		{
 			CPerformance p3(_fill_timing);
 			agge::rect_i area = { 0, 0, _agg_bitmap.width(), _agg_bitmap.height() };
-			agge::fill(_agg_bitmap, area, platform_blender_solid_color(240, 255, 255));
+			agge::fill(_agg_bitmap, area, platform_blender_solid_color(color::make(240, 255, 255)));
 		}
 
 		{
@@ -504,7 +507,7 @@ void CChildView::OnPaint()
 				_agg_rasterizer.reset();
 				add_path(_agg_rasterizer, agg_path_adaptor(_agg_path_flatten));
 				_agg_rasterizer.sort();
-				_renderer(_agg_bitmap, 0, _agg_rasterizer, platform_blender_solid_color(0, 150, 255), winding<>());
+				_renderer(_agg_bitmap, 0, _agg_rasterizer, platform_blender_solid_color(color::make(0, 150, 255)), winding<>());
 			}
 		}
 
@@ -762,7 +765,7 @@ void CChildView::drawLines(::bitmap &b, const CSize &client, const std::vector<b
 	});
 
 	_agg_rasterizer.sort();
-	_renderer(_agg_bitmap, 0, _agg_rasterizer, platform_blender_solid_color(0, 0, 0), winding<>());
+	_renderer(_agg_bitmap, 0, _agg_rasterizer, platform_blender_solid_color(color::make(0, 0, 0)), winding<>());
 }
 
 void CChildView::drawBars(::bitmap &b, const CSize &client, const vector<bar> &bars)
@@ -799,7 +802,7 @@ void CChildView::drawBars(::bitmap &b, const CSize &client, const vector<bar> &b
 	});
 
 	_agg_rasterizer.sort();
-	_renderer(_agg_bitmap, 0, _agg_rasterizer, platform_blender_solid_color(0, 0, 0, 96), winding<>());
+	_renderer(_agg_bitmap, 0, _agg_rasterizer, platform_blender_solid_color(color::make(0, 0, 0, 96)), winding<>());
 }
 
 void CChildView::drawEllipses(::bitmap &b, const CSize &client, const vector<ellipse_t> &ellipses)
@@ -812,8 +815,8 @@ void CChildView::drawEllipses(::bitmap &b, const CSize &client, const vector<ell
 		_agg_rasterizer.reset();
 		add_path(_agg_rasterizer, ellipse);
 		_agg_rasterizer.sort();
-		_renderer(_agg_bitmap, 0, _agg_rasterizer, platform_blender_solid_color(GetRValue(e.second),
-			GetGValue(e.second), GetBValue(e.second), 224), winding<>());
+		_renderer(_agg_bitmap, 0, _agg_rasterizer, platform_blender_solid_color(color::make(GetRValue(e.second),
+			GetGValue(e.second), GetBValue(e.second), 224)), winding<>());
 	});
 }
 

@@ -21,28 +21,28 @@ namespace
 		return r;
 	}
 
-	const platform_blender_solid_color c_palette[] = {
-		platform_blender_solid_color(230, 85, 13),
-		platform_blender_solid_color(253, 141, 60),
-		platform_blender_solid_color(253, 174, 107),
-		platform_blender_solid_color(253, 208, 162),
+	const color c_palette[] = {
+		color::make(230, 85, 13),
+		color::make(253, 141, 60),
+		color::make(253, 174, 107),
+		color::make(253, 208, 162),
 
-		platform_blender_solid_color(49, 163, 84),
-		platform_blender_solid_color(116, 196, 118),
-		platform_blender_solid_color(161, 217, 155),
-		platform_blender_solid_color(199, 233, 192),
+		color::make(49, 163, 84),
+		color::make(116, 196, 118),
+		color::make(161, 217, 155),
+		color::make(199, 233, 192),
 
-		platform_blender_solid_color(107, 174, 214),
-		platform_blender_solid_color(158, 202, 225),
-		platform_blender_solid_color(198, 219, 239),
+		color::make(107, 174, 214),
+		color::make(158, 202, 225),
+		color::make(198, 219, 239),
 
-		platform_blender_solid_color(117, 107, 177),
-		platform_blender_solid_color(158, 154, 200),
-		platform_blender_solid_color(188, 189, 220),
-		platform_blender_solid_color(218, 218, 235),
+		color::make(117, 107, 177),
+		color::make(158, 154, 200),
+		color::make(188, 189, 220),
+		color::make(218, 218, 235),
 	};
 
-	const pair<real_t, platform_blender_solid_color> c_segments[] = {
+	const pair<real_t, color> c_segments[] = {
 		make_pair(0.4f, c_palette[0]),
 		make_pair(0.25f, c_palette[4]),
 		make_pair(0.2f, c_palette[8]),
@@ -68,7 +68,7 @@ namespace
 				ras.close_polygon();
 				a += d;
 				ras.sort();
-				ren(surface, 0 /*no windowing*/, ras /*mask*/, b->second, winding<>());
+				ren(surface, 0 /*no windowing*/, ras /*mask*/, platform_blender_solid_color(b->second), winding<>());
 				ras.reset();
 			}
 		}
@@ -80,7 +80,8 @@ namespace
 			ras.reset();
 
 			stopwatch(counter);
-				fill(surface, mkrect<int>(0, 0, surface.width(), surface.height()), platform_blender_solid_color(0, 50, 100));
+				fill(surface, mkrect<int>(0, 0, surface.width(), surface.height()),
+					platform_blender_solid_color(color::make(0, 50, 100)));
 			timings.clearing += stopwatch(counter);
 
 			stopwatch(counter);

@@ -29,7 +29,7 @@ namespace demo
 			const rect_i area = { 0, 0, static_cast<int>(surface.width()), static_cast<int>(surface.height()) };
 
 			stopwatch(counter);
-				agge::fill(surface, area, solid_color_brush(0, 50, 100));
+				agge::fill(surface, area, solid_color_brush(color::make(0, 50, 100)));
 			timings.clearing += stopwatch(counter);
 
 			_ddx += 0.02f;
@@ -51,7 +51,7 @@ namespace demo
 
 			double sort = stopwatch(counter);
 
-			_renderer(surface, 0, _rasterizer, solid_color_brush(255, 255, 255), winding<>());
+			_renderer(surface, 0, _rasterizer, solid_color_brush(color::make(255, 255, 255)), winding<>());
 
 			double render = stopwatch(counter);
 

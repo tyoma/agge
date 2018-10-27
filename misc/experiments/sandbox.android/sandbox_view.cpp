@@ -24,6 +24,7 @@
 #include <agge/renderer_parallel.h>
 #include <agge/stroke.h>
 #include <agge/stroke_features.h>
+#include <samples/common/shell.h>
 
 #include <jni.h>
 #include <android/bitmap.h>
@@ -130,7 +131,7 @@ try
 	agg->rasterizer.reset();
 	add_path(agg->rasterizer, assist(agg_path_adaptor(agg->spiral), agg->stroke));
 	agg->rasterizer.sort();
-	agg->renderer(bm, 0, agg->rasterizer, blender_solid_color_rgb<pixel32, order_rgba>(0, 154, 255), agge::winding<>());
+	agg->renderer(bm, 0, agg->rasterizer, platform_blender_solid_color(color::make(0, 154, 255)), agge::winding<>());
 }
 catch (...)
 {

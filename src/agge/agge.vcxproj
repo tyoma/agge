@@ -48,6 +48,7 @@
     <ClCompile Include="blenders_intel.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="color.cpp" />
     <ClCompile Include="curves.cpp" />
     <ClCompile Include="dash.cpp" />
     <ClCompile Include="figures.cpp" />
@@ -93,6 +94,7 @@
     <ClInclude Include="..\..\agge\blenders_generic.h" />
     <ClInclude Include="..\..\agge\blenders_simd.h" />
     <ClInclude Include="..\..\agge\clipper.h" />
+    <ClInclude Include="..\..\agge\color.h" />
     <ClInclude Include="..\..\agge\config.h" />
     <ClInclude Include="..\..\agge\curves.h" />
     <ClInclude Include="..\..\agge\dash.h" />

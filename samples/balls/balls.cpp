@@ -36,7 +36,7 @@ namespace
 			_rasterizer.reset();
 
 			stopwatch(counter);
-				fill(surface, area, platform_blender_solid_color(255, 255, 255));
+				fill(surface, area, platform_blender_solid_color(color::make(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
 
 			for (vector<ball>::iterator i = _balls.begin(); i != _balls.end(); ++i)
@@ -44,7 +44,7 @@ namespace
 
 			for (vector<ball>::iterator i = _balls.begin(); i != _balls.end(); ++i)
 			{
-				platform_blender_solid_color brush(i->color.r, i->color.g, i->color.b, i->color.a);
+				platform_blender_solid_color brush(i->color);
 
 				_rasterizer.reset();
 

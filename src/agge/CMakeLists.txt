@@ -1,5 +1,6 @@
 set(AGGE_SOURCES
 	blenders_intel.cpp
+	color.cpp
 	curves.cpp
 	dash.cpp
 	figures.cpp

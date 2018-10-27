@@ -30,7 +30,7 @@ namespace demo
 			dc::handle h = ctx.select(_font_accessor->native());
 
 			stopwatch(counter);
-				agge::fill(surface, area, solid_color_brush(255, 255, 255));
+				agge::fill(surface, area, platform_blender_solid_color(color::make(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
 
 			_layout.limit_width(static_cast<real_t>(surface.width()));
@@ -60,9 +60,6 @@ namespace demo
 			timings.stroking += (layouting + rasterizer) / glyphs;
 			timings.rasterization += rasterizer;
 		}
-
-	private:
-		typedef platform_blender_solid_color solid_color_brush;
 
 	private:
 		shared_ptr<font_accessor> _font_accessor;

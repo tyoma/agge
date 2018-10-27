@@ -41,8 +41,10 @@ namespace
 
 			ras.sort();
 
-			fill(surface, mkrect<int>(0, 0, surface.width(), surface.height()), platform_blender_solid_color(0, 50, 100));
-			ren(surface, 0 /*no windowing*/, ras /*mask*/, platform_blender_solid_color(255, 255, 255), winding<>());
+			fill(surface, mkrect<int>(0, 0, surface.width(), surface.height()),
+				platform_blender_solid_color(color::make(0, 50, 100)));
+			ren(surface, 0 /*no windowing*/, ras /*mask*/,
+				platform_blender_solid_color(color::make(255, 255, 255)), winding<>());
 		}
 
 	private:

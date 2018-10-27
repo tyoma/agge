@@ -189,7 +189,7 @@ namespace
 			const rect_i area = { 0, 0, static_cast<int>(surface.width()), static_cast<int>(surface.height()) };
 
 			stopwatch(counter);
-			fill(surface, area, platform_blender_solid_color(255, 255, 255));
+			fill(surface, area, platform_blender_solid_color(color::make(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
 
 			for (vector<ball>::iterator i = _balls.begin(); i != _balls.end(); ++i)
@@ -198,7 +198,7 @@ namespace
 			stopwatch(counter);
 			for (vector<ball>::iterator i = _balls.begin(); i != _balls.end(); ++i)
 			{
-				platform_blender_solid_color brush(i->color.r, i->color.g, i->color.b, i->color.a);
+				platform_blender_solid_color brush(i->color);
 				auto_ptr<async_t::rasterizer_type> ras = _async.acquire();
 
 				add_path(*ras, ellipse(i->x, i->y, i->radius, i->radius));

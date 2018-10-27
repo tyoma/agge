@@ -1,5 +1,6 @@
 #pragma once
 
+#include "color.h"
 #include "pixel.h"
 
 namespace agge
@@ -12,21 +13,20 @@ namespace agge
 		typedef uint8_t cover_type;
 
 	public:
-		blender_solid_color_rgb(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 0xFF);
+		blender_solid_color_rgb(color color_);
 
 		void operator ()(pixel *pixels, int x, int y, count_t n) const;
 		void operator ()(pixel *pixels, int x, int y, count_t n, const cover_type *covers) const;
 
 	private:
-		uint8_t _r, _g, _b;
+		color _color;
 		unsigned int _a;
 	};
 
 
 	template <typename PixelT, typename OrderT>
-	inline blender_solid_color_rgb<PixelT, OrderT>::blender_solid_color_rgb(uint8_t r, uint8_t g, uint8_t b,
-			uint8_t a)
-		: _r(r), _g(g), _b(b), _a((a << 6) + 505 * a / 1000)
+	inline blender_solid_color_rgb<PixelT, OrderT>::blender_solid_color_rgb(color color_)
+		: _color(color_), _a((color_.a << 6) + 505 * color_.a / 1000)
 	{
 	}
 
@@ -35,9 +35,9 @@ namespace agge
 	{
 		pixel ref;
 
-		ref.components[OrderT::R] = _r;
-		ref.components[OrderT::G] = _g;
-		ref.components[OrderT::B] = _b;
+		ref.components[OrderT::R] = _color.r;
+		ref.components[OrderT::G] = _color.g;
+		ref.components[OrderT::B] = _color.b;
 		for (; n; --n, ++pixels)
 			*pixels = ref;
 	}
@@ -52,15 +52,18 @@ namespace agge
 
 			if (0x3FFFC0 ^ alpha)
 			{
-				pixels->components[OrderT::R] += static_cast<uint8_t>((_r - pixels->components[OrderT::R]) * alpha >> 22);
-				pixels->components[OrderT::G] += static_cast<uint8_t>((_g - pixels->components[OrderT::G]) * alpha >> 22);
-				pixels->components[OrderT::B] += static_cast<uint8_t>((_b - pixels->components[OrderT::B]) * alpha >> 22);
+				pixels->components[OrderT::R]
+					+= static_cast<uint8_t>((_color.r - pixels->components[OrderT::R]) * alpha >> 22);
+				pixels->components[OrderT::G]
+					+= static_cast<uint8_t>((_color.g - pixels->components[OrderT::G]) * alpha >> 22);
+				pixels->components[OrderT::B]
+					+= static_cast<uint8_t>((_color.b - pixels->components[OrderT::B]) * alpha >> 22);
 			}
 			else
 			{
-				pixels->components[OrderT::R] = _r;
-				pixels->components[OrderT::G] = _g;
-				pixels->components[OrderT::B] = _b;
+				pixels->components[OrderT::R] = _color.r;
+				pixels->components[OrderT::G] = _color.g;
+				pixels->components[OrderT::B] = _color.b;
 			}
 		}
 	}

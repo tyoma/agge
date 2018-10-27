@@ -75,7 +75,7 @@ namespace
 		{
 			long long counter;
 			const rect_i area = { 0, 0, static_cast<int>(surface.width()), static_cast<int>(surface.height()) };
-			platform_blender_solid_color background(255, 255, 255), brush(0, 154, 255);
+			platform_blender_solid_color background(color::make(255, 255, 255)), brush(color::make(0, 154, 255));
 
 			_rasterizer.reset();
 

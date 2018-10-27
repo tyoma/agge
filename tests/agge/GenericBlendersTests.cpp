@@ -34,7 +34,7 @@ namespace agge
 				const int n = 7;
 				const pixel black = { };
 				const uint8_t covers[n] = { 0x00, 0x12, 0x21, 0x71, 0x81, 0xF0, 0xFF };
-				blender_solid_color_rgb<pixel, order_rgba> whiteness(0xFF, 0xFF, 0xFF);
+				blender_solid_color_rgb<pixel, order_rgba> whiteness(color::make(0xFF, 0xFF, 0xFF));
 				pixel dest[n];
 
 				fill_n(dest, n, black);
@@ -71,7 +71,7 @@ namespace agge
 				const int n = 7;
 				const pixel white = { { 0xFF, 0xFF, 0xFF, 0xFF } };
 				const uint8_t covers[n] = { 0x00, 0x12, 0x21, 0x71, 0x81, 0xF0, 0xFF };
-				blender_solid_color_rgb<pixel, order_rgba> blackness(0x00, 0x00, 0x00);
+				blender_solid_color_rgb<pixel, order_rgba> blackness(color::make(0x00, 0x00, 0x00));
 				pixel dest[n];
 
 				fill_n(dest, n, white);
@@ -109,10 +109,10 @@ namespace agge
 
 				// INIT
 				const uint8_t cover = 0xFF;
-				blender_solid_color_rgb<pixel1, order_rgba> b1(0x10, 0x20, 0x30);
-				blender_solid_color_rgb<pixel2, order_bgra> b2(0x10, 0x20, 0x30);
-				blender_solid_color_rgb<pixel3, order_argb> b3(0x10, 0x20, 0x30);
-				blender_solid_color_rgb<pixel4, order_abgr> b4(0x10, 0x20, 0x30);
+				blender_solid_color_rgb<pixel1, order_rgba> b1(color::make(0x10, 0x20, 0x30));
+				blender_solid_color_rgb<pixel2, order_bgra> b2(color::make(0x10, 0x20, 0x30));
+				blender_solid_color_rgb<pixel3, order_argb> b3(color::make(0x10, 0x20, 0x30));
+				blender_solid_color_rgb<pixel4, order_abgr> b4(color::make(0x10, 0x20, 0x30));
 				pixel1 dest1 = { };
 				pixel2 dest2 = { };
 				pixel3 dest3 = { };
@@ -146,10 +146,10 @@ namespace agge
 
 				// INIT
 				const uint8_t cover = 0xA0;
-				blender_solid_color_rgb<pixel1, order_rgba> b1(0x10, 0x20, 0x30);
-				blender_solid_color_rgb<pixel2, order_bgra> b2(0x10, 0x20, 0x30);
-				blender_solid_color_rgb<pixel3, order_argb> b3(0x10, 0x20, 0x30);
-				blender_solid_color_rgb<pixel4, order_abgr> b4(0x10, 0x20, 0x30);
+				blender_solid_color_rgb<pixel1, order_rgba> b1(color::make(0x10, 0x20, 0x30));
+				blender_solid_color_rgb<pixel2, order_bgra> b2(color::make(0x10, 0x20, 0x30));
+				blender_solid_color_rgb<pixel3, order_argb> b3(color::make(0x10, 0x20, 0x30));
+				blender_solid_color_rgb<pixel4, order_abgr> b4(color::make(0x10, 0x20, 0x30));
 				pixel1 dest1 = { { 0x25, 0x47, 0x9A, 0xAB } };
 				pixel2 dest2 = { { 0x25, 0x47, 0x9A, 0xAB } };
 				pixel3 dest3 = { { 0x25, 0x47, 0x9A, 0xAB } };
@@ -182,7 +182,7 @@ namespace agge
 				const int n = 3;
 				const pixel white = { { 0x80, 0x80, 0x80, 0x80 } };
 				const uint8_t covers[n] = { 0x10, 0x90, 0xB8, };
-				blender_solid_color_rgb<pixel, order_rgba> b(0x70, 0xD0, 0x90);
+				blender_solid_color_rgb<pixel, order_rgba> b(color::make(0x70, 0xD0, 0x90));
 				pixel dest[n];
 
 				fill_n(dest, n, white);
@@ -209,8 +209,8 @@ namespace agge
 				const int n = 4;
 				const pixel back = { { 0x20, 0x80, 0xE0, 0x80 } };
 				const uint8_t covers[n] = { 0x10, 0x90, 0xA0, 0xD0, };
-				blender_solid_color_rgb<pixel, order_rgba> b1(0x80, 0x80, 0x80, 0x30);
-				blender_solid_color_rgb<pixel, order_rgba> b2(0x80, 0x80, 0x80, 0xC0);
+				blender_solid_color_rgb<pixel, order_rgba> b1(color::make(0x80, 0x80, 0x80, 0x30));
+				blender_solid_color_rgb<pixel, order_rgba> b2(color::make(0x80, 0x80, 0x80, 0xC0));
 				pixel dest1[n];
 				pixel dest2[n];
 
@@ -246,8 +246,8 @@ namespace agge
 
 				// INIT
 				pixel dest[5] = { };
-				blender_solid_color_rgb<pixel, order_rgba> b1(0x80, 0x80, 0x80, 0x00);
-				blender_solid_color_rgb<pixel, order_rgba> b2(0x14, 0x14, 0x14, 0x00);
+				blender_solid_color_rgb<pixel, order_rgba> b1(color::make(0x80, 0x80, 0x80, 0x00));
+				blender_solid_color_rgb<pixel, order_rgba> b2(color::make(0x14, 0x14, 0x14, 0x00));
 
 				// ACT
 				b1(dest, 0, 0, 3);
@@ -301,8 +301,8 @@ namespace agge
 				// INIT
 				pixel1 dest1 = { };
 				pixel2 dest2 = { };
-				blender_solid_color_rgb<pixel1, order_bgra> b1(0x01, 0x02, 0x03);
-				blender_solid_color_rgb<pixel2, order_argb> b2(0x11, 0x12, 0x13);
+				blender_solid_color_rgb<pixel1, order_bgra> b1(color::make(0x01, 0x02, 0x03));
+				blender_solid_color_rgb<pixel2, order_argb> b2(color::make(0x11, 0x12, 0x13));
 
 				// ACT
 				b1(&dest1, 0, 0, 1);
