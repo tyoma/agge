@@ -311,16 +311,16 @@ namespace agge
 					prev_x = x, prev_y = y;
 
 				// ASSERT
-				assert_equal_approx(13.1f, prev_x, 5);
-				assert_equal_approx(-7.1f, prev_y, 5);
+				assert_approx_equal(13.1f, prev_x, 0.00001);
+				assert_approx_equal(-7.1f, prev_y, 0.00001);
 
 				// ACT
 				for (real_t x, y; path_command_stop != a2.vertex(&x, &y); )
 					prev_x = x, prev_y = y;
 
 				// ASSERT
-				assert_equal_approx(-139.6f, prev_x, 5);
-				assert_equal_approx(19.4f, prev_y, 5);
+				assert_approx_equal(-139.6f, prev_x, 0.00001);
+				assert_approx_equal(19.4f, prev_y, 0.00001);
 			}
 
 
