@@ -13,6 +13,9 @@
 	typedef struct HBITMAP__ *image_handle;
 	struct HDC__;
 	typedef struct HDC__ *context_handle;
+#else
+	typedef void *image_handle;
+	typedef void *context_handle;
 #endif
 
 namespace agge
