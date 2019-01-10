@@ -5,7 +5,9 @@
 
 #include <memory>
 
-#pragma warning(disable:4355)
+#ifdef _MSC_VER
+	#pragma warning(disable:4355)
+#endif
 
 namespace agge
 {

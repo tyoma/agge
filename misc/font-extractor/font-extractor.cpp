@@ -96,7 +96,7 @@ namespace
 	public:
 		stream_writer(FILE *s)
 			: _stream(s)
-		{	setmode(fileno(_stream), O_BINARY);	}
+		{	_setmode(_fileno(_stream), O_BINARY);	}
 
 		void write(const void *data, size_t size)
 		{	fwrite(data, 1, size, _stream);	}

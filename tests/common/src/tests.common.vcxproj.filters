@@ -25,5 +25,6 @@
   <ItemGroup>
     <ClInclude Include="..\helpers.h" />
     <ClInclude Include="..\mt.h" />
+    <ClInclude Include="..\scoped_ptr.h" />
   </ItemGroup>
 </Project>

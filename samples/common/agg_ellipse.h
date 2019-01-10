@@ -1,33 +1,28 @@
 //----------------------------------------------------------------------------
-// Anti-Grain Geometry (AGG) - Version 2.5
-// A high quality rendering engine for C++
-// Copyright (C) 2002-2006 Maxim Shemanarev
+// Anti-Grain Geometry - Version 2.4
+// Copyright (C) 2002-2005 Maxim Shemanarev (http://www.antigrain.com)
+//
+// Permission to copy, use, modify, sell and distribute this software 
+// is granted provided this copyright notice appears in all copies. 
+// This software is provided "as is" without express or implied
+// warranty, and with no claim as to its suitability for any purpose.
+//
+//----------------------------------------------------------------------------
 // Contact: mcseem@antigrain.com
 //          mcseemagg@yahoo.com
-//          http://antigrain.com
-// 
-// AGG is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-// 
-// AGG is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with AGG; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
-// MA 02110-1301, USA.
+//          http://www.antigrain.com
+//----------------------------------------------------------------------------
+//
+// class ellipse
+//
 //----------------------------------------------------------------------------
 
-#ifndef AGGX_ELLIPSE_INCLUDED
-#define AGGX_ELLIPSE_INCLUDED
+#ifndef AGG_ELLIPSE_INCLUDED
+#define AGG_ELLIPSE_INCLUDED
 
 #include "paths.h"
 
-namespace common
+namespace agg
 {
 
     //----------------------------------------------------------------ellipse
@@ -90,9 +85,9 @@ namespace common
     //------------------------------------------------------------------------
     inline void ellipse::calc_num_steps()
     {
-        agge::real_t ra = (fabs(m_rx) + fabs(m_ry)) / 2;
-        agge::real_t da = acos(ra / (ra + 0.125f / m_scale)) * 2;
-        m_num = static_cast<int>(2*pi / da);
+        agge::real_t ra = (common::fabs(m_rx) + common::fabs(m_ry)) / 2;
+        agge::real_t da = common::acos(ra / (ra + 0.125f / m_scale)) * 2.0f;
+        m_num = static_cast<int>(2*agge::pi / da);
     }
 
     //------------------------------------------------------------------------
@@ -107,17 +102,21 @@ namespace common
         if(m_step == m_num) 
         {
             ++m_step;
-			return agge::path_command_end_poly | agge::path_flag_close;
+            return agge::path_command_end_poly | agge::path_flag_close;
         }
-		if(m_step > m_num) return agge::path_command_stop;
-        agge::real_t angle = agge::real_t(m_step) / agge::real_t(m_num) * 2.0f * pi;
-        if(m_cw) angle = 2.0f * pi - angle;
-        *x = m_x + cos(angle) * m_rx;
-        *y = m_y + sin(angle) * m_ry;
+        if(m_step > m_num) return agge::path_command_stop;
+        agge::real_t angle = agge::real_t(m_step) / agge::real_t(m_num) * 2.0f * agge::pi;
+        if(m_cw) angle = 2.0f * agge::pi - angle;
+        *x = m_x + agge::cos(angle) * m_rx;
+        *y = m_y + agge::sin(angle) * m_ry;
         m_step++;
-		return ((m_step == 1) ? agge::path_command_move_to : agge::path_command_line_to);
+        return ((m_step == 1) ? agge::path_command_move_to : agge::path_command_line_to);
     }
 
 }
 
+
+
 #endif
+
+

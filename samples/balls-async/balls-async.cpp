@@ -7,8 +7,7 @@
 #include <agge.async/worker.h>
 #include <memory>
 
-#include <misc/experiments/common/ellipse.h>
-
+#include <samples/common/agg_ellipse.h>
 #include <samples/common/shell.h>
 #include <samples/common/timing.h>
 
@@ -201,7 +200,7 @@ namespace
 				platform_blender_solid_color brush(i->color);
 				auto_ptr<async_t::rasterizer_type> ras = _async.acquire();
 
-				add_path(*ras, ellipse(i->x, i->y, i->radius, i->radius));
+				add_path(*ras, agg::ellipse(i->x, i->y, i->radius, i->radius));
 				_async.submit(ras, surface, brush);
 				ras.release();
 			}

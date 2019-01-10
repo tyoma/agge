@@ -42,7 +42,6 @@
     <ClCompile>
       <AdditionalIncludeDirectories>./../..;./../../libraries/strmd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
     </Link>

@@ -7,6 +7,7 @@
 #include <agge/path.h>
 #include <algorithm>
 #include <tests/common/helpers.h>
+#include <tests/common/scoped_ptr.h>
 #include <ut/assert.h>
 #include <ut/test.h>
 
@@ -99,12 +100,9 @@ namespace agge
 				text_engine_base e(loader);
 
 				// ACT
-				font::ptr fonts1[] = {
-					e.create_font(L"arial", 13, false, false, font::key::gf_strong),
-					e.create_font(L"tahoma", 29, true, false, font::key::gf_vertical),
-					e.create_font(L"helvetica", 15, false, true, font::key::gf_none /* freely scalable */),
-				};
-				fonts1;
+				font::ptr f11 = e.create_font(L"arial", 13, false, false, font::key::gf_strong);
+				font::ptr f12 = e.create_font(L"tahoma", 29, true, false, font::key::gf_vertical);
+				font::ptr f13 = e.create_font(L"helvetica", 15, false, true, font::key::gf_none /* freely scalable */);
 
 				// ASSERT
 				font::key fd1[] = {
@@ -119,10 +117,7 @@ namespace agge
 				loader.created_log.clear();
 
 				// ACT
-				font::ptr fonts2[] = {
-					e.create_font(L"arial", 15, true, true, font::key::gf_none /* freely scalable */),
-				};
-				fonts2;
+				font::ptr f21 = e.create_font(L"arial", 15, true, true, font::key::gf_none /* freely scalable */);
 
 				// ASSERT
 				font::key fd2[] = {
@@ -140,12 +135,9 @@ namespace agge
 				text_engine_base e(loader);
 
 				// ACT
-				font::ptr fonts1[] = {
-					e.create_font(L"arial", 13, false, true, font::key::gf_none),
-					e.create_font(L"arial", 29, false, true, font::key::gf_none),
-					e.create_font(L"arial", 140, false, true, font::key::gf_none),
-				};
-				fonts1;
+				font::ptr f11 = e.create_font(L"arial", 13, false, true, font::key::gf_none);
+				font::ptr f12 = e.create_font(L"arial", 29, false, true, font::key::gf_none);
+				font::ptr f13 = e.create_font(L"arial", 140, false, true, font::key::gf_none);
 
 				// ASSERT
 				font::key fd1[] = {
@@ -155,11 +147,8 @@ namespace agge
 				assert_equal(fd1, get_descriptors(loader.created_log));
 
 				// ACT
-				font::ptr fonts2[] = {
-					e.create_font(L"times", 31, true, false, font::key::gf_none),
-					e.create_font(L"times", 91, true, false, font::key::gf_none),
-				};
-				fonts2;
+				font::ptr f21 = e.create_font(L"times", 31, true, false, font::key::gf_none);
+				font::ptr f22 = e.create_font(L"times", 91, true, false, font::key::gf_none);
 
 				// ASSERT
 				font::key fd2[] = {
@@ -875,7 +864,7 @@ namespace agge
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
-				auto_ptr<logging_text_engine> e(new logging_text_engine(loader, 1));
+				scoped_ptr<logging_text_engine> e(new logging_text_engine(loader, 1));
 				font::ptr f1 = e->create_font(L"Arial", 101, false, false, font::key::gf_none);
 				font::ptr f2 = e->create_font(L"Arial", 15, false, false, font::key::gf_none);
 

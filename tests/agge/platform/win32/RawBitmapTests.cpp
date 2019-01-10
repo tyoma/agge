@@ -2,10 +2,11 @@
 
 #include "surface.h"
 
-#include <memory>
+#include <tests/common/scoped_ptr.h>
 #include <ut/assert.h>
 #include <ut/test.h>
 
+using namespace agge::tests;
 using namespace std;
 
 namespace agge
@@ -316,8 +317,8 @@ namespace agge
 				test( NativeHandleIsProvidedFromTheBitmap )
 				{
 					// INIT
-					auto_ptr<raw_bitmap> b1(new raw_bitmap(10, 10, bpp32));
-					auto_ptr<raw_bitmap> b2(new raw_bitmap(10, 10, bpp32));
+					scoped_ptr<raw_bitmap> b1(new raw_bitmap(10, 10, bpp32));
+					scoped_ptr<raw_bitmap> b2(new raw_bitmap(10, 10, bpp32));
 					gdi_surface s(1, 1);
 
 					// ACT

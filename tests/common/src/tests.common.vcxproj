@@ -49,6 +49,7 @@
   <ItemGroup>
     <ClInclude Include="..\helpers.h" />
     <ClInclude Include="..\mt.h" />
+    <ClInclude Include="..\scoped_ptr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="platform\linux\mt.cpp">

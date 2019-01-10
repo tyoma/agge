@@ -28,6 +28,7 @@
 #include <stdexcept>
 #include <stdio.h>
 #include <tchar.h>
+#include <tests/common/scoped_ptr.h>
 #include <windows.h>
 
 using namespace std;
@@ -234,7 +235,7 @@ int main()
 	::SetProcessDPIAware();
 
 	desktop_services s;
-	auto_ptr<application> app(agge_create_application(s));
+	agge::tests::scoped_ptr<application> app(agge_create_application(s));
 	MainDialog dialog(*app);
 
 	MainDialog::PumpMessages();

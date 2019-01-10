@@ -5,7 +5,7 @@
 #include "helpers.h"
 #include "mocks.h"
 
-#include <memory>
+#include <tests/common/scoped_ptr.h>
 #include <ut/assert.h>
 #include <ut/test.h>
 
@@ -541,7 +541,7 @@ namespace agge
 			{
 				// INIT
 				size_t joins = 0, caps = 0;
-				auto_ptr<stroke> s(new stroke);
+				scoped_ptr<stroke> s(new stroke);
 
 				s->set_join(passthrough_join(joins));
 				s->set_cap(passthrough_cap(caps));

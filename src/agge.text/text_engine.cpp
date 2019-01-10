@@ -80,7 +80,7 @@ namespace agge
 			return i->second.lock();
 
 		garbage_container::const_iterator gi = _garbage.find(key);
-		auto_ptr<font> pre_f;
+		unique_ptr<font> pre_f;
 
 		if (_garbage.end() != gi)
 		{

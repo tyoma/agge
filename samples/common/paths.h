@@ -7,19 +7,17 @@
 
 namespace common
 {
-	const agge::real_t pi = 3.14159265358979323846f;
+	inline float fabs(float value)
+	{	return ::fabsf(value);	}
 
-	inline float cos(float value)
-	{	return ::cosf(value);	}
+	inline double fabs(double value)
+	{	return ::fabs(value);	}
 
-	inline float sin(float value)
-	{	return ::sinf(value);	}
+	inline float acos(float value)
+	{	return ::acosf(value);	}
 
-	inline double cos(double value)
-	{	return ::cos(value);	}
-
-	inline double sin(double value)
-	{	return ::sin(value);	}
+	inline double acos(double value)
+	{	return ::acos(value);	}
 
 	typedef std::vector< std::pair<std::pair<agge::real_t, agge::real_t>, unsigned> > AggPath;
 
@@ -123,7 +121,7 @@ namespace common
 		for (agge::real_t angle = start_angle, dr = k * step / 45.0f, da = k / 180.0f * pi;
 			r1 < r2; r1 += dr, angle += da, start = false)
 		{
-			const agge::real_t px = x + cos(angle) * r1, py = y + sin(angle) * r1;
+			const agge::real_t px = x + agge::cos(angle) * r1, py = y + agge::sin(angle) * r1;
 
 			if (start)
 				pathMoveTo(target, px, py);

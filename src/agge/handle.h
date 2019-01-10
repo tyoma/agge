@@ -37,14 +37,14 @@ namespace agge
 	template <typename NativeHandleT>
 	inline const NativeHandleT *handle::address_of() const
 	{
-		typedef char validate[sizeof(NativeHandleT) <= storage_size ? 1 : -1];
-		return static_cast<const NativeHandleT *>(static_cast<const void *>(_handle));
+		const void *validating[sizeof(NativeHandleT) <= storage_size ? 1 : -1] = { _handle };
+		return static_cast<const NativeHandleT *>(validating[0]);
 	}
 
 	template <typename NativeHandleT>
 	inline NativeHandleT *handle::address_of()
 	{
-		typedef char validate[sizeof(NativeHandleT) <= storage_size ? 1 : -1];
-		return static_cast<NativeHandleT *>(static_cast<void *>(_handle));
+		void *validating[sizeof(NativeHandleT) <= storage_size ? 1 : -1] = { _handle };
+		return static_cast<NativeHandleT *>(validating[0]);
 	}
 }

@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <strmd/deserializer.h>
+#include <tests/common/scoped_ptr.h>
 
 using namespace agge;
 using namespace std;
@@ -47,7 +48,7 @@ font_loader::font_loader(services &s)
 font::accessor_ptr font_loader::load(const wchar_t *typeface, int height, bool bold, bool italic,
 	font::key::grid_fit grid_fit)
 {
-	auto_ptr<stream> r(_services.open_file(format_font_name(convert_mb(typeface), height, bold, italic, grid_fit).c_str()));
+	agge::tests::scoped_ptr<stream> r(_services.open_file(format_font_name(convert_mb(typeface), height, bold, italic, grid_fit).c_str()));
 	deserializer<stream, varint> dser(*r);
 	shared_ptr<truetype::font> font(new truetype::font);
 

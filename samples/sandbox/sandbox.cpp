@@ -8,7 +8,7 @@
 #include <agge/stroke_features.h>
 
 #include <algorithm>
-#include <misc/experiments/common/paths.h>
+#include <samples/common/paths.h>
 #include <samples/common/shell.h>
 #include <samples/common/timing.h>
 
@@ -51,7 +51,7 @@ namespace
 
 			real_t num = (ay-cy) * (dx-cx) - (ax-cx) * (dy-cy);
 			real_t den = (bx-ax) * (dy-cy) - (by-ay) * (dx-cx);
-			if (fabs(den) < distance_epsilon)
+			if (common::fabs(den) < distance_epsilon)
 				return false;	
 			real_t r = num / den;
 			*x = ax + r * (bx-ax);

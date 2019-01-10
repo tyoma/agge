@@ -5,7 +5,7 @@
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
 
-#include <misc/experiments/common/ellipse.h>
+#include <samples/common/agg_ellipse.h>
 
 #include <samples/common/shell.h>
 #include <samples/common/timing.h>
@@ -49,7 +49,7 @@ namespace
 				_rasterizer.reset();
 
 				stopwatch(counter);
-				add_path(_rasterizer, ellipse(i->x, i->y, i->radius, i->radius));
+				add_path(_rasterizer, agg::ellipse(i->x, i->y, i->radius, i->radius));
 				_rasterizer.sort();
 				timings.rasterization += stopwatch(counter);
 				_renderer(surface, 0, _rasterizer, brush, winding<>());

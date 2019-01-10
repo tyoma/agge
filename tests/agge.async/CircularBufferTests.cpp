@@ -1,5 +1,6 @@
 #include <agge.async/circular.h>
 
+#include <tests/common/scoped_ptr.h>
 #include <ut/assert.h>
 #include <ut/test.h>
 
@@ -534,8 +535,8 @@ namespace agge
 			{
 				// INIT
 				int n, copies1 = 0, copies2 = 0;
-				auto_ptr< circular_buffer<TrackedCopies> > buffer1(new circular_buffer<TrackedCopies>);
-				auto_ptr< circular_buffer<TrackedCopies> > buffer2(new circular_buffer<TrackedCopies>);
+				scoped_ptr< circular_buffer<TrackedCopies> > buffer1(new circular_buffer<TrackedCopies>);
+				scoped_ptr< circular_buffer<TrackedCopies> > buffer2(new circular_buffer<TrackedCopies>);
 
 				buffer1->produce(TrackedCopies(copies1), postproduce(n));
 				buffer1->produce(TrackedCopies(copies1), postproduce(n));
@@ -563,7 +564,7 @@ namespace agge
 			{
 				// INIT
 				int n, copies = 0;
-				auto_ptr< circular_buffer<TrackedCopies> > buffer(new circular_buffer<TrackedCopies>(5 * sizeof(TrackedCopies)));
+				scoped_ptr< circular_buffer<TrackedCopies> > buffer(new circular_buffer<TrackedCopies>(5 * sizeof(TrackedCopies)));
 
 				buffer->produce(TrackedCopies(copies), postproduce(n));
 				buffer->produce(TrackedCopies(copies), postproduce(n));
