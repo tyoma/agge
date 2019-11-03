@@ -1,5 +1,10 @@
+cmake_minimum_required(VERSION 2.8)
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++03")
+endif()
+
 set(AGGE_SOURCES
-	blenders_intel.cpp
 	color.cpp
 	curves.cpp
 	dash.cpp
@@ -11,6 +16,12 @@ set(AGGE_SOURCES
 	stroke_features.cpp
 	vector_rasterizer.cpp
 )
+
+if(NOT ANDROID_ABI OR ANDROID_ABI MATCHES "x86.*")
+	set(AGGE_SOURCES ${AGGE_SOURCES}
+		blenders_intel.cpp
+	)
+endif()
 
 if (WIN32)
 	set(AGGE_SOURCES ${AGGE_SOURCES}
@@ -37,10 +48,6 @@ else()
 	set(AGGE_SOURCES ${AGGE_SOURCES}
 		platform/linux/semaphore.cpp
 	)
-endif()
-
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++03")
 endif()
 
 add_library(agge STATIC ${AGGE_SOURCES})
