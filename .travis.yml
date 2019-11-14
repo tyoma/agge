@@ -11,7 +11,7 @@ script:
  - mkdir _build
  - cd _build
  - cmake ..
- - make
+ - make -j4
  - bin/utee-runner bin/libagge.tests.so
  - bin/utee-runner bin/libagge.text.tests.so
  - bin/utee-runner bin/libagge.async.tests.so

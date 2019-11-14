@@ -16,6 +16,18 @@ namespace agge
 	{
 		namespace mocks
 		{
+			class logging_text_engine : public text_engine_base
+			{
+			public:
+				logging_text_engine(loader &loader_, unsigned collection_cycles);
+
+			public:
+				std::vector<void *> deletion_log;
+
+			private:
+				virtual void on_before_removed(font *font_) throw();
+			};
+
 			class font_accessor : public font::accessor
 			{
 			public:

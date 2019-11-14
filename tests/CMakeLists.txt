@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 2.8)
 
 include(test)
 
+find_package(Threads)
+
+link_libraries(${CMAKE_THREAD_LIBS_INIT})
+
 add_subdirectory(agge)
 add_subdirectory(agge.text)
 if (NOT MSVC_VERSION OR NOT (MSVC_VERSION LESS 1700))

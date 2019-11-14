@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++03")
-endif()
-
 set(AGGE_TEST_SOURCES
 	BitmapTests.cpp
 	BlendersTests.cpp
@@ -37,9 +33,6 @@ if(NOT ANDROID_ABI OR ANDROID_ABI MATCHES "x86.*")
 	set(AGGE_TEST_SOURCES ${AGGE_TEST_SOURCES} SIMDBlendersTests.cpp)
 endif()	
 
-
-find_package(Threads)
-
 add_library(agge.tests SHARED ${AGGE_TEST_SOURCES})
 
-target_link_libraries(agge.tests agge tests-common ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(agge.tests agge tests-common)

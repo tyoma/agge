@@ -6,10 +6,20 @@ using namespace std;
 
 namespace agge
 {
+	template class text_engine<tests::mocks::rasterizer>;
+
 	namespace tests
 	{
 		namespace mocks
 		{
+			logging_text_engine::logging_text_engine(loader &loader_, unsigned collection_cycles)
+				: text_engine_base(loader_, collection_cycles)
+			{	}
+
+			void logging_text_engine::on_before_removed(font *font_) throw()
+			{	deletion_log.push_back(font_);	}
+
+
 			font_accessor::font_accessor()
 			{	}
 

@@ -15,6 +15,10 @@ using namespace std;
 
 namespace agge
 {
+#if defined(__clang__) || defined(__GNUC__)
+	extern template class text_engine<tests::mocks::rasterizer>;
+#endif
+
 	namespace tests
 	{
 		namespace
@@ -632,21 +636,6 @@ namespace agge
 			}
 
 
-			class logging_text_engine : public text_engine_base
-			{
-			public:
-				logging_text_engine(loader &loader_, unsigned collection_cycles)
-					: text_engine_base(loader_, collection_cycles)
-				{	}
-
-			public:
-				vector<void *> deletion_log;
-
-			private:
-				virtual void on_before_removed(font *font_) throw()
-				{	deletion_log.push_back(font_);	}
-			};
-
 			test( ReleasedFontIsNotifiedAboutImmidiatelyWhenNoCollectionIsRequired )
 			{
 				// INIT
@@ -657,7 +646,7 @@ namespace agge
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
-				logging_text_engine e(loader, 0);
+				mocks::logging_text_engine e(loader, 0);
 				font::ptr f = e.create_font(L"Arial", 10, false, false, font::key::gf_strong);
 				void *pvf = f.get();
 
@@ -683,7 +672,7 @@ namespace agge
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
-				logging_text_engine e(loader, 0);
+				mocks::logging_text_engine e(loader, 0);
 				font::ptr f[] = {
 					e.create_font(L"Arial", 10, false, false, font::key::gf_none),
 					e.create_font(L"Arial", 11, false, false, font::key::gf_none),
@@ -722,7 +711,7 @@ namespace agge
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
-				logging_text_engine e(loader, 0);
+				mocks::logging_text_engine e(loader, 0);
 				font::ptr f = e.create_font(L"Arial", 10, false, false, font::key::gf_none);
 
 				f.reset();
@@ -752,12 +741,12 @@ namespace agge
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
-				logging_text_engine e1(loader, 2);
+				mocks::logging_text_engine e1(loader, 2);
 				font::ptr f1 = e1.create_font(L"Arial", 10, false, false, font::key::gf_strong);
 				font::ptr f2 = e1.create_font(L"Tahoma", 10, true, false, font::key::gf_strong);
 				void *pvf1 = f1.get();
 				void *pvf2 = f2.get();
-				logging_text_engine e2(loader, 5);
+				mocks::logging_text_engine e2(loader, 5);
 				font::ptr f3 = e2.create_font(L"Arial", 10, false, false, font::key::gf_strong);
 				void *pvf3 = f3.get();
 
@@ -822,7 +811,7 @@ namespace agge
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
-				logging_text_engine e(loader, 1);
+				mocks::logging_text_engine e(loader, 1);
 				font::ptr f1 = e.create_font(L"Arial", 10, false, false, font::key::gf_strong);
 				font::ptr f2 = e.create_font(L"Tahoma", 10, true, false, font::key::gf_strong);
 				void *pvf1 = f1.get();
@@ -864,7 +853,7 @@ namespace agge
 						mocks::font_accessor(c_fm2, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
-				scoped_ptr<logging_text_engine> e(new logging_text_engine(loader, 1));
+				scoped_ptr<mocks::logging_text_engine> e(new mocks::logging_text_engine(loader, 1));
 				font::ptr f1 = e->create_font(L"Arial", 101, false, false, font::key::gf_none);
 				font::ptr f2 = e->create_font(L"Arial", 15, false, false, font::key::gf_none);
 
