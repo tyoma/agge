@@ -15,10 +15,6 @@ using namespace std;
 
 namespace agge
 {
-#if defined(__clang__) || defined(__GNUC__)
-	extern template class text_engine<tests::mocks::rasterizer>;
-#endif
-
 	namespace tests
 	{
 		namespace

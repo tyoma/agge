@@ -12,6 +12,6 @@ script:
  - cd _build
  - cmake ..
  - make -j4
- - bin/utee-runner bin/libagge.tests.so
- - bin/utee-runner bin/libagge.text.tests.so
- - bin/utee-runner bin/libagge.async.tests.so
+ - _bin/utee-runner _bin/libagge.tests.so
+ - _bin/utee-runner _bin/libagge.text.tests.so
+ - _bin/utee-runner _bin/libagge.async.tests.so

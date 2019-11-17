@@ -6,8 +6,6 @@ using namespace std;
 
 namespace agge
 {
-	template class text_engine<tests::mocks::rasterizer>;
-
 	namespace tests
 	{
 		namespace mocks
