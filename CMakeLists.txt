@@ -5,10 +5,7 @@ project(AGGE)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/_lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/_bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/_bin)
-
-if (NOT TARGET utee)
-	set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/modules")
-endif()
+set(UTEE_NO_TESTS)
 
 include_directories(.)
 
@@ -23,11 +20,13 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
 
 add_subdirectory(src/agge)
 add_subdirectory(src/agge.text)
-add_subdirectory(tests)
-
-if (NOT TARGET utee)
-	add_subdirectory(libraries/utee/src)
+if (NOT AGGE_NO_TESTS)
+	if (NOT TARGET utee)
+		add_subdirectory(libraries/utee)
+		set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/modules")
+	endif()
+	add_subdirectory(tests)
+	set_property(TARGET agge.tests APPEND PROPERTY COMPILE_OPTIONS $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-std=c++03>)
 endif()
 
 set_property(TARGET agge APPEND PROPERTY COMPILE_OPTIONS $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-std=c++03>)
-set_property(TARGET agge.tests APPEND PROPERTY COMPILE_OPTIONS $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-std=c++03>)
