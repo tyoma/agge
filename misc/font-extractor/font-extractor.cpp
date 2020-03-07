@@ -8,6 +8,7 @@
 #include <samples/common/platform/win32/dc.h>
 #include <stdio.h>
 #include <strmd/serializer.h>
+#include <strmd/type_traits_ex.h>
 #include <windows.h>
 
 using namespace agge;

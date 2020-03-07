@@ -98,5 +98,8 @@
     <ClInclude Include="shell-inline.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\agg_ellipse.h" />
+    <ClInclude Include="..\paths.h" />
+    <ClInclude Include="..\serialization.h" />
   </ItemGroup>
 </Project>

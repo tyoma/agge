@@ -47,10 +47,13 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\agg_ellipse.h" />
     <ClInclude Include="..\font_loader.h" />
     <ClInclude Include="..\lipsum.h" />
+    <ClInclude Include="..\paths.h" />
     <ClInclude Include="..\platform\win32\dc.h" />
     <ClInclude Include="..\platform\win32\font_accessor.h" />
+    <ClInclude Include="..\serialization.h" />
     <ClInclude Include="..\services.h" />
     <ClInclude Include="..\shell.h" />
     <ClInclude Include="..\timing.h" />

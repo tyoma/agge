@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <strmd/deserializer.h>
+#include <strmd/type_traits_ex.h>
 #include <tests/common/scoped_ptr.h>
 
 using namespace agge;
