@@ -1,6 +1,6 @@
 #pragma once
 
-#include "queue.h"
+#include <polyq/queue.h>
 
 #include <agge/hybrid_event.h>
 #include <agge/thread.h>
@@ -13,8 +13,8 @@ namespace agge
 	public:
 		struct work_in;
 		typedef WorkOutT work_out;
-		typedef queue<work_in, hybrid_event> in_queue_type;
-		typedef queue<work_out, hybrid_event> out_queue_type;
+		typedef polyq::queue<work_in, hybrid_event> in_queue_type;
+		typedef polyq::queue<work_out, hybrid_event> out_queue_type;
 
 	public:
 		worker(in_queue_type &input, out_queue_type &output);
@@ -51,15 +51,19 @@ namespace agge
 		{	w.run(_queue);	}
 
 	private:
+		const consumer &operator =(const consumer &rhs);
+
+	private:
 		typename worker<WorkOutT>::out_queue_type &_queue;
 	};
 
 
-
+#pragma warning(disable: 4355)
 	template <typename WorkOutT>
 	inline worker<WorkOutT>::worker(in_queue_type &input, out_queue_type &output)
 		: _input(input), _output(output), _worker_thread(&worker::worker_proc, this)
 	{	}
+#pragma warning(default: 4355)
 
 	template <typename WorkOutT>
 	inline worker<WorkOutT>::~worker()

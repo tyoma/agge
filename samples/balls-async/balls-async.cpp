@@ -49,11 +49,11 @@ namespace
 		{	return _buffer + align_by - (((unsigned)(size_t)_buffer) & align_mask);	}
 
 	private:
-		uint8_t _buffer[sizeof(T) + align_by];
+		agge::uint8_t _buffer[sizeof(T) + align_by];
 	};
 
 	template <typename RasterizerT>
-	class async
+	class async : noncopyable
 	{
 	public:
 		typedef RasterizerT rasterizer_type;
@@ -61,16 +61,16 @@ namespace
 	public:
 		async(count_t n);
 
-		auto_ptr<rasterizer_type> acquire();
+		unique_ptr<rasterizer_type> acquire();
 
 		template <typename SurfaceT, typename BlenderT>
-		void submit(auto_ptr<rasterizer_type> &rasterizer_, SurfaceT &surface, const BlenderT &blender);
+		void submit(unique_ptr<rasterizer_type> &rasterizer_, SurfaceT &surface, const BlenderT &blender);
 
 		void wait_completion();
 
 	private:
 		typedef renderer_parallel renderer_type;
-		typedef agge::worker< auto_ptr<rasterizer_type> > render_worker;
+		typedef agge::worker< unique_ptr<rasterizer_type> > render_worker;
 		typedef typename render_worker::work_in render_work;
 		typedef agge::worker<render_work> sorter_worker;
 		typedef typename sorter_worker::work_in sort_work;
@@ -96,9 +96,13 @@ namespace
 	template <typename SurfaceT, typename BlenderT>
 	struct async<RasterizerT>::renderer_no_window_work_impl : async<RasterizerT>::render_work
 	{
-		renderer_no_window_work_impl(auto_ptr<typename async::rasterizer_type> &ras_, SurfaceT &surface_,
+		renderer_no_window_work_impl(renderer_no_window_work_impl &&other)
+			: ras(move(other.ras)), surface(other.surface), blender(other.blender), ren(other.ren)
+		{	}
+
+		renderer_no_window_work_impl(unique_ptr<typename async::rasterizer_type> &&ras_, SurfaceT &surface_,
 				const BlenderT &blender_, typename async::renderer_type &ren_)
-			: ras(ras_), surface(surface_), blender(blender_), ren(ren_)
+			: ras(move(ras_)), surface(surface_), blender(blender_), ren(ren_)
 		{	}
 
 		virtual void run(typename async::render_worker::out_queue_type &output)
@@ -107,7 +111,7 @@ namespace
 			output.produce(ras);
 		}
 
-		auto_ptr<typename async::rasterizer_type> ras;
+		unique_ptr<typename async::rasterizer_type> ras;
 		SurfaceT &surface;
 		aligned<BlenderT> blender;
 		typename async::renderer_type &ren;
@@ -117,18 +121,22 @@ namespace
 	template <typename SurfaceT, typename BlenderT>
 	struct async<RasterizerT>::sorter_work_impl : async<RasterizerT>::sort_work
 	{
-		sorter_work_impl(auto_ptr<typename async::rasterizer_type> &ras, SurfaceT &surface, const BlenderT &blender,
+		sorter_work_impl(sorter_work_impl &&other)
+			: inner(move(other.inner))
+		{	}
+
+		sorter_work_impl(unique_ptr<typename async::rasterizer_type> &&ras, SurfaceT &surface, const BlenderT &blender,
 				typename async::renderer_type &ren)
-			: inner(ras, surface, blender, ren)
+			: inner(move(ras), surface, blender, ren)
 		{	}
 
 		virtual void run(typename async::sorter_worker::out_queue_type &output)
 		{
 			inner.ras->sort();
-			output.produce(inner);
+			output.produce(move(inner));
 		}
 
-		async<RasterizerT>::renderer_no_window_work_impl<SurfaceT, BlenderT> inner;
+		typename async<RasterizerT>::renderer_no_window_work_impl<SurfaceT, BlenderT> inner;
 	};
 
 
@@ -140,29 +148,29 @@ namespace
 	{
 		while (n--)
 		{
-			auto_ptr<rasterizer_type> r(new rasterizer_type);
+			unique_ptr<rasterizer_type> r(new rasterizer_type);
 			_complete_rasterizers.produce(r);
 		}
 	}
 
 	template <typename RasterizerT>
-	auto_ptr<RasterizerT> async<RasterizerT>::acquire()
+	unique_ptr<RasterizerT> async<RasterizerT>::acquire()
 	{
-		auto_ptr<RasterizerT> ras;
+		unique_ptr<RasterizerT> ras;
 
-		_complete_rasterizers.consume([&](auto_ptr<RasterizerT> &o) {
-			ras = o;
+		_complete_rasterizers.consume([&](unique_ptr<RasterizerT> &o) {
+			ras = move(o);
 		});
 		ras->reset();
-		return ras;
+		return move(ras);
 	}
 
 	template <typename RasterizerT>
 	template <typename SurfaceT, typename BlenderT>
-	void async<RasterizerT>::submit(auto_ptr<rasterizer_type> &rasterizer_, SurfaceT &surface, const BlenderT &blender)
+	void async<RasterizerT>::submit(unique_ptr<rasterizer_type> &rasterizer_, SurfaceT &surface, const BlenderT &blender)
 	{
-		sorter_work_impl<SurfaceT, BlenderT> s(rasterizer_, surface, blender, _renderer);
-		_filled_rasterizers.produce(s);
+		sorter_work_impl<SurfaceT, BlenderT> w(move(rasterizer_), surface, blender, _renderer);
+		_filled_rasterizers.produce(move(w));
 	}
 
 	template <typename RasterizerT>
@@ -198,11 +206,10 @@ namespace
 			for (vector<ball>::iterator i = _balls.begin(); i != _balls.end(); ++i)
 			{
 				platform_blender_solid_color brush(i->color);
-				auto_ptr<async_t::rasterizer_type> ras = _async.acquire();
+				unique_ptr<async_t::rasterizer_type> ras(_async.acquire().release());
 
 				add_path(*ras, agg::ellipse(i->x, i->y, i->radius, i->radius));
 				_async.submit(ras, surface, brush);
-				ras.release();
 			}
 			_async.wait_completion();
 			timings.rendition += stopwatch(counter);

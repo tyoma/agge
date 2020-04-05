@@ -2,12 +2,20 @@ cmake_minimum_required(VERSION 2.8)
 
 project(AGGE)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/modules)
+
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/_lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/_bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/_bin)
-set(UTEE_NO_TESTS)
+set(UTEE_NO_TESTS 1)
 
 include_directories(.)
+include_directories(./libraries/polyq)
+if (MSVC)
+	if (MSVC_VERSION LESS_EQUAL 1700)
+		include_directories(./compat/msvc10-)
+	endif()
+endif()
 
 add_definitions(-D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
 
@@ -23,7 +31,6 @@ add_subdirectory(src/agge.text)
 if (NOT AGGE_NO_TESTS)
 	if (NOT TARGET utee)
 		add_subdirectory(libraries/utee)
-		set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/modules")
 	endif()
 	add_subdirectory(tests)
 	set_property(TARGET agge.tests APPEND PROPERTY COMPILE_OPTIONS $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-std=c++03>)
