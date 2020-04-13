@@ -34,6 +34,7 @@ endif()
 
 if (APPLE)
 	set(AGGE_SOURCES ${AGGE_SOURCES}
+		platform/apple/bitmap.cpp
 		platform/apple/semaphore.cpp
 	)
 elseif(WIN32)

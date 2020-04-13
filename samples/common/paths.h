@@ -118,7 +118,7 @@ namespace common
 		bool start = true;
 
 		pathStart(target);
-		for (agge::real_t angle = start_angle, dr = k * step / 45.0f, da = k / 180.0f * pi;
+		for (agge::real_t angle = start_angle, dr = k * step / 45.0f, da = k / 180.0f * agge::pi;
 			r1 < r2; r1 += dr, angle += da, start = false)
 		{
 			const agge::real_t px = x + agge::cos(angle) * r1, py = y + agge::sin(angle) * r1;

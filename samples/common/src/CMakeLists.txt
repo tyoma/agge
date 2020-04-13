@@ -14,9 +14,19 @@ if (WIN32)
 		platform/win32/shell.cpp
 		platform/win32/timing.cpp
 	)
-else()
+elseif(APPLE)
+	enable_language(OBJCXX)
+	
+	set(SAMPLES_COMMON_SOURCES ${SAMPLES_COMMON_SOURCES}
+		platform/apple/main.mm
+		platform/apple/ShellView.mm
+	)
 endif()
 
 add_library(samples.common STATIC ${SAMPLES_COMMON_SOURCES})
 
 target_link_libraries(samples.common agge agge.text)
+
+if(APPLE)
+	target_link_libraries(samples.common "-framework Foundation -framework Cocoa")
+endif()
