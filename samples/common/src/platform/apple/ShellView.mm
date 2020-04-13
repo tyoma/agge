@@ -8,24 +8,12 @@
 		_application.reset(agge_create_application(*_services));
 	}
 
-	- (id) init
-	{
-		[self createApp];
-		return [super init];
-	}
-
 	- (id) initWithFrame:(NSRect)frameRect
 	{
+		self = [super initWithFrame:frameRect];
+		[self scaleUnitSquareToSize:NSMakeSize(0.5, 0.5)];
 		[self createApp];
-		return [super initWithFrame:frameRect];
-	}
-
-	- (id) initWithCoder:(NSCoder *)decoder
-	{
-		[self createApp];
-        id x = [super initWithCoder:decoder];
-        [self scaleUnitSquareToSize:NSMakeSize(0.5, 0.5)];
-		return x;
+		return self;
 	}
 
 	- (void) setFrameSize:(NSSize)newSize
@@ -38,13 +26,9 @@
 	- (void) drawRect:(NSRect)dirtyRect
 	{
 		application::timings t;
-        CGContextRef context = [[NSGraphicsContext currentContext]CGContext];
 		
 		_application->draw(*_surface, t);
-		_surface->blit(context, 0, 0, _surface->width(), _surface->height());
-		
-		CGAffineTransform  deviceTransform = CGContextGetUserSpaceToDeviceSpaceTransform(context);
-		NSLog(@"x-scaling = %f y-scaling = %f", deviceTransform.a, deviceTransform.d);
+		_surface->blit([[NSGraphicsContext currentContext]CGContext], 0, 0, _surface->width(), _surface->height());
 	}
 @end
 
@@ -52,8 +36,7 @@ application::~application()
 {	}
 
 void application::resize(int /*width*/, int /*height*/)
-{
-}
+{	}
 
 stream *shell_services::open_file(const char *path)
 {

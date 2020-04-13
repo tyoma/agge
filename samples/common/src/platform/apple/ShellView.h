@@ -19,7 +19,6 @@ class shell_services : public services
 }
 
 	- (void) createApp;
-	- (id) init;
 	- (void) setFrameSize:(NSSize)newSize;
 	- (void) drawRect:(NSRect)dirtyRect;
 @end
