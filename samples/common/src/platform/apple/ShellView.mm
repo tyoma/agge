@@ -40,7 +40,21 @@ void application::resize(int /*width*/, int /*height*/)
 
 stream *shell_services::open_file(const char *path)
 {
-	throw 0;
+    class file_stream : public stream
+    {
+    public:
+        file_stream(const char *path)
+            : _stream(fopen(path, "rb"), &fclose)
+        {    }
+
+        virtual void read(void *buffer, size_t size)
+        {    fread(buffer, 1, size, _stream.get());    }
+
+    private:
+        std::shared_ptr<FILE> _stream;
+    };
+
+    return new file_stream(path);
 }
 
 double stopwatch(long long&)
