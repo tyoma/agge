@@ -112,8 +112,8 @@ namespace agge
 					}
 					break;
 				}
-				pgi->dx = previous ? previous->metrics.advance_x : 0.0f;
-				pgi->dy = 0.0f;
+				pgi->d.dx = previous ? previous->metrics.advance_x : 0.0f;
+				pgi->d.dy = 0.0f;
 				pgi->index = index;
 				previous = g;
 			}

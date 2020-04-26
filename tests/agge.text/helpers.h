@@ -36,8 +36,11 @@ namespace agge
 		{	return convert(i);	}
 	}
 
+	inline bool operator ==(const vector_r &lhs, const vector_r &rhs)
+	{	return tests::equal(lhs.dx, rhs.dx) && tests::equal(lhs.dy, rhs.dy);	}
+
 	inline bool operator ==(const layout::positioned_glyph &lhs, const layout::positioned_glyph &rhs)
-	{	return tests::equal(lhs.dx, rhs.dx) && tests::equal(lhs.dy, rhs.dy) && lhs.index == rhs.index;	}
+	{	return lhs.d == rhs.d && lhs.index == rhs.index;	}
 
 	inline bool operator ==(const glyph::path_point &lhs, const glyph::path_point &rhs)
 	{	return lhs.command == rhs.command && tests::equal(lhs.x, rhs.x) && tests::equal(lhs.y, rhs.y);	}

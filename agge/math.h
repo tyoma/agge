@@ -41,6 +41,10 @@ namespace agge
 	{	return distance(a.x, a.y, b.x, b.y);	}
 
 	template <typename CoordT>
+	inline const point<CoordT> &operator +=(point<CoordT> &lhs, const agge_vector<CoordT> &rhs)
+	{	return lhs.x += rhs.dx, lhs.y += rhs.dy, lhs;	}
+
+	template <typename CoordT>
 	inline point<CoordT> operator +(const point<CoordT> &lhs, const agge_vector<CoordT> &rhs)
 	{
 		const point<CoordT> result = { lhs.x + rhs.dx, lhs.y + rhs.dy };

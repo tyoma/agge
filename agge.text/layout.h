@@ -7,11 +7,11 @@
 
 namespace agge
 {
-	class vector_rasterizer;
-
 	class layout : noncopyable
 	{
 	public:
+		enum halign { near, far, center, };
+
 		struct positioned_glyph;
 		struct glyph_run;
 		typedef pod_vector<glyph_run> glyph_runs_container;
@@ -40,7 +40,7 @@ namespace agge
 
 	struct layout::positioned_glyph
 	{
-		real_t dx, dy;
+		vector_r d;
 		uint16_t index;
 	};
 

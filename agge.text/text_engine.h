@@ -4,6 +4,7 @@
 #include "layout.h"
 
 #include <agge/config.h>
+#include <agge/math.h>
 
 namespace agge
 {
@@ -76,7 +77,12 @@ namespace agge
 		explicit text_engine(loader &loader_, uint8_t precision = 4);
 
 		void render_glyph(RasterizerT &target, const font &font_, uint16_t glyph_index, real_t x, real_t y);
+		template <typename IteratorT>
+		void render_glyph_run(RasterizerT &target, const font &font_, IteratorT glyph_begin, IteratorT glyph_end,
+			real_t x, real_t y);
 		void render_layout(RasterizerT &target, const layout &layout_, real_t x, real_t y);
+		void render_string(RasterizerT &target, const font &font_, const wchar_t *text, layout::halign halign,
+			real_t x, real_t y);
 
 	private:
 		typedef hash_map<int, RasterizerT> rasters_map;
@@ -114,25 +120,58 @@ namespace agge
 	}
 
 	template <typename RasterizerT>
+	template <typename IteratorT>
+	inline void text_engine<RasterizerT>::render_glyph_run(RasterizerT &target, const font &font_,
+		IteratorT glyph_begin, IteratorT glyph_end, real_t x, real_t y)
+	{
+		point_r ref = { x, y };
+		typename font_rasters_map::iterator ri = _cached_fonts.find(&font_);
+
+		if (_cached_fonts.end() == ri)
+			_cached_fonts.insert(&font_, rasters_map(), ri);
+
+		rasters_map &rasters = ri->second;
+
+		for (layout::positioned_glyphs_container::const_iterator g = glyph_begin; g != glyph_end; ++g)
+		{
+			ref += g->d;
+			render_glyph(target, font_, rasters, g->index, ref.x, ref.y);
+		}
+	}
+
+	template <typename RasterizerT>
 	inline void text_engine<RasterizerT>::render_layout(RasterizerT &target, const layout &layout_, real_t x, real_t y)
 	{
 		for (layout::const_iterator gr = layout_.begin(); gr != layout_.end(); ++gr)
+			render_glyph_run(target, *gr->glyph_run_font, gr->begin, gr->end, x, gr->reference.y + y);
+	}
+
+	template <typename RasterizerT>
+	inline void text_engine<RasterizerT>::render_string(RasterizerT &target, const font &font_, const wchar_t *text,
+		layout::halign halign, real_t x, real_t y)
+	{
+		typename font_rasters_map::iterator ri = _cached_fonts.find(&font_);
+
+		if (_cached_fonts.end() == ri)
+			_cached_fonts.insert(&font_, rasters_map(), ri);
+
+		rasters_map &rasters = ri->second;
+		real_t dx = 0.0f;
+
+		if (layout::near != halign)
 		{
-			real_t rx = x;
-			const real_t ry = gr->reference.y + y;
-			const font &f = *layout_.begin()->glyph_run_font;
-			typename font_rasters_map::iterator ri = _cached_fonts.find(&f);
+			for (const wchar_t *c = text; *c; ++c)
+				dx += font_.get_glyph(font_.map_single(*c))->metrics.advance_x;
+			x -= layout::center == halign ? 0.5f * dx : dx;
+		}
 
-			if (_cached_fonts.end() == ri)
-				_cached_fonts.insert(&f, rasters_map(), ri);
+		for (const wchar_t *c = text; *c; ++c)
+		{
+			const uint16_t index = font_.map_single(*c);
+			const glyph *g = font_.get_glyph(index);
 
-			rasters_map &rasters = ri->second;
-
-			for (layout::positioned_glyphs_container::const_iterator g = gr->begin; g != gr->end; ++g)
-			{
-				rx += g->dx;
-				render_glyph(target, f, rasters, g->index, rx, ry);
-			}
+			render_glyph(target, font_, rasters, index, x, y);
+			x += g->metrics.advance_x, y += g->metrics.advance_y;
 		}
 	}
 

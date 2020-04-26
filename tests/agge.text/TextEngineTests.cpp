@@ -488,6 +488,64 @@ namespace agge
 			}
 
 
+			test( GlyphRunIsRenderedInTheProperOrder )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index font_indices[] = { { L'a', 0 }, { L'w', 1 }, };
+				mocks::font_accessor::glyph font_glyphs[] = {
+					mocks::glyph(5, 0, c_outline_1),
+					mocks::glyph(7, 0, c_outline_2),
+				};
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
+						mocks::font_accessor(c_fm2, font_indices, font_glyphs)),
+				};
+				mocks::fonts_loader loader(fonts);
+				text_engine<mocks::rasterizer> e(loader, 0);
+				font::ptr f = e.create_font(L"Arial", 10, false, false, font::key::gf_strong);
+				mocks::rasterizer target;
+				layout::positioned_glyph glyphs_[] = {
+					{ 0.0f, 0.0f, 0 }, { 5.0f, 0.0f, 1 }, { 7.0f, 0.0f, 1 }, { 7.0f, 2.0f, 0 }, { 5.0f, -3.0f, 0 },
+				};
+
+				// ACT
+				e.render_glyph_run(target, *f, glyphs_ + 0, glyphs_ + 3, 0.0f, 3.0f);
+
+				// ASSERT
+				assert_equal(3u, target.append_log.size());
+				assert_equal(0, target.append_log[0].second.x);
+				assert_equal(3, target.append_log[0].second.y);
+				assert_equal(c_outline_1, target.append_log[0].first->path);
+				assert_equal(5, target.append_log[1].second.x);
+				assert_equal(3, target.append_log[1].second.y);
+				assert_equal(c_outline_2, target.append_log[1].first->path);
+				assert_equal(12, target.append_log[2].second.x);
+				assert_equal(3, target.append_log[2].second.y);
+				assert_equal(c_outline_2, target.append_log[2].first->path);
+
+				// INIT
+				target.append_log.clear();
+
+				// ACT
+				e.render_glyph_run(target, *f, glyphs_ + 1, glyphs_ + 5, 17.0f, 90.0f);
+
+				// ASSERT
+				assert_equal(4u, target.append_log.size());
+				assert_equal(22, target.append_log[0].second.x);
+				assert_equal(90, target.append_log[0].second.y);
+				assert_equal(c_outline_2, target.append_log[0].first->path);
+				assert_equal(29, target.append_log[1].second.x);
+				assert_equal(90, target.append_log[1].second.y);
+				assert_equal(c_outline_2, target.append_log[1].first->path);
+				assert_equal(36, target.append_log[2].second.x);
+				assert_equal(92, target.append_log[2].second.y);
+				assert_equal(c_outline_1, target.append_log[2].first->path);
+				assert_equal(41, target.append_log[3].second.x);
+				assert_equal(89, target.append_log[3].second.y);
+				assert_equal(c_outline_1, target.append_log[3].first->path);
+			}
+
+
 			test( SingleLineLayoutGlyphsAreRenderedInTheProperOrder1 )
 			{
 				// INIT
@@ -629,6 +687,127 @@ namespace agge
 				assert_equal(18, target.append_log[2].second.x);
 				assert_equal(17, target.append_log[2].second.y);
 				assert_equal(c_outline_1, target.append_log[2].first->path);
+			}
+
+
+			test( SimpleStringIsRenderedAsAGlyphRun )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index font_indices[] = { { L'a', 0 }, { L'w', 1 }, { L'z', 2 }, };
+				mocks::font_accessor::glyph font_glyphs[] = {
+					mocks::glyph(5, 0, c_outline_1),
+					mocks::glyph(7, 0, c_outline_2),
+					mocks::glyph(4, 2.1, c_outline_diamond),
+				};
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
+						mocks::font_accessor(c_fm2, font_indices, font_glyphs)),
+				};
+				mocks::fonts_loader loader(fonts);
+				text_engine<mocks::rasterizer> e(loader, 0);
+				font::ptr f = e.create_font(L"Arial", 10, false, false, font::key::gf_strong);
+				mocks::rasterizer target;
+
+				// ACT
+				e.render_string(target, *f, L"aww", layout::near, 0.0f, 3.0f);
+
+				// ASSERT
+				assert_equal(3u, target.append_log.size());
+				assert_equal(0, target.append_log[0].second.x);
+				assert_equal(3, target.append_log[0].second.y);
+				assert_equal(c_outline_1, target.append_log[0].first->path);
+				assert_equal(5, target.append_log[1].second.x);
+				assert_equal(3, target.append_log[1].second.y);
+				assert_equal(c_outline_2, target.append_log[1].first->path);
+				assert_equal(12, target.append_log[2].second.x);
+				assert_equal(3, target.append_log[2].second.y);
+				assert_equal(c_outline_2, target.append_log[2].first->path);
+
+				// INIT
+				target.append_log.clear();
+
+				// ACT
+				e.render_string(target, *f, L"wwaza", layout::near, 17.0f, 90.0f);
+
+				// ASSERT
+				assert_equal(5u, target.append_log.size());
+				assert_equal(17, target.append_log[0].second.x);
+				assert_equal(90, target.append_log[0].second.y);
+				assert_equal(c_outline_2, target.append_log[0].first->path);
+				assert_equal(24, target.append_log[1].second.x);
+				assert_equal(90, target.append_log[1].second.y);
+				assert_equal(c_outline_2, target.append_log[1].first->path);
+				assert_equal(31, target.append_log[2].second.x);
+				assert_equal(90, target.append_log[2].second.y);
+				assert_equal(c_outline_1, target.append_log[2].first->path);
+				assert_equal(36, target.append_log[3].second.x);
+				assert_equal(90, target.append_log[3].second.y);
+				assert_equal(c_outline_diamond, target.append_log[3].first->path);
+				assert_equal(40, target.append_log[4].second.x);
+				assert_equal(92, target.append_log[4].second.y);
+				assert_equal(c_outline_1, target.append_log[4].first->path);
+			}
+
+
+			test( CenterAndFarAlignmentsShiftTheGlyphRunAccordingly )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index font_indices[] = { { L'a', 0 }, { L'w', 1 }, { L'z', 2 }, };
+				mocks::font_accessor::glyph font_glyphs[] = {
+					mocks::glyph(5, 0, c_outline_1),
+					mocks::glyph(7, 0, c_outline_2),
+					mocks::glyph(4, 2, c_outline_diamond),
+				};
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
+						mocks::font_accessor(c_fm2, font_indices, font_glyphs)),
+				};
+				mocks::fonts_loader loader(fonts);
+				text_engine<mocks::rasterizer> e(loader, 0);
+				font::ptr f = e.create_font(L"Arial", 10, false, false, font::key::gf_strong);
+				mocks::rasterizer target;
+
+				// ACT
+				e.render_string(target, *f, L"awwz", layout::far, 20.0f, 0.0f);
+
+				// ASSERT
+				assert_equal(4u, target.append_log.size());
+				assert_equal(-3, target.append_log[0].second.x);
+				assert_equal(0, target.append_log[0].second.y);
+				assert_equal(c_outline_1, target.append_log[0].first->path);
+				assert_equal(2, target.append_log[1].second.x);
+				assert_equal(0, target.append_log[1].second.y);
+				assert_equal(c_outline_2, target.append_log[1].first->path);
+				assert_equal(9, target.append_log[2].second.x);
+				assert_equal(0, target.append_log[2].second.y);
+				assert_equal(c_outline_2, target.append_log[2].first->path);
+				assert_equal(16, target.append_log[3].second.x);
+				assert_equal(0, target.append_log[3].second.y);
+				assert_equal(c_outline_diamond, target.append_log[3].first->path);
+
+				// INIT
+				target.append_log.clear();
+
+				// ACT
+				e.render_string(target, *f, L"awwwz", layout::center, 20.0f, 7.0f);
+
+				// ASSERT
+				assert_equal(5u, target.append_log.size());
+				assert_equal(5, target.append_log[0].second.x);
+				assert_equal(7, target.append_log[0].second.y);
+				assert_equal(c_outline_1, target.append_log[0].first->path);
+				assert_equal(10, target.append_log[1].second.x);
+				assert_equal(7, target.append_log[1].second.y);
+				assert_equal(c_outline_2, target.append_log[1].first->path);
+				assert_equal(17, target.append_log[2].second.x);
+				assert_equal(7, target.append_log[2].second.y);
+				assert_equal(c_outline_2, target.append_log[2].first->path);
+				assert_equal(24, target.append_log[3].second.x);
+				assert_equal(7, target.append_log[3].second.y);
+				assert_equal(c_outline_2, target.append_log[3].first->path);
+				assert_equal(31, target.append_log[4].second.x);
+				assert_equal(7, target.append_log[4].second.y);
+				assert_equal(c_outline_diamond, target.append_log[4].first->path);
 			}
 
 
