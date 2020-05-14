@@ -28,4 +28,7 @@ namespace agge
 
 	float cos(float a)
 	{	return ::cosf(a);}
+
+	float acos(float v)
+	{	return ::acosf(v);	}
 }

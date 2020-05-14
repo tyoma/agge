@@ -341,7 +341,7 @@ namespace agge
 					had_output = true;
 					assert_not_equal(prev_x, x);
 					assert_not_equal(prev_y, y);
-					assert_on_circle(13.1f, -17.2f, 10.1f, x, y);
+					assert_point_on_circle(13.1f, -17.2f, 10.1f, x, y);
 					prev_x = x, prev_y = y;
 				}
 

@@ -48,6 +48,16 @@ namespace
 			line_style.set_join(joins::bevel());
 			knot(180.0f, 100.0f);
 
+			line_style.width(10.0f);
+			line_style.set_cap(caps::round());
+			line_style.set_join(joins::bevel());
+			knot(250.0f, 100.0f);
+
+			line_style.width(15.0f);
+			line_style.set_cap(caps::round());
+			line_style.set_join(joins::bevel());
+			knot(320.0f, 100.0f);
+
 			ras.sort();
 
 			fill(surface, mkrect<int>(0, 0, surface.width(), surface.height()),

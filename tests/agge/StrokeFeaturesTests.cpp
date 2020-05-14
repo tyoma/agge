@@ -1,5 +1,6 @@
 #include <agge/stroke_features.h>
 
+#include "assertex.h"
 #include "helpers.h"
 
 #include <tests/common/helpers.h>
@@ -99,6 +100,8 @@ namespace agge
 	{
 		namespace tests
 		{
+			using namespace agge::tests;
+
 			begin_test_suite( TriangleCapTests )
 				test( ThreePointsAreProducedByCap )
 				{
@@ -177,6 +180,81 @@ namespace agge
 
 					assert_equal(reference, output);
 				}
+			end_test_suite
+
+
+			begin_test_suite( RoundCapTests )
+				test( VerticalCapPointsLieOnCircle )
+				{
+					// INIT
+					const point_r seq1[] = { { 3.3f, 10.2f }, { 3.3f, 10.0f }, };
+					const point_r seq2[] = { { 10.1f, -1.0f }, { 10.1f, 5.0f }, };
+					points output;
+					round c;
+
+					// ACT
+					c.calc(output, 3.75f, seq1[0], distance(seq1[0], seq1[1]), seq1[1]);
+
+					// ASSERT
+					assert_is_true(output.size() >= 3);
+					assert_equal(mkpoint(7.05f, 10.2f), output[0]);
+					assert_points_on_circle(3.3, 10.2, 3.75, output);
+					assert_equal(mkpoint(-0.45f, 10.2f), output[output.size() - 1]);
+
+					// INIT
+					unsigned size_1 = output.size();
+
+					output.clear();
+
+					// ACT
+					c.calc(output, 2.0f, seq2[0], distance(seq2[0], seq2[1]), seq2[1]);
+
+					// ASSERT
+					assert_is_true(output.size() >= 3);
+					assert_is_true(size_1 > output.size());
+					assert_equal(mkpoint(8.1f, -1.0f), output[0]);
+					assert_points_on_circle(10.1, -1.0, 2, output);
+					assert_equal(mkpoint(12.1f, -1.0f), output[output.size() - 1]);
+				}
+
+
+				test( HorizontalCapPointsLieOnCircle )
+				{
+					// INIT
+					const point_r seq[] = { { 3.3f, 10.2f }, { 13.3f, 10.2f }, };
+					points output;
+					round c;
+
+					// ACT
+					c.calc(output, 3.0f, seq[0], distance(seq[0], seq[1]), seq[1]);
+
+					// ASSERT
+					assert_is_true(output.size() >= 3);
+					assert_equal(mkpoint(3.3f, 13.2f), output[0]);
+					assert_points_on_circle(3.3, 10.2, 3.0, output);
+					assert_equal(mkpoint(3.3f, 7.2f), output[output.size() - 1]);
+				}
+
+
+				test( CircleIsMadeAtAnyAngle )
+				{
+					// INIT
+					const point_r seq[] = { { 3.1f, 3.3f }, { 7.1f, 6.3f }, };
+					points output;
+					round c;
+
+					// ACT
+					c.calc(output, 15.0f, seq[0], distance(seq[0], seq[1]), seq[1]);
+
+					// ASSERT
+					assert_equal(1u, output.size() & 1u); // must be odd
+					assert_is_true(7u <= output.size());
+					assert_equal(mkpoint(-5.9f, 15.3f), output[0]);
+					assert_equal(mkpoint(-8.9f, -5.7f), output[output.size() / 2]);
+					assert_equal(mkpoint(12.1f, -8.7f), output[output.size() - 1]);
+					assert_points_on_circle(3.1, 3.3, 15.0, output);
+				}
+
 			end_test_suite
 		}
 	}
