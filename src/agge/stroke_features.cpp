@@ -1,5 +1,6 @@
 #include <agge/stroke_features.h>
 
+#include <agge/curves.h>
 #include <agge/math.h>
 
 namespace agge
@@ -61,11 +62,10 @@ namespace agge
 
 			for (real_t t = step; t < 1.0f; t += step)
 			{
-				const real_t _1_t = 1.0f - t;
-				const real_t c[] = { _1_t * _1_t * _1_t, 3.0f * _1_t * _1_t * t, 3.0f * _1_t * t * t, t * t * t, };
+				point_r p;
 
-				output.push_back(create_point(xb * c[0] + xc1 * c[1] + xc2 * c[2] + xe * c[3],
-					yb * c[0] + yc1 * c[1] + yc2 * c[2] + ye * c[3]));
+				cbezier::calculate(&p.x, &p.y, xb, yb, xc1, yc1, xc2, yc2, xe, ye, t);
+				output.push_back(p);
 			}
 			output.push_back(create_point(xe, ye));
 
@@ -76,11 +76,10 @@ namespace agge
 
 			for (real_t t = step; t < 1.0f; t += step)
 			{
-				const real_t _1_t = 1.0f - t;
-				const real_t c[] = { _1_t * _1_t * _1_t, 3.0f * _1_t * _1_t * t, 3.0f * _1_t * t * t, t * t * t, };
+				point_r p;
 
-				output.push_back(create_point(xb * c[0] + xc1 * c[1] + xc2 * c[2] + xe * c[3],
-					yb * c[0] + yc1 * c[1] + yc2 * c[2] + ye * c[3]));
+				cbezier::calculate(&p.x, &p.y, xb, yb, xc1, yc1, xc2, yc2, xe, ye, t);
+				output.push_back(p);
 			}
 			output.push_back(create_point(xe, ye));
 		}

@@ -27,6 +27,9 @@ namespace agge
 		void rewind(unsigned id);
 		int vertex(real_t *x, real_t *y);
 
+		static void calculate(real_t *x, real_t *y, real_t xb, real_t yb, real_t xc1, real_t yc1, real_t xc2, real_t yc2,
+			real_t xe, real_t ye, real_t t);
+
 	private:
 		real_t _xb, _yb, _xc1, _yc1, _xc2, _yc2, _xe, _ye;
 		real_t _t, _step;

@@ -74,11 +74,7 @@ namespace agge
 		case path_command_line_to:
 			if (_t < 1.0f)
 			{
-				const real_t _1_t = 1.0f - _t;
-				const real_t c[] = { _1_t * _1_t * _1_t, 3.0f * _1_t * _1_t * _t, 3.0f * _1_t * _t * _t, _t * _t * _t, };
-
-				*x = _xb * c[0] + _xc1 * c[1] + _xc2 * c[2] + _xe * c[3];
-				*y = _yb * c[0] + _yc1 * c[1] + _yc2 * c[2] + _ye * c[3];
+				calculate(x, y, _xb, _yb, _xc1, _yc1, _xc2, _yc2, _xe, _ye, _t);
 				_t += _step;
 			}
 			else
@@ -89,6 +85,17 @@ namespace agge
 			break;
 		}
 		return stage;
+	}
+
+	void cbezier::calculate(real_t *x, real_t *y, real_t xb, real_t yb, real_t xc1, real_t yc1, real_t xc2, real_t yc2,
+		real_t xe, real_t ye, real_t t)
+	{
+		const real_t _1_t = 1.0f - t;
+		const real_t tm = 3.0f * t * _1_t;
+		const real_t c[] = { _1_t * _1_t * _1_t, tm * _1_t, tm * t, t * t * t, };
+
+		*x = xb * c[0] + xc1 * c[1] + xc2 * c[2] + xe * c[3];
+		*y = yb * c[0] + yc1 * c[1] + yc2 * c[2] + ye * c[3];
 	}
 
 
