@@ -131,7 +131,7 @@ int main(int argc, const char *argv[])
 	
 	dc ctx;
 	shared_ptr<void> hfont(::CreateFontA(height, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, !!italic, FALSE, FALSE, 0,
-		ANTIALIASED_QUALITY, 0, 0, 0, typeface.c_str()), &delete_object);
+		0, 0, ANTIALIASED_QUALITY, 0, typeface.c_str()), &delete_object);
 	shared_ptr<void> selector = ctx.select(hfont.get());
 	truetype::glyph g;
 	truetype::font f;

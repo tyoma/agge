@@ -38,7 +38,7 @@ namespace
 font_accessor::font_accessor(int height, const wchar_t *typeface, bool bold, bool italic,
 		agge::font::key::grid_fit grid_fit)
 	: _native(::CreateFontW(height, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, !!italic, FALSE, FALSE, 0,
-		ANTIALIASED_QUALITY, 0, 0, 0, typeface), &::DeleteObject), _grid_fit(grid_fit)
+		0, 0, ANTIALIASED_QUALITY, 0, typeface), &::DeleteObject), _grid_fit(grid_fit)
 {	}
 
 HFONT font_accessor::native() const
