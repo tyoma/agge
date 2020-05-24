@@ -32,6 +32,10 @@ namespace agge
 			return container.begin() + n;
 		}
 
+		template <typename T>
+		AGGE_INLINE void set_end(pod_vector<T> &container, typename pod_vector<T>::iterator end)
+		{	container.set_end(end);	}
+
 		template <typename IteratorT>
 		void sort_cells_x_ascending(IteratorT begin, IteratorT end)
 		{
@@ -60,16 +64,19 @@ namespace agge
 			}
 		}
 
-		void jump_xy(cells_iterator &current, int x, int y)
+		void jump_xy(cells_iterator &current, int x_, int y_)
 		{
+			const short x = static_cast<short>(x_), y = static_cast<short>(y_);
+
 			if ((current->x ^ x) | (current->y ^ y))
 			{
 				if (current->cover | current->area)
 				{
 					++current;
-					current->area = current->cover = 0;
+					current->area = 0;
+					current->cover = 0;
 				}
-				current->x = static_cast<short>(x), current->y = static_cast<short>(y);
+				current->x = x, current->y = y;
 			}
 		}
 
@@ -137,7 +144,7 @@ namespace agge
 		_sorted = 0;
 
 		// Untested: we use top metric of cells required to draw the longest line given the current bounds.
-		cells_container::iterator current = resize_by(_cells, 2 * agge_max(width(), height()) + 1) - 1;
+		cells_container::iterator current = resize_by(_cells, 2 * agge_max(_max_x - _min_x, _max_y - _min_y) + 3) - 1;
 
 		if (ey2 == ey1)
 		{
@@ -221,7 +228,7 @@ namespace agge
 					hline(current, tg_delta, ey1, x_to, x2, dy_rest);
 			}
 		}
-		_cells.set_end(++current);
+		set_end(_cells, ++current);
 	}
 
 	void vector_rasterizer::append(const vector_rasterizer &source, int dx, int dy)

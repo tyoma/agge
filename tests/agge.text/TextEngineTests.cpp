@@ -811,6 +811,127 @@ namespace agge
 			}
 
 
+			test( OnlyGlyphsFittingIntoWidthAreDisplayed )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index font_indices[] = { { L'a', 0 }, { L'w', 1 }, { L'z', 2 }, };
+				mocks::font_accessor::glyph font_glyphs[] = {
+					mocks::glyph(5, 0, c_outline_1),
+					mocks::glyph(7, 0, c_outline_2),
+					mocks::glyph(4, 0, c_outline_diamond),
+				};
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
+						mocks::font_accessor(c_fm2, font_indices, font_glyphs)),
+				};
+				mocks::fonts_loader loader(fonts);
+				text_engine<mocks::rasterizer> e(loader, 0);
+				font::ptr f = e.create_font(L"Arial", 10, false, false, font::key::gf_strong);
+				mocks::rasterizer target;
+
+				// ACT
+				e.render_string(target, *f, L"awwzwzwzaw", layout::near, 0.0f, 0.0f, 23.0f);
+
+				// ASSERT
+				assert_equal(4u, target.append_log.size());
+
+				// INIT
+				target = mocks::rasterizer();
+
+				// ACT
+				e.render_string(target, *f, L"awwzwzwzaw", layout::far, 0.0f, 0.0f, 22.99f);
+
+				// ASSERT
+				assert_equal(3u, target.append_log.size());
+
+				// INIT
+				target = mocks::rasterizer();
+
+				// ACT
+				e.render_string(target, *f, L"awwzwzwzaw", layout::center, 0.0f, 0.0f, 29.99f);
+
+				// ASSERT
+				assert_equal(4u, target.append_log.size());
+
+				// INIT
+				target = mocks::rasterizer();
+
+				// ACT
+				e.render_string(target, *f, L"awwzwzwzaw", layout::near, 0.0f, 0.0f, 30.0f);
+
+				// ASSERT
+				assert_equal(5u, target.append_log.size());
+
+				// INIT
+				target = mocks::rasterizer();
+
+				// ACT
+				e.render_string(target, *f, L"awwzwzwzaw", layout::far, 0.0f, 0.0f, 56.99f);
+
+				// ASSERT
+				assert_equal(9u, target.append_log.size());
+			}
+
+
+			test( FarAndCenterAligmentIsHeldIfLimitedByWidth )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index font_indices[] = { { L'a', 0 }, { L'w', 1 }, { L'z', 2 }, };
+				mocks::font_accessor::glyph font_glyphs[] = {
+					mocks::glyph(5, 0, c_outline_1),
+					mocks::glyph(8, 1, c_outline_2),
+					mocks::glyph(4, 0, c_outline_diamond),
+				};
+				pair<font::key, mocks::font_accessor> fonts[] = {
+					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
+						mocks::font_accessor(c_fm2, font_indices, font_glyphs)),
+				};
+				mocks::fonts_loader loader(fonts);
+				text_engine<mocks::rasterizer> e(loader, 0);
+				font::ptr f = e.create_font(L"Arial", 10, false, false, font::key::gf_strong);
+				mocks::rasterizer target;
+
+				// ACT
+				e.render_string(target, *f, L"awwzwzwzaw", layout::far, 40.0f, 0.0f, 21.1f);
+
+				// ASSERT
+				assert_equal(3u, target.append_log.size());
+				assert_equal(19, target.append_log[0].second.x);
+				assert_equal(0, target.append_log[0].second.y);
+				assert_equal(c_outline_1, target.append_log[0].first->path);
+				assert_equal(24, target.append_log[1].second.x);
+				assert_equal(0, target.append_log[1].second.y);
+				assert_equal(c_outline_2, target.append_log[1].first->path);
+				assert_equal(32, target.append_log[2].second.x);
+				assert_equal(1, target.append_log[2].second.y);
+				assert_equal(c_outline_2, target.append_log[2].first->path);
+
+				// INIT
+				target = mocks::rasterizer();
+
+				// ACT
+				e.render_string(target, *f, L"zwwawzwzaw", layout::center, 40.0f, 0.0f, 33.0f);
+
+				// ASSERT
+				assert_equal(5u, target.append_log.size());
+				assert_equal(23, target.append_log[0].second.x);
+				assert_equal(0, target.append_log[0].second.y);
+				assert_equal(c_outline_diamond, target.append_log[0].first->path);
+				assert_equal(27, target.append_log[1].second.x);
+				assert_equal(0, target.append_log[1].second.y);
+				assert_equal(c_outline_2, target.append_log[1].first->path);
+				assert_equal(35, target.append_log[2].second.x);
+				assert_equal(1, target.append_log[2].second.y);
+				assert_equal(c_outline_2, target.append_log[2].first->path);
+				assert_equal(43, target.append_log[3].second.x);
+				assert_equal(2, target.append_log[3].second.y);
+				assert_equal(c_outline_1, target.append_log[3].first->path);
+				assert_equal(48, target.append_log[4].second.x);
+				assert_equal(2, target.append_log[4].second.y);
+				assert_equal(c_outline_2, target.append_log[4].first->path);
+			}
+
+
 			test( ReleasedFontIsNotifiedAboutImmidiatelyWhenNoCollectionIsRequired )
 			{
 				// INIT
