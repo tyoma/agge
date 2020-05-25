@@ -22,6 +22,7 @@ namespace agge
 	typedef point<real_t> point_r;
 	typedef agge_vector<real_t> vector_r;
 	typedef rect<int> rect_i;
+	typedef rect<real_t> rect_r;
 	typedef box<real_t> box_r;
 
 	template <typename T>
