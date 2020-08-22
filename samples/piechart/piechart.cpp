@@ -68,7 +68,7 @@ namespace
 				ras.close_polygon();
 				a += d;
 				ras.sort();
-				ren(surface, 0 /*no windowing*/, ras /*mask*/, platform_blender_solid_color(b->second), winding<>());
+				ren(surface, zero(), 0 /*no windowing*/, ras /*mask*/, platform_blender_solid_color(b->second), winding<>());
 				ras.reset();
 			}
 		}

@@ -52,7 +52,7 @@ namespace
 				add_path(_rasterizer, agg::ellipse(i->x, i->y, i->radius, i->radius));
 				_rasterizer.sort();
 				timings.rasterization += stopwatch(counter);
-				_renderer(surface, 0, _rasterizer, brush, winding<>());
+				_renderer(surface, zero(), 0, _rasterizer, brush, winding<>());
 				timings.rendition += stopwatch(counter);
 			}
 		}

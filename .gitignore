@@ -3,6 +3,7 @@
 *.opensdf
 *.suo
 *.user
+!*.tests.vcxproj.user
 *.ipch
 _*
 CVS

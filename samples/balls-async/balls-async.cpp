@@ -107,7 +107,7 @@ namespace
 
 		virtual void run(typename async::render_worker::out_queue_type &output)
 		{
-			ren(surface, 0, *ras, *blender, winding<>());
+			ren(surface, zero(), 0, *ras, *blender, winding<>());
 			output.produce(ras);
 		}
 

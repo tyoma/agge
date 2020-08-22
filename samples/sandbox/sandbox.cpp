@@ -103,7 +103,7 @@ namespace
 //				add_path(_rasterizer, assist(agg_path_adaptor(_spiral), _stroke1));
 				_rasterizer.sort();
 				timings.rasterization += stopwatch(counter);
-				_renderer(surface, 0, _rasterizer, brush, winding<>());
+				_renderer(surface, zero(), 0, _rasterizer, brush, winding<>());
 			timings.rendition += stopwatch(counter);
 		}
 

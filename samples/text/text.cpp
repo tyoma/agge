@@ -51,7 +51,7 @@ namespace demo
 
 			double sort = stopwatch(counter);
 
-			_renderer(surface, 0, _rasterizer, solid_color_brush(color::make(255, 255, 255)), winding<>());
+			_renderer(surface, zero(), 0, _rasterizer, solid_color_brush(color::make(255, 255, 255)), winding<>());
 
 			double render = stopwatch(counter);
 

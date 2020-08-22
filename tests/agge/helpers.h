@@ -97,11 +97,11 @@ namespace agge
 		inline std::vector<T> mkvector(T (&p)[N])
 		{	return std::vector<T>(p, p + N);	}
 
-		template <typename CoordT>
-		inline rect<CoordT> mkrect_sized(CoordT left, CoordT top, CoordT width, CoordT height)
+		template <typename T>
+		inline agge_vector<T> mkvector(T dx, T dy)
 		{
-			rect<CoordT> rc = { left, top, left + width, top + height };
-			return rc;
+			agge_vector<T> v = { dx, dy };
+			return v;
 		}
 
 		template <typename T>

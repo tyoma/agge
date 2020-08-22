@@ -12,8 +12,8 @@ namespace agge
 		~renderer_parallel();
 
 		template <typename BitmapT, typename MaskT, typename BlenderT, typename AlphaFn>
-		void operator ()(BitmapT &bitmap_, const rect_i *window, const MaskT &mask, const BlenderT &blender,
-			const AlphaFn &alpha);
+		void operator ()(BitmapT &bitmap_, vector_i offset, const rect_i *window, const MaskT &mask,
+			const BlenderT &blender, const AlphaFn &alpha);
 
 	private:
 		raw_memory_object * const _scanline_caches; // Not an exception safe, but faster to place this one here...
@@ -32,8 +32,8 @@ namespace agge
 	{	delete []_scanline_caches;	}
 
 	template <typename BitmapT, typename MaskT, typename BlenderT, typename AlphaFn>
-	void renderer_parallel::operator ()(BitmapT &bitmap_, const rect_i *window, const MaskT &mask, const BlenderT &blender,
-		const AlphaFn &alpha)
+	void renderer_parallel::operator ()(BitmapT &bitmap_, vector_i offset, const rect_i *window,
+		const MaskT &mask, const BlenderT &blender, const AlphaFn &alpha)
 	{
 		typedef renderer::adapter<BitmapT, BlenderT> rendition_adapter;
 
@@ -58,7 +58,7 @@ namespace agge
 			const AlphaFn &alpha;
 		};
 
-		const rendition_adapter adapter(bitmap_, window, blender);
+		const rendition_adapter adapter(bitmap_, offset, window, blender);
 		kernel_function kernel(adapter, *this, mask, alpha);
 
 		_parallel.call(kernel);

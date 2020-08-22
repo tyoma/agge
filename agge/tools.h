@@ -12,6 +12,15 @@ namespace agge
 	template <typename CoordT>
 	struct rect;
 
+	struct zero
+	{
+		template <typename T>
+		operator T() const
+		{
+			T v = {};
+			return v;
+		}
+	};
 
 	template <typename CoordT>
 	inline point<CoordT> create_point(CoordT x, CoordT y)

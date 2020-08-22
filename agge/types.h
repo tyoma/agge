@@ -20,6 +20,7 @@ namespace agge
 	typedef unsigned char uint8_t;
 	typedef unsigned short uint16_t;
 	typedef point<real_t> point_r;
+	typedef agge_vector<int> vector_i;
 	typedef agge_vector<real_t> vector_r;
 	typedef rect<int> rect_i;
 	typedef rect<real_t> rect_r;

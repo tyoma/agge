@@ -115,14 +115,14 @@ namespace agge
 				r1.line_to(6.43f, 6.72f);
 				r1.line_to(3.1f, 0.3f);
 				r1.sort();
-				r(bitmap1, 0, r1, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(bitmap1, zero(), 0, r1, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
 
 				r2.move_to(3.1f, 0.3f);
 				r2.line_to(-2.422f, 2.705f);
 				r2.line_to(6.43f, 6.72f);
 				r2.line_to(3.1f, 0.3f);
 				r2.sort();
-				r(bitmap1i, 0, r2, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(bitmap1i, zero(), 0, r2, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
 
 				// ASSERT
 				uint8_t reference1[] = {
@@ -145,7 +145,7 @@ namespace agge
 				r1.line_to(4.5f, 1.0f);
 				r1.line_to(1.0f, 1.0f);
 				r1.sort();
-				r(bitmap2, 0, r1, mocks::blender<uint16_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(bitmap2, zero(), 0, r1, mocks::blender<uint16_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
 
 				// ASSERT
 				uint16_t reference2[] = {
@@ -174,7 +174,7 @@ namespace agge
 				ras.line_to(4.3f, 3.1f);
 				ras.close_polygon();
 				ras.sort();
-				r(bitmap, 0, ras, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(bitmap, zero(), 0, ras, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
 
 				// ASSERT
 				uint8_t reference1[] = {
@@ -197,7 +197,7 @@ namespace agge
 				ras.line_to(4.3f, 3.1f);
 				ras.close_polygon();
 				ras.sort();
-				r(bitmap, 0, ras, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(bitmap, zero(), 0, ras, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
 
 				// ASSERT
 				uint8_t reference2[] = {
@@ -230,19 +230,19 @@ namespace agge
 				// ACT
 				r1.line_to(0.0f, 0.0f);
 				r1.sort();
-				r(b1, 0, r1, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(b1, zero(), 0, r1, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
 
 				r2.line_to(0.0f, 0.0f);
 				r2.sort();
-				r(b2, 0, r2, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(b2, zero(), 0, r2, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
 
 				r3.line_to(0.0f, 0.0f);
 				r3.sort();
-				r(b3, 0, r3, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(b3, zero(), 0, r3, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
 
 				r4.line_to(0.0f, 0.0f);
 				r4.sort();
-				r(b4, 0, r4, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(b4, zero(), 0, r4, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
 
 				// ASSERT
 				uint8_t reference1[] = {
@@ -296,11 +296,11 @@ namespace agge
 				// ACT / ASSERT
 				r1.line_to(0.0f, 0.0f);
 				r1.sort();
-				r(b1, 0, r1, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(b1, zero(), 0, r1, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
 
 				r2.line_to(0.0f, 0.0f);
 				r2.sort();
-				r(b2, 0, r2, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(b2, zero(), 0, r2, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
 
 				uint8_t reference1[] = {
 					0x00, 0x00, 0x00, 0x00, 0x00,
@@ -344,7 +344,7 @@ namespace agge
 				// ACT / ASSERT
 				ras.line_to(0.0f, 0.0f);
 				ras.sort();
-				r(b, 0, ras, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(b, zero(), 0, ras, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
 
 				uint8_t reference[] = {
 					0x00, 0x00, 0x00, 0x00,
@@ -377,9 +377,9 @@ namespace agge
 				rectangle(r3, 1.0f, 1.0f, 4.0f, 3.0f);
 				r3.sort();
 
-				r(b1, 0, r1, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
-				r(b2, 0, r2, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
-				r(b3, 0, r3, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(b1, zero(), 0, r1, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(b2, zero(), 0, r2, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(b3, zero(), 0, r3, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
 
 				// ASSERT
 				uint8_t reference1[] = {
@@ -437,8 +437,8 @@ namespace agge
 				r2.append(rsrc2, 0, 0);
 				r2.sort();
 
-				r(b1, 0, r1, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
-				r(b2, 0, r2, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(b1, zero(), 0, r1, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(b2, zero(), 0, r2, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
 
 				// ASSERT
 				uint8_t reference1[] = {
@@ -488,8 +488,8 @@ namespace agge
 				r2.append(rsrc2, -2, 1);
 				r2.sort();
 
-				r(b1, 0, r1, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
-				r(b2, 0, r2, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(b1, zero(), 0, r1, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
+				r(b2, zero(), 0, r2, mocks::blender<uint8_t, uint8_t>(), mocks::simple_alpha<uint8_t, 8>());
 
 				// ASSERT
 				uint8_t reference1[] = {
