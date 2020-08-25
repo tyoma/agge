@@ -15,6 +15,12 @@ if (MSVC)
 	if (MSVC_VERSION LESS_EQUAL 1700)
 		include_directories(./compat/msvc10-)
 	endif()
+	if (MSVC_VERSION LESS_EQUAL 1500)
+		include_directories(./compat/msvc9-)
+		add_compile_options(
+			"$<$<CXX_COMPILER_ID:MSVC>:/FI make/build.props/emit-tr1-to-std.h>"
+		)
+	endif()
 endif()
 
 add_definitions(-D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)

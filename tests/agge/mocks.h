@@ -127,7 +127,7 @@ namespace agge
 					for (int i = 0; i != n; ++i)
 					{
 						_cells.push_back(cells[i]);
-						for (int j = 0; j != cells[i].second - cells[i].second; ++j)
+						for (int j = 0; j != cells[i].second - cells[i].first; ++j)
 						{
 							min_x = agge_min(min_x, (cells[i].first + j)->x);
 							max_x = agge_max(min_x, (cells[i].first + j)->x);

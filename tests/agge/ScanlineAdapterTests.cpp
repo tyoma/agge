@@ -41,14 +41,14 @@ namespace agge
 				scanline_adapter< mocks::renderer_adapter<uint16_t> > sl2(r2, b2, 17);
 
 				// ASSERT
-				assert_is_true(enough_capacity<uint8_t>(b1, 11 + 16));
-				assert_is_true(enough_capacity<uint16_t>(b2, 17 + 16));
+				assert_is_true(enough_capacity<uint8_t>(b1, 11 + 4));
+				assert_is_true(enough_capacity<uint16_t>(b2, 17 + 4));
 
 				// INIT / ACT
 				scanline_adapter< mocks::renderer_adapter<> > sl3(r1, b1, 1311);
 
 				// ASSERT
-				assert_is_true(enough_capacity<uint8_t>(b1, 1311 + 16));
+				assert_is_true(enough_capacity<uint8_t>(b1, 1311 + 4));
 			}
 
 
@@ -68,7 +68,7 @@ namespace agge
 				scanline_adapter<renderer> sl2(r, b, 10);
 
 				// ASSERT
-				assert_equal(p1, b.get<uint8_t>(10 + 16));
+				assert_equal(p1, b.get<uint8_t>(10 + 4));
 			}
 
 
@@ -144,7 +144,7 @@ namespace agge
 
 				renderer r;
 				raw_memory_object b;
-				scanline_adapter<renderer> sl(r, b, 11);
+				scanline_adapter<renderer> sl(r, b, 20);
 
 				// ACT
 				sl.add_span(20001, 20, 3);
@@ -257,49 +257,41 @@ namespace agge
 			}
 
 
-			test( CoversBufferIsPaddedInTheBegining )
+			test( StaleCoverValuesAreAccessibleAndUnchanged )
 			{
 				// INIT
 				typedef mocks::renderer_adapter<uint8_t> renderer;
 
 				renderer r;
 				raw_memory_object rmo;
-				scanline_adapter<renderer> sl(r, rmo, 16);
-				uint8_t *b = rmo.get<uint8_t>(1);
+				scanline_adapter<renderer> sl(r, rmo, 8);
 
-				// ACT
-				sl.add_span(4, 7, 17);
+				sl.add_cell(0, 13);
+				sl.add_span(1, 5, 17);
+				sl.add_cell(6, 11);
+				sl.add_cell(7, 10);
 				sl.commit();
-
-				// ASSERT
-				assert_equal(&b[4], r.raw_render_log[0].first);
-				assert_equal(&b[4], r.raw_render_log[1].first);
-				assert_equal(0, b[0]);
-				assert_equal(0, b[1]);
-				assert_equal(0, b[2]);
-
-				const uint8_t *end = r.raw_render_log[1].first + r.raw_render_log[1].second;
-
-				assert_equal(0, *end++);
-				assert_equal(0, *end++);
-				assert_equal(0, *end++);
-
-				// ACT
-				sl.add_span(4, 2, 3);
 				r.raw_render_log.clear();
+
+				// ACT
+				sl.add_span(0, 6, 19);
 				sl.commit();
 
 				// ASSERT
-				assert_equal(&b[4], r.raw_render_log[0].first);
-				assert_equal(0, b[0]);
-				assert_equal(0, b[1]);
-				assert_equal(0, b[2]);
+				uint8_t reference1[] = { 19, 19, 19, 19, 19, 19, 11, 10, };
 
-				end = r.raw_render_log[0].first + r.raw_render_log[0].second;
+				assert_equal(1u, r.raw_render_log.size());
+				assert_equal(reference1, vector<uint8_t>(r.raw_render_log[0].first, r.raw_render_log[0].first + 8));
 
-				assert_equal(0, *end++);
-				assert_equal(0, *end++);
-				assert_equal(0, *end++);
+				// ACT
+				sl.add_span(0, 5, 23);
+				sl.commit();
+
+				// ASSERT
+				uint8_t reference2[] = { 23, 23, 23, 23, 23, 19, 11, 10, };
+
+				assert_equal(2u, r.raw_render_log.size());
+				assert_equal(reference2, vector<uint8_t>(r.raw_render_log[1].first, r.raw_render_log[1].first + 8));
 			}
 
 

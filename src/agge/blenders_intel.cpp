@@ -4,6 +4,10 @@ namespace agge
 {
 	namespace simd
 	{
+		unsigned int blender_solid_color::_tail_mask[5] = {
+			0x00000000, 0x000000FF, 0x0000FFFF, 0x00FFFFFF, 0xFFFFFFFF,
+		};
+
 		namespace
 		{
 			__m128i make_color_u16(pixel32 components)
@@ -33,30 +37,24 @@ namespace agge
 				*pixels = _components;
 		}
 
-		void blender_solid_color::operator ()(pixel *pixels, int /*x*/, int /*y*/, count_t n, const cover_type *covers) const
+		void blender_solid_color::blend4(pixel *pixels, __m128i color_u16, __m128i alpha_u16, unsigned int covers_packed)
 		{
-			n = (n + 3) >> 2;
+			__m128i alpha = _mm_mulhi_epu16(_mm_unpacklo_epi8(_mm_setzero_si128(), _mm_cvtsi32_si128(covers_packed)),
+				alpha_u16);
 
-			const __m128i zero = _mm_setzero_si128();
-			const __m128i alpha_u16 = _mm_load_si128(&_alpha_u16);
-			const __m128i color_u16 = _mm_load_si128(&_color_u16);
+			alpha = _mm_unpacklo_epi16(alpha, alpha);
 
-			for (__m128i *p = reinterpret_cast<__m128i *>(pixels); n; --n, ++p, covers += 4)
-			{
-				__m128i alpha = _mm_mulhi_epu16(_mm_unpacklo_epi8(zero, _mm_cvtsi32_si128(*reinterpret_cast<const int *>(covers))), alpha_u16);
-				
-				alpha = _mm_unpacklo_epi16(alpha, alpha);
-				
-				__m128i source10 = _mm_loadu_si128(p);
-				__m128i	source32 = _mm_unpackhi_epi8(source10, zero);
-							source10 = _mm_unpacklo_epi8(source10, zero);
+			__m128i source10 = _mm_loadu_si128(reinterpret_cast<__m128i *>(pixels));
+			__m128i	source32 = _mm_unpackhi_epi8(source10, _mm_setzero_si128());
+						source10 = _mm_unpacklo_epi8(source10, _mm_setzero_si128());
 
-				// source -= ((source - color) << 2) * alpha >> 16;
-				source32 = _mm_sub_epi16(source32, _mm_mulhi_epi16(_mm_slli_epi16(_mm_sub_epi16(source32, color_u16), 2), _mm_unpackhi_epi32(alpha, alpha)));
-				source10 = _mm_sub_epi16(source10, _mm_mulhi_epi16(_mm_slli_epi16(_mm_sub_epi16(source10, color_u16), 2), _mm_unpacklo_epi32(alpha, alpha)));
+			// source -= ((source - color) << 2) * alpha >> 16;
+			source32 = _mm_sub_epi16(source32, _mm_mulhi_epi16(_mm_slli_epi16(_mm_sub_epi16(source32, color_u16), 2),
+				_mm_unpackhi_epi32(alpha, alpha)));
+			source10 = _mm_sub_epi16(source10, _mm_mulhi_epi16(_mm_slli_epi16(_mm_sub_epi16(source10, color_u16), 2),
+				_mm_unpacklo_epi32(alpha, alpha)));
 
-				_mm_storeu_si128(p, _mm_packus_epi16(source10, source32));
-			}
+			_mm_storeu_si128(reinterpret_cast<__m128i *>(pixels), _mm_packus_epi16(source10, source32));
 		}
 	}
 }

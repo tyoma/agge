@@ -30,7 +30,7 @@ namespace agge
 
 	template <typename RendererT>
 	inline scanline_adapter<RendererT>::scanline_adapter(RendererT &renderer_, raw_memory_object &covers, count_t max_length)
-		: _renderer(renderer_), _x(0), _start_x(0), _start_cover(covers.get<cover_type>(max_length + 16) + 4)
+		: _renderer(renderer_), _x(0), _start_x(0), _start_cover(covers.get<cover_type>(max_length + 4))
 	{	_cover = _start_cover;	}
 
 	template <typename RendererT>
@@ -56,13 +56,12 @@ namespace agge
 
 		_x += length;
 		_cover += length;
-		memset(p, cover, length);		
+		memset(p, cover, length);
 	}
 
 	template <typename RendererT>
 	AGGE_INLINE void scanline_adapter<RendererT>::commit(int next_x)
 	{
-		*reinterpret_cast<int *>(_cover) = 0;
 		_renderer(_start_x, _x - _start_x, _start_cover);
 		_start_x = _x = next_x;
 		_cover = _start_cover;

@@ -1,0 +1,5 @@
+#pragma once
+
+#include <../include/memory>
+
+#define unique_ptr auto_ptr

@@ -10,8 +10,8 @@ namespace agge
 	class raw_memory_object : noncopyable
 	{
 	public:
-		raw_memory_object();
-		~raw_memory_object();
+		raw_memory_object() throw();
+		~raw_memory_object() throw();
 
 		template <typename T>
 		T *get(count_t size);
@@ -23,11 +23,11 @@ namespace agge
 
 
 
-	inline raw_memory_object::raw_memory_object()
+	inline raw_memory_object::raw_memory_object() throw()
 		: _buffer(0), _size(0)
 	{	}
 
-	inline raw_memory_object::~raw_memory_object()
+	inline raw_memory_object::~raw_memory_object() throw()
 	{	delete []_buffer;	}
 
 	template <typename T>
