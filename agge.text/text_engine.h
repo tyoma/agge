@@ -83,7 +83,7 @@ namespace agge
 			real_t x, real_t y);
 		void render_layout(RasterizerT &target, const layout &layout_, real_t x, real_t y);
 		void render_string(RasterizerT &target, const font &font_, const wchar_t *text, layout::halign halign,
-			real_t x, real_t y, real_t max_width = std::numeric_limits<real_t>::max());
+			real_t x, real_t y, real_t max_width = (std::numeric_limits<real_t>::max)());
 
 	private:
 		typedef hash_map<int, RasterizerT> rasters_map;
