@@ -51,7 +51,7 @@ namespace agge
 			bool italic = false, grid_fit grid_fit = gf_none);
 
 		std::wstring typeface;
-		unsigned height : 20;
+		int height : 20;
 		unsigned bold : 1;
 		unsigned italic : 1;
 		grid_fit grid_fit_ : 3;
