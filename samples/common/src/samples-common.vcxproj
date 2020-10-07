@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations" Condition="'$(VisualStudioVersion)'=='10.0'">
-    <ProjectConfiguration Include="Debug|Android">
-      <Configuration>Debug</Configuration>
-      <Platform>Android</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -12,10 +8,6 @@
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Android">
-      <Configuration>Release</Configuration>
-      <Platform>Android</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
@@ -42,7 +34,6 @@
     <ClCompile>
       <AdditionalIncludeDirectories>../../..;./../../../libraries/strmd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <AdditionalOptions Condition="'$(Platform)'=='Android'">-std=c++11 %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -65,26 +56,18 @@
   <ItemGroup>
     <ClCompile Include="font_loader.cpp" />
     <ClCompile Include="platform\android\bitmap.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="platform\android\shell.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="platform\android\timing.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="platform\win32\dc.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'!='Win32' And '$(Platform)'!='x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="platform\win32\font.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'!='Win32' And '$(Platform)'!='x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="platform\win32\shell.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'!='Win32' And '$(Platform)'!='x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="platform\win32\timing.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'!='Win32' And '$(Platform)'!='x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="platform\win32\dc.cpp" />
+    <ClCompile Include="platform\win32\font.cpp" />
+    <ClCompile Include="platform\win32\shell.cpp" />
+    <ClCompile Include="platform\win32\timing.cpp" />
     <ClCompile Include="truetype.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

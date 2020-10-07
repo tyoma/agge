@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations" Condition="'$(VisualStudioVersion)'=='10.0'">
-    <ProjectConfiguration Include="Debug|Android">
-      <Configuration>Debug</Configuration>
-      <Platform>Android</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -12,10 +8,6 @@
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Android">
-      <Configuration>Release</Configuration>
-      <Platform>Android</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
@@ -41,13 +33,10 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>../..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Warnings Condition="'$(Platform)'=='Android'">AllWarnings</Warnings>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="blenders_intel.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="blenders_intel.cpp" />
     <ClCompile Include="color.cpp" />
     <ClCompile Include="curves.cpp" />
     <ClCompile Include="dash.cpp" />
@@ -61,27 +50,22 @@
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="platform\linux\semaphore.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="platform\unix\intrinsic.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="platform\unix\thread.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'!='Android'">true</ExcludedFromBuild>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="platform\win32\bitmap.cpp">
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="platform\win32\intrinsic.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="platform\win32\intrinsic.cpp" />
     <ClCompile Include="platform\win32\semaphore.cpp">
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="platform\win32\thread.cpp">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Android'">true</ExcludedFromBuild>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
     </ClCompile>
     <ClCompile Include="stroke.cpp" />

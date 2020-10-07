@@ -16,7 +16,6 @@
       <GccExceptionHandling>true</GccExceptionHandling>
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalOptions Condition="'$(Platform)'=='Android'">-Wall %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -44,8 +43,6 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableEnhancedInstructionSet Condition="'$(Platform)'=='Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <AdditionalOptions Condition="'$(Platform)'=='Android'">-ffast-math %(AdditionalOptions)</AdditionalOptions>
-      <StrictAliasing Condition="'$(Platform)'=='Android'">true</StrictAliasing>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
