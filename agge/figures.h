@@ -4,6 +4,20 @@
 
 namespace agge
 {
+	class line
+	{
+	public:
+		line(real_t x1, real_t y1, real_t x2, real_t y2);
+
+		void rewind(unsigned id);
+		int vertex(real_t *x, real_t *y);
+
+	private:
+		point_r _points[2];
+		unsigned _step;
+	};
+
+
 	class rectangle
 	{
 	public:
@@ -13,7 +27,7 @@ namespace agge
 		int vertex(real_t *x, real_t *y);
 
 	private:
-		rect<real_t> _rect;
+		point_r _points[2];
 		unsigned _step;
 	};
 }

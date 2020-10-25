@@ -1,5 +1,7 @@
 ﻿#include <agge/clipper.h>
 #include <agge/curves.h>
+#include <agge/dash.h>
+#include <agge/figures.h>
 #include <agge/filling_rules.h>
 #include <agge/path.h>
 #include <agge/renderer.h>
@@ -58,6 +60,12 @@ namespace
 			line_style.set_join(joins::bevel());
 			knot(320.0f, 100.0f);
 
+			line_style.width(1.0f);
+			line_style.set_cap(caps::butt());
+			dash_style.remove_all_dashes();
+			dash_style.add_dash(1.0f, 1.0f);
+			add_path(ras, assist(assist(line(19.5f, 300.5f, 319.5f, 300.5f), dash_style), line_style));
+
 			ras.sort();
 
 			fill(surface, mkrect<int>(0, 0, surface.width(), surface.height()),
@@ -70,6 +78,7 @@ namespace
 		rasterizer< clipper<int> > ras;
 		renderer ren;
 		stroke line_style;
+		dash dash_style;
 	};
 }
 
