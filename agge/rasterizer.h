@@ -29,6 +29,7 @@ namespace agge
 		void append(const rasterizer &other, int dx, int dy);
 
 		using vector_rasterizer::sort;
+		using vector_rasterizer::compact;
 		using vector_rasterizer::operator [];
 		using vector_rasterizer::width;
 		using vector_rasterizer::min_y;

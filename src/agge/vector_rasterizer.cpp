@@ -3,6 +3,8 @@
 #include <agge/config.h>
 #include <agge/precise_delta.h>
 
+#include <iostream>
+
 namespace agge
 {
 	namespace
@@ -305,6 +307,21 @@ namespace agge
 		}
 
 		_sorted = 1;
+	}
+
+	void vector_rasterizer::compact()
+	{
+		cells_container::iterator r, w;
+
+		sort();
+		for (r = _cells.begin(), w = r; r != _cells.end(); w++)
+		{
+			for (*w = *r++; (r != _cells.end()) && (r->x == w->x) && (r->y == w->y); ++r)
+				w->area += r->area, w->cover += r->cover;
+		}
+		_cells.resize(static_cast<count_t>(w - _cells.begin()));
+		_sorted = 0;
+		sort();
 	}
 
 	AGGE_INLINE void vector_rasterizer::hline(cells_container::iterator &current, precise_delta &tg_delta, int ey, int x1, int x2, int dy)

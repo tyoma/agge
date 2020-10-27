@@ -41,6 +41,7 @@ namespace agge
 		void append(const vector_rasterizer &source, int dx, int dy);
 		const cells_container &cells() const;
 		void sort(bool was_presorted = false);
+		void compact();
 		bool empty() const;
 		bool sorted() const;
 

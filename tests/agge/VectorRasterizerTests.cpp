@@ -1505,6 +1505,66 @@ namespace agge
 				assert_is_true(vr.sorted());
 			}
 
+
+			test( CellsAreSortedAfterCompacting )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				// ACT
+				rectangle(vr, 2, 1, 5, 5);
+				vr.compact();
+
+				// ASSERT
+				vector_rasterizer::cell reference[] = {
+					{ 2, 1, 0, -256 }, { 5, 1, 0, 256 },
+					{ 2, 2, 0, -256 }, { 5, 2, 0, 256 },
+					{ 2, 3, 0, -256 }, { 5, 3, 0, 256 },
+					{ 2, 4, 0, -256 }, { 5, 4, 0, 256 },
+					{ 5, 5, 0, 0 },
+				};
+
+				assert_is_true(vr.sorted());
+				assert_equal(reference, vr.cells());
+			}
+
+
+			test( AliasedCellsAreMergedOnCompact )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				// ACT
+				rectangle(vr, 2, 1, 7, 5);
+				rectangle(vr, 2.75, 3.5, 4, 4);
+				rectangle(vr, 7, 2, 7.5, 3);
+				vr.compact();
+
+				// ASSERT
+				vector_rasterizer::cell reference1[] = {
+					{ 2, 1, 0, -256 }, { 7, 1, 0, 256 },
+					{ 2, 2, 0, -256 }, { 7, 2, 65536, 256 },
+					{ 2, 3, -49152, -384 }, { 4, 3, 0, 128 }, { 7, 3, 0, 256 },
+					{ 2, 4, 0, -256 }, { 7, 4, 0, 256 },
+				};
+
+				assert_is_true(vr.sorted());
+				assert_equal(reference1, vr.cells());
+			}
+
+
+			test( CompactingAnEmptyRasterizerLeavesItUnsortedAndEmpty )
+			{
+				// INIT
+				vector_rasterizer vr;
+
+				// ACT
+				vr.compact();
+
+				// ASSERT
+				assert_is_empty(vr);
+			}
+
 		end_test_suite
 	}
 }

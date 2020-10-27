@@ -208,7 +208,7 @@ namespace agge
 
 		rasters.insert(precise_glyph_index, RasterizerT(), glyph_iterator);
 		add_path(glyph_iterator->second, converted_pi);
-		glyph_iterator->second.sort();
+		glyph_iterator->second.compact();
 	}
 
 	template <typename RasterizerT>
