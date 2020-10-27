@@ -3,8 +3,6 @@
 #include <agge/config.h>
 #include <agge/precise_delta.h>
 
-#include <iostream>
-
 namespace agge
 {
 	namespace

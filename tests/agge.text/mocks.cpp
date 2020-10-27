@@ -90,7 +90,7 @@ namespace agge
 			void rasterizer::close_polygon()
 			{	path.back().command |= path_flag_close;	}
 
-			void rasterizer::sort()
+			void rasterizer::compact()
 			{	_sorted = true;	}
 
 			void rasterizer::append(const rasterizer &source, int dx, int dy)

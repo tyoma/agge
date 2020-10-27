@@ -113,7 +113,7 @@ namespace agge
 				void line_to(real_t x, real_t y);
 				void close_polygon();
 
-				void sort();
+				void compact();
 
 				void append(const rasterizer &source, int dx, int dy);
 
