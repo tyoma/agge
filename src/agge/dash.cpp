@@ -45,12 +45,7 @@ namespace agge
 		{
 		case initial:
 			_j = begin();
-			_dash = _pattern.begin();
-			_dash_length = _dash->dash_length - _dash_start;
-			if (_dash_length < 0.0f)
-				_t = _dash->gap_length + _dash_length, _dash_length = _dash->dash_length; // gap is hit
-			else
-				_t = 0.0f; // dash is hit
+			seek_dash_start();
 
 		case seek:
 			do
@@ -91,6 +86,31 @@ namespace agge
 			return path_command_stop;
 		}
 		return path_command_stop;
+	}
+
+	void dash::seek_dash_start()
+	{
+		real_t period = 0.0f;
+
+		for (agge::pod_vector<dash_gap>::const_iterator i = _pattern.begin(); i != _pattern.end(); ++i)
+			period += i->dash_length + i->gap_length;
+
+		real_t dash_start = _dash_start - period * static_cast<int>(_dash_start / period);
+
+		for (_dash = _pattern.begin(); ; _dash++)
+		{
+			const real_t d = _dash->dash_length + _dash->gap_length;
+
+			if (dash_start < d)
+				break;
+			dash_start -= d;
+		}
+
+		_dash_length = _dash->dash_length - dash_start;
+		if (_dash_length < 0.0f)
+			_t = _dash->gap_length + _dash_length, _dash_length = _dash->dash_length; // gap is hit
+		else
+			_t = 0.0f; // dash is hit
 	}
 
 	void dash::interpolate_current(real_t *x, real_t *y) const

@@ -386,6 +386,150 @@ namespace agge
 
 				assert_equal(reference1, result1);
 			}
+
+
+			test( DashStartIsRespectedForAWholePeriod )
+			{
+				// INIT
+				dash d;
+
+				d.add_dash(2.0f, 1.0f);
+				d.add_dash(1.0f, 3.0f);
+				d.add_dash(0.5f, 1.2f);
+
+				// ACT
+				d.dash_start(8.7f);
+
+				move_to(d, 0.0f, 0.0f);
+				line_to(d, 9.5f, 0.0f);
+
+				mocks::path::point result[] = {
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d),
+				};
+
+				// ASSERT
+				mocks::path::point reference[] = {
+					{ 0.0f, 0.0f, path_command_move_to }, { 2.0f, 0.0f, path_command_line_to },
+					{ 3.0f, 0.0f, path_command_move_to }, { 4.0f, 0.0f, path_command_line_to },
+					{ 7.0f, 0.0f, path_command_move_to }, { 7.5f, 0.0f, path_command_line_to },
+					{ 8.7f, 0.0f, path_command_move_to }, { 9.5f, 0.0f, path_command_line_to },
+					{ 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference, result);
+			}
+
+
+			test( DashStartIsRespectedForAMultiDashWhenDashIsHit )
+			{
+				// INIT
+				dash d;
+
+				d.add_dash(2.0f, 1.0f);
+				d.add_dash(1.0f, 3.5f);
+				d.add_dash(0.5f, 0.5f);
+
+				// ACT
+				d.dash_start(0.3f);
+
+				move_to(d, 0.0f, 0.0f);
+				line_to(d, 9.5f, 0.0f);
+
+				mocks::path::point result1[] = {
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d),
+				};
+
+				// ASSERT
+				mocks::path::point reference1[] = {
+					{ 0.0f, 0.0f, path_command_move_to }, { 1.7f, 0.0f, path_command_line_to },
+					{ 2.7f, 0.0f, path_command_move_to }, { 3.7f, 0.0f, path_command_line_to },
+					{ 7.2f, 0.0f, path_command_move_to }, { 7.7f, 0.0f, path_command_line_to },
+					{ 8.2f, 0.0f, path_command_move_to }, { 9.5f, 0.0f, path_command_line_to },
+					{ 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference1, result1);
+
+				// INIT
+				d.remove_all();
+
+				// ACT
+				d.dash_start(7.75f);
+
+				move_to(d, 0.0f, 0.0f);
+				line_to(d, 9.5f, 0.0f);
+
+				mocks::path::point result2[] = {
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d),
+				};
+
+				// ASSERT
+				mocks::path::point reference2[] = {
+					{ 0.0f, 0.0f, path_command_move_to }, { 0.25f, 0.0f, path_command_line_to },
+					{ 0.75f, 0.0f, path_command_move_to }, { 2.75f, 0.0f, path_command_line_to },
+					{ 3.75f, 0.0f, path_command_move_to }, { 4.75f, 0.0f, path_command_line_to },
+					{ 8.25f, 0.0f, path_command_move_to }, { 8.75f, 0.0f, path_command_line_to },
+					{ 9.25f, 0.0f, path_command_move_to }, { 9.5f, 0.0f, path_command_line_to },
+					{ 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference2, result2);
+
+				// INIT
+				d.remove_all();
+
+				// ACT
+				d.dash_start(7.75f + 8.5f);
+
+				move_to(d, 0.0f, 0.0f);
+				line_to(d, 9.5f, 0.0f);
+
+				mocks::path::point result3[] = {
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d),
+				};
+
+				// ASSERT
+				assert_equal(reference2, result3);
+
+				// INIT
+				d.remove_all();
+
+				// ACT
+				d.dash_start(7.75f + 3.0f * 8.5f);
+
+				move_to(d, 0.0f, 0.0f);
+				line_to(d, 9.5f, 0.0f);
+
+				mocks::path::point result4[] = {
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d),
+				};
+
+				// ASSERT
+				assert_equal(reference2, result4);
+			}
 		end_test_suite
 	}
 }

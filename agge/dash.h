@@ -33,6 +33,7 @@ namespace agge
 		};
 
 	private:
+		void seek_dash_start();
 		void interpolate_current(real_t *x, real_t *y) const;
 
 	private:
