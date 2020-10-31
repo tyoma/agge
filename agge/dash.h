@@ -35,7 +35,7 @@ namespace agge
 	private:
 		vertex_sequence::const_iterator _j;
 		agge::pod_vector<dash_gap>::const_iterator _dash;
-		real_t _t;
+		real_t _t, _dash_length, _dash_start;
 		point_r _start;
 		state _state;
 		agge::pod_vector<dash_gap> _pattern;

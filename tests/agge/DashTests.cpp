@@ -300,6 +300,92 @@ namespace agge
 				assert_equal(reference, result);
 			}
 
+
+			test( DashStartIsRespectedForASingleDashWhenGapIsHit )
+			{
+				// INIT
+				dash d;
+
+				d.add_dash(2.0f, 1.0f);
+
+				// ACT
+				d.dash_start(0.3f);
+
+				move_to(d, 0.0f, 0.0f);
+				line_to(d, 6.0f, 0.0f);
+
+				mocks::path::point result1[] = {
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d),
+				};
+
+				// ASSERT
+				mocks::path::point reference1[] = {
+					{ 0.0f, 0.0f, path_command_move_to }, { 1.7f, 0.0f, path_command_line_to },
+					{ 2.7f, 0.0f, path_command_move_to }, { 4.7f, 0.0f, path_command_line_to },
+					{ 5.7f, 0.0f, path_command_move_to }, { 6.0f, 0.0f, path_command_line_to },
+					{ 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference1, result1);
+
+				// INIT
+				d.remove_all();
+
+				// ACT
+				d.dash_start(0.43f);
+
+				move_to(d, 0.0f, 0.0f);
+				line_to(d, 0.2f, 0.0f);
+				line_to(d, 3.5f, 0.0f);
+
+				mocks::path::point result2[] = {
+					vertex(d), vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d),
+				};
+
+				// ASSERT
+				mocks::path::point reference2[] = {
+					{ 0.0f, 0.0f, path_command_move_to }, { 0.2f, 0.0f, path_command_line_to }, { 1.57f, 0.0f, path_command_line_to },
+					{ 2.57f, 0.0f, path_command_move_to }, { 3.5f, 0.0f, path_command_line_to },
+					{ 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference2, result2);
+			}
+
+
+			test( DashStartIsRespectedForASingleDashWhenDashIsHit )
+			{
+				// INIT
+				dash d;
+
+				d.add_dash(2.0f, 1.0f);
+
+				// ACT
+				d.dash_start(2.15f);
+
+				move_to(d, 0.0f, 0.0f);
+				line_to(d, 6.0f, 0.0f);
+
+				mocks::path::point result1[] = {
+					vertex(d), vertex(d),
+					vertex(d), vertex(d),
+					vertex(d),
+				};
+
+				// ASSERT
+				mocks::path::point reference1[] = {
+					{ 0.85f, 0.0f, path_command_move_to }, { 2.85f, 0.0f, path_command_line_to },
+					{ 3.85f, 0.0f, path_command_move_to }, { 5.85f, 0.0f, path_command_line_to },
+					{ 0.0f, 0.0f, path_command_stop },
+				};
+
+				assert_equal(reference1, result1);
+			}
 		end_test_suite
 	}
 }

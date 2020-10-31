@@ -64,6 +64,7 @@ namespace
 			line_style.set_cap(caps::butt());
 			dash_style.remove_all_dashes();
 			dash_style.add_dash(1.0f, 1.0f);
+			dash_style.dash_start(0.5f);
 			add_path(ras, assist(assist(line(19.5f, 300.5f, 319.5f, 300.5f), dash_style), line_style));
 
 			ras.sort();

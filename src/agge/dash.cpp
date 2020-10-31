@@ -5,7 +5,7 @@
 namespace agge
 {
 	dash::dash()
-		: _state(initial)
+		: _state(initial), _dash_start(0.0f)
 	{	}
 
 	void dash::remove_all_dashes()
@@ -17,6 +17,9 @@ namespace agge
 
 		_pattern.push_back(dg);
 	}
+
+	void dash::dash_start(real_t offset)
+	{	_dash_start = offset;	}
 
 	void dash::remove_all()
 	{
@@ -46,7 +49,11 @@ namespace agge
 		case initial:
 			_j = begin();
 			_dash = _pattern.begin();
-			_t = 0.0f;
+			_dash_length = _dash->dash_length - _dash_start;
+			if (_dash_length < 0.0f)
+				_t = _dash->gap_length + _dash_length, _dash_length = _dash->dash_length; // gap is hit
+			else
+				_t = 0.0f; // dash is hit
 			_state = seek;
 
 		case seek:
@@ -65,7 +72,7 @@ namespace agge
 			i = _j - 1;
 			m = _j->point + (_t / i->distance) * (_j->point - i->point);
 			*x = m.x, *y = m.y;
-			_t += _dash->dash_length;
+			_t += _dash_length;
 			_state = _t > 0.0f ? emit_source : finish_dash;
 			return path_command_move_to;
 
@@ -85,6 +92,7 @@ namespace agge
 			_t += _dash->gap_length;
 			if (++_dash == _pattern.end())
 				_dash = _pattern.begin();
+			_dash_length = _dash->dash_length;
 			_state = _t < 0.0f ? move : seek;
 			return path_command_line_to;
 
