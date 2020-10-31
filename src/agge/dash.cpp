@@ -106,11 +106,12 @@ namespace agge
 			dash_start -= d;
 		}
 
-		_dash_length = _dash->dash_length - dash_start;
-		if (_dash_length < 0.0f)
-			_t = _dash->gap_length + _dash_length, _dash_length = _dash->dash_length; // gap is hit
+		const real_t dash_length = _dash->dash_length - dash_start;
+
+		if (dash_length > 0.0f)
+			_t = 0.0f, _dash_length = dash_length; // dash is hit
 		else
-			_t = 0.0f; // dash is hit
+			_t = _dash->gap_length + dash_length, _dash_length = _dash->dash_length; // gap is hit
 	}
 
 	void dash::interpolate_current(real_t *x, real_t *y) const
