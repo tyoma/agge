@@ -33,6 +33,9 @@ namespace agge
 		};
 
 	private:
+		void interpolate_current(real_t *x, real_t *y) const;
+
+	private:
 		vertex_sequence::const_iterator _j;
 		agge::pod_vector<dash_gap>::const_iterator _dash;
 		real_t _t, _dash_length, _dash_start;

@@ -5,7 +5,7 @@
 namespace agge
 {
 	dash::dash()
-		: _state(initial), _dash_start(0.0f)
+		: _dash_start(0.0f), _state(initial)
 	{	}
 
 	void dash::remove_all_dashes()
@@ -41,9 +41,6 @@ namespace agge
 
 	int dash::vertex(real_t *x, real_t *y)
 	{
-		vertex_sequence::const_iterator i;
-		point_r m;
-
 		switch (_state)
 		{
 		case initial:
@@ -54,7 +51,6 @@ namespace agge
 				_t = _dash->gap_length + _dash_length, _dash_length = _dash->dash_length; // gap is hit
 			else
 				_t = 0.0f; // dash is hit
-			_state = seek;
 
 		case seek:
 			do
@@ -66,12 +62,9 @@ namespace agge
 					return path_command_stop;
 				}
 			}	while (_t > 0.0f);
-			_state = move;
 
 		case move:
-			i = _j - 1;
-			m = _j->point + (_t / i->distance) * (_j->point - i->point);
-			*x = m.x, *y = m.y;
+			interpolate_current(x, y);
 			_t += _dash_length;
 			_state = _t > 0.0f ? emit_source : finish_dash;
 			return path_command_move_to;
@@ -86,9 +79,7 @@ namespace agge
 			return path_command_line_to;
 
 		case finish_dash:
-			i = _j - 1;
-			m = _j->point + (_t / i->distance) * (_j->point - i->point);
-			*x = m.x, *y = m.y;
+			interpolate_current(x, y);
 			_t += _dash->gap_length;
 			if (++_dash == _pattern.end())
 				_dash = _pattern.begin();
@@ -100,5 +91,13 @@ namespace agge
 			return path_command_stop;
 		}
 		return path_command_stop;
+	}
+
+	void dash::interpolate_current(real_t *x, real_t *y) const
+	{
+		vertex_sequence::const_iterator i = _j - 1;
+		point_r m = _j->point + (_t / i->distance) * (_j->point - i->point);
+
+		*x = m.x, *y = m.y;
 	}
 }
