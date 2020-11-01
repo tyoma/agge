@@ -4,6 +4,7 @@
 
 namespace agge
 {
+	extern const real_t c_qarc_bezier_k;
 	extern const real_t distance_epsilon;
 	extern const real_t pi;
 
@@ -26,6 +27,8 @@ namespace agge
 
 	inline real_t muldiv(real_t a, real_t b, real_t c)
 	{	return a * b / c;	}
+
+	real_t optimal_circle_stepping(real_t radius, real_t scale = 1.0f);
 
 	inline real_t distance(real_t ax, real_t ay, real_t bx, real_t by)
 	{

@@ -5,14 +5,6 @@
 
 namespace agge
 {
-	namespace
-	{
-		const real_t c_qarc_bezier_k = 0.551915024494f;
-
-		real_t optimal_circle_stepping(real_t radius, real_t scale = 1.0f)
-		{	return acos(radius / (radius + 0.125f / scale)) / pi;	}
-	}
-
 	namespace caps
 	{
 		void butt::calc(points &output, real_t hw, const point_r &v0, real_t d, const point_r &v1) const
