@@ -90,7 +90,7 @@ namespace agge
 		else
 		{
 			pair<font::accessor_ptr, real_t> acc = create_font_accessor(key);
-			pre_f.reset(new font(acc.first, acc.second));
+			pre_f.reset(new font(key, acc.first, acc.second));
 		}
 
 		font::ptr f(pre_f.get(), bind(&text_engine_base::on_released, this, &*i, _1));

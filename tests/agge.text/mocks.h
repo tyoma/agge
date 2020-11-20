@@ -156,7 +156,10 @@ namespace agge
 			template <size_t indices_n, size_t glyphs_n>
 			inline font::ptr create_font(const font::metrics &metrics_,
 				const font_accessor::char_to_index (&indices)[indices_n], font_accessor::glyph (&glyphs)[glyphs_n])
-			{	return font::ptr(new font(font::accessor_ptr(new font_accessor(metrics_, indices,glyphs))));	}
+			{
+				return font::ptr(new font(font::key(std::wstring(), 10),
+					font::accessor_ptr(new font_accessor(metrics_, indices, glyphs))));
+			}
 		}
 	}
 

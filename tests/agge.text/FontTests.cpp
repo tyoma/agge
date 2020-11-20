@@ -129,7 +129,7 @@ namespace agge
 				};
 				mocks::font_accessor::glyph glyphs[] = { { { 0, 0 } }, };
 				shared_ptr<mocks::font_accessor> a(new mocks::font_accessor(c_fm1, indices, glyphs));
-				font::ptr f(new font(a));
+				font::ptr f(new font(font::key(wstring(), 10), a));
 
 				// INIT / ACT (caching occurs here)
 				f->map_single(L'a');
@@ -140,6 +140,27 @@ namespace agge
 				assert_equal(19u, f->map_single(L'a'));
 				assert_equal(13111u, f->map_single(L'B'));
 				assert_equal(0, a->glyph_mapping_calls);
+			}
+
+
+			test( FontStoresItsKey )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = {
+					{ L'a', 19 }, { L'B', 13111 },
+				};
+				mocks::font_accessor::glyph glyphs[] = { { { 0, 0 } }, };
+				shared_ptr<mocks::font_accessor> a(new mocks::font_accessor(c_fm1, indices, glyphs));
+
+				// INIT / ACT
+				font f1(font::key(L"Arial", 13), a);
+				font f2(font::key(L"Segoe", -17), a);
+
+				// ACT / ASSERT
+				assert_equal(L"Arial", f1.get_key().typeface);
+				assert_equal(13, f1.get_key().height);
+				assert_equal(L"Segoe", f2.get_key().typeface);
+				assert_equal(-17, f2.get_key().height);
 			}
 
 		end_test_suite

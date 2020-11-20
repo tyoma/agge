@@ -12,9 +12,22 @@ namespace agge
 	{
 	public:
 		struct accessor;
-		struct key;
 		typedef shared_ptr<accessor> accessor_ptr;
 		typedef shared_ptr<font> ptr;
+
+		struct key
+		{
+			enum grid_fit { gf_none = 0, gf_vertical = 1, gf_strong = 2 };
+
+			explicit key(const std::wstring &typeface, int height, bool bold = false, bool italic = false,
+				grid_fit grid_fit = gf_none);
+
+			std::wstring typeface;
+			int height : 20;
+			unsigned bold : 1;
+			unsigned italic : 1;
+			grid_fit grid_fit_ : 2;
+		};
 
 		struct metrics
 		{
@@ -24,8 +37,9 @@ namespace agge
 		};
 
 	public:
-		explicit font(const accessor_ptr &accessor_, real_t factor = 1.0f);
+		explicit font(const key &key_, const accessor_ptr &accessor_, real_t factor = 1.0f);
 
+		key get_key() const;
 		metrics get_metrics() const;
 
 		uint16_t map_single(wchar_t character) const;
@@ -37,24 +51,11 @@ namespace agge
 
 	private:
 		const accessor_ptr _accessor;
+		const key _key;
 		metrics _metrics;
 		mutable glyphs_cache_t _glyphs;
 		mutable char2index_cache_t _char2glyph;
 		real_t _factor;
-	};
-
-	struct font::key
-	{
-		enum grid_fit { gf_none = 0, gf_vertical = 1, gf_strong = 2 };
-
-		explicit key(const std::wstring &typeface = std::wstring(), unsigned height = 0, bool bold = false,
-			bool italic = false, grid_fit grid_fit = gf_none);
-
-		std::wstring typeface;
-		int height : 20;
-		unsigned bold : 1;
-		unsigned italic : 1;
-		grid_fit grid_fit_ : 3;
 	};
 
 	struct font::accessor

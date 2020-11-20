@@ -15,14 +15,17 @@ namespace agge
 		};
 	}
 
-	font::font(const accessor_ptr &accessor_, real_t factor)
-		: _accessor(accessor_), _metrics(accessor_->get_metrics()), _factor(factor)
+	font::font(const key &key_, const accessor_ptr &accessor_, real_t factor)
+		: _accessor(accessor_), _key(key_), _metrics(accessor_->get_metrics()), _factor(factor)
 	{
 		_metrics.ascent *= _factor;
 		_metrics.descent *= _factor;
 		_metrics.leading *= _factor;
 	}
 	
+	font::key font::get_key() const
+	{	return _key;	}
+
 	font::metrics font::get_metrics() const
 	{	return _metrics;	}
 
@@ -59,7 +62,7 @@ namespace agge
 	}
 
 
-	font::key::key(const wstring &typeface_, unsigned height_, bool bold_, bool italic_, grid_fit grid_fit__)
+	font::key::key(const wstring &typeface_, int height_, bool bold_, bool italic_, grid_fit grid_fit__)
 		: typeface(typeface_), height(height_), bold(bold_), italic(italic_), grid_fit_(grid_fit__)
 	{	}
 
