@@ -159,7 +159,7 @@ namespace agge
 		rasters_map &rasters = ri->second;
 		real_t dx = 0.0f;
 
-		if (layout::near != halign)
+		if (layout::near_ != halign)
 		{
 			for (const wchar_t *c = text; *c; ++c)
 			{

@@ -711,7 +711,7 @@ namespace agge
 				mocks::rasterizer target;
 
 				// ACT
-				e.render_string(target, *f, L"aww", layout::near, 0.0f, 3.0f);
+				e.render_string(target, *f, L"aww", layout::near_, 0.0f, 3.0f);
 
 				// ASSERT
 				assert_equal(3u, target.append_log.size());
@@ -729,7 +729,7 @@ namespace agge
 				target.append_log.clear();
 
 				// ACT
-				e.render_string(target, *f, L"wwaza", layout::near, 17.0f, 90.0f);
+				e.render_string(target, *f, L"wwaza", layout::near_, 17.0f, 90.0f);
 
 				// ASSERT
 				assert_equal(5u, target.append_log.size());
@@ -770,7 +770,7 @@ namespace agge
 				mocks::rasterizer target;
 
 				// ACT
-				e.render_string(target, *f, L"awwz", layout::far, 20.0f, 0.0f);
+				e.render_string(target, *f, L"awwz", layout::far_, 20.0f, 0.0f);
 
 				// ASSERT
 				assert_equal(4u, target.append_log.size());
@@ -832,7 +832,7 @@ namespace agge
 				mocks::rasterizer target;
 
 				// ACT
-				e.render_string(target, *f, L"awwzwzwzaw", layout::near, 0.0f, 0.0f, 23.0f);
+				e.render_string(target, *f, L"awwzwzwzaw", layout::near_, 0.0f, 0.0f, 23.0f);
 
 				// ASSERT
 				assert_equal(4u, target.append_log.size());
@@ -841,7 +841,7 @@ namespace agge
 				target = mocks::rasterizer();
 
 				// ACT
-				e.render_string(target, *f, L"awwzwzwzaw", layout::far, 0.0f, 0.0f, 22.99f);
+				e.render_string(target, *f, L"awwzwzwzaw", layout::far_, 0.0f, 0.0f, 22.99f);
 
 				// ASSERT
 				assert_equal(3u, target.append_log.size());
@@ -859,7 +859,7 @@ namespace agge
 				target = mocks::rasterizer();
 
 				// ACT
-				e.render_string(target, *f, L"awwzwzwzaw", layout::near, 0.0f, 0.0f, 30.0f);
+				e.render_string(target, *f, L"awwzwzwzaw", layout::near_, 0.0f, 0.0f, 30.0f);
 
 				// ASSERT
 				assert_equal(5u, target.append_log.size());
@@ -868,7 +868,7 @@ namespace agge
 				target = mocks::rasterizer();
 
 				// ACT
-				e.render_string(target, *f, L"awwzwzwzaw", layout::far, 0.0f, 0.0f, 56.99f);
+				e.render_string(target, *f, L"awwzwzwzaw", layout::far_, 0.0f, 0.0f, 56.99f);
 
 				// ASSERT
 				assert_equal(9u, target.append_log.size());
@@ -894,7 +894,7 @@ namespace agge
 				mocks::rasterizer target;
 
 				// ACT
-				e.render_string(target, *f, L"awwzwzwzaw", layout::far, 40.0f, 0.0f, 21.1f);
+				e.render_string(target, *f, L"awwzwzwzaw", layout::far_, 40.0f, 0.0f, 21.1f);
 
 				// ASSERT
 				assert_equal(3u, target.append_log.size());

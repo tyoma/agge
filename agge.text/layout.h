@@ -10,7 +10,7 @@ namespace agge
 	class layout : noncopyable
 	{
 	public:
-		enum halign { near, far, center, };
+		enum halign { near_, far_, center, };
 
 		struct positioned_glyph;
 		struct glyph_run;
