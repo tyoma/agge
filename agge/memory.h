@@ -17,6 +17,10 @@ namespace agge
 		T *get(count_t size);
 
 	private:
+		template <typename T>
+		T *get_adjust(count_t size);
+
+	private:
 		uint8_t *_buffer;
 		count_t _size;
 	};
@@ -35,15 +39,18 @@ namespace agge
 	{
 		size *= sizeof(T);
 		size /= sizeof(uint8_t);
-		if (size > _size)
-		{
-			uint8_t *buffer = new uint8_t[size];
+		return size > _size ? get_adjust<T>(size) : reinterpret_cast<T *>(_buffer);
+	}
 
-			delete []_buffer;
-			_buffer = buffer;
-			_size = size;
-			memset(buffer, uint8_t(), size);
-		}
+	template <typename T>
+	inline T *raw_memory_object::get_adjust(count_t size)
+	{
+		uint8_t *buffer = new uint8_t[size];
+
+		delete []_buffer;
+		_buffer = buffer;
+		_size = size;
+		memset(buffer, uint8_t(), size);
 		return reinterpret_cast<T *>(_buffer);
 	}
 
