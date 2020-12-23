@@ -9,9 +9,6 @@ namespace agge
 	{
 		namespace
 		{
-			const void *get_buffer(void *data)
-			{	return data;	}
-			
 			template <typename T>
 			void swap(T &lhs, T &rhs)
 			{	T t = lhs; lhs = rhs, rhs = t;	}
@@ -19,8 +16,6 @@ namespace agge
 		
 		raw_bitmap::~raw_bitmap()
 		{
-			if (_native)
-				::CGImageRelease(_native);
 			delete []_memory;
 		}
 		
@@ -28,44 +23,39 @@ namespace agge
 		{
 			count_t stride = calculate_stride(width + _extra_pixels);
 			count_t size = stride * height;
-			uint8_t *memory = size > _allocated_width ? new uint8_t[size] : _memory;
-			size_t component_bits = _bpp == bpp32 ? 8 : _bpp == bpp16 ? 5 : 8;
-			int format = _bpp == bpp32 ? kCGImageAlphaNoneSkipFirst : kCGImageAlphaNone;
 			
-			CGDataProviderDirectCallbacks cb = { 0, &get_buffer, 0, 0, 0 };
-			CGColorSpaceRef cs = _bpp == bpp8 ? ::CGColorSpaceCreateDeviceGray() : ::CGColorSpaceCreateDeviceRGB();
-			CGDataProviderRef provider = ::CGDataProviderCreateDirect(memory, size, &cb);
-			CGImageRef image = ::CGImageCreate(width, height, component_bits, _bpp, stride, cs, format, provider, NULL,
-				FALSE, kCGRenderingIntentDefault);
-			::CGDataProviderRelease(provider);
-			::CGColorSpaceRelease(cs);
-			
-			if (image)
+			if (size > _allocated_width /*size, actually*/)
 			{
-				if (_native)
-					::CGImageRelease(_native);
-				_allocated_width = memory != _memory ? size : _allocated_width;
-				_native = image;
-				_width = width;
-				_height = height;
-				_stride = stride;
+				uint8_t *memory = new uint8_t[size];
+				
+				_allocated_width = size;
 				swap(_memory, memory);
-			}
-			if (memory != _memory)
 				delete []memory;
-			if (!image)
-				throw std::bad_alloc();			
+			}
+			_width = width;
+			_height = height;
+			_stride = stride;
 		}
 		
 		void raw_bitmap::blit(CGContextRef context, int x, int y, count_t width, count_t height) const
 		{
-			CGRect destination = { { CGFloat(x), CGFloat(y) }, { CGFloat(_width), CGFloat(_height) } };
-			CGRect clip = { { CGFloat(x), CGFloat(y) }, { CGFloat(width), CGFloat(height) } };
+			count_t stride = calculate_stride(_width + _extra_pixels);
+			count_t size = stride * height;
+			size_t component_bits = _bpp == bpp32 ? 8 : _bpp == bpp16 ? 5 : 8;
+			int format = _bpp == bpp32 ? kCGImageAlphaNoneSkipFirst : kCGImageAlphaNone;
 			
-			::CGContextSaveGState(context);
-			::CGContextClipToRect(context, clip);
-			::CGContextDrawImage(context, destination, _native);
-			::CGContextRestoreGState(context);
+			CGColorSpaceRef cs = _bpp == bpp8 ? ::CGColorSpaceCreateDeviceGray() : ::CGColorSpaceCreateDeviceRGB();
+			CGDataProviderRef provider = ::CGDataProviderCreateWithData(0, _memory, size, 0);
+			CGImageRef image = ::CGImageCreate(width, height, component_bits, _bpp, stride, cs, format, provider, NULL,
+				FALSE, kCGRenderingIntentDefault);
+			::CGDataProviderRelease(provider);
+			::CGColorSpaceRelease(cs);
+
+		
+			CGRect destination = { { CGFloat(x), CGFloat(y) }, { CGFloat(width), CGFloat(height) } };
+			
+			::CGContextDrawImage(context, destination, image);
+			::CGImageRelease(image);
 		}
 	}
 }
