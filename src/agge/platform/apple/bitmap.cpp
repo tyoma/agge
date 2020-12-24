@@ -44,14 +44,11 @@ namespace agge
 			size_t component_bits = _bpp == bpp32 ? 8 : _bpp == bpp16 ? 5 : 8;
 			int format = _bpp == bpp32 ? kCGImageAlphaNoneSkipFirst : kCGImageAlphaNone;
 			
-			CGColorSpaceRef cs = _bpp == bpp8 ? ::CGColorSpaceCreateDeviceGray() : ::CGColorSpaceCreateDeviceRGB();
 			CGDataProviderRef provider = ::CGDataProviderCreateWithData(0, _memory, size, 0);
-			CGImageRef image = ::CGImageCreate(width, height, component_bits, _bpp, stride, cs, format, provider, NULL,
-				FALSE, kCGRenderingIntentDefault);
+			CGImageRef image = ::CGImageCreate(width, height, component_bits, _bpp, stride,
+				CGBitmapContextGetColorSpace(context), format, provider, NULL, FALSE, kCGRenderingIntentDefault);
 			::CGDataProviderRelease(provider);
-			::CGColorSpaceRelease(cs);
 
-		
 			CGRect destination = { { CGFloat(x), CGFloat(y) }, { CGFloat(width), CGFloat(height) } };
 			
 			::CGContextDrawImage(context, destination, image);
