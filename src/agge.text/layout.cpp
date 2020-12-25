@@ -45,8 +45,8 @@ namespace agge
 		};
 	}
 
-	layout::layout(font::ptr font_)
-		: _font(font_), _limit_width(1e30f)
+	layout::layout(font::ptr base_font)
+		: _base_font(base_font), _limit_width(1e30f)
 	{	}
 
 	void layout::process(const richtext_t &text)
@@ -68,7 +68,7 @@ namespace agge
 		if (_glyph_runs.empty())
 			return box;
 
-		font::metrics m = _font->get_metrics();
+		font::metrics m = _base_font->get_metrics();
 
 		for (const_iterator i = begin(); i != end(); ++i)
 			box.w = agge_max(box.w, i->width);
@@ -78,10 +78,7 @@ namespace agge
 
 	void layout::analyze()
 	{
-//		if (_text.empty())
-//			return;
-
-		const font::metrics m = _font->get_metrics();
+		const font::metrics m = _base_font->get_metrics();
 		real_t y = 0;
 
 		_glyph_runs.clear();
@@ -98,8 +95,8 @@ namespace agge
 
 			for (richtext_t::const_iterator eow_i = _text.end(); i != _text.end() && !eat_lf(i); ++i, ++pgi)
 			{
-				const uint16_t index = _font->map_single(*i);
-				const glyph *g = _font->get_glyph(index);
+				const uint16_t index = _base_font->map_single(*i);
+				const glyph *g = _base_font->get_glyph(index);
 
 				if (eow(*i))
 				{
@@ -131,7 +128,7 @@ namespace agge
 			gr.reference.x = 0.0f;
 			gr.reference.y = y + m.ascent;
 			gr.width = width;
-			gr.glyph_run_font = _font;
+			gr.glyph_run_font = _base_font;
 			_glyph_runs.push_back(gr);
 			y += height(m);
 		}

@@ -19,7 +19,7 @@ namespace agge
 		typedef glyph_runs_container::const_iterator const_iterator;
 
 	public:
-		layout(font::ptr font_);
+		layout(font::ptr base_font);
 
 		void process(const richtext_t &text);
 
@@ -34,7 +34,7 @@ namespace agge
 
 	private:
 		richtext_t _text;
-		font::ptr _font;
+		font::ptr _base_font;
 		positioned_glyphs_container _glyphs;
 		glyph_runs_container _glyph_runs;
 		real_t _limit_width;

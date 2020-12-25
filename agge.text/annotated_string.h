@@ -37,14 +37,18 @@ namespace agge
 	template <typename CharT, typename AnnotationT>
 	struct annotated_string<CharT, AnnotationT>::element_type
 	{
+		const typename annotated_string<CharT, AnnotationT>::string_type *underlying;
+		size_t index;
 		const AnnotationT *annotation;
+
+		operator CharT() const;
 	};
 
 	template <typename CharT, typename AnnotationT>
 	class annotated_string<CharT, AnnotationT>::const_iterator
 	{
 	public:
-		const_iterator(const CharT *start, size_t index,
+		const_iterator(const typename annotated_string<CharT, AnnotationT>::string_type &underlying, size_t index,
 			const typename annotated_string<CharT, AnnotationT>::annotations_t &annotations);
 
 		typedef std::forward_iterator_tag iterator_category;
@@ -54,7 +58,7 @@ namespace agge
 		typedef void reference; // The iterator does not provide stable references.
 
 	public:
-		CharT operator *() const;
+		const typename annotated_string<CharT, AnnotationT>::element_type &operator *() const;
 		const typename annotated_string<CharT, AnnotationT>::element_type *operator ->() const;
 		const_iterator &operator ++();
 		bool operator ==(const const_iterator &rhs) const;
@@ -64,9 +68,7 @@ namespace agge
 		void seek_annotation();
 
 	private:
-		mutable typename annotated_string<CharT, AnnotationT>::element_type _current;
-		const CharT *_start;
-		size_t _index;
+		typename annotated_string<CharT, AnnotationT>::element_type _current;
 		const typename annotated_string<CharT, AnnotationT>::annotations_t *_annotations;
 		typename annotated_string<CharT, AnnotationT>::annotations_t::const_iterator _next_annotation;
 	};
@@ -108,23 +110,34 @@ namespace agge
 	template <typename CharT, typename AnnotationT>
 	inline typename annotated_string<CharT, AnnotationT>::const_iterator
 		annotated_string<CharT, AnnotationT>::begin() const
-	{	return const_iterator(_underlying.data(), 0u, _annotations);	}
+	{	return const_iterator(_underlying, 0u, _annotations);	}
 
 	template <typename CharT, typename AnnotationT>
 	inline typename annotated_string<CharT, AnnotationT>::const_iterator
 		annotated_string<CharT, AnnotationT>::end() const
-	{	return const_iterator(_underlying.data(), _underlying.size(), _annotations);	}
+	{	return const_iterator(_underlying, _underlying.size(), _annotations);	}
 
 
 	template <typename CharT, typename AnnotationT>
-	inline annotated_string<CharT, AnnotationT>::const_iterator::const_iterator(const CharT *start, size_t index,
+	inline annotated_string<CharT, AnnotationT>::element_type::operator CharT() const
+	{	return (*underlying)[index];	}
+
+
+	template <typename CharT, typename AnnotationT>
+	inline annotated_string<CharT, AnnotationT>::const_iterator::const_iterator(
+			const typename annotated_string<CharT, AnnotationT>::string_type &underlying, size_t index,
 			const typename annotated_string<CharT, AnnotationT>::annotations_t &annotations)
-		: _start(start), _index(index), _annotations(&annotations), _next_annotation(annotations.begin())
-	{	seek_annotation();	}
+		: _annotations(&annotations), _next_annotation(annotations.begin())
+	{
+		_current.underlying = &underlying;
+		_current.index = index;
+		seek_annotation();
+	}
 
 	template <typename CharT, typename AnnotationT>
-	inline CharT annotated_string<CharT, AnnotationT>::const_iterator::operator *() const
-	{	return *(_start + _index);	}
+	inline const typename annotated_string<CharT, AnnotationT>::element_type
+		&annotated_string<CharT, AnnotationT>::const_iterator::operator *() const
+	{	return _current;	}
 
 	template <typename CharT, typename AnnotationT>
 	inline const typename annotated_string<CharT, AnnotationT>::element_type
@@ -134,22 +147,20 @@ namespace agge
 	template <typename CharT, typename AnnotationT>
 	inline typename annotated_string<CharT, AnnotationT>::const_iterator
 		&annotated_string<CharT, AnnotationT>::const_iterator::operator ++()
-	{	return _index++, seek_annotation(), *this;	}
+	{	return _current.index++, seek_annotation(), *this;	}
 
 	template <typename CharT, typename AnnotationT>
 	inline bool annotated_string<CharT, AnnotationT>::const_iterator::operator ==(const const_iterator &rhs) const
-	{	return _index == rhs._index;	}
-
-	template <typename CharT, typename AnnotationT>
-	inline void annotated_string<CharT, AnnotationT>::const_iterator::seek_annotation()
-	{
-		_current.annotation = _annotations->end() != _next_annotation && _index == _next_annotation->second
-			? &_next_annotation++->first : 0;
-	}
-
-
+	{	return _current.index == rhs._current.index;	}
 
 	template <typename CharT, typename AnnotationT>
 	inline bool annotated_string<CharT, AnnotationT>::const_iterator::operator !=(const const_iterator &rhs) const
 	{	return !(*this == rhs);	}
+
+	template <typename CharT, typename AnnotationT>
+	inline void annotated_string<CharT, AnnotationT>::const_iterator::seek_annotation()
+	{
+		_current.annotation = _annotations->end() != _next_annotation && _current.index == _next_annotation->second
+			? &_next_annotation++->first : 0;
+	}
 }

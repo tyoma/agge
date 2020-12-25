@@ -19,7 +19,8 @@ namespace demo
 	{
 	public:
 		TextDrawer(services &s)
-			: _renderer(3), _font_loader(s), _text_engine(_font_loader), _ddx(0.0f)
+			: _renderer(3), _font_loader(s), _text_engine(_font_loader),
+				_font(_text_engine.create_font(L"arial", 14, false, false, font::key::gf_none)), _layout(_font), _ddx(0.0f)
 		{	}
 
 	private:
@@ -36,15 +37,12 @@ namespace demo
 
 			_rasterizer.reset();
 
-			font::ptr f = _text_engine.create_font(L"arial", 14, false, false, font::key::gf_none);
-			layout l(f);
-
-			l.process(c_text_long.c_str());
-			l.limit_width(static_cast<real_t>(surface.width()));
+			_layout.process(c_text_long.c_str());
+			_layout.limit_width(static_cast<real_t>(surface.width()));
 
 			stopwatch(counter);
 
-			_text_engine.render_layout(_rasterizer, l, _ddx, 0.0f);
+			_text_engine.render_layout(_rasterizer, _layout, _ddx, 0.0f);
 
 			double append = stopwatch(counter);
 
@@ -68,6 +66,8 @@ namespace demo
 		renderer_parallel _renderer;
 		font_loader _font_loader;
 		text_engine<my_rasterizer> _text_engine;
+		font::ptr _font;
+		layout _layout;
 		float _ddx;
 	};
 }
