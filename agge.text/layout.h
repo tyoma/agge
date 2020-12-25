@@ -1,9 +1,9 @@
 #pragma once
 
 #include "font.h"
+#include "richtext.h"
 
 #include <agge/types.h>
-#include <string>
 
 namespace agge
 {
@@ -19,7 +19,9 @@ namespace agge
 		typedef glyph_runs_container::const_iterator const_iterator;
 
 	public:
-		layout(const wchar_t *text, font::ptr font_);
+		layout(font::ptr font_);
+
+		void process(const richtext_t &text);
 
 		void limit_width(real_t width);
 		box_r get_box();
@@ -31,7 +33,7 @@ namespace agge
 		void analyze();
 
 	private:
-		std::wstring _text;
+		richtext_t _text;
 		font::ptr _font;
 		positioned_glyphs_container _glyphs;
 		glyph_runs_container _glyph_runs;

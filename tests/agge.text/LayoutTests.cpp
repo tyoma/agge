@@ -27,7 +27,9 @@ namespace agge
 				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
 
 				// INIT / ACT
-				layout l(L"", f);
+				layout l(f);
+
+				l.process(L"");
 
 				// ACT
 				box_r box = l.get_box();
@@ -49,9 +51,13 @@ namespace agge
 				font::ptr f1 = mocks::create_font(c_fm1, indices1, glyphs);
 
 				// INIT / ACT
-				layout l1(L"A", f1);
-				layout l2(L"AAB", f1);
-				layout l3(L"BQA", f1);
+				layout l1(f1);
+				layout l2(f1);
+				layout l3(f1);
+
+				l1.process(L"A");
+				l2.process(L"AAB");
+				l3.process(L"BQA");
 
 				// ACT
 				box_r box1 = l1.get_box();
@@ -68,8 +74,11 @@ namespace agge
 				font::ptr f2 = mocks::create_font(c_fm1, indices2, glyphs);
 
 				// INIT / ACT
-				layout l4(L"A", f2);
-				layout l5(L"ABQABQABQ", f2);
+				layout l4(f2);
+				layout l5(f2);
+
+				l4.process(L"A");
+				l5.process(L"ABQABQABQ");
 
 				// ACT
 				box_r box4 = l4.get_box();
@@ -97,11 +106,17 @@ namespace agge
 				layout::const_iterator gr;
 
 				// INIT / ACT
-				layout l1(L"A", f1);
-				layout l2(L"AAB", f1);
-				layout l3(L"BQA", f1);
-				layout l4(L"A", f2);
-				layout l5(L"ABQ A  QA", f2);
+				layout l1(f1);
+				layout l2(f1);
+				layout l3(f1);
+				layout l4(f2);
+				layout l5(f2);
+
+				l1.process(L"A");
+				l2.process(L"AAB");
+				l3.process(L"BQA");
+				l4.process(L"A");
+				l5.process(L"ABQ A  QA");
 
 				// ASSERT
 				layout::positioned_glyph reference1[] = { { 0.0f, 0.0f, 1 } };
@@ -158,9 +173,14 @@ namespace agge
 				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
 
 				// ACT
-				layout l1(L"ABC CBA AB\nABB BBC\n", f);
-				layout l2(L"AC CB\nA AB\nABB BBC\n", f);
-				layout l3(L"AC CB\nA AB\nABB BBC", f); // Last row will be checked even if no newline is encountered.
+				layout l1(f);
+				layout l2(f);
+				layout l3(f);
+
+				l1.process(L"ABC CBA AB\nABB BBC\n");
+				l2.process(L"AC CB\nA AB\nABB BBC\n");
+				l3.process(L"AC CB\nA AB\nABB BBC"); // Last row will be checked even if no newline is encountered.
+
 				box_r box1 = l1.get_box();
 				box_r box2 = l2.get_box();
 				box_r box3 = l3.get_box();
@@ -187,8 +207,11 @@ namespace agge
 				layout::const_iterator gr;
 
 				// INIT / ACT
-				layout l1(L"ABC CBA AB\nABB BBC\n", f1);
-				layout l2(L"AC CB\nA AB\nABB BBC", f2);
+				layout l1(f1);
+				layout l2(f2);
+
+				l1.process(L"ABC CBA AB\nABB BBC\n");
+				l2.process(L"AC CB\nA AB\nABB BBC");
 
 				// ASSERT
 				layout::positioned_glyph reference11[] = {
@@ -249,10 +272,12 @@ namespace agge
 				layout::const_iterator gr;
 				
 				// 44 + 7.1 + 48 + 7.1 + 26 + 7.1 + 48 + 7.1 + 44
-				layout l1(L"AAAA BBBB CC BBBB AAAA", f);
+				layout l1(f);
+				l1.process (L"AAAA BBBB CC BBBB AAAA");
 
 				// 55 + 7.1 + 36 + 7.1 + 22 + 7.1 + 22 + 7.1 + 80 + 7.1 + 52 + 7.1 + 44 + 7.1 + 118
-				layout l2(L"CCC'C BBB AA AA AAAABBB CCCC AAAA ABABABABAB.", f);
+				layout l2(f);
+				l2.process(L"CCC'C BBB AA AA AAAABBB CCCC AAAA ABABABABAB.");
 
 				// ACT
 				l1.limit_width(139.1f); // AAAA BBBB CC|BBBB AAAA
@@ -319,7 +344,9 @@ namespace agge
 				};
 				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
 				layout::const_iterator gr;
-				layout l(L"ABCABCABC", f);
+				layout l(f);
+
+				l.process(L"ABCABCABC");
 
 				// ACT
 				l.limit_width(6);
@@ -367,7 +394,9 @@ namespace agge
 					{ { 5, 0 } },
 				};
 				font::ptr f1 = mocks::create_font(c_fm1, indices, glyphs);
-				layout l1(L"AAAAA", f1);
+				layout l1(f1);
+
+				l1.process(L"AAAAA");
 
 				// ACT
 				box_r box1 = l1.get_box();
@@ -377,7 +406,9 @@ namespace agge
 
 				// INIT
 				font::ptr f2 = mocks::create_font(c_fm2, indices, glyphs);
-				layout l2(L"AAAAA", f2);
+				layout l2(f2);
+
+				l2.process(L"AAAAA");
 
 				// ACT
 				box_r box2 = l2.get_box();
@@ -395,7 +426,9 @@ namespace agge
 					{ { 5, 0 } },
 				};
 				font::ptr f1 = mocks::create_font(c_fm1, indices, glyphs);
-				layout l1(L"AAAAA\nAA", f1);
+				layout l1(f1);
+
+				l1.process(L"AAAAA\nAA");
 
 				// ACT
 				box_r box1 = l1.get_box();
@@ -405,7 +438,9 @@ namespace agge
 
 				// INIT
 				font::ptr f2 = mocks::create_font(c_fm2, indices, glyphs);
-				layout l2(L"AAAAA\nA\nA", f2);
+				layout l2(f2);
+
+				l2.process(L"AAAAA\nA\nA");
 
 				// ACT
 				box_r box2 = l2.get_box();

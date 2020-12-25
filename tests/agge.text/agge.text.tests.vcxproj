@@ -39,6 +39,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnnotatedStringTests.cpp" />
+    <ClCompile Include="RichTextLayoutTests.cpp" />
     <ClCompile Include="TextEngineTests.cpp" />
     <ClCompile Include="FontTests.cpp" />
     <ClCompile Include="LayoutTests.cpp" />

@@ -46,6 +46,10 @@ namespace agge
 		template <typename T, size_t n>
 		inline T *end(T (&p)[n])
 		{	return p + n;	}
+
+		template <typename T, size_t n>
+		size_t size(T (&)[n])
+		{	return n;	}
 	}
 	
 	inline bool operator ==(const vector_rasterizer::cell &lhs, const vector_rasterizer::cell &rhs)

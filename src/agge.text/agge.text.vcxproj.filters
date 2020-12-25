@@ -24,5 +24,7 @@
     <ClInclude Include="..\..\agge.text\text_engine.h" />
     <ClInclude Include="..\..\agge.text\functional.h" />
     <ClInclude Include="..\..\agge.text\glyph.h" />
+    <ClInclude Include="..\..\agge.text\richtext.h" />
+    <ClInclude Include="..\..\agge.text\annotated_string.h" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 #include <agge.text/layout.h>
 
 #include <agge/tools.h>
+#include <agge.text/richtext.h>
 
 using namespace std;
 
@@ -11,7 +12,8 @@ namespace agge
 		real_t height(const font::metrics &m)
 		{	return m.ascent + m.descent + m.leading; }
 
-		bool eat_lf(wstring::const_iterator &i)
+		template <typename IteratorT>
+		bool eat_lf(IteratorT &i)
 		{
 			if (*i == L'\n')
 			{
@@ -43,9 +45,13 @@ namespace agge
 		};
 	}
 
-	layout::layout(const wchar_t *text, font::ptr font_)
-		: _text(text), _font(font_), _limit_width(1e30f)
+	layout::layout(font::ptr font_)
+		: _font(font_), _limit_width(1e30f)
+	{	}
+
+	void layout::process(const richtext_t &text)
 	{
+		_text = text;
 		analyze();
 	}
 
@@ -72,11 +78,10 @@ namespace agge
 
 	void layout::analyze()
 	{
-		if (_text.empty())
-			return;
+//		if (_text.empty())
+//			return;
 
 		const font::metrics m = _font->get_metrics();
-		const wstring &text = _text;
 		real_t y = 0;
 
 		_glyph_runs.clear();
@@ -84,14 +89,14 @@ namespace agge
 
 		positioned_glyphs_container::iterator pgi = _glyphs.begin();
 
-		for (wstring::const_iterator i = text.begin(); i != text.end(); )
+		for (richtext_t::const_iterator i = _text.begin(); i != _text.end(); )
 		{
 			real_t width = 0.0f;
 			const glyph *previous = 0;
 			sensors::eow eow;
 			positioned_glyphs_container::iterator start_pgi = pgi, eow_pgi = pgi;
 
-			for (wstring::const_iterator eow_i = _text.end(); i != _text.end() && !eat_lf(i); ++i, ++pgi)
+			for (richtext_t::const_iterator eow_i = _text.end(); i != _text.end() && !eat_lf(i); ++i, ++pgi)
 			{
 				const uint16_t index = _font->map_single(*i);
 				const glyph *g = _font->get_glyph(index);
@@ -107,7 +112,8 @@ namespace agge
 				{
 					if (eow_i != _text.end()) // not an emergency break
 					{
-						i = eow_i + 1;
+						i = eow_i;
+						++i;
 						pgi = eow_pgi;
 					}
 					break;

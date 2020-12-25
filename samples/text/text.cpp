@@ -37,8 +37,9 @@ namespace demo
 			_rasterizer.reset();
 
 			font::ptr f = _text_engine.create_font(L"arial", 14, false, false, font::key::gf_none);
-			layout l(c_text_long.c_str(), f);
+			layout l(f);
 
+			l.process(c_text_long.c_str());
 			l.limit_width(static_cast<real_t>(surface.width()));
 
 			stopwatch(counter);

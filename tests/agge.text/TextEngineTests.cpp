@@ -563,7 +563,9 @@ namespace agge
 				mocks::fonts_loader loader(fonts);
 				text_engine<mocks::rasterizer> e(loader, 0);
 				mocks::rasterizer target;
-				layout l1(L"aww", e.create_font(L"Arial", 10, false, false, font::key::gf_strong));
+				layout l1(e.create_font(L"Arial", 10, false, false, font::key::gf_strong));
+
+				l1.process(L"aww");
 
 				// ACT
 				e.render_layout(target, l1, 0.0f, 0.0f);
@@ -597,7 +599,9 @@ namespace agge
 				mocks::fonts_loader loader(fonts);
 				text_engine<mocks::rasterizer> e(loader, 0);
 				mocks::rasterizer target;
-				layout l(L"wa", e.create_font(L"Arial", 10, false, false, font::key::gf_strong));
+				layout l(e.create_font(L"Arial", 10, false, false, font::key::gf_strong));
+
+				l.process(L"wa");
 
 				// ACT
 				e.render_layout(target, l, 0.0f, 0.0f);
@@ -628,7 +632,9 @@ namespace agge
 				mocks::fonts_loader loader(fonts);
 				text_engine<mocks::rasterizer> e(loader, 0);
 				mocks::rasterizer target;
-				layout l(L"aww\nww\na", e.create_font(L"Arial", 10, false, false, font::key::gf_strong));
+				layout l(e.create_font(L"Arial", 10, false, false, font::key::gf_strong));
+
+				l.process(L"aww\nww\na");
 
 				// ACT
 				e.render_layout(target, l, 0.0f, 0.0f);
@@ -673,7 +679,9 @@ namespace agge
 				mocks::fonts_loader loader(fonts);
 				text_engine<mocks::rasterizer> e(loader, 0);
 				mocks::rasterizer target;
-				layout l(L"aaa", e.create_font(L"Arial", 10, false, false, font::key::gf_strong));
+				layout l(e.create_font(L"Arial", 10, false, false, font::key::gf_strong));
+
+				l.process(L"aaa");
 
 				// ACT
 				e.render_layout(target, l, 7.7f, 13.2f);
