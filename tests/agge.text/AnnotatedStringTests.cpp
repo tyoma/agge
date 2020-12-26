@@ -14,7 +14,7 @@ namespace agge
 	inline bool operator ==(const pair<basic_string<T>, const AnnotationT *> &expected,
 		const typename agge::annotated_string<T, AnnotationT>::range &actual)
 	{
-		return expected.first == basic_string<T>(actual.begin, actual.end)
+		return expected.first == basic_string<T>(actual.begin(), actual.end())
 			&& !!expected.second == !!actual.annotation
 			&& (!expected.second || *expected.second == *actual.annotation);
 	}
@@ -231,7 +231,7 @@ namespace agge
 
 				assert_not_null(i->annotation);
 				assert_equal(171819, *i->annotation);
-				assert_equal(1, distance(i->begin, i->end));
+				assert_equal(1, distance(i->begin(), i->end()));
 				assert_is_false(j == i);
 				assert_is_false(seq.ranges_end() == i);
 				assert_is_true(j != i);
@@ -239,7 +239,7 @@ namespace agge
 				++i;
 				assert_not_null(i->annotation);
 				assert_equal(123, *i->annotation);
-				assert_equal(3, distance(i->begin, i->end));
+				assert_equal(3, distance(i->begin(), i->end()));
 				assert_is_false(j == i);
 				assert_is_false(seq.ranges_end() == i);
 				assert_is_true(j != i);
@@ -247,7 +247,7 @@ namespace agge
 				++i;
 				assert_not_null(i->annotation);
 				assert_equal(42, *i->annotation);
-				assert_equal(1, distance(i->begin, i->end));
+				assert_equal(1, distance(i->begin(), i->end()));
 				assert_is_true(j == i);
 				assert_is_false(seq.ranges_end() == i);
 				assert_is_false(j != i);

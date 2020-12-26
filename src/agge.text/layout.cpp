@@ -86,16 +86,16 @@ namespace agge
 
 		positioned_glyphs_container::iterator pgi = _glyphs.begin();
 
-		for (auto range = _text.ranges_begin(); range != _text.ranges_end(); ++range)
+		for (richtext_t::const_iterator range = _text.ranges_begin(); range != _text.ranges_end(); ++range)
 		{
-			for (auto i = range->begin; i != range->end; )
+			for (richtext_t::string_type::const_iterator i = range->begin(), end = range->end(); i != end; )
 			{
 				real_t width = 0.0f;
 				const glyph *previous = 0;
 				sensors::eow eow;
 				positioned_glyphs_container::iterator start_pgi = pgi, eow_pgi = pgi;
 
-				for (auto eow_i = range->end; i != range->end && !eat_lf(i); ++i, ++pgi)
+				for (auto eow_i = end; i != end && !eat_lf(i); ++i, ++pgi)
 				{
 					const uint16_t index = _base_font->map_single(*i);
 					const glyph *g = _base_font->get_glyph(index);
@@ -109,7 +109,7 @@ namespace agge
 					width += g->metrics.advance_x;
 					if (width > _limit_width)
 					{
-						if (eow_i != range->end) // not an emergency break
+						if (eow_i != end) // not an emergency break
 						{
 							i = eow_i;
 							++i;
