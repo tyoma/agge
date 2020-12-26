@@ -86,51 +86,54 @@ namespace agge
 
 		positioned_glyphs_container::iterator pgi = _glyphs.begin();
 
-		for (richtext_t::const_iterator i = _text.begin(); i != _text.end(); )
+		for (auto range = _text.ranges_begin(); range != _text.ranges_end(); ++range)
 		{
-			real_t width = 0.0f;
-			const glyph *previous = 0;
-			sensors::eow eow;
-			positioned_glyphs_container::iterator start_pgi = pgi, eow_pgi = pgi;
-
-			for (richtext_t::const_iterator eow_i = _text.end(); i != _text.end() && !eat_lf(i); ++i, ++pgi)
+			for (auto i = range->begin; i != range->end; )
 			{
-				const uint16_t index = _base_font->map_single(*i);
-				const glyph *g = _base_font->get_glyph(index);
+				real_t width = 0.0f;
+				const glyph *previous = 0;
+				sensors::eow eow;
+				positioned_glyphs_container::iterator start_pgi = pgi, eow_pgi = pgi;
 
-				if (eow(*i))
+				for (auto eow_i = range->end; i != range->end && !eat_lf(i); ++i, ++pgi)
 				{
-					eow_i = i;
-					eow_pgi = pgi;
-				}
+					const uint16_t index = _base_font->map_single(*i);
+					const glyph *g = _base_font->get_glyph(index);
 
-				width += g->metrics.advance_x;
-				if (width > _limit_width)
-				{
-					if (eow_i != _text.end()) // not an emergency break
+					if (eow(*i))
 					{
-						i = eow_i;
-						++i;
-						pgi = eow_pgi;
+						eow_i = i;
+						eow_pgi = pgi;
 					}
-					break;
+
+					width += g->metrics.advance_x;
+					if (width > _limit_width)
+					{
+						if (eow_i != range->end) // not an emergency break
+						{
+							i = eow_i;
+							++i;
+							pgi = eow_pgi;
+						}
+						break;
+					}
+					pgi->d.dx = previous ? previous->metrics.advance_x : 0.0f;
+					pgi->d.dy = 0.0f;
+					pgi->index = index;
+					previous = g;
 				}
-				pgi->d.dx = previous ? previous->metrics.advance_x : 0.0f;
-				pgi->d.dy = 0.0f;
-				pgi->index = index;
-				previous = g;
+
+				glyph_run gr;
+
+				gr.begin = start_pgi;
+				gr.end = pgi;
+				gr.reference.x = 0.0f;
+				gr.reference.y = y + m.ascent;
+				gr.width = width;
+				gr.glyph_run_font = _base_font;
+				_glyph_runs.push_back(gr);
+				y += height(m);
 			}
-
-			glyph_run gr;
-
-			gr.begin = start_pgi;
-			gr.end = pgi;
-			gr.reference.x = 0.0f;
-			gr.reference.y = y + m.ascent;
-			gr.width = width;
-			gr.glyph_run_font = _base_font;
-			_glyph_runs.push_back(gr);
-			y += height(m);
 		}
 	}
 }

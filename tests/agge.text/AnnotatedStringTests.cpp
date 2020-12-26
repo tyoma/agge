@@ -8,44 +8,15 @@
 
 using namespace std;
 
-namespace ut
-{
-	template <typename T, typename AnnotationT, size_t n>
-	inline void are_equal(pair<size_t, AnnotationT> (&expected)[n], const agge::annotated_string<T, AnnotationT> &actual,
-		const LocationInfo &location)
-	{
-		size_t index = 0u;
-		const pair<size_t, AnnotationT> *m = expected;
-
-		for (typename agge::annotated_string<T, AnnotationT>::const_iterator i = actual.begin(); i != actual.end();
-			++i, ++index)
-		{
-			if (i->annotation)
-			{
-				are_not_equal(end(expected), m, location);
-				are_equal(m->first, index, location);
-				are_equal(m->second, *i->annotation, location);
-				++m;
-			}
-		}
-		are_equal(end(expected), m, location);
-	}
-}
-
 namespace agge
 {
 	template <typename T, typename AnnotationT>
-	inline bool operator ==(const basic_string<T> &expected, const agge::annotated_string<T, AnnotationT> &actual)
+	inline bool operator ==(const pair<basic_string<T>, const AnnotationT *> &expected,
+		const typename agge::annotated_string<T, AnnotationT>::range &actual)
 	{
-		typename agge::annotated_string<T, AnnotationT>::const_iterator i = actual.begin();
-		typename basic_string<T>::const_iterator j = expected.begin();
-
-		for (; i != actual.end() && j != expected.end(); ++i, ++j)
-		{
-			if (*j != *i)
-				return false;
-		}
-		return actual.end() == i && expected.end() == j;
+		return expected.first == basic_string<T>(actual.begin, actual.end)
+			&& !!expected.second == !!actual.annotation
+			&& (!expected.second || *expected.second == *actual.annotation);
 	}
 
 	namespace tests
@@ -53,19 +24,42 @@ namespace agge
 		namespace
 		{
 			template <typename T, typename AnnotationT>
-			bool is_trivial(const annotated_string<T, AnnotationT> &seq)
+			class ranges_container
 			{
-				for (typename annotated_string<T, AnnotationT>::const_iterator i = seq.begin(); i != seq.end(); ++i)
-				{
-					if (i->annotation)
-						return false;
-				}
-				return true;
-			}
+			public:
+				ranges_container(const annotated_string<T, AnnotationT> &underlying)
+					: _underlying(&underlying)
+				{	}
+
+				typename annotated_string<T, AnnotationT>::const_iterator begin() const
+				{	return _underlying->ranges_begin();	}
+
+				typename annotated_string<T, AnnotationT>::const_iterator end() const
+				{	return _underlying->ranges_end();	}
+
+			private:
+				const annotated_string<T, AnnotationT> *_underlying;
+			};
+
+			template <typename T, typename AnnotationT>
+			ranges_container<T, AnnotationT> ranges(const annotated_string<T, AnnotationT> &from)
+			{	return ranges_container<T, AnnotationT>(from);	}
 		}
 
 		begin_test_suite( AnnotatedStringTests )
-			test( AppendingSimpleSequenceDoesNotModifyIt )
+			test( EmptyStringContainsNoSpans )
+			{
+				typedef annotated_string<wchar_t, string> container_t;
+
+				// INIT
+				container_t seq;
+
+				// ACT / ASSERT
+				assert_equal(seq.ranges_end(), seq.ranges_begin());
+			}
+
+
+			test( AppendingSimpleSequenceDoesNotAnnotateIt )
 			{
 				typedef annotated_string<wchar_t, string> container_t;
 
@@ -76,15 +70,21 @@ namespace agge
 				seq += L"Lorem ipsum dolor sit amet";
 
 				// ACT / ASSERT
-				assert_equal(wstring(L"Lorem ipsum dolor sit amet"), seq);
-				assert_is_true(is_trivial(seq));
+				pair<wstring, const string *> reference1[] = {
+					make_pair(L"Lorem ipsum dolor sit amet", nullptr),
+				};
+
+				assert_equal(reference1, ranges(seq));
 
 				// ACT
 				seq += L", consectetur adipisci elit";
 
 				// ACT / ASSERT
-				assert_is_true(is_trivial(seq));
-				assert_equal(wstring(L"Lorem ipsum dolor sit amet, consectetur adipisci elit"), seq);
+				pair<wstring, const string *> reference2[] = {
+					make_pair(L"Lorem ipsum dolor sit amet, consectetur adipisci elit", nullptr),
+				};
+
+				assert_equal(reference2, ranges(seq));
 			}
 
 
@@ -96,15 +96,21 @@ namespace agge
 				const container_t seq1("Lorem ipsum");
 
 				// ACT / ASSERT
-				assert_equal(string("Lorem ipsum"), seq1);
-				assert_is_true(is_trivial(seq1));
+				pair<string, const char *> reference1[] = {
+					make_pair("Lorem ipsum", nullptr),
+				};
+
+				assert_equal(reference1, ranges(seq1));
 
 				// INIT / ACT
 				const container_t seq2("dolor sit amet");
 
 				// ACT / ASSERT
-				assert_equal(string("dolor sit amet"), seq2);
-				assert_is_true(is_trivial(seq2));
+				pair<string, const char *> reference2[] = {
+					make_pair("dolor sit amet", nullptr),
+				};
+
+				assert_equal(reference2, ranges(seq2));
 			}
 
 
@@ -120,8 +126,11 @@ namespace agge
 				seq.annotate(123456);
 
 				// ACT / ASSERT
-				assert_equal(string("aZ"), seq);
-				assert_is_true(is_trivial(seq));
+				pair<string, const int *> reference[] = {
+					make_pair("aZ", nullptr),
+				};
+
+				assert_equal(reference, ranges(seq));
 			}
 
 
@@ -137,13 +146,12 @@ namespace agge
 				seq += "foobar";
 
 				// ACT / ASSERT
-				assert_equal(string("foobar"), seq);
-
-				pair<size_t, string> reference_modifiers[] = {
-					make_pair(0u, "zamazu"),
+				string m = "zamazu";
+				pair<string, const string *> reference[] = {
+					make_pair("foobar", &m),
 				};
 
-				assert_equal(reference_modifiers, seq);
+				assert_equal(reference, ranges(seq));
 			}
 
 
@@ -162,13 +170,14 @@ namespace agge
 				seq += "BAZ";
 
 				// ACT / ASSERT
-				assert_equal(string("foo BarBAZ"), seq);
-
-				pair<size_t, int> reference_modifiers[] = {
-					make_pair(4, 17), make_pair(7, 191),
+				int annotations[] = {	17, 191,	};
+				pair<string, const int *> reference[] = {
+					make_pair("foo ", nullptr),
+					make_pair("Bar", &annotations[0]),
+					make_pair("BAZ", &annotations[1]),
 				};
 
-				assert_equal(reference_modifiers, seq);
+				assert_equal(reference, ranges(seq));
 			}
 
 
@@ -189,13 +198,14 @@ namespace agge
 				seq += " socicety political opponents survive";
 
 				// ACT / ASSERT
-				assert_equal(string("In a free socicety political opponents survive"), seq);
-
-				pair<size_t, int> reference_modifiers[] = {
-					make_pair(5, 32), make_pair(9, 0),
+				int annotations[] = {	32, 0,	};
+				pair<string, const int *> reference[] = {
+					make_pair("In a ", nullptr),
+					make_pair("free", &annotations[0]),
+					make_pair(" socicety political opponents survive", &annotations[1]),
 				};
 
-				assert_equal(reference_modifiers, seq);
+				assert_equal(reference, ranges(seq));
 			}
 
 
@@ -210,21 +220,43 @@ namespace agge
 				seq.annotate(171819);
 				seq += "A";
 				seq.annotate(123);
-				seq += "BC";
+				seq += "BCD";
+				seq.annotate(42);
+				seq += "q";
 
 				// ACT / ASSERT
-				container_t::const_iterator i = seq.begin();
+				container_t::const_iterator i = seq.ranges_begin(), j = i;
 
-				assert_equal('A', *i);
+				++++j;
+
 				assert_not_null(i->annotation);
 				assert_equal(171819, *i->annotation);
+				assert_equal(1, distance(i->begin, i->end));
+				assert_is_false(j == i);
+				assert_is_false(seq.ranges_end() == i);
+				assert_is_true(j != i);
+				assert_is_true(seq.ranges_end() != i);
 				++i;
-				assert_equal('B', *i);
 				assert_not_null(i->annotation);
 				assert_equal(123, *i->annotation);
+				assert_equal(3, distance(i->begin, i->end));
+				assert_is_false(j == i);
+				assert_is_false(seq.ranges_end() == i);
+				assert_is_true(j != i);
+				assert_is_true(seq.ranges_end() != i);
 				++i;
-				assert_equal('C', *i);
-				assert_null(i->annotation);
+				assert_not_null(i->annotation);
+				assert_equal(42, *i->annotation);
+				assert_equal(1, distance(i->begin, i->end));
+				assert_is_true(j == i);
+				assert_is_false(seq.ranges_end() == i);
+				assert_is_false(j != i);
+				assert_is_true(seq.ranges_end() != i);
+				++i;
+				assert_is_false(j == i);
+				assert_is_true(seq.ranges_end() == i);
+				assert_is_true(j != i);
+				assert_is_false(seq.ranges_end() != i);
 			}
 
 
