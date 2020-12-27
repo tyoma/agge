@@ -82,7 +82,7 @@ namespace agge
 		void render_glyph_run(RasterizerT &target, const font &font_, IteratorT glyph_begin, IteratorT glyph_end,
 			real_t x, real_t y);
 		void render_layout(RasterizerT &target, const layout &layout_, real_t x, real_t y);
-		void render_string(RasterizerT &target, const font &font_, const wchar_t *text, layout::halign halign,
+		void render_string(RasterizerT &target, const font &font_, const wchar_t *text, text_alignment halign,
 			real_t x, real_t y, real_t max_width = (std::numeric_limits<real_t>::max)());
 
 	private:
@@ -133,7 +133,7 @@ namespace agge
 
 		rasters_map &rasters = ri->second;
 
-		for (layout::positioned_glyphs_container::const_iterator g = glyph_begin; g != glyph_end; ref += g->d, ++g)
+		for (positioned_glyphs_container_t::const_iterator g = glyph_begin; g != glyph_end; ref += g->d, ++g)
 			render_glyph(target, font_, rasters, g->index, ref.x, ref.y);
 	}
 
@@ -146,7 +146,7 @@ namespace agge
 
 	template <typename RasterizerT>
 	inline void text_engine<RasterizerT>::render_string(RasterizerT &target, const font &font_, const wchar_t *text,
-		layout::halign halign, real_t x, real_t y, real_t max_width)
+		text_alignment halign, real_t x, real_t y, real_t max_width)
 	{
 		typename font_rasters_map::iterator ri = _cached_fonts.find(&font_);
 
@@ -156,7 +156,7 @@ namespace agge
 		rasters_map &rasters = ri->second;
 		real_t dx = 0.0f;
 
-		if (layout::near_ != halign)
+		if (near_ != halign)
 		{
 			for (const wchar_t *c = text; *c; ++c)
 			{
@@ -166,7 +166,7 @@ namespace agge
 					break;
 				dx = dx2;
 			}
-			x -= layout::center == halign ? 0.5f * dx : dx;
+			x -= center == halign ? 0.5f * dx : dx;
 		}
 
 		for (const wchar_t *c = text; *c; ++c)

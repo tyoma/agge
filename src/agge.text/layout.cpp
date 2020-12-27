@@ -1,7 +1,7 @@
 #include <agge.text/layout.h>
 
 #include <agge/tools.h>
-#include <agge.text/richtext.h>
+#include <agge.text/font.h>
 
 using namespace std;
 

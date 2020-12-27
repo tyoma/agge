@@ -28,5 +28,6 @@
     <ClInclude Include="..\..\agge.text\annotated_string.h" />
     <ClInclude Include="..\..\agge.text\range.h" />
     <ClInclude Include="..\..\agge.text\types.h" />
+    <ClInclude Include="..\..\agge.text\layout_primitives.h" />
   </ItemGroup>
 </Project>

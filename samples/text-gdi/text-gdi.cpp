@@ -48,8 +48,8 @@ namespace demo
 				if (i->reference.y > surface.height())
 					break;
 
-				glyphs += distance(i->begin, i->end);
-				for (layout::positioned_glyphs_container::const_iterator j = i->begin; j != i->end; ++j)
+				glyphs += distance(i->begin(), i->end());
+				for (positioned_glyphs_container_t::const_iterator j = i->begin(); j != i->end(); ++j)
 					_glyph_indices.push_back(j->index);
 				::ExtTextOut(ctx, static_cast<int>(x), static_cast<int>(i->reference.y), ETO_GLYPH_INDEX /*| ETO_PDY*/, 0,
 					reinterpret_cast<LPCTSTR>(&_glyph_indices[0]), static_cast<UINT>(_glyph_indices.size()), 0);

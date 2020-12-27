@@ -39,10 +39,10 @@ namespace agge
 	inline bool operator ==(const vector_r &lhs, const vector_r &rhs)
 	{	return tests::equal(lhs.dx, rhs.dx) && tests::equal(lhs.dy, rhs.dy);	}
 
-	inline bool operator ==(const layout::positioned_glyph &lhs, const layout::positioned_glyph &rhs)
+	inline bool operator ==(const positioned_glyph &lhs, const positioned_glyph &rhs)
 	{	return lhs.d == rhs.d && lhs.index == rhs.index;	}
 
-	inline bool operator ==(glyph_index_t lhs, const layout::positioned_glyph &rhs)
+	inline bool operator ==(glyph_index_t lhs, const positioned_glyph &rhs)
 	{	return lhs == rhs.index;	}
 
 	inline bool operator ==(const glyph::path_point &lhs, const glyph::path_point &rhs)

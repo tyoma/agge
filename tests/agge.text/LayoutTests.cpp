@@ -119,11 +119,11 @@ namespace agge
 				l5.process(L"ABQ A  QA");
 
 				// ASSERT
-				layout::positioned_glyph reference1[] = { { 11.0f, 0.0f, 1 } };
-				layout::positioned_glyph reference2[] = { { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 13.0f, 0.0f, 0 }, };
-				layout::positioned_glyph reference3[] = { { 13.0f, 0.0f, 0 }, { 13.0f, 0.0f, 0 }, { 11.0f, 0.0f, 1 }, };
-				layout::positioned_glyph reference4[] = { { 13.0f, 0.0f, 0 }, };
-				layout::positioned_glyph reference5[] = {
+				positioned_glyph reference1[] = { { 11.0f, 0.0f, 1 } };
+				positioned_glyph reference2[] = { { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 13.0f, 0.0f, 0 }, };
+				positioned_glyph reference3[] = { { 13.0f, 0.0f, 0 }, { 13.0f, 0.0f, 0 }, { 11.0f, 0.0f, 1 }, };
+				positioned_glyph reference4[] = { { 13.0f, 0.0f, 0 }, };
+				positioned_glyph reference5[] = {
 					{ 13.0f, 0.0f, 0 },
 					{ 11.0f, 0.0f, 1 },
 					{ 12.7f, 0.0f, 2 },
@@ -245,21 +245,21 @@ namespace agge
 				l2.process(L"AC CB\nA AB\nABB BBC");
 
 				// ASSERT
-				layout::positioned_glyph reference11[] = {
+				positioned_glyph reference11[] = {
 					{ 11.0f, 0.0f, 1 }, { 13.0f, 0.0f, 2 }, { 17.0f, 0.0f, 3 }, { 7.1f, 0.0f, 0 }, { 17.0f, 0.0f, 3 },
 						{ 13.0f, 0.0f, 2 }, { 11.0f, 0.0f, 1 }, { 7.1f, 0.0f, 0 }, { 11.0f, 0.0f, 1 }, { 13.0f, 0.0f, 2 },
 				};
-				layout::positioned_glyph reference12[] = {
+				positioned_glyph reference12[] = {
 					{ 11.0f, 0.0f, 1 }, { 13.0f, 0.0f, 2 }, { 13.0f, 0.0f, 2 }, { 7.1f, 0.0f, 0 }, { 13.0f, 0.0f, 2 },
 						{ 13.0f, 0.0f, 2 }, { 17.0f, 0.0f, 3 }, 
 				};
-				layout::positioned_glyph reference21[] = {
+				positioned_glyph reference21[] = {
 					{ 11.0f, 0.0f, 1 }, { 17.0f, 0.0f, 3 }, { 7.1f, 0.0f, 0 }, { 17.0f, 0.0f, 3 }, { 13.0f, 0.0f, 2 },
 				};
-				layout::positioned_glyph reference22[] = {
+				positioned_glyph reference22[] = {
 					{ 11.0f, 0.0f, 1 }, { 7.1f, 0.0f, 0 }, { 11.0f, 0.0f, 1 }, { 13.0f, 0.0f, 2 },
 				};
-				layout::positioned_glyph reference23[] = {
+				positioned_glyph reference23[] = {
 					{ 11.0f, 0.0f, 1 }, { 13.0f, 0.0f, 2 }, { 13.0f, 0.0f, 2 }, { 7.1f, 0.0f, 0 }, { 13.0f, 0.0f, 2 },
 						{ 13.0f, 0.0f, 2 }, { 17.0f, 0.0f, 3 },
 				};
@@ -315,32 +315,32 @@ namespace agge
 				l2.limit_width(139.1f); // CCC'C BBB AA|AA AAAABBB|CCCC AAAA|ABABABABAB.
 
 				// ASSERT
-				layout::positioned_glyph reference11[] = {
+				positioned_glyph reference11[] = {
 					{ 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 7.1f, 0.0f, 0 },
 					{ 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 7.1f, 0.0f, 0 },
 					{ 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 },
 				};
-				layout::positioned_glyph reference12[] = {
+				positioned_glyph reference12[] = {
 					{ 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 7.1f, 0.0f, 0 },
 					{ 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 },
 				};
 
-				layout::positioned_glyph reference21[] = {
+				positioned_glyph reference21[] = {
 					{ 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 }, { 3.0f, 0.0f, 4 }, { 13.0f, 0.0f, 3 },
 						{ 7.1f, 0.0f, 0 },
 					{ 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 7.1f, 0.0f, 0 },
 					{ 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 },
 				};
-				layout::positioned_glyph reference22[] = {
+				positioned_glyph reference22[] = {
 					{ 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 7.1f, 0.0f, 0 },
 					{ 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 12.0f, 0.0f, 2 },
 						{ 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 },
 				};
-				layout::positioned_glyph reference23[] = {
+				positioned_glyph reference23[] = {
 					{ 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 }, { 7.1f, 0.0f, 0 },
 					{ 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, 
 				};
-				layout::positioned_glyph reference24[] = {
+				positioned_glyph reference24[] = {
 					{ 11.0f, 0.0f, 1 }, { 12.0f, 0.0f, 2 }, { 11.0f, 0.0f, 1 }, { 12.0f, 0.0f, 2 }, { 11.0f, 0.0f, 1 },
 						{ 12.0f, 0.0f, 2 }, { 11.0f, 0.0f, 1 }, { 12.0f, 0.0f, 2 }, { 11.0f, 0.0f, 1 }, { 12.0f, 0.0f, 2 },
 						{ 3.0f, 0.0f, 5 },
@@ -383,7 +383,7 @@ namespace agge
 				l.limit_width(6);
 
 				// ASSERT
-				layout::positioned_glyph reference1[] = { { 1.0f, 0.0f, 0 }, { 2.0f, 0.0f, 1 }, { 3.0f, 0.0f, 2 }, };
+				positioned_glyph reference1[] = { { 1.0f, 0.0f, 0 }, { 2.0f, 0.0f, 1 }, { 3.0f, 0.0f, 2 }, };
 
 				gr = l.begin();
 				assert_equal(3, std::distance(gr, l.end()));
@@ -397,13 +397,13 @@ namespace agge
 				l.limit_width(8);
 
 				// ASSERT
-				layout::positioned_glyph reference21[] = {
+				positioned_glyph reference21[] = {
 					{ 1.0f, 0.0f, 0 }, { 2.0f, 0.0f, 1 }, { 3.0f, 0.0f, 2 }, { 1.0f, 0.0f, 0 },
 				};
-				layout::positioned_glyph reference22[] = {
+				positioned_glyph reference22[] = {
 					{ 2.0f, 0.0f, 1 }, { 3.0f, 0.0f, 2 }, { 1.0f, 0.0f, 0 }, { 2.0f, 0.0f, 1 },
 				};
-				layout::positioned_glyph reference23[] = {
+				positioned_glyph reference23[] = {
 					{ 3.0f, 0.0f, 2 },
 				};
 
