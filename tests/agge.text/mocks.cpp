@@ -37,7 +37,7 @@ namespace agge
 			font::metrics font_accessor::get_metrics() const
 			{	return _metrics;	}
 
-			uint16_t font_accessor::get_glyph_index(wchar_t character) const
+			glyph_index_t font_accessor::get_glyph_index(wchar_t character) const
 			{
 				indices_map_t::const_iterator i = _indices.find(character);
 
@@ -45,7 +45,7 @@ namespace agge
 				return i != _indices.end() ? i->second : 0xffff;
 			}
 
-			agge::glyph::outline_ptr font_accessor::load_glyph(uint16_t index, agge::glyph::glyph_metrics &m) const
+			agge::glyph::outline_ptr font_accessor::load_glyph(glyph_index_t index, agge::glyph::glyph_metrics &m) const
 			{
 				if (index >= _glyphs.size())
 					return agge::glyph::outline_ptr();

@@ -29,7 +29,7 @@ namespace agge
 	font::metrics font::get_metrics() const
 	{	return _metrics;	}
 
-	uint16_t font::map_single(wchar_t character) const
+	glyph_index_t font::map_single(wchar_t character) const
 	{
 		char2index_cache_t::const_iterator i = _char2glyph.find(character);
 
@@ -43,7 +43,7 @@ namespace agge
 		return i->second;
 	}
 
-	const glyph *font::get_glyph(uint16_t index) const
+	const glyph *font::get_glyph(glyph_index_t index) const
 	{
 		glyphs_cache_t::iterator i = _glyphs.find(index);
 

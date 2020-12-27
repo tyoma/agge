@@ -21,16 +21,16 @@ namespace agge
 		{	}
 
 	private:
-		typedef hash_map< uint16_t, pair<glyph::outline_ptr, glyph::glyph_metrics> > glyphs;
+		typedef hash_map< glyph_index_t, pair<glyph::outline_ptr, glyph::glyph_metrics> > glyphs;
 
 	private:
 		virtual font::metrics get_metrics() const
 		{	return _underlying->get_metrics();	}
 
-		virtual uint16_t get_glyph_index(wchar_t character) const
+		virtual glyph_index_t get_glyph_index(wchar_t character) const
 		{	return _underlying->get_glyph_index(character);	}
 
-		virtual glyph::outline_ptr load_glyph(uint16_t index, glyph::glyph_metrics &m) const
+		virtual glyph::outline_ptr load_glyph(glyph_index_t index, glyph::glyph_metrics &m) const
 		{
 			glyphs::iterator i = _glyphs.find(index);
 

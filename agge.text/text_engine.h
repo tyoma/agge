@@ -77,7 +77,7 @@ namespace agge
 	public:
 		explicit text_engine(loader &loader_, uint8_t precision = 4);
 
-		void render_glyph(RasterizerT &target, const font &font_, uint16_t glyph_index, real_t x, real_t y);
+		void render_glyph(RasterizerT &target, const font &font_, glyph_index_t glyph_index, real_t x, real_t y);
 		template <typename IteratorT>
 		void render_glyph_run(RasterizerT &target, const font &font_, IteratorT glyph_begin, IteratorT glyph_end,
 			real_t x, real_t y);
@@ -90,10 +90,10 @@ namespace agge
 		typedef hash_map<const font *, rasters_map> font_rasters_map;
 
 	private:
-		void render_glyph(RasterizerT &target, const font &font_, rasters_map &rasters, uint16_t glyph_index,
+		void render_glyph(RasterizerT &target, const font &font_, rasters_map &rasters, glyph_index_t glyph_index,
 			real_t x, real_t y);
-		void load_glyph_precise(const font &font_, uint16_t glyph_index, unsigned int precise_glyph_index, int xf, int yf,
-			rasters_map &rasters, typename rasters_map::iterator &glyph_iterator);
+		void load_glyph_precise(const font &font_, glyph_index_t glyph_index, unsigned int precise_glyph_index,
+			int xf, int yf, rasters_map &rasters, typename rasters_map::iterator &glyph_iterator);
 		virtual void on_before_removed(font *font_) throw();
 
 	private:
@@ -110,7 +110,7 @@ namespace agge
 	{	}
 
 	template <typename RasterizerT>
-	inline void text_engine<RasterizerT>::render_glyph(RasterizerT &target, const font &font_, uint16_t glyph_index,
+	inline void text_engine<RasterizerT>::render_glyph(RasterizerT &target, const font &font_, glyph_index_t glyph_index,
 		real_t x, real_t y)
 	{
 		typename font_rasters_map::iterator rasters = _cached_fonts.find(&font_);
@@ -171,7 +171,7 @@ namespace agge
 
 		for (const wchar_t *c = text; *c; ++c)
 		{
-			const uint16_t index = font_.map_single(*c);
+			const glyph_index_t index = font_.map_single(*c);
 			const glyph *g = font_.get_glyph(index);
 
 			if ((max_width -= g->metrics.advance_x) < 0.0f)
@@ -183,7 +183,7 @@ namespace agge
 
 	template <typename RasterizerT>
 	AGGE_INLINE void text_engine<RasterizerT>::render_glyph(RasterizerT &target, const font &font_, rasters_map &rasters,
-		uint16_t glyph_index, real_t x, real_t y)
+		glyph_index_t glyph_index, real_t x, real_t y)
 	{
 		const int xi = static_cast<int>(x * _factor) >> _precision, yi = static_cast<int>(y * _factor) >> _precision;
 		const int xf = static_cast<int>((x - xi) * _factor), yf = static_cast<int>((y - yi) * _factor);
@@ -196,7 +196,7 @@ namespace agge
 	}
 
 	template <typename RasterizerT>
-	inline void text_engine<RasterizerT>::load_glyph_precise(const font &font_, uint16_t glyph_index,
+	inline void text_engine<RasterizerT>::load_glyph_precise(const font &font_, glyph_index_t glyph_index,
 		unsigned int precise_glyph_index, int xf, int yf, rasters_map &rasters,
 		typename rasters_map::iterator &glyph_iterator)
 	{

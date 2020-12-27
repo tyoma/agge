@@ -32,6 +32,7 @@ namespace agge
 
 	public:
 		void analyze();
+		void new_line(glyph_run &range_, real_t dy);
 
 	private:
 		richtext_t _text;
@@ -44,7 +45,7 @@ namespace agge
 	struct layout::positioned_glyph
 	{
 		vector_r d;
-		uint16_t index;
+		glyph_index_t index;
 	};
 
 	struct layout::glyph_run : range<const layout::positioned_glyphs_container>

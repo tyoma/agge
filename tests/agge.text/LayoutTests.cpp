@@ -39,7 +39,7 @@ namespace agge
 				assert_equal(0.0f, box.h);
 			}
 
-		
+
 			test( SingleLineUnboundLayoutBoxEqualsSumOfAdvances )
 			{
 				// INIT
@@ -189,6 +189,37 @@ namespace agge
 				assert_equal(120.2f, box1.w);
 				assert_equal(87.1f, box2.w);
 				assert_equal(87.1f, box3.w);
+			}
+
+
+			test( TrivialLineFeedsDoNotProduceEmptyLines )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L' ', 0 }, { L'A', 1 }, { L'B', 2 }, { L'C', 3 }, };
+				mocks::font_accessor::glyph glyphs[] = {
+					{ { 7.1, 0 } },
+					{ { 11, 0 } },
+					{ { 13, 0 } },
+					{ { 17, 0 } },
+				};
+				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
+
+				// ACT
+				layout l(f);
+
+				l.process(L"ABC CBA AB\n\n\nABB BBC\n\n");
+
+				// ASSERT
+				glyph_index_t reference1[] = {	1, 2, 3, 0, 3, 2, 1, 0, 1, 2,	};
+				glyph_index_t reference2[] = {	1, 2, 2, 0, 2, 2, 3,	};
+				layout::const_iterator gr = l.begin();
+
+				assert_equal(2, std::distance(gr, l.end()));
+				assert_equal(mkpoint(0.0f, 10.0f), gr->reference);
+				assert_equal(reference1, mkvector(gr->begin(), gr->end()));
+				++gr;
+				assert_equal(mkpoint(0.0f, 52.0f), gr->reference);
+				assert_equal(reference2, mkvector(gr->begin(), gr->end()));
 			}
 
 

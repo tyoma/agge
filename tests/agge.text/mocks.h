@@ -48,12 +48,12 @@ namespace agge
 				shared_ptr<size_t> glyphs_loaded;
 
 			private:
-				typedef std::map<wchar_t, uint16_t> indices_map_t;
+				typedef std::map<wchar_t, glyph_index_t> indices_map_t;
 
 			private:
 				virtual font::metrics get_metrics() const;
-				virtual uint16_t get_glyph_index(wchar_t character) const;
-				virtual agge::glyph::outline_ptr load_glyph(uint16_t index, agge::glyph::glyph_metrics &m) const;
+				virtual glyph_index_t get_glyph_index(wchar_t character) const;
+				virtual agge::glyph::outline_ptr load_glyph(glyph_index_t index, agge::glyph::glyph_metrics &m) const;
 
 			private:
 				font::metrics _metrics;
@@ -84,7 +84,7 @@ namespace agge
 			struct font_accessor::char_to_index
 			{
 				wchar_t symbol;
-				uint16_t index;
+				glyph_index_t index;
 
 				template <typename T1, typename T2>
 				operator std::pair<T1, T2>() const
