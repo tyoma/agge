@@ -138,25 +138,25 @@ namespace agge
 				gr = l1.begin();
 				assert_equal(1, std::distance(gr, l1.end()));
 				assert_equal(f1, gr->glyph_run_font);
-				assert_equal(reference1, mkvector(gr->begin, gr->end));
+				assert_equal(reference1, mkvector(gr->begin(), gr->end()));
 
 				gr = l2.begin();
 				assert_equal(1, std::distance(gr, l2.end()));
 				assert_equal(f1, gr->glyph_run_font);
-				assert_equal(reference2, mkvector(gr->begin, gr->end));
+				assert_equal(reference2, mkvector(gr->begin(), gr->end()));
 
 				gr = l3.begin();
 				assert_equal(1, std::distance(gr, l3.end()));
-				assert_equal(reference3, mkvector(gr->begin, gr->end));
+				assert_equal(reference3, mkvector(gr->begin(), gr->end()));
 
 				gr = l4.begin();
 				assert_equal(1, std::distance(gr, l4.end()));
 				assert_equal(f2, gr->glyph_run_font);
-				assert_equal(reference4, mkvector(gr->begin, gr->end));
+				assert_equal(reference4, mkvector(gr->begin(), gr->end()));
 
 				gr = l5.begin();
 				assert_equal(1, std::distance(gr, l5.end()));
-				assert_equal(reference5, mkvector(gr->begin, gr->end));
+				assert_equal(reference5, mkvector(gr->begin(), gr->end()));
 			}
 
 
@@ -236,21 +236,21 @@ namespace agge
 				gr = l1.begin();
 				assert_equal(2, std::distance(gr, l1.end()));
 				assert_equal(mkpoint(0.0f, 10.0f), gr->reference);
-				assert_equal(reference11, mkvector(gr->begin, gr->end));
+				assert_equal(reference11, mkvector(gr->begin(), gr->end()));
 				++gr;
 				assert_equal(mkpoint(0.0f, 24.0f), gr->reference);
-				assert_equal(reference12, mkvector(gr->begin, gr->end));
+				assert_equal(reference12, mkvector(gr->begin(), gr->end()));
 
 				gr = l2.begin();
 				assert_equal(3, std::distance(gr, l2.end()));
 				assert_equal(mkpoint(0.0f, 14.0f), gr->reference);
-				assert_equal(reference21, mkvector(gr->begin, gr->end));
+				assert_equal(reference21, mkvector(gr->begin(), gr->end()));
 				++gr;
 				assert_equal(mkpoint(0.0f, 32.0f), gr->reference);
-				assert_equal(reference22, mkvector(gr->begin, gr->end));
+				assert_equal(reference22, mkvector(gr->begin(), gr->end()));
 				++gr;
 				assert_equal(mkpoint(0.0f, 50.0f), gr->reference);
-				assert_equal(reference23, mkvector(gr->begin, gr->end));
+				assert_equal(reference23, mkvector(gr->begin(), gr->end()));
 			}
 		
 
@@ -317,19 +317,19 @@ namespace agge
 
 				gr = l1.begin();
 				assert_equal(2, std::distance(gr, l1.end()));
-				assert_equal(reference11, mkvector(gr->begin, gr->end));
+				assert_equal(reference11, mkvector(gr->begin(), gr->end()));
 				++gr;
-				assert_equal(reference12, mkvector(gr->begin, gr->end));
+				assert_equal(reference12, mkvector(gr->begin(), gr->end()));
 
 				gr = l2.begin();
 				assert_equal(4, std::distance(gr, l2.end()));
-				assert_equal(reference21, mkvector(gr->begin, gr->end));
+				assert_equal(reference21, mkvector(gr->begin(), gr->end()));
 				++gr;
-				assert_equal(reference22, mkvector(gr->begin, gr->end));
+				assert_equal(reference22, mkvector(gr->begin(), gr->end()));
 				++gr;
-				assert_equal(reference23, mkvector(gr->begin, gr->end));
+				assert_equal(reference23, mkvector(gr->begin(), gr->end()));
 				++gr;
-				assert_equal(reference24, mkvector(gr->begin, gr->end));
+				assert_equal(reference24, mkvector(gr->begin(), gr->end()));
 			}
 
 
@@ -356,11 +356,11 @@ namespace agge
 
 				gr = l.begin();
 				assert_equal(3, std::distance(gr, l.end()));
-				assert_equal(reference1, mkvector(gr->begin, gr->end));
+				assert_equal(reference1, mkvector(gr->begin(), gr->end()));
 				++gr;
-				assert_equal(reference1, mkvector(gr->begin, gr->end));
+				assert_equal(reference1, mkvector(gr->begin(), gr->end()));
 				++gr;
-				assert_equal(reference1, mkvector(gr->begin, gr->end));
+				assert_equal(reference1, mkvector(gr->begin(), gr->end()));
 
 				// ACT
 				l.limit_width(8);
@@ -378,11 +378,11 @@ namespace agge
 
 				gr = l.begin();
 				assert_equal(3, std::distance(gr, l.end()));
-				assert_equal(reference21, mkvector(gr->begin, gr->end));
+				assert_equal(reference21, mkvector(gr->begin(), gr->end()));
 				++gr;
-				assert_equal(reference22, mkvector(gr->begin, gr->end));
+				assert_equal(reference22, mkvector(gr->begin(), gr->end()));
 				++gr;
-				assert_equal(reference23, mkvector(gr->begin, gr->end));
+				assert_equal(reference23, mkvector(gr->begin(), gr->end()));
 			}
 
 

@@ -12,6 +12,7 @@ namespace agge
 
 		void set_end();
 		void extend_end();
+		bool empty() const;
 		typename ContainerT::const_iterator begin() const;
 		typename ContainerT::const_iterator end() const;
 
@@ -36,6 +37,10 @@ namespace agge
 	template <typename ContainerT>
 	inline void range<ContainerT>::extend_end()
 	{	end_index = _container->size();	}
+
+	template <typename ContainerT>
+	inline bool range<ContainerT>::empty() const
+	{	return begin_index == end_index;	}
 
 	template <typename ContainerT>
 	inline typename ContainerT::const_iterator range<ContainerT>::begin() const

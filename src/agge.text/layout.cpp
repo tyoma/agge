@@ -79,61 +79,82 @@ namespace agge
 	void layout::analyze()
 	{
 		const font::metrics m = _base_font->get_metrics();
-		real_t y = 0;
+		sensors::eow eow;
 
 		_glyph_runs.clear();
-		_glyphs.resize(static_cast<count_t>(_text.size()));
-
-		positioned_glyphs_container::iterator pgi = _glyphs.begin();
+		_glyphs.clear();
 
 		for (richtext_t::const_iterator range = _text.ranges_begin(); range != _text.ranges_end(); ++range)
 		{
+			glyph_run pgi(_glyphs);
+
+			pgi.set_end();
+			pgi.glyph_run_font = _base_font;
+			pgi.reference.x = 0.0f, pgi.reference.y = m.ascent;
+			pgi.width = 0.0f;
+
+			glyph_run eow_pgi(pgi);
+			const glyph *previous = 0;
+
 			for (richtext_t::string_type::const_iterator i = range->begin(), end = range->end(); i != end; )
 			{
-				real_t width = 0.0f;
-				const glyph *previous = 0;
-				sensors::eow eow;
-				positioned_glyphs_container::iterator start_pgi = pgi, eow_pgi = pgi;
-
-				for (auto eow_i = end; i != end && !eat_lf(i); ++i, ++pgi)
+				if (eat_lf(i))
 				{
-					const uint16_t index = _base_font->map_single(*i);
-					const glyph *g = _base_font->get_glyph(index);
+					// Next line: line-feed
+					_glyph_runs.push_back(pgi);
 
-					if (eow(*i))
-					{
-						eow_i = i;
-						eow_pgi = pgi;
-					}
-
-					width += g->metrics.advance_x;
-					if (width > _limit_width)
-					{
-						if (eow_i != end) // not an emergency break
-						{
-							i = eow_i;
-							++i;
-							pgi = eow_pgi;
-						}
-						break;
-					}
-					pgi->d.dx = previous ? previous->metrics.advance_x : 0.0f;
-					pgi->d.dy = 0.0f;
-					pgi->index = index;
-					previous = g;
+					pgi.set_end();
+					pgi.reference.x = 0.0f, pgi.reference.y += height(m);
+					pgi.width = 0.0f;
+					eow_pgi = pgi;
+					previous = 0;
+					continue;
 				}
 
-				glyph_run gr;
+				const uint16_t index = _base_font->map_single(*i);
+				const glyph *g = _base_font->get_glyph(index);
 
-				gr.begin = start_pgi;
-				gr.end = pgi;
-				gr.reference.x = 0.0f;
-				gr.reference.y = y + m.ascent;
-				gr.width = width;
-				gr.glyph_run_font = _base_font;
-				_glyph_runs.push_back(gr);
-				y += height(m);
+				if (eow_pgi.empty() && pgi.width + g->metrics.advance_x > _limit_width)
+				{
+					// Next line: emergency mid-word break
+					_glyph_runs.push_back(pgi);
+					pgi.set_end();
+					pgi.reference.x = 0.0f, pgi.reference.y += height(m);
+					pgi.width = 0.0f;
+					eow_pgi = pgi;
+					previous = 0;
+					continue;
+				}
+
+				const positioned_glyph pg = {
+					create_vector(previous ? previous->metrics.advance_x : 0.0f, 0.0f),
+					index
+				};
+
+				if (eow(*i))
+					eow_pgi = pgi;
+				_glyphs.push_back(pg);
+				pgi.extend_end();
+				pgi.width += g->metrics.advance_x;
+				previous = g;
+
+				if (!eow_pgi.empty() && pgi.width > _limit_width)
+				{
+					// Next line: normal word-boundary break
+					_glyph_runs.push_back(eow_pgi);
+					pgi.begin_index = eow_pgi.end_index + 1; // TODO: we eat only one space after the word-break now - have to eat them all...
+					if (!pgi.empty())
+						_glyphs[pgi.begin_index].d = zero();
+					else
+						previous = 0;
+					pgi.reference.x = 0.0f, pgi.reference.y += height(m);
+					pgi.width -= eow_pgi.width + _base_font->get_glyph(eow_pgi.end()->index)->metrics.advance_x;
+					eow_pgi.set_end();
+				}
+				i++;
 			}
+			if (!pgi.empty())
+				_glyph_runs.push_back(pgi);
 		}
 	}
 }

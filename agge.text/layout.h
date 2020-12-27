@@ -4,6 +4,7 @@
 #include "richtext.h"
 
 #include <agge/types.h>
+#include <vector>
 
 namespace agge
 {
@@ -14,7 +15,7 @@ namespace agge
 
 		struct positioned_glyph;
 		struct glyph_run;
-		typedef pod_vector<glyph_run> glyph_runs_container;
+		typedef std::vector<glyph_run> glyph_runs_container;
 		typedef pod_vector<positioned_glyph> positioned_glyphs_container;
 		typedef glyph_runs_container::const_iterator const_iterator;
 
@@ -46,12 +47,13 @@ namespace agge
 		uint16_t index;
 	};
 
-	struct layout::glyph_run
+	struct layout::glyph_run : range<const layout::positioned_glyphs_container>
 	{
+		glyph_run(const layout::positioned_glyphs_container &container);
+
 		font::ptr glyph_run_font;
 		point_r reference;
 		real_t width;
-		layout::positioned_glyphs_container::const_iterator begin, end;
 	};
 
 
@@ -61,4 +63,8 @@ namespace agge
 
 	inline layout::const_iterator layout::end() const
 	{	return _glyph_runs.end();	}
+
+	inline layout::glyph_run::glyph_run(const layout::positioned_glyphs_container &container)
+		: range<const layout::positioned_glyphs_container>(container)
+	{	}
 }

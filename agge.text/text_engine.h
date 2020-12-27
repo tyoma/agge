@@ -144,7 +144,7 @@ namespace agge
 	inline void text_engine<RasterizerT>::render_layout(RasterizerT &target, const layout &layout_, real_t x, real_t y)
 	{
 		for (layout::const_iterator gr = layout_.begin(); gr != layout_.end(); ++gr)
-			render_glyph_run(target, *gr->glyph_run_font, gr->begin, gr->end, x, gr->reference.y + y);
+			render_glyph_run(target, *gr->glyph_run_font, gr->begin(), gr->end(), x, gr->reference.y + y);
 	}
 
 	template <typename RasterizerT>
