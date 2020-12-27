@@ -37,10 +37,8 @@ namespace demo
 
 			_rasterizer.reset();
 
-			_layout.process(c_text_long.c_str());
-			_layout.limit_width(static_cast<real_t>(surface.width()));
-
 			stopwatch(counter);
+			_layout.process(c_text_long.c_str());
 
 			_text_engine.render_layout(_rasterizer, _layout, _ddx, 0.0f);
 
@@ -57,6 +55,9 @@ namespace demo
 			timings.rasterization += append + sort;
 			timings.rendition += render;
 		}
+
+		virtual void resize(int width, int /*height*/)
+		{	_layout.set_width_limit(static_cast<real_t>(width));	}
 
 	private:
 		typedef platform_blender_solid_color solid_color_brush;

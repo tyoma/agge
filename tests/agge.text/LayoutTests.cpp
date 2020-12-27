@@ -302,17 +302,18 @@ namespace agge
 				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
 				layout::const_iterator gr;
 				
-				// 44 + 7.1 + 48 + 7.1 + 26 + 7.1 + 48 + 7.1 + 44
 				layout l1(f);
+
+				layout l2(f);
+
+				// ACT
+				// 44 + 7.1 + 48 + 7.1 + 26 + 7.1 + 48 + 7.1 + 44
+				l1.set_width_limit(139.1f); // AAAA BBBB CC|BBBB AAAA
 				l1.process (L"AAAA BBBB CC BBBB AAAA");
 
 				// 55 + 7.1 + 36 + 7.1 + 22 + 7.1 + 22 + 7.1 + 80 + 7.1 + 52 + 7.1 + 44 + 7.1 + 118
-				layout l2(f);
+				l2.set_width_limit(139.1f); // CCC'C BBB AA|AA AAAABBB|CCCC AAAA|ABABABABAB.
 				l2.process(L"CCC'C BBB AA AA AAAABBB CCCC AAAA ABABABABAB.");
-
-				// ACT
-				l1.limit_width(139.1f); // AAAA BBBB CC|BBBB AAAA
-				l2.limit_width(139.1f); // CCC'C BBB AA|AA AAAABBB|CCCC AAAA|ABABABABAB.
 
 				// ASSERT
 				positioned_glyph reference11[] = {
@@ -377,10 +378,9 @@ namespace agge
 				layout::const_iterator gr;
 				layout l(f);
 
-				l.process(L"ABCABCABC");
-
 				// ACT
-				l.limit_width(6);
+				l.set_width_limit(6);
+				l.process(L"ABCABCABC");
 
 				// ASSERT
 				positioned_glyph reference1[] = { { 1.0f, 0.0f, 0 }, { 2.0f, 0.0f, 1 }, { 3.0f, 0.0f, 2 }, };
@@ -394,7 +394,8 @@ namespace agge
 				assert_equal(reference1, mkvector(gr->begin(), gr->end()));
 
 				// ACT
-				l.limit_width(8);
+				l.set_width_limit(8);
+				l.process(L"ABCABCABC");
 
 				// ASSERT
 				positioned_glyph reference21[] = {
@@ -478,6 +479,33 @@ namespace agge
 
 				// ASSERT
 				assert_equal(53.0f, box2.h);
+			}
+
+
+			test( SettingWidthResetsLayoutContent )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L'A', 0 }, };
+				mocks::font_accessor::glyph glyphs[] = {
+					{ { 5, 0 } },
+				};
+				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
+				layout l(f);
+
+				l.process(L"AAAAA\nAA");
+
+				// ACT
+				l.set_width_limit(15.0f);
+
+				// ASSERT
+				assert_equal(l.end(), l.begin());
+
+				// ACT
+				l.process(L"A");
+
+				// ASSERT
+				assert_equal(1, distance(l.begin(), l.end()));
+				assert_equal(0u, l.begin()->begin_index);
 			}
 
 		end_test_suite

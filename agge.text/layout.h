@@ -15,18 +15,16 @@ namespace agge
 
 		void process(const richtext_t &text);
 
-		void limit_width(real_t width);
+		void set_width_limit(real_t width);
 		box_r get_box();
 
 		const_iterator begin() const;
 		const_iterator end() const;
 
 	public:
-		void analyze();
 		void new_line(glyph_run &range_, real_t dy);
 
 	private:
-		richtext_t _text;
 		shared_ptr<font> _base_font;
 		positioned_glyphs_container_t _glyphs;
 		glyph_runs_container_t _glyph_runs;

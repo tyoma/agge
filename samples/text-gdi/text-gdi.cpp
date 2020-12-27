@@ -33,7 +33,7 @@ namespace demo
 				agge::fill(surface, area, platform_blender_solid_color(color::make(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
 
-			_layout.limit_width(static_cast<real_t>(surface.width()));
+			_layout.set_width_limit(static_cast<real_t>(surface.width()));
 
 			double layouting = stopwatch(counter);
 			

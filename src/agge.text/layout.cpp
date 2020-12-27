@@ -51,39 +51,12 @@ namespace agge
 
 	void layout::process(const richtext_t &text)
 	{
-		_text = text;
-		analyze();
-	}
-
-	void layout::limit_width(real_t width)
-	{
-		_limit_width = width;
-		analyze();
-	}
-
-	box_r layout::get_box()
-	{
-		box_r box = {};
-
-		if (_glyph_runs.empty())
-			return box;
-
-		font::metrics m = _base_font->get_metrics();
-
-		for (const_iterator i = begin(); i != end(); ++i)
-			box.w = agge_max(box.w, i->width);
-		box.h = (end() - begin()) * height(m) - m.leading;
-		return box;
-	}
-
-	void layout::analyze()
-	{
 		const font::metrics m = _base_font->get_metrics();
 		sensors::eow eow;
 
 		_glyph_runs.clear();
 		_glyphs.clear();
-		for (richtext_t::const_iterator range = _text.ranges_begin(); range != _text.ranges_end(); ++range)
+		for (richtext_t::const_iterator range = text.ranges_begin(); range != text.ranges_end(); ++range)
 		{
 			glyph_run accumulator(_glyphs);
 
@@ -136,6 +109,27 @@ namespace agge
 			if (!accumulator.empty())
 				_glyph_runs.push_back(accumulator);
 		}
+	}
+
+	void layout::set_width_limit(real_t width)
+	{
+		_limit_width = width;
+		_glyph_runs.clear();
+	}
+
+	box_r layout::get_box()
+	{
+		box_r box = {};
+
+		if (_glyph_runs.empty())
+			return box;
+
+		font::metrics m = _base_font->get_metrics();
+
+		for (const_iterator i = begin(); i != end(); ++i)
+			box.w = agge_max(box.w, i->width);
+		box.h = (end() - begin()) * height(m) - m.leading;
+		return box;
 	}
 
 	void layout::new_line(glyph_run &range_, real_t dy)
