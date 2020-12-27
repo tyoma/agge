@@ -83,7 +83,6 @@ namespace agge
 
 		_glyph_runs.clear();
 		_glyphs.clear();
-
 		for (richtext_t::const_iterator range = _text.ranges_begin(); range != _text.ranges_end(); ++range)
 		{
 			glyph_run pgi(_glyphs);
@@ -94,7 +93,6 @@ namespace agge
 			pgi.width = 0.0f;
 
 			glyph_run eow_pgi(pgi);
-			const glyph *previous = 0;
 
 			for (richtext_t::string_type::const_iterator i = range->begin(), end = range->end(); i != end; )
 			{
@@ -102,12 +100,10 @@ namespace agge
 				{
 					// Next line: line-feed
 					_glyph_runs.push_back(pgi);
-
 					pgi.set_end();
 					pgi.reference.x = 0.0f, pgi.reference.y += height(m);
 					pgi.width = 0.0f;
 					eow_pgi = pgi;
-					previous = 0;
 					continue;
 				}
 
@@ -122,12 +118,11 @@ namespace agge
 					pgi.reference.x = 0.0f, pgi.reference.y += height(m);
 					pgi.width = 0.0f;
 					eow_pgi = pgi;
-					previous = 0;
 					continue;
 				}
 
 				const positioned_glyph pg = {
-					create_vector(previous ? previous->metrics.advance_x : 0.0f, 0.0f),
+					create_vector(g->metrics.advance_x, 0.0f),
 					index
 				};
 
@@ -135,18 +130,13 @@ namespace agge
 					eow_pgi = pgi;
 				_glyphs.push_back(pg);
 				pgi.extend_end();
-				pgi.width += g->metrics.advance_x;
-				previous = g;
+				pgi.width += pg.d.dx;
 
 				if (!eow_pgi.empty() && pgi.width > _limit_width)
 				{
 					// Next line: normal word-boundary break
 					_glyph_runs.push_back(eow_pgi);
 					pgi.begin_index = eow_pgi.end_index + 1; // TODO: we eat only one space after the word-break now - have to eat them all...
-					if (!pgi.empty())
-						_glyphs[pgi.begin_index].d = zero();
-					else
-						previous = 0;
 					pgi.reference.x = 0.0f, pgi.reference.y += height(m);
 					pgi.width -= eow_pgi.width + _base_font->get_glyph(eow_pgi.end()->index)->metrics.advance_x;
 					eow_pgi.set_end();

@@ -133,11 +133,8 @@ namespace agge
 
 		rasters_map &rasters = ri->second;
 
-		for (layout::positioned_glyphs_container::const_iterator g = glyph_begin; g != glyph_end; ++g)
-		{
-			ref += g->d;
+		for (layout::positioned_glyphs_container::const_iterator g = glyph_begin; g != glyph_end; ref += g->d, ++g)
 			render_glyph(target, font_, rasters, g->index, ref.x, ref.y);
-		}
 	}
 
 	template <typename RasterizerT>

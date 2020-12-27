@@ -507,7 +507,7 @@ namespace agge
 				font::ptr f = e.create_font(L"Arial", 10, false, false, font::key::gf_strong);
 				mocks::rasterizer target;
 				layout::positioned_glyph glyphs_[] = {
-					{ 0.0f, 0.0f, 0 }, { 5.0f, 0.0f, 1 }, { 7.0f, 0.0f, 1 }, { 7.0f, 2.0f, 0 }, { 5.0f, -3.0f, 0 },
+					{ 5.0f, 0.0f, 0 }, { 7.0f, 0.0f, 1 }, { 7.0f, 2.0f, 1 }, { 5.0f, -3.0f, 0 }, { 7.0f, 2.0f, 0 }
 				};
 
 				// ACT
@@ -533,16 +533,16 @@ namespace agge
 
 				// ASSERT
 				assert_equal(4u, target.append_log.size());
-				assert_equal(22, target.append_log[0].second.x);
+				assert_equal(17, target.append_log[0].second.x);
 				assert_equal(90, target.append_log[0].second.y);
 				assert_equal(c_outline_2, target.append_log[0].first->path);
-				assert_equal(29, target.append_log[1].second.x);
+				assert_equal(24, target.append_log[1].second.x);
 				assert_equal(90, target.append_log[1].second.y);
 				assert_equal(c_outline_2, target.append_log[1].first->path);
-				assert_equal(36, target.append_log[2].second.x);
+				assert_equal(31, target.append_log[2].second.x);
 				assert_equal(92, target.append_log[2].second.y);
 				assert_equal(c_outline_1, target.append_log[2].first->path);
-				assert_equal(41, target.append_log[3].second.x);
+				assert_equal(36, target.append_log[3].second.x);
 				assert_equal(89, target.append_log[3].second.y);
 				assert_equal(c_outline_1, target.append_log[3].first->path);
 			}
