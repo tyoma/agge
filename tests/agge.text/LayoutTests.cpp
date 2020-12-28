@@ -215,10 +215,10 @@ namespace agge
 				layout::const_iterator gr = l.begin();
 
 				assert_equal(2, std::distance(gr, l.end()));
-				assert_equal(mkpoint(0.0f, 10.0f), gr->reference);
+				assert_equal(create_vector(0.0f, 10.0f), gr->offset);
 				assert_equal(reference1, mkvector(gr->begin(), gr->end()));
 				++gr;
-				assert_equal(mkpoint(0.0f, 52.0f), gr->reference);
+				assert_equal(create_vector(0.0f, 52.0f), gr->offset);
 				assert_equal(reference2, mkvector(gr->begin(), gr->end()));
 			}
 
@@ -266,21 +266,21 @@ namespace agge
 
 				gr = l1.begin();
 				assert_equal(2, std::distance(gr, l1.end()));
-				assert_equal(mkpoint(0.0f, 10.0f), gr->reference);
+				assert_equal(create_vector(0.0f, 10.0f), gr->offset);
 				assert_equal(reference11, mkvector(gr->begin(), gr->end()));
 				++gr;
-				assert_equal(mkpoint(0.0f, 24.0f), gr->reference);
+				assert_equal(create_vector(0.0f, 24.0f), gr->offset);
 				assert_equal(reference12, mkvector(gr->begin(), gr->end()));
 
 				gr = l2.begin();
 				assert_equal(3, std::distance(gr, l2.end()));
-				assert_equal(mkpoint(0.0f, 14.0f), gr->reference);
+				assert_equal(create_vector(0.0f, 14.0f), gr->offset);
 				assert_equal(reference21, mkvector(gr->begin(), gr->end()));
 				++gr;
-				assert_equal(mkpoint(0.0f, 32.0f), gr->reference);
+				assert_equal(create_vector(0.0f, 32.0f), gr->offset);
 				assert_equal(reference22, mkvector(gr->begin(), gr->end()));
 				++gr;
-				assert_equal(mkpoint(0.0f, 50.0f), gr->reference);
+				assert_equal(create_vector(0.0f, 50.0f), gr->offset);
 				assert_equal(reference23, mkvector(gr->begin(), gr->end()));
 			}
 		
@@ -350,11 +350,11 @@ namespace agge
 				gr = l1.begin();
 				assert_equal(2, std::distance(gr, l1.end()));
 				assert_approx_equal(132.2f, gr->width, 0.001f);
-				assert_approx_equal(10.0f, gr->reference.y, 0.001f);
+				assert_equal(create_vector(0.0f, 10.0f), gr->offset);
 				assert_equal(reference11, mkvector(gr->begin(), gr->end()));
 				++gr;
 				assert_approx_equal(99.1f, gr->width, 0.001f);
-				assert_approx_equal(24.0f, gr->reference.y, 0.001f);
+				assert_equal(create_vector(0.0f, 24.0f), gr->offset);
 				assert_equal(reference12, mkvector(gr->begin(), gr->end()));
 
 				gr = l2.begin();

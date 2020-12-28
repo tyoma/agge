@@ -32,34 +32,33 @@ namespace demo
 			stopwatch(counter);
 				agge::fill(surface, area, platform_blender_solid_color(color::make(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
-
-			_layout.set_width_limit(static_cast<real_t>(surface.width()));
-
+				_layout.process(c_text_long.c_str());
 			double layouting = stopwatch(counter);
-			
-			::SetTextAlign(ctx, TA_BASELINE | TA_LEFT);
+				::SetTextAlign(ctx, TA_BASELINE | TA_LEFT);
+				for (layout::const_iterator i = _layout.begin(); i != _layout.end(); ++i)
+				{
+					real_t x = i->offset.dx + _ddx;
 
-			for (layout::const_iterator i = _layout.begin(); i != _layout.end(); ++i)
-			{
-				real_t x = i->reference.x + _ddx;
+					_glyph_indices.clear();
 
-				_glyph_indices.clear();
+					if (i->offset.dy > surface.height())
+						break;
 
-				if (i->reference.y > surface.height())
-					break;
+					glyphs += distance(i->begin(), i->end());
+					for (positioned_glyphs_container_t::const_iterator j = i->begin(); j != i->end(); ++j)
+						_glyph_indices.push_back(j->index);
+					::ExtTextOut(ctx, static_cast<int>(x), static_cast<int>(i->offset.dy), ETO_GLYPH_INDEX /*| ETO_PDY*/, 0,
+						reinterpret_cast<LPCTSTR>(&_glyph_indices[0]), static_cast<UINT>(_glyph_indices.size()), 0);
+				}
 
-				glyphs += distance(i->begin(), i->end());
-				for (positioned_glyphs_container_t::const_iterator j = i->begin(); j != i->end(); ++j)
-					_glyph_indices.push_back(j->index);
-				::ExtTextOut(ctx, static_cast<int>(x), static_cast<int>(i->reference.y), ETO_GLYPH_INDEX /*| ETO_PDY*/, 0,
-					reinterpret_cast<LPCTSTR>(&_glyph_indices[0]), static_cast<UINT>(_glyph_indices.size()), 0);
-			}
+			double rasterization = stopwatch(counter);
 
-			double rasterizer = stopwatch(counter);
-
-			timings.stroking += (layouting + rasterizer) / glyphs;
-			timings.rasterization += rasterizer;
+			timings.stroking += layouting;
+			timings.rasterization += rasterization;
 		}
+
+		virtual void resize(int width, int /*height*/)
+		{	_layout.set_width_limit(static_cast<real_t>(width));	}
 
 	private:
 		shared_ptr<font_accessor> _font_accessor;

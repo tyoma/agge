@@ -1,5 +1,6 @@
 #include <agge.text/layout.h>
 
+#include <agge/math.h>
 #include <agge/tools.h>
 #include <agge.text/font.h>
 
@@ -81,7 +82,7 @@ namespace agge
 
 			accumulator.set_end();
 			accumulator.glyph_run_font = _base_font;
-			accumulator.reference.x = 0.0f, accumulator.reference.y = m.ascent;
+			accumulator.offset = create_vector(0.0f, m.ascent);
 			accumulator.width = 0.0f;
 
 			size_t eow_position = 0, sow_position = 0;
@@ -125,7 +126,7 @@ namespace agge
 					sow_start_width = eow_accumulator.width - sow_start_width;
 					eow_accumulator.width = eow_width;
 					_glyph_runs.push_back(eow_accumulator);
-					accumulator.reference.x = 0.0f, accumulator.reference.y += height(m);
+					accumulator.offset += create_vector(0.0f, height(m));
 					if (sow_position > eow_position)
 					{
 						// New word was actually found after the last matched end-of-word.
@@ -177,7 +178,7 @@ namespace agge
 		if (!range_.empty())
 			_glyph_runs.push_back(range_);
 		range_.set_end();
-		range_.reference.x = 0.0f, range_.reference.y += dy;
+		range_.offset += create_vector(0.0f, dy);
 		range_.width = 0.0f;
 	}
 }

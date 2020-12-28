@@ -509,9 +509,15 @@ namespace agge
 				positioned_glyph glyphs_[] = {
 					{ 5.0f, 0.0f, 0 }, { 7.0f, 0.0f, 1 }, { 7.0f, 2.0f, 1 }, { 5.0f, -3.0f, 0 }, { 7.0f, 2.0f, 0 }
 				};
+				positioned_glyphs_container_t glyphs = mkpodvector(glyphs_ + 0, glyphs_ + 5);
+				glyph_run gr(glyphs);
+
+				gr.begin_index = 0, gr.end_index = 3;
+				gr.glyph_run_font = f;
+				gr.offset = zero();
 
 				// ACT
-				e.render_glyph_run(target, *f, glyphs_ + 0, glyphs_ + 3, 0.0f, 3.0f);
+				e.render(target, gr, create_point(0.0f, 3.0f));
 
 				// ASSERT
 				assert_equal(3u, target.append_log.size());
@@ -527,9 +533,12 @@ namespace agge
 
 				// INIT
 				target.append_log.clear();
+				gr.begin_index = 1, gr.end_index = 5;
+				gr.glyph_run_font = f;
+				gr.offset = zero();
 
 				// ACT
-				e.render_glyph_run(target, *f, glyphs_ + 1, glyphs_ + 5, 17.0f, 90.0f);
+				e.render(target, gr, create_point(17.0f, 90.0f));
 
 				// ASSERT
 				assert_equal(4u, target.append_log.size());
@@ -568,7 +577,7 @@ namespace agge
 				l1.process(L"aww");
 
 				// ACT
-				e.render_layout(target, l1, 0.0f, 0.0f);
+				e.render(target, l1, create_point(0.0f, 0.0f));
 
 				// ASSERT
 				assert_equal(3u, target.append_log.size());
@@ -604,7 +613,7 @@ namespace agge
 				l.process(L"wa");
 
 				// ACT
-				e.render_layout(target, l, 0.0f, 0.0f);
+				e.render(target, l, create_point(0.0f, 0.0f));
 
 				// ASSERT
 				assert_equal(2u, target.append_log.size());
@@ -637,7 +646,7 @@ namespace agge
 				l.process(L"aww\nww\na");
 
 				// ACT
-				e.render_layout(target, l, 0.0f, 0.0f);
+				e.render(target, l, create_point(0.0f, 0.0f));
 
 				// ASSERT
 				assert_equal(6u, target.append_log.size());
@@ -684,7 +693,7 @@ namespace agge
 				l.process(L"aaa");
 
 				// ACT
-				e.render_layout(target, l, 7.7f, 13.2f);
+				e.render(target, l, create_point(7.7f, 13.2f));
 
 				// ASSERT
 				assert_equal(3u, target.append_log.size());

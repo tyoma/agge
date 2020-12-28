@@ -14,6 +14,16 @@ namespace agge
 		inline std::vector<typename std::iterator_traits<Iterator>::value_type> mkvector(Iterator begin, Iterator end)
 		{	return std::vector<typename std::iterator_traits<Iterator>::value_type>(begin, end);	}
 
+		template <typename Iterator>
+		inline pod_vector<typename std::iterator_traits<Iterator>::value_type> mkpodvector(Iterator begin, Iterator end)
+		{
+			agge::pod_vector<typename std::iterator_traits<Iterator>::value_type> v;
+
+			for (; begin != end; ++begin)
+				v.push_back(*begin);
+			return v;
+		}
+
 		inline glyph::path_point mkppoint(int command, real_t x, real_t y)
 		{
 			glyph::path_point p = { command, x, y };

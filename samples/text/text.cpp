@@ -36,7 +36,7 @@ namespace demo
 				_rasterizer.reset();
 			stopwatch(counter);
 				_layout.process(c_text_long.c_str());
-				_text_engine.render_layout(_rasterizer, _layout, _ddx, 0.0f);
+				_text_engine.render(_rasterizer, _layout, create_point(_ddx, 0.0f));
 			double append = stopwatch(counter);
 				_rasterizer.sort(true);
 			double sort = stopwatch(counter);

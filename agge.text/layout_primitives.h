@@ -28,7 +28,7 @@ namespace agge
 		glyph_run(const positioned_glyphs_container_t &container);
 
 		shared_ptr<font> glyph_run_font;
-		point_r reference;
+		vector_r offset;
 		real_t width;
 	};
 
@@ -37,6 +37,7 @@ namespace agge
 		text_line(const glyph_runs_container_t &container);
 
 		vector_r offset;
+		rect_r cover_box;
 	};
 
 

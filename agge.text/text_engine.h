@@ -1,7 +1,7 @@
 #pragma once
 
 #include "font.h"
-#include "layout.h"
+#include "layout_primitives.h"
 
 #include <agge/config.h>
 #include <agge/math.h>
@@ -78,10 +78,9 @@ namespace agge
 		explicit text_engine(loader &loader_, uint8_t precision = 4);
 
 		void render_glyph(RasterizerT &target, const font &font_, glyph_index_t glyph_index, real_t x, real_t y);
-		template <typename IteratorT>
-		void render_glyph_run(RasterizerT &target, const font &font_, IteratorT glyph_begin, IteratorT glyph_end,
-			real_t x, real_t y);
-		void render_layout(RasterizerT &target, const layout &layout_, real_t x, real_t y);
+		void render(RasterizerT &target, const glyph_run &glyphs, point_r reference);
+		template <typename ContainerT>
+		void render(RasterizerT &target, const ContainerT &container, const point_r &reference);
 		void render_string(RasterizerT &target, const font &font_, const wchar_t *text, text_alignment halign,
 			real_t x, real_t y, real_t max_width = (std::numeric_limits<real_t>::max)());
 
@@ -90,6 +89,7 @@ namespace agge
 		typedef hash_map<const font *, rasters_map> font_rasters_map;
 
 	private:
+		rasters_map &get_rasters_map(const font &font_);
 		void render_glyph(RasterizerT &target, const font &font_, rasters_map &rasters, glyph_index_t glyph_index,
 			real_t x, real_t y);
 		void load_glyph_precise(const font &font_, glyph_index_t glyph_index, unsigned int precise_glyph_index,
@@ -112,48 +112,31 @@ namespace agge
 	template <typename RasterizerT>
 	inline void text_engine<RasterizerT>::render_glyph(RasterizerT &target, const font &font_, glyph_index_t glyph_index,
 		real_t x, real_t y)
-	{
-		typename font_rasters_map::iterator rasters = _cached_fonts.find(&font_);
-
-		if (_cached_fonts.end() == rasters)
-			_cached_fonts.insert(&font_, rasters_map(), rasters);
-		render_glyph(target, font_, rasters->second, glyph_index, x, y);
-	}
+	{	render_glyph(target, font_, get_rasters_map(font_), glyph_index, x, y);	}
 
 	template <typename RasterizerT>
-	template <typename IteratorT>
-	inline void text_engine<RasterizerT>::render_glyph_run(RasterizerT &target, const font &font_,
-		IteratorT glyph_begin, IteratorT glyph_end, real_t x, real_t y)
+	inline void text_engine<RasterizerT>::render(RasterizerT &target, const glyph_run &gr, point_r ref)
 	{
-		point_r ref = { x, y };
-		typename font_rasters_map::iterator ri = _cached_fonts.find(&font_);
+		const font &font_ = *gr.glyph_run_font.get();
+		rasters_map &rasters = get_rasters_map(font_);
 
-		if (_cached_fonts.end() == ri)
-			_cached_fonts.insert(&font_, rasters_map(), ri);
-
-		rasters_map &rasters = ri->second;
-
-		for (positioned_glyphs_container_t::const_iterator g = glyph_begin; g != glyph_end; ref += g->d, ++g)
+		for (positioned_glyphs_container_t::const_iterator g = gr.begin(), end = gr.end(); g != end; ref += g->d, ++g)
 			render_glyph(target, font_, rasters, g->index, ref.x, ref.y);
 	}
 
 	template <typename RasterizerT>
-	inline void text_engine<RasterizerT>::render_layout(RasterizerT &target, const layout &layout_, real_t x, real_t y)
+	template <typename ContainerT>
+	inline void text_engine<RasterizerT>::render(RasterizerT &target, const ContainerT &container, const point_r &ref)
 	{
-		for (layout::const_iterator gr = layout_.begin(); gr != layout_.end(); ++gr)
-			render_glyph_run(target, *gr->glyph_run_font, gr->begin(), gr->end(), x, gr->reference.y + y);
+		for (typename ContainerT::const_iterator i = container.begin(), end = container.end(); i != end; ++i)
+			render(target, *i, ref + i->offset);
 	}
 
 	template <typename RasterizerT>
 	inline void text_engine<RasterizerT>::render_string(RasterizerT &target, const font &font_, const wchar_t *text,
 		text_alignment halign, real_t x, real_t y, real_t max_width)
 	{
-		typename font_rasters_map::iterator ri = _cached_fonts.find(&font_);
-
-		if (_cached_fonts.end() == ri)
-			_cached_fonts.insert(&font_, rasters_map(), ri);
-
-		rasters_map &rasters = ri->second;
+		rasters_map &rasters = get_rasters_map(font_);
 		real_t dx = 0.0f;
 
 		if (near_ != halign)
@@ -179,6 +162,16 @@ namespace agge
 			render_glyph(target, font_, rasters, index, x, y);
 			x += g->metrics.advance_x, y += g->metrics.advance_y;
 		}
+	}
+
+	template <typename RasterizerT>
+	AGGE_INLINE typename text_engine<RasterizerT>::rasters_map &text_engine<RasterizerT>::get_rasters_map(const font &font_)
+	{
+		typename font_rasters_map::iterator ri = _cached_fonts.find(&font_);
+
+		if (_cached_fonts.end() == ri)
+			_cached_fonts.insert(&font_, rasters_map(), ri);
+		return ri->second;
 	}
 
 	template <typename RasterizerT>
