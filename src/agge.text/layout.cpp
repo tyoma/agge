@@ -12,6 +12,9 @@ namespace agge
 		real_t height(const font::metrics &m)
 		{	return m.ascent + m.descent + m.leading; }
 
+		bool is_space(wchar_t c)
+		{	return c == L' ';	}
+
 		template <typename IteratorT>
 		bool eat_lf(IteratorT &i)
 		{
@@ -26,22 +29,37 @@ namespace agge
 
 	namespace sensors
 	{
-		class eow : noncopyable
+		class sensor : noncopyable
 		{
 		public:
-			eow ()
+			sensor()
 				: _previous(0)
 			{	}
 
+		protected:
+			wchar_t _previous;
+		};
+
+		struct eow : sensor
+		{
 			bool operator ()(wchar_t c)
 			{
-				bool result = c == L' ' && _previous != L' ';
+				bool result = is_space(c) && !is_space(_previous);
+
 				_previous = c;
 				return result;
 			}
+		};
 
-		private:
-			wchar_t _previous;
+		struct sow : sensor
+		{
+			bool operator ()(wchar_t c)
+			{
+				bool result = !is_space(c) && is_space(_previous);
+
+				_previous = c;
+				return result;
+			}
 		};
 	}
 
@@ -53,6 +71,7 @@ namespace agge
 	{
 		const font::metrics m = _base_font->get_metrics();
 		sensors::eow eow;
+		sensors::sow sow;
 
 		_glyph_runs.clear();
 		_glyphs.clear();
@@ -65,44 +84,64 @@ namespace agge
 			accumulator.reference.x = 0.0f, accumulator.reference.y = m.ascent;
 			accumulator.width = 0.0f;
 
-			glyph_run eow_accumulator(accumulator);
+			size_t eow_position = 0, sow_position = 0;
+			real_t eow_width = 0.0f, sow_width = 0.0f;
 
 			for (richtext_t::string_type::const_iterator i = range->begin(), end = range->end(); i != end; )
 			{
 				if (eat_lf(i))
 				{
 					// Next line: line-feed
-					new_line(accumulator, height(m)), eow_accumulator.set_end();
+					new_line(accumulator, height(m)), eow_position = 0;
 					continue;
 				}
 
 				const glyph_index_t index = _base_font->map_single(*i);
 				const glyph *g = _base_font->get_glyph(index);
+				const real_t advance = g->metrics.advance_x;
+				const positioned_glyph pg = {	create_vector(advance, 0.0f), index	};
 
-				if (eow_accumulator.empty() && accumulator.width + g->metrics.advance_x > _limit_width)
+				if (eow(*i))
+					eow_position = accumulator.end_index, eow_width = accumulator.width;
+				if (sow(*i))
+					sow_position = accumulator.end_index, sow_width = 0.0f;
+				if (!eow_position && accumulator.width + advance > _limit_width)
 				{
 					// Next line: emergency mid-word break
-					new_line(accumulator, height(m)), eow_accumulator.set_end();
+					new_line(accumulator, height(m)), eow_position = 0;
 					continue;
 				}
 
-				const positioned_glyph pg = {	create_vector(g->metrics.advance_x, 0.0f), index	};
-
-				if (eow(*i))
-					eow_accumulator = accumulator;
 				_glyphs.push_back(pg);
 				accumulator.extend_end();
 				accumulator.width += pg.d.dx;
+				sow_width += pg.d.dx;
 
-				if (!eow_accumulator.empty() && accumulator.width > _limit_width)
+				if (eow_position && accumulator.width > _limit_width)
 				{
 					// Next line: normal word-boundary break
+					glyph_run eow_accumulator(accumulator);
+
+					eow_accumulator.end_index = eow_position;
+					eow_accumulator.width = eow_width;
 					_glyph_runs.push_back(eow_accumulator);
-					accumulator.begin_index = eow_accumulator.end_index + 1; // TODO: we eat only one space after the word-break now - have to eat them all...
 					accumulator.reference.x = 0.0f, accumulator.reference.y += height(m);
-					accumulator.width -= eow_accumulator.width
-						+ _base_font->get_glyph(eow_accumulator.end()->index)->metrics.advance_x;
-					eow_accumulator.set_end();
+//					eow_position = 0; // TODO: check resetting of last eow index
+					if (sow_position > eow_position)
+					{
+						// New word was actually found after the last matched end-of-word.
+						accumulator.begin_index = sow_position;
+						accumulator.width = sow_width;
+					}
+					else
+					{
+						// No new word found before - let's scan ourselves.
+						accumulator.set_end();
+						accumulator.width = 0.0f;
+						while (i != end && isspace(*i))
+							i++;
+						continue;
+					}
 				}
 				i++;
 			}

@@ -508,6 +508,65 @@ namespace agge
 				assert_equal(0u, l.begin()->begin_index);
 			}
 
+
+			test( NextWordIsDisplayedWithoutSpacesOnWordBreakWhenNextWordIsFound )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L'A', 0 }, { L' ', 1 }, };
+				mocks::font_accessor::glyph glyphs[] = {
+					{ { 5, 0 } },
+					{ { 4, 0 } },
+				};
+				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
+				layout l(f);
+
+				l.set_width_limit(39.0f);
+
+				// ACT
+				l.process(L"AAAAA   AAAA    AA");
+
+				// ASSERT
+				glyph_index_t reference1[] = {	0, 0, 0, 0, 0,	};
+				glyph_index_t reference2[] = {	0, 0, 0, 0,	};
+				glyph_index_t reference3[] = {	0, 0,	};
+
+				assert_equal(3, distance(l.begin(), l.end()));
+				layout::const_iterator i = l.begin();
+				assert_equal(reference1, mkvector(i->begin(), i->end()));
+				++i;
+				assert_equal(reference2, mkvector(i->begin(), i->end()));
+				++i;
+				assert_equal(reference3, mkvector(i->begin(), i->end()));
+			}
+
+
+			test( NextWordIsDisplayedWithoutSpacesOnWordBreakWhenNextWordIsNotFound )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L'A', 1 }, { L' ', 0 }, };
+				mocks::font_accessor::glyph glyphs[] = {
+					{ { 4, 0 } },
+					{ { 5, 0 } },
+				};
+				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
+				layout l(f);
+
+				l.set_width_limit(26.0f);
+
+				// ACT
+				l.process(L"AAAAA   A   A");
+
+				// ASSERT
+				glyph_index_t reference1[] = {	1, 1, 1, 1, 1,	};
+				glyph_index_t reference2[] = {	1, 0, 0, 0, 1,	};
+
+				assert_equal(2, distance(l.begin(), l.end()));
+				layout::const_iterator i = l.begin();
+				assert_equal(reference1, mkvector(i->begin(), i->end()));
+				++i;
+				assert_equal(reference2, mkvector(i->begin(), i->end()));
+			}
+
 		end_test_suite
 	}
 }

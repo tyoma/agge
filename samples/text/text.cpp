@@ -31,25 +31,16 @@ namespace demo
 
 			stopwatch(counter);
 				agge::fill(surface, area, solid_color_brush(color::make(0, 50, 100)));
-			timings.clearing += stopwatch(counter);
-
-			_ddx += 0.02f;
-
-			_rasterizer.reset();
-
+				timings.clearing += stopwatch(counter);
+				_ddx += 0.02f;
+				_rasterizer.reset();
 			stopwatch(counter);
-			_layout.process(c_text_long.c_str());
-
-			_text_engine.render_layout(_rasterizer, _layout, _ddx, 0.0f);
-
+				_layout.process(c_text_long.c_str());
+				_text_engine.render_layout(_rasterizer, _layout, _ddx, 0.0f);
 			double append = stopwatch(counter);
-
-			_rasterizer.sort(true);
-
+				_rasterizer.sort(true);
 			double sort = stopwatch(counter);
-
-			_renderer(surface, zero(), 0, _rasterizer, solid_color_brush(color::make(255, 255, 255)), winding<>());
-
+				_renderer(surface, zero(), 0, _rasterizer, solid_color_brush(color::make(255, 255, 255)), winding<>());
 			double render = stopwatch(counter);
 
 			timings.rasterization += append + sort;
