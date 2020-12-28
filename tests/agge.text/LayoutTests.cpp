@@ -349,8 +349,12 @@ namespace agge
 
 				gr = l1.begin();
 				assert_equal(2, std::distance(gr, l1.end()));
+				assert_approx_equal(132.2f, gr->width, 0.001f);
+				assert_approx_equal(10.0f, gr->reference.y, 0.001f);
 				assert_equal(reference11, mkvector(gr->begin(), gr->end()));
 				++gr;
+				assert_approx_equal(99.1f, gr->width, 0.001f);
+				assert_approx_equal(24.0f, gr->reference.y, 0.001f);
 				assert_equal(reference12, mkvector(gr->begin(), gr->end()));
 
 				gr = l2.begin();
@@ -567,6 +571,80 @@ namespace agge
 				assert_equal(reference2, mkvector(i->begin(), i->end()));
 			}
 
+
+			test( ConsequentWordBreakWorkWhenNextWordIsFound )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L' ', 0 }, { L'A', 1 }, { L'B', 2 }, { L'C', 3 }, { L'D', 4 }, };
+				mocks::font_accessor::glyph glyphs[] = {
+					{ { 3, 0 } },
+					{ { 5, 0 } },
+					{ { 7, 0 } },
+					{ { 11, 0 } },
+					{ { 13, 0 } },
+				};
+				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
+				layout l(f);
+
+				l.set_width_limit(60.0f);
+
+				// ACT
+				// 36 + 3 + 61
+				// ABCD|ABCDCD[]C
+				l.process(L"ABCD ABCDCDC");
+
+				// ASSERT
+				glyph_index_t reference1[] = {	1, 2, 3, 4,	};
+				glyph_index_t reference2[] = {	1, 2, 3, 4, 3, 4,	};
+				glyph_index_t reference3[] = {	3,	};
+
+				assert_equal(3, distance(l.begin(), l.end()));
+				layout::const_iterator i = l.begin();
+				assert_equal(reference1, mkvector(i->begin(), i->end()));
+				++i;
+				assert_equal(reference2, mkvector(i->begin(), i->end()));
+				++i;
+				assert_equal(reference3, mkvector(i->begin(), i->end()));
+			}
+
+
+			test( ConsequentWordBreakWorkWhenNextWordIsNotFound )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L' ', 0 }, { L'A', 1 }, { L'B', 2 }, { L'C', 3 }, { L'D', 4 }, };
+				mocks::font_accessor::glyph glyphs[] = {
+					{ { 3, 0 } },
+					{ { 5, 0 } },
+					{ { 7, 0 } },
+					{ { 11, 0 } },
+					{ { 13, 0 } },
+				};
+				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
+				layout l(f);
+
+				l.set_width_limit(38.0f);
+
+				// ACT
+				// 36 + 3 + 61
+				// ABCD|ABCD[]CDC
+				l.process(L"ABCD ABCDCDC");
+
+				// ASSERT
+				glyph_index_t reference1[] = {	1, 2, 3, 4,	};
+				glyph_index_t reference2[] = {	1, 2, 3, 4,	};
+				glyph_index_t reference3[] = {	3,	4, 3, };
+
+				assert_equal(3, distance(l.begin(), l.end()));
+				layout::const_iterator i = l.begin();
+				assert_approx_equal(36.0f, i->width, 0.001f);
+				assert_equal(reference1, mkvector(i->begin(), i->end()));
+				++i;
+				assert_approx_equal(36.0f, i->width, 0.001f);
+				assert_equal(reference2, mkvector(i->begin(), i->end()));
+				++i;
+				assert_approx_equal(35.0f, i->width, 0.001f);
+				assert_equal(reference3, mkvector(i->begin(), i->end()));
+			}
 		end_test_suite
 	}
 }

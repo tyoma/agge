@@ -85,7 +85,7 @@ namespace agge
 			accumulator.width = 0.0f;
 
 			size_t eow_position = 0, sow_position = 0;
-			real_t eow_width = 0.0f, sow_width = 0.0f;
+			real_t eow_width = 0.0f, sow_start_width = 0.0f;
 
 			for (richtext_t::string_type::const_iterator i = range->begin(), end = range->end(); i != end; )
 			{
@@ -104,7 +104,7 @@ namespace agge
 				if (eow(*i))
 					eow_position = accumulator.end_index, eow_width = accumulator.width;
 				if (sow(*i))
-					sow_position = accumulator.end_index, sow_width = 0.0f;
+					sow_position = accumulator.end_index, sow_start_width = accumulator.width;
 				if (!eow_position && accumulator.width + advance > _limit_width)
 				{
 					// Next line: emergency mid-word break
@@ -115,7 +115,6 @@ namespace agge
 				_glyphs.push_back(pg);
 				accumulator.extend_end();
 				accumulator.width += pg.d.dx;
-				sow_width += pg.d.dx;
 
 				if (eow_position && accumulator.width > _limit_width)
 				{
@@ -123,15 +122,15 @@ namespace agge
 					glyph_run eow_accumulator(accumulator);
 
 					eow_accumulator.end_index = eow_position;
+					sow_start_width = eow_accumulator.width - sow_start_width;
 					eow_accumulator.width = eow_width;
 					_glyph_runs.push_back(eow_accumulator);
 					accumulator.reference.x = 0.0f, accumulator.reference.y += height(m);
-//					eow_position = 0; // TODO: check resetting of last eow index
 					if (sow_position > eow_position)
 					{
 						// New word was actually found after the last matched end-of-word.
 						accumulator.begin_index = sow_position;
-						accumulator.width = sow_width;
+						accumulator.width = sow_start_width;
 					}
 					else
 					{
@@ -140,8 +139,10 @@ namespace agge
 						accumulator.width = 0.0f;
 						while (i != end && isspace(*i))
 							i++;
+						eow_position = 0;
 						continue;
 					}
+					eow_position = 0;
 				}
 				i++;
 			}
