@@ -17,6 +17,60 @@ namespace agge
 		{
 			font::metrics c_fm1 = { 10.0f, 2.0f, 2.0f };
 			font::metrics c_fm2 = { 14.0f, 3.0f, 1.0f };
+
+			class ref_glyph_run
+			{
+			public:
+				template <size_t n>
+				ref_glyph_run(shared_ptr<font> font_, real_t offset_x, real_t offset_y, glyph_index_t (&indices)[n])
+					: _font(font_), _offset(create_vector(offset_x, offset_y)), _check_glyph_advances(false)
+				{
+					for (size_t i = 0; i != n; ++i)
+					{
+						positioned_glyph g = {	create_vector(0.0f, 0.0f), indices[i]	};
+						_glyphs.push_back(g);
+					}
+				}
+
+				template <typename T>
+				ref_glyph_run(shared_ptr<font> font_, real_t offset_x, real_t offset_y, const vector<T> &indices)
+					: _font(font_), _offset(create_vector(offset_x, offset_y)), _check_glyph_advances(false)
+				{
+					for (typename vector<T>::const_iterator i = indices.begin(); i != indices.end(); ++i)
+					{
+						positioned_glyph g = {	create_vector(0.0f, 0.0f), static_cast<glyph_index_t>(*i)	};
+						_glyphs.push_back(g);
+					}
+				}
+
+				template <size_t n>
+				ref_glyph_run(shared_ptr<font> font_, real_t offset_x, real_t offset_y,
+						positioned_glyph (&positioned)[n])
+					: _font(font_), _offset(create_vector(offset_x, offset_y)), _glyphs(mkvector(begin(positioned),
+						end(positioned))), _check_glyph_advances(true)
+				{	}
+
+				bool operator ==(const glyph_run &run) const
+				{
+					if (_font == run.glyph_run_font && _offset == run.offset)
+					{
+						vector<positioned_glyph>::const_iterator i = _glyphs.begin();
+						positioned_glyphs_container_t::const_iterator j = run.begin();
+
+						for (; i != _glyphs.end() && j != run.end(); ++i, ++j)
+							if (i->index != j->index || _check_glyph_advances && !(i->d == j->d))
+								return false;
+						return true;
+					}
+					return false;
+				}
+
+			private:
+				shared_ptr<font> _font;
+				vector_r _offset;
+				vector<positioned_glyph> _glyphs;
+				bool _check_glyph_advances;
+			};
 		}
 
 		begin_test_suite( LayoutTests )
@@ -102,7 +156,7 @@ namespace agge
 					{ { 10.1, 0 } },
 				};
 				font::ptr f1 = mocks::create_font(c_fm1, indices1, glyphs);
-				font::ptr f2 = mocks::create_font(c_fm1, indices2, glyphs);
+				font::ptr f2 = mocks::create_font(c_fm2, indices2, glyphs);
 				layout::const_iterator gr;
 
 				// INIT / ACT
@@ -135,28 +189,20 @@ namespace agge
 					{ 13.0f, 0.0f, 0 },
 				};
 
-				gr = l1.begin();
-				assert_equal(1, std::distance(gr, l1.end()));
-				assert_equal(f1, gr->glyph_run_font);
-				assert_equal(reference1, mkvector(gr->begin(), gr->end()));
+				assert_equal(plural + ref_glyph_run(f1, 0.0f, 10.0f, reference1),
+					mkvector(l1.begin(), l1.end()));
 
-				gr = l2.begin();
-				assert_equal(1, std::distance(gr, l2.end()));
-				assert_equal(f1, gr->glyph_run_font);
-				assert_equal(reference2, mkvector(gr->begin(), gr->end()));
+				assert_equal(plural + ref_glyph_run(f1, 0.0f, 10.0f, reference2),
+					mkvector(l2.begin(), l2.end()));
 
-				gr = l3.begin();
-				assert_equal(1, std::distance(gr, l3.end()));
-				assert_equal(reference3, mkvector(gr->begin(), gr->end()));
+				assert_equal(plural + ref_glyph_run(f1, 0.0f, 10.0f, reference3),
+					mkvector(l3.begin(), l3.end()));
 
-				gr = l4.begin();
-				assert_equal(1, std::distance(gr, l4.end()));
-				assert_equal(f2, gr->glyph_run_font);
-				assert_equal(reference4, mkvector(gr->begin(), gr->end()));
+				assert_equal(plural + ref_glyph_run(f2, 0.0f, 14.0f, reference4),
+					mkvector(l4.begin(), l4.end()));
 
-				gr = l5.begin();
-				assert_equal(1, std::distance(gr, l5.end()));
-				assert_equal(reference5, mkvector(gr->begin(), gr->end()));
+				assert_equal(plural + ref_glyph_run(f2, 0.0f, 14.0f, reference5),
+					mkvector(l5.begin(), l5.end()));
 			}
 
 
@@ -210,16 +256,10 @@ namespace agge
 				l.process(L"ABC CBA AB\n\n\nABB BBC\n\n");
 
 				// ASSERT
-				glyph_index_t reference1[] = {	1, 2, 3, 0, 3, 2, 1, 0, 1, 2,	};
-				glyph_index_t reference2[] = {	1, 2, 2, 0, 2, 2, 3,	};
-				layout::const_iterator gr = l.begin();
-
-				assert_equal(2, std::distance(gr, l.end()));
-				assert_equal(create_vector(0.0f, 10.0f), gr->offset);
-				assert_equal(reference1, mkvector(gr->begin(), gr->end()));
-				++gr;
-				assert_equal(create_vector(0.0f, 52.0f), gr->offset);
-				assert_equal(reference2, mkvector(gr->begin(), gr->end()));
+				assert_equal(plural
+					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 1 + 2 + 3 + 0 + 3 + 2 + 1 + 0 + 1 + 2)
+					+ ref_glyph_run(f, 0.0f, 52.0f, plural + 1 + 2 + 2 + 0 + 2 + 2 + 3),
+					mkvector(l.begin(), l.end()));
 			}
 
 
@@ -253,6 +293,13 @@ namespace agge
 					{ 11.0f, 0.0f, 1 }, { 13.0f, 0.0f, 2 }, { 13.0f, 0.0f, 2 }, { 7.1f, 0.0f, 0 }, { 13.0f, 0.0f, 2 },
 						{ 13.0f, 0.0f, 2 }, { 17.0f, 0.0f, 3 }, 
 				};
+
+				assert_equal(plural
+					+ ref_glyph_run(f1, 0.0f, 10.0f, reference11)
+					+ ref_glyph_run(f1, 0.0f, 24.0f, reference12),
+					mkvector(l1.begin(), l1.end()));
+
+
 				positioned_glyph reference21[] = {
 					{ 11.0f, 0.0f, 1 }, { 17.0f, 0.0f, 3 }, { 7.1f, 0.0f, 0 }, { 17.0f, 0.0f, 3 }, { 13.0f, 0.0f, 2 },
 				};
@@ -264,24 +311,11 @@ namespace agge
 						{ 13.0f, 0.0f, 2 }, { 17.0f, 0.0f, 3 },
 				};
 
-				gr = l1.begin();
-				assert_equal(2, std::distance(gr, l1.end()));
-				assert_equal(create_vector(0.0f, 10.0f), gr->offset);
-				assert_equal(reference11, mkvector(gr->begin(), gr->end()));
-				++gr;
-				assert_equal(create_vector(0.0f, 24.0f), gr->offset);
-				assert_equal(reference12, mkvector(gr->begin(), gr->end()));
-
-				gr = l2.begin();
-				assert_equal(3, std::distance(gr, l2.end()));
-				assert_equal(create_vector(0.0f, 14.0f), gr->offset);
-				assert_equal(reference21, mkvector(gr->begin(), gr->end()));
-				++gr;
-				assert_equal(create_vector(0.0f, 32.0f), gr->offset);
-				assert_equal(reference22, mkvector(gr->begin(), gr->end()));
-				++gr;
-				assert_equal(create_vector(0.0f, 50.0f), gr->offset);
-				assert_equal(reference23, mkvector(gr->begin(), gr->end()));
+				assert_equal(plural
+					+ ref_glyph_run(f2, 0.0f, 14.0f, reference21)
+					+ ref_glyph_run(f2, 0.0f, 32.0f, reference22)
+					+ ref_glyph_run(f2, 0.0f, 50.0f, reference23),
+					mkvector(l2.begin(), l2.end()));
 			}
 		
 
@@ -316,56 +350,17 @@ namespace agge
 				l2.process(L"CCC'C BBB AA AA AAAABBB CCCC AAAA ABABABABAB.");
 
 				// ASSERT
-				positioned_glyph reference11[] = {
-					{ 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 7.1f, 0.0f, 0 },
-					{ 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 7.1f, 0.0f, 0 },
-					{ 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 },
-				};
-				positioned_glyph reference12[] = {
-					{ 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 7.1f, 0.0f, 0 },
-					{ 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 },
-				};
+				assert_equal(plural
+					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 1 + 1 + 1 + 1 + 0 + 2 + 2 + 2 + 2 + 0 + 3 + 3)
+					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 2 + 2 + 2 + 2 + 0 + 1 + 1 + 1 + 1),
+					mkvector(l1.begin(), l1.end()));
 
-				positioned_glyph reference21[] = {
-					{ 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 }, { 3.0f, 0.0f, 4 }, { 13.0f, 0.0f, 3 },
-						{ 7.1f, 0.0f, 0 },
-					{ 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 }, { 7.1f, 0.0f, 0 },
-					{ 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 },
-				};
-				positioned_glyph reference22[] = {
-					{ 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 7.1f, 0.0f, 0 },
-					{ 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 12.0f, 0.0f, 2 },
-						{ 12.0f, 0.0f, 2 }, { 12.0f, 0.0f, 2 },
-				};
-				positioned_glyph reference23[] = {
-					{ 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 }, { 13.0f, 0.0f, 3 }, { 7.1f, 0.0f, 0 },
-					{ 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, { 11.0f, 0.0f, 1 }, 
-				};
-				positioned_glyph reference24[] = {
-					{ 11.0f, 0.0f, 1 }, { 12.0f, 0.0f, 2 }, { 11.0f, 0.0f, 1 }, { 12.0f, 0.0f, 2 }, { 11.0f, 0.0f, 1 },
-						{ 12.0f, 0.0f, 2 }, { 11.0f, 0.0f, 1 }, { 12.0f, 0.0f, 2 }, { 11.0f, 0.0f, 1 }, { 12.0f, 0.0f, 2 },
-						{ 3.0f, 0.0f, 5 },
-				};
-
-				gr = l1.begin();
-				assert_equal(2, std::distance(gr, l1.end()));
-				assert_approx_equal(132.2f, gr->width, 0.001f);
-				assert_equal(create_vector(0.0f, 10.0f), gr->offset);
-				assert_equal(reference11, mkvector(gr->begin(), gr->end()));
-				++gr;
-				assert_approx_equal(99.1f, gr->width, 0.001f);
-				assert_equal(create_vector(0.0f, 24.0f), gr->offset);
-				assert_equal(reference12, mkvector(gr->begin(), gr->end()));
-
-				gr = l2.begin();
-				assert_equal(4, std::distance(gr, l2.end()));
-				assert_equal(reference21, mkvector(gr->begin(), gr->end()));
-				++gr;
-				assert_equal(reference22, mkvector(gr->begin(), gr->end()));
-				++gr;
-				assert_equal(reference23, mkvector(gr->begin(), gr->end()));
-				++gr;
-				assert_equal(reference24, mkvector(gr->begin(), gr->end()));
+				assert_equal(plural
+					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 3 + 3 + 3 + 4 + 3 + 0 + 2 + 2 + 2 + 0 + 1 + 1)
+					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 1 + 1 + 0 + 1 + 1 + 1 + 1 + 2 + 2 + 2)
+					+ ref_glyph_run(f, 0.0f, 38.0f, plural + 3 + 3 + 3 +3 + 0 + 1 + 1 + 1 + 1)
+					+ ref_glyph_run(f, 0.0f, 52.0f, plural + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 5),
+					mkvector(l2.begin(), l2.end()));
 			}
 
 
@@ -387,38 +382,22 @@ namespace agge
 				l.process(L"ABCABCABC");
 
 				// ASSERT
-				positioned_glyph reference1[] = { { 1.0f, 0.0f, 0 }, { 2.0f, 0.0f, 1 }, { 3.0f, 0.0f, 2 }, };
-
-				gr = l.begin();
-				assert_equal(3, std::distance(gr, l.end()));
-				assert_equal(reference1, mkvector(gr->begin(), gr->end()));
-				++gr;
-				assert_equal(reference1, mkvector(gr->begin(), gr->end()));
-				++gr;
-				assert_equal(reference1, mkvector(gr->begin(), gr->end()));
+				assert_equal(plural
+					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 0 + 1 + 2)
+					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 0 + 1 + 2)
+					+ ref_glyph_run(f, 0.0f, 38.0f, plural + 0 + 1 + 2),
+					mkvector(l.begin(), l.end()));
 
 				// ACT
 				l.set_width_limit(8);
 				l.process(L"ABCABCABC");
 
 				// ASSERT
-				positioned_glyph reference21[] = {
-					{ 1.0f, 0.0f, 0 }, { 2.0f, 0.0f, 1 }, { 3.0f, 0.0f, 2 }, { 1.0f, 0.0f, 0 },
-				};
-				positioned_glyph reference22[] = {
-					{ 2.0f, 0.0f, 1 }, { 3.0f, 0.0f, 2 }, { 1.0f, 0.0f, 0 }, { 2.0f, 0.0f, 1 },
-				};
-				positioned_glyph reference23[] = {
-					{ 3.0f, 0.0f, 2 },
-				};
-
-				gr = l.begin();
-				assert_equal(3, std::distance(gr, l.end()));
-				assert_equal(reference21, mkvector(gr->begin(), gr->end()));
-				++gr;
-				assert_equal(reference22, mkvector(gr->begin(), gr->end()));
-				++gr;
-				assert_equal(reference23, mkvector(gr->begin(), gr->end()));
+				assert_equal(plural
+					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 0 + 1 + 2 + 0)
+					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 1 + 2 + 0 + 1)
+					+ ref_glyph_run(f, 0.0f, 38.0f, plural + 2),
+					mkvector(l.begin(), l.end()));
 			}
 
 
@@ -530,17 +509,11 @@ namespace agge
 				l.process(L"AAAAA   AAAA    AA");
 
 				// ASSERT
-				glyph_index_t reference1[] = {	0, 0, 0, 0, 0,	};
-				glyph_index_t reference2[] = {	0, 0, 0, 0,	};
-				glyph_index_t reference3[] = {	0, 0,	};
-
-				assert_equal(3, distance(l.begin(), l.end()));
-				layout::const_iterator i = l.begin();
-				assert_equal(reference1, mkvector(i->begin(), i->end()));
-				++i;
-				assert_equal(reference2, mkvector(i->begin(), i->end()));
-				++i;
-				assert_equal(reference3, mkvector(i->begin(), i->end()));
+				assert_equal(plural
+					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 0 + 0 + 0 + 0 + 0)
+					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 0 + 0 + 0 + 0)
+					+ ref_glyph_run(f, 0.0f, 38.0f, plural + 0 + 0),
+					mkvector(l.begin(), l.end()));
 			}
 
 
@@ -561,14 +534,10 @@ namespace agge
 				l.process(L"AAAAA   A   A");
 
 				// ASSERT
-				glyph_index_t reference1[] = {	1, 1, 1, 1, 1,	};
-				glyph_index_t reference2[] = {	1, 0, 0, 0, 1,	};
-
-				assert_equal(2, distance(l.begin(), l.end()));
-				layout::const_iterator i = l.begin();
-				assert_equal(reference1, mkvector(i->begin(), i->end()));
-				++i;
-				assert_equal(reference2, mkvector(i->begin(), i->end()));
+				assert_equal(plural
+					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 1 + 1 + 1 + 1 + 1)
+					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 1 + 0 + 0 + 0 + 1),
+					mkvector(l.begin(), l.end()));
 			}
 
 
@@ -594,17 +563,11 @@ namespace agge
 				l.process(L"ABCD ABCDCDC");
 
 				// ASSERT
-				glyph_index_t reference1[] = {	1, 2, 3, 4,	};
-				glyph_index_t reference2[] = {	1, 2, 3, 4, 3, 4,	};
-				glyph_index_t reference3[] = {	3,	};
-
-				assert_equal(3, distance(l.begin(), l.end()));
-				layout::const_iterator i = l.begin();
-				assert_equal(reference1, mkvector(i->begin(), i->end()));
-				++i;
-				assert_equal(reference2, mkvector(i->begin(), i->end()));
-				++i;
-				assert_equal(reference3, mkvector(i->begin(), i->end()));
+				assert_equal(plural
+					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 1 + 2 + 3 + 4)
+					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 1 + 2 + 3 + 4 + 3 + 4)
+					+ ref_glyph_run(f, 0.0f, 38.0f, plural + 3),
+					mkvector(l.begin(), l.end()));
 			}
 
 
@@ -630,20 +593,11 @@ namespace agge
 				l.process(L"ABCD ABCDCDC");
 
 				// ASSERT
-				glyph_index_t reference1[] = {	1, 2, 3, 4,	};
-				glyph_index_t reference2[] = {	1, 2, 3, 4,	};
-				glyph_index_t reference3[] = {	3,	4, 3, };
-
-				assert_equal(3, distance(l.begin(), l.end()));
-				layout::const_iterator i = l.begin();
-				assert_approx_equal(36.0f, i->width, 0.001f);
-				assert_equal(reference1, mkvector(i->begin(), i->end()));
-				++i;
-				assert_approx_equal(36.0f, i->width, 0.001f);
-				assert_equal(reference2, mkvector(i->begin(), i->end()));
-				++i;
-				assert_approx_equal(35.0f, i->width, 0.001f);
-				assert_equal(reference3, mkvector(i->begin(), i->end()));
+				assert_equal(plural
+					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 1 + 2 + 3 + 4)
+					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 1 + 2 + 3 + 4)
+					+ ref_glyph_run(f, 0.0f, 38.0f, plural + 3 + 4 + 3),
+					mkvector(l.begin(), l.end()));
 			}
 		end_test_suite
 	}

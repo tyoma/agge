@@ -5,11 +5,39 @@
 #include <iterator>
 #include <tests/common/helpers.h>
 #include <vector>
+#include <ut/assert.h>
 
 namespace agge
 {
 	namespace tests
 	{
+		namespace
+		{
+			template <typename T1, typename T2>
+			inline bool operator ==(const std::vector<T1> &lhs, const std::vector<T2> &rhs)
+			{
+				typename std::vector<T1>::const_iterator i = lhs.begin();
+				typename std::vector<T2>::const_iterator j = rhs.begin();
+
+				for (; i != lhs.end() && j != rhs.end(); ++i, ++j)
+					if (!(*i == *j))
+						return false;
+				return i == lhs.end() && j == rhs.end();
+			}
+		}
+
+		struct plural_
+		{
+			template <typename T>
+			std::vector<T> operator +(const T &rhs) const
+			{	return std::vector<T>(1, rhs);	}
+		} const plural;
+
+		template <typename T>
+		inline std::vector<T> operator +(std::vector<T> lhs, const T &rhs)
+		{	return lhs.push_back(rhs), lhs;	}
+
+
 		template <typename Iterator>
 		inline std::vector<typename std::iterator_traits<Iterator>::value_type> mkvector(Iterator begin, Iterator end)
 		{	return std::vector<typename std::iterator_traits<Iterator>::value_type>(begin, end);	}
@@ -48,12 +76,6 @@ namespace agge
 
 	inline bool operator ==(const vector_r &lhs, const vector_r &rhs)
 	{	return tests::equal(lhs.dx, rhs.dx) && tests::equal(lhs.dy, rhs.dy);	}
-
-	inline bool operator ==(const positioned_glyph &lhs, const positioned_glyph &rhs)
-	{	return lhs.d == rhs.d && lhs.index == rhs.index;	}
-
-	inline bool operator ==(glyph_index_t lhs, const positioned_glyph &rhs)
-	{	return lhs == rhs.index;	}
 
 	inline bool operator ==(const glyph::path_point &lhs, const glyph::path_point &rhs)
 	{	return lhs.command == rhs.command && tests::equal(lhs.x, rhs.x) && tests::equal(lhs.y, rhs.y);	}
