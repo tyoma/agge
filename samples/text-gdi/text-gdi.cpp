@@ -26,7 +26,6 @@ namespace demo
 		{
 			long long counter;
 			const rect_i area = { 0, 0, static_cast<int>(surface.width()), static_cast<int>(surface.height()) };
-			size_t glyphs = 0;
 			dc ctx(&surface);
 			dc::handle h = ctx.select(_font_accessor->native());
 
@@ -38,18 +37,25 @@ namespace demo
 				::SetTextAlign(ctx, TA_BASELINE | TA_LEFT);
 				for (layout::const_iterator i = _layout.begin(); i != _layout.end(); ++i)
 				{
-					real_t x = i->offset.dx + _ddx;
+					vector_r d = i->offset;
+
+					d.dx += _ddx;
 
 					_glyph_indices.clear();
 
 					if (i->offset.dy > surface.height())
 						break;
 
-					glyphs += distance(i->begin(), i->end());
-					for (positioned_glyphs_container_t::const_iterator j = i->begin(); j != i->end(); ++j)
-						_glyph_indices.push_back(j->index);
-					::ExtTextOut(ctx, static_cast<int>(x), static_cast<int>(i->offset.dy), ETO_GLYPH_INDEX /*| ETO_PDY*/, 0,
-						reinterpret_cast<LPCTSTR>(&_glyph_indices[0]), static_cast<UINT>(_glyph_indices.size()), 0);
+					for (glyph_runs_container_t::const_iterator j = i->begin(); j != i->end(); ++j)
+					{
+						vector_r dg = d;
+
+						dg += j->offset;
+						for (positioned_glyphs_container_t::const_iterator k = j->begin(); k != j->end(); ++k)
+							_glyph_indices.push_back(k->index);
+						::ExtTextOut(ctx, static_cast<int>(dg.dx), static_cast<int>(dg.dy), ETO_GLYPH_INDEX /*| ETO_PDY*/, 0,
+							reinterpret_cast<LPCTSTR>(&_glyph_indices[0]), static_cast<UINT>(_glyph_indices.size()), 0);
+					}
 				}
 
 			double rasterization = stopwatch(counter);

@@ -50,14 +50,14 @@ namespace agge
 						end(positioned))), _check_glyph_advances(true)
 				{	}
 
-				bool operator ==(const glyph_run &run) const
+				bool operator ==(const glyph_run &rhs) const
 				{
-					if (_font == run.glyph_run_font && _offset == run.offset)
+					if (_font == rhs.glyph_run_font && _offset == rhs.offset)
 					{
 						vector<positioned_glyph>::const_iterator i = _glyphs.begin();
-						positioned_glyphs_container_t::const_iterator j = run.begin();
+						positioned_glyphs_container_t::const_iterator j = rhs.begin();
 
-						for (; i != _glyphs.end() && j != run.end(); ++i, ++j)
+						for (; i != _glyphs.end() && j != rhs.end(); ++i, ++j)
 							if (i->index != j->index || (_check_glyph_advances && !(i->d == j->d)))
 								return false;
 						return true;
@@ -70,6 +70,34 @@ namespace agge
 				vector_r _offset;
 				vector<positioned_glyph> _glyphs;
 				bool _check_glyph_advances;
+			};
+
+			class ref_text_line
+			{
+			public:
+				ref_text_line(real_t offset_x, real_t offset_y, real_t width, const vector<ref_glyph_run> &glyph_runs)
+					: _offset(create_vector(offset_x, offset_y)), _width(width), _glyph_runs(glyph_runs)
+				{	}
+
+				bool operator ==(const text_line &rhs) const
+				{
+					if (_offset == rhs.offset)
+					{
+						vector<ref_glyph_run>::const_iterator i = _glyph_runs.begin();
+						glyph_runs_container_t::const_iterator j = rhs.begin();
+
+						for (; i != _glyph_runs.end() && j != rhs.end(); ++i, ++j)
+							if (!(*i == *j))
+								return false;
+						return true;
+					}
+					return false;
+				}
+
+			private:
+				vector_r _offset;
+				real_t _width;
+				vector<ref_glyph_run> _glyph_runs;
 			};
 		}
 
@@ -189,19 +217,19 @@ namespace agge
 					{ 13.0f, 0.0f, 0 },
 				};
 
-				assert_equal(plural + ref_glyph_run(f1, 0.0f, 10.0f, reference1),
+				assert_equal(plural + ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f1, 0.0f, 0.0f, reference1)),
 					mkvector(l1.begin(), l1.end()));
 
-				assert_equal(plural + ref_glyph_run(f1, 0.0f, 10.0f, reference2),
+				assert_equal(plural + ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f1, 0.0f, 0.0f, reference2)),
 					mkvector(l2.begin(), l2.end()));
 
-				assert_equal(plural + ref_glyph_run(f1, 0.0f, 10.0f, reference3),
+				assert_equal(plural + ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f1, 0.0f, 0.0f, reference3)),
 					mkvector(l3.begin(), l3.end()));
 
-				assert_equal(plural + ref_glyph_run(f2, 0.0f, 14.0f, reference4),
+				assert_equal(plural + ref_text_line(0.0f, 14.0f, 0.0f, plural + ref_glyph_run(f2, 0.0f, 0.0f, reference4)),
 					mkvector(l4.begin(), l4.end()));
 
-				assert_equal(plural + ref_glyph_run(f2, 0.0f, 14.0f, reference5),
+				assert_equal(plural + ref_text_line(0.0f, 14.0f, 0.0f, plural + ref_glyph_run(f2, 0.0f, 0.0f, reference5)),
 					mkvector(l5.begin(), l5.end()));
 			}
 
@@ -257,8 +285,8 @@ namespace agge
 
 				// ASSERT
 				assert_equal(plural
-					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 1 + 2 + 3 + 0 + 3 + 2 + 1 + 0 + 1 + 2)
-					+ ref_glyph_run(f, 0.0f, 52.0f, plural + 1 + 2 + 2 + 0 + 2 + 2 + 3),
+					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 3 + 0 + 3 + 2 + 1 + 0 + 1 + 2))
+					+ ref_text_line(0.0f, 52.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 2 + 0 + 2 + 2 + 3)),
 					mkvector(l.begin(), l.end()));
 			}
 
@@ -295,8 +323,8 @@ namespace agge
 				};
 
 				assert_equal(plural
-					+ ref_glyph_run(f1, 0.0f, 10.0f, reference11)
-					+ ref_glyph_run(f1, 0.0f, 24.0f, reference12),
+					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f1, 0.0f, 0.0f, reference11))
+					+ ref_text_line(0.0f, 24.0f, 0.0f, plural + ref_glyph_run(f1, 0.0f, 0.0f, reference12)),
 					mkvector(l1.begin(), l1.end()));
 
 
@@ -312,9 +340,9 @@ namespace agge
 				};
 
 				assert_equal(plural
-					+ ref_glyph_run(f2, 0.0f, 14.0f, reference21)
-					+ ref_glyph_run(f2, 0.0f, 32.0f, reference22)
-					+ ref_glyph_run(f2, 0.0f, 50.0f, reference23),
+					+ ref_text_line(0.0f, 14.0f, 0.0f, plural + ref_glyph_run(f2, 0.0f, 0.0f, reference21))
+					+ ref_text_line(0.0f, 32.0f, 0.0f, plural + ref_glyph_run(f2, 0.0f, 0.0f, reference22))
+					+ ref_text_line(0.0f, 50.0f, 0.0f, plural + ref_glyph_run(f2, 0.0f, 0.0f, reference23)),
 					mkvector(l2.begin(), l2.end()));
 			}
 		
@@ -351,15 +379,15 @@ namespace agge
 
 				// ASSERT
 				assert_equal(plural
-					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 1 + 1 + 1 + 1 + 0 + 2 + 2 + 2 + 2 + 0 + 3 + 3)
-					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 2 + 2 + 2 + 2 + 0 + 1 + 1 + 1 + 1),
+					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 1 + 1 + 1 + 0 + 2 + 2 + 2 + 2 + 0 + 3 + 3))
+					+ ref_text_line(0.0f, 24.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 2 + 2 + 2 + 2 + 0 + 1 + 1 + 1 + 1)),
 					mkvector(l1.begin(), l1.end()));
 
 				assert_equal(plural
-					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 3 + 3 + 3 + 4 + 3 + 0 + 2 + 2 + 2 + 0 + 1 + 1)
-					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 1 + 1 + 0 + 1 + 1 + 1 + 1 + 2 + 2 + 2)
-					+ ref_glyph_run(f, 0.0f, 38.0f, plural + 3 + 3 + 3 +3 + 0 + 1 + 1 + 1 + 1)
-					+ ref_glyph_run(f, 0.0f, 52.0f, plural + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 5),
+					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 3 + 3 + 3 + 4 + 3 + 0 + 2 + 2 + 2 + 0 + 1 + 1))
+					+ ref_text_line(0.0f, 24.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 1 + 0 + 1 + 1 + 1 + 1 + 2 + 2 + 2))
+					+ ref_text_line(0.0f, 38.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 3 + 3 + 3 +3 + 0 + 1 + 1 + 1 + 1))
+					+ ref_text_line(0.0f, 52.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 5)),
 					mkvector(l2.begin(), l2.end()));
 			}
 
@@ -383,9 +411,9 @@ namespace agge
 
 				// ASSERT
 				assert_equal(plural
-					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 0 + 1 + 2)
-					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 0 + 1 + 2)
-					+ ref_glyph_run(f, 0.0f, 38.0f, plural + 0 + 1 + 2),
+					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 0 + 1 + 2))
+					+ ref_text_line(0.0f, 24.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 0 + 1 + 2))
+					+ ref_text_line(0.0f, 38.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 0 + 1 + 2)),
 					mkvector(l.begin(), l.end()));
 
 				// ACT
@@ -394,9 +422,9 @@ namespace agge
 
 				// ASSERT
 				assert_equal(plural
-					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 0 + 1 + 2 + 0)
-					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 1 + 2 + 0 + 1)
-					+ ref_glyph_run(f, 0.0f, 38.0f, plural + 2),
+					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 0 + 1 + 2 + 0))
+					+ ref_text_line(0.0f, 24.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 0 + 1))
+					+ ref_text_line(0.0f, 38.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 2)),
 					mkvector(l.begin(), l.end()));
 			}
 
@@ -510,9 +538,9 @@ namespace agge
 
 				// ASSERT
 				assert_equal(plural
-					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 0 + 0 + 0 + 0 + 0)
-					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 0 + 0 + 0 + 0)
-					+ ref_glyph_run(f, 0.0f, 38.0f, plural + 0 + 0),
+					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 0 + 0 + 0 + 0 + 0))
+					+ ref_text_line(0.0f, 24.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 0 + 0 + 0 + 0))
+					+ ref_text_line(0.0f, 38.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 0 + 0)),
 					mkvector(l.begin(), l.end()));
 			}
 
@@ -535,8 +563,8 @@ namespace agge
 
 				// ASSERT
 				assert_equal(plural
-					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 1 + 1 + 1 + 1 + 1)
-					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 1 + 0 + 0 + 0 + 1),
+					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 1 + 1 + 1 + 1))
+					+ ref_text_line(0.0f, 24.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 0 + 0 + 0 + 1)),
 					mkvector(l.begin(), l.end()));
 			}
 
@@ -564,9 +592,9 @@ namespace agge
 
 				// ASSERT
 				assert_equal(plural
-					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 1 + 2 + 3 + 4)
-					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 1 + 2 + 3 + 4 + 3 + 4)
-					+ ref_glyph_run(f, 0.0f, 38.0f, plural + 3),
+					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 3 + 4))
+					+ ref_text_line(0.0f, 24.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 3 + 4 + 3 + 4))
+					+ ref_text_line(0.0f, 38.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 3)),
 					mkvector(l.begin(), l.end()));
 			}
 
@@ -594,9 +622,9 @@ namespace agge
 
 				// ASSERT
 				assert_equal(plural
-					+ ref_glyph_run(f, 0.0f, 10.0f, plural + 1 + 2 + 3 + 4)
-					+ ref_glyph_run(f, 0.0f, 24.0f, plural + 1 + 2 + 3 + 4)
-					+ ref_glyph_run(f, 0.0f, 38.0f, plural + 3 + 4 + 3),
+					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 3 + 4))
+					+ ref_text_line(0.0f, 24.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 3 + 4))
+					+ ref_text_line(0.0f, 38.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 3 + 4 + 3)),
 					mkvector(l.begin(), l.end()));
 			}
 		end_test_suite

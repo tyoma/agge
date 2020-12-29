@@ -29,7 +29,6 @@ namespace agge
 
 		shared_ptr<font> glyph_run_font;
 		vector_r offset;
-		real_t width;
 	};
 
 	struct text_line : range<const glyph_runs_container_t>
@@ -37,12 +36,17 @@ namespace agge
 		text_line(const glyph_runs_container_t &container);
 
 		vector_r offset;
-		rect_r cover_box;
+		real_t width;
 	};
 
 
 
 	inline glyph_run::glyph_run(const positioned_glyphs_container_t &container)
 		: range<const positioned_glyphs_container_t>(container)
+	{	}
+
+
+	inline text_line::text_line(const glyph_runs_container_t &container)
+		: range<const glyph_runs_container_t>(container)
 	{	}
 }

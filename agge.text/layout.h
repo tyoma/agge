@@ -8,7 +8,8 @@ namespace agge
 	class layout : noncopyable
 	{
 	public:
-		typedef glyph_runs_container_t::const_iterator const_iterator;
+		typedef std::vector<text_line> text_lines_container_t;
+		typedef text_lines_container_t::const_iterator const_iterator;
 
 	public:
 		layout(shared_ptr<font> base_font);
@@ -21,21 +22,19 @@ namespace agge
 		const_iterator begin() const;
 		const_iterator end() const;
 
-	public:
-		void new_line(glyph_run &range_, real_t dy);
-
 	private:
 		shared_ptr<font> _base_font;
 		positioned_glyphs_container_t _glyphs;
 		glyph_runs_container_t _glyph_runs;
+		text_lines_container_t _text_lines;
 		real_t _limit_width;
 	};
 
 
 
 	inline layout::const_iterator layout::begin() const
-	{	return _glyph_runs.begin();	}
+	{	return _text_lines.begin();	}
 
 	inline layout::const_iterator layout::end() const
-	{	return _glyph_runs.end();	}
+	{	return _text_lines.end();	}
 }

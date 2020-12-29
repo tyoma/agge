@@ -49,19 +49,19 @@ namespace agge
 
 		template <typename ContainerT, typename CharIteratorT>
 		bool /*end-of-line*/ fill_glyph_run(ContainerT &glyphs, glyph_run &accumulator, glyph_run &next, real_t &limit,
-			CharIteratorT &i, CharIteratorT text_end)
+			real_t &occupied, real_t &next_occupied, CharIteratorT &i, CharIteratorT text_end)
 		{
 			const font &font_ = *accumulator.glyph_run_font;
 			size_t eow_position = 0, sow_position = 0;
 			real_t eow_limit = 0.0f, sow_prior_limit = 0.0f;
 
-			for (const real_t start_limit = limit; i != text_end; )
+			for (/*const real_t start_limit = limit*/; i != text_end; )
 			{
 				if (eat_lf(i))
 				{
 					// Next line: line-feed
 					next.begin_index = next.end_index = accumulator.end_index;
-					limit = 0.0f;
+					next_occupied = 0.0f;
 					return true;
 				}
 
@@ -82,13 +82,13 @@ namespace agge
 						// Next line: normal word-boundary break
 						next = accumulator;
 						accumulator.end_index = eow_position;
-						accumulator.width += start_limit - eow_limit;
+//						accumulator.width += start_limit - eow_limit;
 						if (sow_position > eow_position)
 						{
 							// New word was actually found after the last matched end-of-word.
 							next.begin_index = sow_position;
-							next.width = sow_prior_limit - limit;
-							limit = next.width;
+//							next.width = sow_prior_limit - limit;
+							next_occupied = sow_prior_limit - limit;
 						}
 						else
 						{
@@ -96,23 +96,22 @@ namespace agge
 							while (i != text_end && is_space(*i))
 								++i;
 							next.set_end();
-							next.width = 0.0f;
-							limit = 0.0f;
+							next_occupied = 0.0f;
 						}
 					}
 					else
 					{
 						// Next line: emergency mid-word break
 						next.begin_index = next.end_index = accumulator.end_index;
-						limit = 0.0f;
+						next_occupied = 0.0f;
 					}
 					return true;
 				}
 
 				glyphs.push_back(pg);
 				accumulator.extend_end();
-				accumulator.width += advance;
 				limit -= advance;
+				occupied += advance;
 				++i;
 			}
 			return false;
@@ -125,10 +124,13 @@ namespace agge
 
 	void layout::process(const richtext_t &text)
 	{
+		_text_lines.clear();
 		_glyph_runs.clear();
 		_glyphs.clear();
 
-		real_t limit = _limit_width;
+		real_t limit = _limit_width, occupied = 0.0f, next_occupied = 0.0f;
+
+		text_line accumulator_tl(_glyph_runs);
 
 		for (richtext_t::const_iterator range = text.ranges_begin(); range != text.ranges_end(); ++range)
 		{
@@ -137,29 +139,44 @@ namespace agge
 
 			accumulator.set_end();
 			accumulator.glyph_run_font = _base_font;
-			accumulator.offset = create_vector(0.0f, m.ascent);
-			accumulator.width = 0.0f;
+			accumulator.offset = zero();
+
+			accumulator_tl.offset = create_vector(0.0f, m.ascent);
 
 			glyph_run next(accumulator);
 
 			for (detector_iterator i = range->begin(), end = range->end();
-				fill_glyph_run(_glyphs, accumulator, next, limit, i, end);
-				limit = _limit_width - limit)
+				fill_glyph_run(_glyphs, accumulator, next, limit, occupied, next_occupied, i, end);
+				limit = _limit_width - next_occupied)
 			{
 				if (!accumulator.empty())
+				{
 					_glyph_runs.push_back(accumulator);
-				next.offset += create_vector(0.0f, height(m));
+					accumulator_tl.extend_end();
+					accumulator_tl.width = occupied;
+					_text_lines.push_back(accumulator_tl);
+					accumulator_tl.set_end();
+					occupied = 0.0f;
+				}
 				accumulator = next;
+				accumulator_tl.offset += create_vector(0.0f, height(m));
 			}
 			if (!accumulator.empty())
+			{
 				_glyph_runs.push_back(accumulator);
+				accumulator_tl.extend_end();
+				accumulator_tl.width = occupied;
+				_text_lines.push_back(accumulator_tl);
+				accumulator_tl.set_end();
+				occupied = 0.0f;
+			}
 		}
 	}
 
 	void layout::set_width_limit(real_t width)
 	{
 		_limit_width = width;
-		_glyph_runs.clear();
+		_text_lines.clear();
 	}
 
 	box_r layout::get_box()
@@ -175,14 +192,5 @@ namespace agge
 			box.w = agge_max(box.w, i->width);
 		box.h = (end() - begin()) * height(m) - m.leading;
 		return box;
-	}
-
-	void layout::new_line(glyph_run &range_, real_t dy)
-	{
-		if (!range_.empty())
-			_glyph_runs.push_back(range_);
-		range_.set_end();
-		range_.offset += create_vector(0.0f, dy);
-		range_.width = 0.0f;
 	}
 }

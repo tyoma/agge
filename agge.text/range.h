@@ -8,6 +8,9 @@ namespace agge
 	class range
 	{
 	public:
+		typedef typename ContainerT::const_iterator const_iterator;
+
+	public:
 		range(ContainerT &container);
 
 		void set_end();
