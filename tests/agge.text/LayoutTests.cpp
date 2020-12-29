@@ -58,7 +58,7 @@ namespace agge
 						positioned_glyphs_container_t::const_iterator j = run.begin();
 
 						for (; i != _glyphs.end() && j != run.end(); ++i, ++j)
-							if (i->index != j->index || _check_glyph_advances && !(i->d == j->d))
+							if (i->index != j->index || (_check_glyph_advances && !(i->d == j->d)))
 								return false;
 						return true;
 					}

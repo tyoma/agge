@@ -51,6 +51,10 @@ namespace agge
 		typedef hash_map<wchar_t, glyph_index_t> char2index_cache_t;
 
 	private:
+		glyph_index_t load_mapping(wchar_t character) const;
+		const glyph* load_glyph(glyph_index_t index) const;
+
+	private:
 		const accessor_ptr _accessor;
 		const key _key;
 		metrics _metrics;

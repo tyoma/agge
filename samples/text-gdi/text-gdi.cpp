@@ -17,7 +17,8 @@ namespace demo
 	public:
 		TextDrawerGDI()
 			: _font_accessor(new font_accessor(14, L"tahoma", false, false, font::key::gf_none)),
-				_font(new font(font::key(L"tahoma", 14), _font_accessor)), _layout(_font), _ddx(0.0f)
+				_font(new font(font::key(L"tahoma", 14), _font_accessor)), _layout(_font), _text(c_text_long.c_str()),
+				_ddx(0.0f)
 		{	_layout.process(c_text_long.c_str());	}
 
 	private:
@@ -32,7 +33,7 @@ namespace demo
 			stopwatch(counter);
 				agge::fill(surface, area, platform_blender_solid_color(color::make(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
-				_layout.process(c_text_long.c_str());
+				_layout.process(_text);
 			double layouting = stopwatch(counter);
 				::SetTextAlign(ctx, TA_BASELINE | TA_LEFT);
 				for (layout::const_iterator i = _layout.begin(); i != _layout.end(); ++i)
@@ -63,6 +64,7 @@ namespace demo
 	private:
 		shared_ptr<font_accessor> _font_accessor;
 		shared_ptr<font> _font;
+		richtext_t _text;
 		layout _layout;
 		float _ddx;
 		vector<agge::uint16_t> _glyph_indices;

@@ -33,33 +33,37 @@ namespace agge
 	{
 		char2index_cache_t::const_iterator i = _char2glyph.find(character);
 
-		if (_char2glyph.end() == i)
-		{
-			char2index_cache_t::iterator inserted;
-
-			_char2glyph.insert(character, _accessor->get_glyph_index(character), inserted);
-			i = inserted;
-		}
-		return i->second;
+		return _char2glyph.end() != i ? i->second : load_mapping(character);
 	}
 
 	const glyph *font::get_glyph(glyph_index_t index) const
 	{
 		glyphs_cache_t::iterator i = _glyphs.find(index);
 
-		if (_glyphs.end() == i)
-		{
-			glyphs_cache_t::iterator inserted;
-			glyph g;
-
-			g.factor = _factor;
-			g.outline = _accessor->load_glyph(index, g.metrics);
-			g.metrics.advance_x *= _factor;
-			g.metrics.advance_y *= _factor;
-			_glyphs.insert(index, g, i);
-		}
-		return i->second.outline ? &i->second : 0;
+		return _glyphs.end() != i ? i->second.outline ? &i->second : 0 : load_glyph(index);
 	}
+
+	glyph_index_t font::load_mapping(wchar_t character) const
+	{
+		char2index_cache_t::iterator inserted;
+
+		_char2glyph.insert(character, _accessor->get_glyph_index(character), inserted);
+		return inserted->second;
+	}
+
+	const glyph* font::load_glyph(glyph_index_t index) const
+	{
+		glyphs_cache_t::iterator inserted;
+		glyph g;
+
+		g.factor = _factor;
+		g.outline = _accessor->load_glyph(index, g.metrics);
+		g.metrics.advance_x *= _factor;
+		g.metrics.advance_y *= _factor;
+		_glyphs.insert(index, g, inserted);
+		return inserted->second.outline ? &inserted->second : 0;
+	}
+
 
 
 	font::key::key(const wstring &typeface_, int height_, bool bold_, bool italic_, grid_fit grid_fit__)
