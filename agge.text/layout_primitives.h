@@ -29,6 +29,7 @@ namespace agge
 
 		shared_ptr<font> glyph_run_font;
 		vector_r offset;
+		real_t width;
 	};
 
 	struct text_line : range<const glyph_runs_container_t>

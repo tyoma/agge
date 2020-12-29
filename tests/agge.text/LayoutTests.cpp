@@ -81,7 +81,7 @@ namespace agge
 
 				bool operator ==(const text_line &rhs) const
 				{
-					if (_offset == rhs.offset)
+					if (_offset == rhs.offset && (!_width || tests::equal(_width, rhs.width)))
 					{
 						vector<ref_glyph_run>::const_iterator i = _glyph_runs.begin();
 						glyph_runs_container_t::const_iterator j = rhs.begin();
@@ -266,31 +266,6 @@ namespace agge
 			}
 
 
-			test( TrivialLineFeedsDoNotProduceEmptyLines )
-			{
-				// INIT
-				mocks::font_accessor::char_to_index indices[] = { { L' ', 0 }, { L'A', 1 }, { L'B', 2 }, { L'C', 3 }, };
-				mocks::font_accessor::glyph glyphs[] = {
-					{ { 7.1, 0 } },
-					{ { 11, 0 } },
-					{ { 13, 0 } },
-					{ { 17, 0 } },
-				};
-				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
-
-				// ACT
-				layout l(f);
-
-				l.process(L"ABC CBA AB\n\n\nABB BBC\n\n");
-
-				// ASSERT
-				assert_equal(plural
-					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 3 + 0 + 3 + 2 + 1 + 0 + 1 + 2))
-					+ ref_text_line(0.0f, 52.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 2 + 0 + 2 + 2 + 3)),
-					mkvector(l.begin(), l.end()));
-			}
-
-
 			test( MultiLineUnboundLayoutProducesGlyphRunsForEachLine )
 			{
 				// INIT
@@ -323,8 +298,8 @@ namespace agge
 				};
 
 				assert_equal(plural
-					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f1, 0.0f, 0.0f, reference11))
-					+ ref_text_line(0.0f, 24.0f, 0.0f, plural + ref_glyph_run(f1, 0.0f, 0.0f, reference12)),
+					+ ref_text_line(0.0f, 10.0f, 120.2f, plural + ref_glyph_run(f1, 0.0f, 0.0f, reference11))
+					+ ref_text_line(0.0f, 24.0f, 87.1f, plural + ref_glyph_run(f1, 0.0f, 0.0f, reference12)),
 					mkvector(l1.begin(), l1.end()));
 
 
@@ -340,12 +315,37 @@ namespace agge
 				};
 
 				assert_equal(plural
-					+ ref_text_line(0.0f, 14.0f, 0.0f, plural + ref_glyph_run(f2, 0.0f, 0.0f, reference21))
-					+ ref_text_line(0.0f, 32.0f, 0.0f, plural + ref_glyph_run(f2, 0.0f, 0.0f, reference22))
-					+ ref_text_line(0.0f, 50.0f, 0.0f, plural + ref_glyph_run(f2, 0.0f, 0.0f, reference23)),
+					+ ref_text_line(0.0f, 14.0f, 65.1f, plural + ref_glyph_run(f2, 0.0f, 0.0f, reference21))
+					+ ref_text_line(0.0f, 32.0f, 42.1f, plural + ref_glyph_run(f2, 0.0f, 0.0f, reference22))
+					+ ref_text_line(0.0f, 50.0f, 87.1f, plural + ref_glyph_run(f2, 0.0f, 0.0f, reference23)),
 					mkvector(l2.begin(), l2.end()));
 			}
-		
+
+
+			test( TrivialLineFeedsDoNotProduceEmptyLines )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L' ', 0 }, { L'A', 1 }, { L'B', 2 }, { L'C', 3 }, };
+				mocks::font_accessor::glyph glyphs[] = {
+					{ { 7.1, 0 } },
+					{ { 11, 0 } },
+					{ { 13, 0 } },
+					{ { 17, 0 } },
+				};
+				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
+
+				// ACT
+				layout l(f);
+
+				l.process(L"ABC CBA AB\n\n\nABB BBC\n\n");
+
+				// ASSERT
+				assert_equal(plural
+					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 3 + 0 + 3 + 2 + 1 + 0 + 1 + 2))
+					+ ref_text_line(0.0f, 52.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 2 + 0 + 2 + 2 + 3)),
+					mkvector(l.begin(), l.end()));
+			}
+
 
 			test( LongSingleLineIsBrokenOnWordBounds )
 			{
@@ -379,15 +379,15 @@ namespace agge
 
 				// ASSERT
 				assert_equal(plural
-					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 1 + 1 + 1 + 0 + 2 + 2 + 2 + 2 + 0 + 3 + 3))
-					+ ref_text_line(0.0f, 24.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 2 + 2 + 2 + 2 + 0 + 1 + 1 + 1 + 1)),
+					+ ref_text_line(0.0f, 10.0f, 132.2f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 1 + 1 + 1 + 0 + 2 + 2 + 2 + 2 + 0 + 3 + 3))
+					+ ref_text_line(0.0f, 24.0f, 99.1f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 2 + 2 + 2 + 2 + 0 + 1 + 1 + 1 + 1)),
 					mkvector(l1.begin(), l1.end()));
 
 				assert_equal(plural
-					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 3 + 3 + 3 + 4 + 3 + 0 + 2 + 2 + 2 + 0 + 1 + 1))
-					+ ref_text_line(0.0f, 24.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 1 + 0 + 1 + 1 + 1 + 1 + 2 + 2 + 2))
-					+ ref_text_line(0.0f, 38.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 3 + 3 + 3 +3 + 0 + 1 + 1 + 1 + 1))
-					+ ref_text_line(0.0f, 52.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 5)),
+					+ ref_text_line(0.0f, 10.0f, 127.2f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 3 + 3 + 3 + 4 + 3 + 0 + 2 + 2 + 2 + 0 + 1 + 1))
+					+ ref_text_line(0.0f, 24.0f, 109.1f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 1 + 0 + 1 + 1 + 1 + 1 + 2 + 2 + 2))
+					+ ref_text_line(0.0f, 38.0f, 103.1f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 3 + 3 + 3 +3 + 0 + 1 + 1 + 1 + 1))
+					+ ref_text_line(0.0f, 52.0f, 118.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 5)),
 					mkvector(l2.begin(), l2.end()));
 			}
 
@@ -411,9 +411,9 @@ namespace agge
 
 				// ASSERT
 				assert_equal(plural
-					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 0 + 1 + 2))
-					+ ref_text_line(0.0f, 24.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 0 + 1 + 2))
-					+ ref_text_line(0.0f, 38.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 0 + 1 + 2)),
+					+ ref_text_line(0.0f, 10.0f, 6.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 0 + 1 + 2))
+					+ ref_text_line(0.0f, 24.0f, 6.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 0 + 1 + 2))
+					+ ref_text_line(0.0f, 38.0f, 6.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 0 + 1 + 2)),
 					mkvector(l.begin(), l.end()));
 
 				// ACT
@@ -422,9 +422,9 @@ namespace agge
 
 				// ASSERT
 				assert_equal(plural
-					+ ref_text_line(0.0f, 10.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 0 + 1 + 2 + 0))
-					+ ref_text_line(0.0f, 24.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 0 + 1))
-					+ ref_text_line(0.0f, 38.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 2)),
+					+ ref_text_line(0.0f, 10.0f, 7.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 0 + 1 + 2 + 0))
+					+ ref_text_line(0.0f, 24.0f, 8.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 1 + 2 + 0 + 1))
+					+ ref_text_line(0.0f, 38.0f, 3.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 2)),
 					mkvector(l.begin(), l.end()));
 			}
 

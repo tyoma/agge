@@ -37,6 +37,7 @@ namespace demo
 				_rasterizer.reset();
 			stopwatch(counter);
 				_layout.process(_text);
+			double stroking = stopwatch(counter);
 				_text_engine.render(_rasterizer, _layout, create_point(_ddx, 0.0f));
 			double append = stopwatch(counter);
 				_rasterizer.sort(true);
@@ -44,6 +45,7 @@ namespace demo
 				_renderer(surface, zero(), 0, _rasterizer, solid_color_brush(color::make(255, 255, 255)), winding<>());
 			double render = stopwatch(counter);
 
+			timings.stroking += stroking;
 			timings.rasterization += append + sort;
 			timings.rendition += render;
 		}

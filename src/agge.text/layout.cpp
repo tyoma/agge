@@ -48,47 +48,47 @@ namespace agge
 		};
 
 		template <typename ContainerT, typename CharIteratorT>
-		bool /*end-of-line*/ fill_glyph_run(ContainerT &glyphs, glyph_run &accumulator, glyph_run &next, real_t &limit,
-			real_t &occupied, real_t &next_occupied, CharIteratorT &i, CharIteratorT text_end)
+		bool /*end-of-line*/ populate_glyph_run(ContainerT &glyphs, glyph_run &accumulator, glyph_run &next,
+			const real_t limit, CharIteratorT &i, CharIteratorT text_end)
 		{
 			const font &font_ = *accumulator.glyph_run_font;
 			size_t eow_position = 0, sow_position = 0;
-			real_t eow_limit = 0.0f, sow_prior_limit = 0.0f;
+			real_t eow_width = 0.0f, sow_width = 0.0f;
 
-			for (/*const real_t start_limit = limit*/; i != text_end; )
+			next.width = 0.0f;
+			for (real_t advance; i != text_end; ++i, accumulator.width += advance)
 			{
 				if (eat_lf(i))
 				{
 					// Next line: line-feed
-					next.begin_index = next.end_index = accumulator.end_index;
-					next_occupied = 0.0f;
+					next.set_end();
 					return true;
 				}
 
 				const glyph_index_t index = font_.map_single(*i);
 				const glyph *g = font_.get_glyph(index);
-				const real_t advance = g->metrics.advance_x;
-				const positioned_glyph pg = {	create_vector(advance, 0.0f), index	};
+
+				advance = g->metrics.advance_x;
 
 				if (i.at_end_of_word())
-					eow_position = accumulator.end_index, eow_limit = limit;
+					eow_position = accumulator.end_index, eow_width = accumulator.width;
 				if (i.at_start_of_word())
-					sow_position = accumulator.end_index, sow_prior_limit = limit;
+					sow_position = accumulator.end_index, sow_width = accumulator.width;
 
-				if (advance > limit)
+				if (accumulator.width + advance > limit)
 				{
 					if (eow_position)
 					{
 						// Next line: normal word-boundary break
 						next = accumulator;
 						accumulator.end_index = eow_position;
-//						accumulator.width += start_limit - eow_limit;
+						sow_width = accumulator.width - sow_width;
+						accumulator.width = eow_width;
 						if (sow_position > eow_position)
 						{
 							// New word was actually found after the last matched end-of-word.
 							next.begin_index = sow_position;
-//							next.width = sow_prior_limit - limit;
-							next_occupied = sow_prior_limit - limit;
+							next.width = sow_width;
 						}
 						else
 						{
@@ -96,23 +96,21 @@ namespace agge
 							while (i != text_end && is_space(*i))
 								++i;
 							next.set_end();
-							next_occupied = 0.0f;
+							next.width = 0.0f;
 						}
 					}
 					else
 					{
 						// Next line: emergency mid-word break
-						next.begin_index = next.end_index = accumulator.end_index;
-						next_occupied = 0.0f;
+						next.set_end();
 					}
 					return true;
 				}
 
+				const positioned_glyph pg = {	create_vector(advance, 0.0f), index	};
+
 				glyphs.push_back(pg);
 				accumulator.extend_end();
-				limit -= advance;
-				occupied += advance;
-				++i;
 			}
 			return false;
 		}
@@ -128,8 +126,6 @@ namespace agge
 		_glyph_runs.clear();
 		_glyphs.clear();
 
-		real_t limit = _limit_width, occupied = 0.0f, next_occupied = 0.0f;
-
 		text_line accumulator_tl(_glyph_runs);
 
 		for (richtext_t::const_iterator range = text.ranges_begin(); range != text.ranges_end(); ++range)
@@ -140,23 +136,22 @@ namespace agge
 			accumulator.set_end();
 			accumulator.glyph_run_font = _base_font;
 			accumulator.offset = zero();
+			accumulator.width = 0.0f;
 
 			accumulator_tl.offset = create_vector(0.0f, m.ascent);
 
 			glyph_run next(accumulator);
 
 			for (detector_iterator i = range->begin(), end = range->end();
-				fill_glyph_run(_glyphs, accumulator, next, limit, occupied, next_occupied, i, end);
-				limit = _limit_width - next_occupied)
+				populate_glyph_run(_glyphs, accumulator, next, _limit_width, i, end); )
 			{
 				if (!accumulator.empty())
 				{
 					_glyph_runs.push_back(accumulator);
 					accumulator_tl.extend_end();
-					accumulator_tl.width = occupied;
+					accumulator_tl.width = accumulator.width;
 					_text_lines.push_back(accumulator_tl);
 					accumulator_tl.set_end();
-					occupied = 0.0f;
 				}
 				accumulator = next;
 				accumulator_tl.offset += create_vector(0.0f, height(m));
@@ -165,10 +160,9 @@ namespace agge
 			{
 				_glyph_runs.push_back(accumulator);
 				accumulator_tl.extend_end();
-				accumulator_tl.width = occupied;
+				accumulator_tl.width = accumulator.width;
 				_text_lines.push_back(accumulator_tl);
 				accumulator_tl.set_end();
-				occupied = 0.0f;
 			}
 		}
 	}
