@@ -34,7 +34,7 @@ namespace agge
 					++*_allocated;
 			}
 
-			font::metrics font_accessor::get_metrics() const
+			font_metrics font_accessor::get_metrics() const
 			{	return _metrics;	}
 
 			glyph_index_t font_accessor::get_glyph_index(wchar_t character) const
@@ -65,13 +65,11 @@ namespace agge
 				: allocated(new size_t())
 			{	}
 
-			font::accessor_ptr fonts_loader::load(const wchar_t *typeface, int height, bool bold, bool italic,
-				font::key::grid_fit grid_fit)
+			font::accessor_ptr fonts_loader::load(const font_descriptor &descriptor)
 			{
-				font::key fd(typeface, height, bold, italic, grid_fit);
-				shared_ptr<font_accessor> a(new font_accessor(fonts[fd]));
+				shared_ptr<font_accessor> a(new font_accessor(fonts[descriptor]));
 
-				created_log.push_back(make_pair(fd, a));
+				created_log.push_back(make_pair(descriptor, a));
 				a->track(allocated);
 				return a;
 			}
@@ -101,12 +99,12 @@ namespace agge
 		}
 	}
 
-	bool operator <(const font::key &lhs, const font::key &rhs)
+	bool operator <(const font_descriptor &lhs, const font_descriptor &rhs)
 	{
-		return lhs.typeface < rhs.typeface ? true : rhs.typeface < lhs.typeface ? false :
+		return lhs.family < rhs.family ? true : rhs.family < lhs.family ? false :
 			lhs.height < rhs.height ? true : rhs.height < lhs.height ? false :
 			lhs.bold < rhs.bold ? true : rhs.bold < lhs.bold ? false :
 			lhs.italic < rhs.italic ? true : rhs.italic < lhs.italic ? false :
-			lhs.grid_fit_ < rhs.grid_fit_;
+			lhs.hinting < rhs.hinting;
 	}
 }

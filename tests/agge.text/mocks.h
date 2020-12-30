@@ -37,7 +37,7 @@ namespace agge
 			public:
 				font_accessor();
 				template <size_t indices_n, size_t glyphs_n>
-				font_accessor(const font::metrics &metrics_, const char_to_index (&indices)[indices_n],
+				font_accessor(const font_metrics &metrics_, const char_to_index (&indices)[indices_n],
 					glyph (&glyphs)[glyphs_n]);
 				~font_accessor();
 
@@ -51,12 +51,12 @@ namespace agge
 				typedef std::map<wchar_t, glyph_index_t> indices_map_t;
 
 			private:
-				virtual font::metrics get_metrics() const;
+				virtual font_metrics get_metrics() const;
 				virtual glyph_index_t get_glyph_index(wchar_t character) const;
 				virtual agge::glyph::outline_ptr load_glyph(glyph_index_t index, agge::glyph::glyph_metrics &m) const;
 
 			private:
-				font::metrics _metrics;
+				font_metrics _metrics;
 				indices_map_t _indices;
 				std::vector<glyph> _glyphs;
 				shared_ptr<size_t> _allocated;
@@ -72,13 +72,12 @@ namespace agge
 				size_t allocated_accessors() const;
 
 			public:
-				std::vector< std::pair<font::key, weak_ptr<font::accessor> > > created_log;
-				std::map<font::key, font_accessor> fonts;
+				std::vector< std::pair<font_descriptor, weak_ptr<font::accessor> > > created_log;
+				std::map<font_descriptor, font_accessor> fonts;
 				shared_ptr<size_t> allocated;
 
 			private:
-				virtual font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic,
-					font::key::grid_fit grid_fit);
+				virtual font::accessor_ptr load(const font_descriptor &descriptor);
 			};
 
 			struct font_accessor::char_to_index
@@ -126,7 +125,7 @@ namespace agge
 
 
 			template <size_t indices_n, size_t glyphs_n>
-			inline font_accessor::font_accessor(const font::metrics &metrics_, const char_to_index (&indices)[indices_n],
+			inline font_accessor::font_accessor(const font_metrics &metrics_, const char_to_index (&indices)[indices_n],
 					glyph (&glyphs)[glyphs_n])
 				: glyph_mapping_calls(0), glyphs_loaded(new size_t(0)), _metrics(metrics_),
 					_indices(indices, indices + indices_n), _glyphs(glyphs, glyphs + glyphs_n)/*,
@@ -154,14 +153,14 @@ namespace agge
 			}
 
 			template <size_t indices_n, size_t glyphs_n>
-			inline font::ptr create_font(const font::metrics &metrics_,
+			inline font::ptr create_font(const font_metrics &metrics_,
 				const font_accessor::char_to_index (&indices)[indices_n], font_accessor::glyph (&glyphs)[glyphs_n])
 			{
-				return font::ptr(new font(font::key(std::wstring(), 10),
+				return font::ptr(new font(font_descriptor(std::string(), 10),
 					font::accessor_ptr(new font_accessor(metrics_, indices, glyphs))));
 			}
 		}
 	}
 
-	bool operator <(const font::key &lhs, const font::key &rhs);
+	bool operator <(const font_descriptor &lhs, const font_descriptor &rhs);
 }

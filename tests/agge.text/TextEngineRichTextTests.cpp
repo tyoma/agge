@@ -17,7 +17,7 @@ namespace agge
 	{
 		typedef rasterizer< clipper<int> > rasterizer_t;
 		typedef text_engine_base::offset_conv offset;
-		font::metrics c_fm1 = { 5.1f, 2.2f, 3.3f };
+		font_metrics c_fm1 = { 5.1f, 2.2f, 3.3f };
 
 		template <int n>
 		real_t decimate(real_t value)
@@ -52,13 +52,13 @@ namespace agge
 					mocks::glyph(13.7, 0, c_outline_2),
 					mocks::glyph(7.725, 0, c_outline_diamond),
 				};
-				pair<font::key, mocks::font_accessor> fonts[] = {
-					make_pair(font::key(L"Arial", 10, false, false, font::key::gf_strong),
+				pair<font_descriptor, mocks::font_accessor> fonts[] = {
+					make_pair(font_descriptor("Arial", 10, false, false, hint_strong),
 						mocks::font_accessor(c_fm1, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				text_engine<rasterizer_t> e(loader, 4);
-				font::ptr fnt = e.create_font(L"Arial", 10, false, false, font::key::gf_strong);
+				font::ptr fnt = e.create_font(fonts[0].first);
 				layout l(fnt);
 				rasterizer_t target, reference;
 
@@ -66,7 +66,7 @@ namespace agge
 				l.process(L"astt");
 
 				// ACT
-				e.render(target, l, near_, near_, create_rect(17.32f, 190.0f, 50.0f, 250.0f));
+				e.render(target, l, align_near, align_near, create_rect(17.32f, 190.0f, 50.0f, 250.0f));
 
 				// ASSERT
 				add_path(reference, offset(fnt->get_glyph(0)->get_outline(), decimate<4>(17.32f + 0.0f), decimate<4>(195.1f)));
@@ -82,7 +82,7 @@ namespace agge
 				l.process(L"att");
 
 				// ACT
-				e.render(target, l, far_, near_, create_rect(17.32f, 191.05f, 50.0f, 250.0f));
+				e.render(target, l, align_far, align_near, create_rect(17.32f, 191.05f, 50.0f, 250.0f));
 
 				// ASSERT
 				add_path(reference, offset(fnt->get_glyph(0)->get_outline(), decimate<4>(29.35f + 0.0f), decimate<4>(196.15f)));
@@ -91,7 +91,7 @@ namespace agge
 				assert_equal(reference, target);
 
 				// ACT
-				e.render(target, l, far_, far_, create_rect(17.32f, 191.05f, 50.0f, 250.0f));
+				e.render(target, l, align_far, align_far, create_rect(17.32f, 191.05f, 50.0f, 250.0f));
 
 				// ASSERT
 				add_path(reference, offset(fnt->get_glyph(0)->get_outline(), decimate<4>(29.35f + 0.0f), decimate<4>(247.8f)));
@@ -100,7 +100,7 @@ namespace agge
 				assert_equal(reference, target);
 
 				// ACT
-				e.render(target, l, near_, far_, create_rect(0.3f, 191.05f, 50.0f, 250.0f));
+				e.render(target, l, align_near, align_far, create_rect(0.3f, 191.05f, 50.0f, 250.0f));
 
 				// ASSERT
 				add_path(reference, offset(fnt->get_glyph(0)->get_outline(), decimate<4>(0.3f + 0.0f), decimate<4>(247.8f)));
@@ -109,7 +109,7 @@ namespace agge
 				assert_equal(reference, target);
 
 				// ACT
-				e.render(target, l, near_, center, create_rect(0.3f, 191.05f, 50.0f, 250.0f));
+				e.render(target, l, align_near, align_center, create_rect(0.3f, 191.05f, 50.0f, 250.0f));
 
 				// ASSERT
 				add_path(reference, offset(fnt->get_glyph(0)->get_outline(), decimate<4>(0.3f + 0.0f), decimate<4>(221.975f)));
@@ -118,7 +118,7 @@ namespace agge
 				assert_equal(reference, target);
 
 				// ACT
-				e.render(target, l, center, center, create_rect(0.3f, 191.05f, 50.0f, 252.0f));
+				e.render(target, l, align_center, align_center, create_rect(0.3f, 191.05f, 50.0f, 252.0f));
 
 				// ASSERT
 				add_path(reference, offset(fnt->get_glyph(0)->get_outline(), decimate<4>(14.825f + 0.0f), decimate<4>(222.975f)));

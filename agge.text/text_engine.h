@@ -1,75 +1,14 @@
 #pragma once
 
-#include "font.h"
 #include "layout_primitives.h"
+#include "text_engine_base.h"
 
 #include <agge/config.h>
 #include <agge/math.h>
-#include <agge/tools.h>
 #include <limits>
 
 namespace agge
 {
-	class text_engine_base : noncopyable
-	{
-	public:
-		struct loader;
-		class offset_conv;
-
-	public:
-		explicit text_engine_base(loader &loader_, unsigned collection_cycles = 5);
-		virtual ~text_engine_base();
-
-		void collect();
-		font::ptr create_font(const wchar_t *typeface, int height, bool bold, bool italic, font::key::grid_fit grid_fit);
-
-	private:
-		class cached_outline_accessor;
-
-		struct font_key_hasher
-		{
-			size_t operator ()(const font::key &key) const;
-		};
-
-		typedef hash_map<font::key, weak_ptr<font>, font_key_hasher> fonts_cache;
-		typedef hash_map<font::key, weak_ptr<font::accessor>, font_key_hasher> scalabale_fonts_cache;
-		typedef hash_map<font::key, std::pair<font*, unsigned /*age*/>, font_key_hasher> garbage_container;
-
-	private:
-		std::pair<font::accessor_ptr, real_t> create_font_accessor(font::key fk);
-		void on_released(const fonts_cache::value_type *entry, font *font_);
-		void destroy(font *font_) throw();
-
-		virtual void on_before_removed(font * /*font_*/) throw() {	}
-
-	private:
-		loader &_loader;
-		const unsigned _collection_cycles;
-		fonts_cache _fonts;
-		scalabale_fonts_cache _scalable_fonts;
-		garbage_container _garbage;
-	};
-
-	struct text_engine_base::loader
-	{
-		virtual font::accessor_ptr load(const wchar_t *typeface, int height, bool bold, bool italic,
-			font::key::grid_fit grid_fit) = 0;
-	};
-
-	class text_engine_base::offset_conv
-	{
-	public:
-		offset_conv(const glyph::path_iterator &source, real_t dx, real_t dy);
-
-		void rewind(unsigned id);
-		int vertex(real_t *x, real_t *y);
-
-	private:
-		glyph::path_iterator _source;
-		real_t _dx, _dy;
-	};
-
-
 	template <typename RasterizerT>
 	class text_engine : public text_engine_base
 	{
@@ -139,12 +78,12 @@ namespace agge
 	inline void text_engine<RasterizerT>::render(RasterizerT &target, const LayoutT &layout_, text_alignment halign,
 		text_alignment valign, const rect_r &ref)
 	{
-		point_r running_ref = create_point(0.0f, near_ == valign ? ref.y1 : far_ == valign ? ref.y2 - layout_.get_box().h
+		point_r running_ref = create_point(0.0f, align_near == valign ? ref.y1 : align_far == valign ? ref.y2 - layout_.get_box().h
 			: 0.5f * (ref.y1 + ref.y2 - layout_.get_box().h));
 
 		for (typename LayoutT::const_iterator i = layout_.begin(), end = layout_.end(); i != end; ++i)
 		{
-			running_ref.x = near_ == halign ? ref.x1 : far_ == halign ? ref.x2 - i->width
+			running_ref.x = align_near == halign ? ref.x1 : align_far == halign ? ref.x2 - i->width
 				: 0.5f * (ref.x1 + ref.x2 - i->width);
 			render(target, *i, running_ref + i->offset);
 		}
@@ -157,7 +96,7 @@ namespace agge
 		rasters_map &rasters = get_rasters_map(font_);
 		real_t dx = 0.0f;
 
-		if (near_ != halign)
+		if (align_near != halign)
 		{
 			for (const wchar_t *c = text; *c; ++c)
 			{
@@ -167,7 +106,7 @@ namespace agge
 					break;
 				dx = dx2;
 			}
-			x -= center == halign ? 0.5f * dx : dx;
+			x -= align_center == halign ? 0.5f * dx : dx;
 		}
 
 		for (const wchar_t *c = text; *c; ++c)

@@ -10,7 +10,7 @@ namespace agge
 {
 	namespace
 	{
-		real_t height(const font::metrics &m)
+		real_t height(const font_metrics &m)
 		{	return m.ascent + m.descent + m.leading; }
 
 		bool is_space(wchar_t c)
@@ -131,7 +131,7 @@ namespace agge
 		for (richtext_t::const_iterator range = text.ranges_begin(); range != text.ranges_end(); ++range)
 		{
 			glyph_run accumulator(_glyphs);
-			const font::metrics m = _base_font->get_metrics();
+			const font_metrics m = _base_font->get_metrics();
 
 			accumulator.set_end();
 			accumulator.glyph_run_font = _base_font;
@@ -180,7 +180,7 @@ namespace agge
 		if (_glyph_runs.empty())
 			return box;
 
-		font::metrics m = _base_font->get_metrics();
+		font_metrics m = _base_font->get_metrics();
 
 		for (const_iterator i = begin(); i != end(); ++i)
 			box.w = agge_max(box.w, i->width);

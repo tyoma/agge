@@ -16,32 +16,11 @@ namespace agge
 		typedef shared_ptr<accessor> accessor_ptr;
 		typedef shared_ptr<font> ptr;
 
-		struct key
-		{
-			enum grid_fit { gf_none = 0, gf_vertical = 1, gf_strong = 2 };
-
-			explicit key(const std::wstring &typeface, int height, bool bold = false, bool italic = false,
-				grid_fit grid_fit = gf_none);
-
-			std::wstring typeface;
-			int height : 20;
-			unsigned bold : 1;
-			unsigned italic : 1;
-			grid_fit grid_fit_ : 2;
-		};
-
-		struct metrics
-		{
-			real_t ascent;
-			real_t descent;
-			real_t leading;
-		};
-
 	public:
-		explicit font(const key &key_, const accessor_ptr &accessor_, real_t factor = 1.0f);
+		explicit font(const font_descriptor &key_, const accessor_ptr &accessor_, real_t factor = 1.0f);
 
-		key get_key() const;
-		metrics get_metrics() const;
+		font_descriptor get_key() const;
+		font_metrics get_metrics() const;
 
 		glyph_index_t map_single(wchar_t character) const;
 		const glyph *get_glyph(glyph_index_t index) const;
@@ -56,8 +35,8 @@ namespace agge
 
 	private:
 		const accessor_ptr _accessor;
-		const key _key;
-		metrics _metrics;
+		const font_descriptor _key;
+		font_metrics _metrics;
 		mutable glyphs_cache_t _glyphs;
 		mutable char2index_cache_t _char2glyph;
 		real_t _factor;
@@ -66,10 +45,8 @@ namespace agge
 	struct font::accessor
 	{
 		virtual ~accessor() { }
-		virtual font::metrics get_metrics() const = 0;
+		virtual font_metrics get_metrics() const = 0;
 		virtual glyph_index_t get_glyph_index(wchar_t character) const = 0;
 		virtual glyph::outline_ptr load_glyph(glyph_index_t index, glyph::glyph_metrics &m) const = 0;
 	};
-
-	bool operator ==(const font::key &lhs, const font::key &rhs);
 }

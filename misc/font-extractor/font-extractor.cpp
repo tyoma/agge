@@ -27,13 +27,13 @@ namespace
 	int real2fint(real_t value)
 	{	return static_cast<int>(value * (1 << 16));	}
 
-	bool load_glyph(HDC hdc, font::key::grid_fit grid_fit, uint16_t index, truetype::glyph &g)
+	bool load_glyph(HDC hdc, font_hinting grid_fit, uint16_t index, truetype::glyph &g)
 	{
 		typedef const void *pvoid;
 
 		const UINT format = GGO_GLYPH_INDEX | GGO_NATIVE | GGO_METRICS
-			| (font::key::gf_none == grid_fit ? GGO_UNHINTED : 0);
-		const int xfactor = font::key::gf_vertical == grid_fit ? 48 : 1;
+			| (hint_none == grid_fit ? GGO_UNHINTED : 0);
+		const int xfactor = hint_vertical == grid_fit ? 48 : 1;
 		const MAT2 c_identity = { { 0, (short)xfactor }, { 0, 0 }, { 0, 0 }, { 0, -1 }, };
 
 		GLYPHMETRICS gm;
@@ -42,7 +42,7 @@ namespace
 		if (size == GDI_ERROR)
 			return false;
 
-		if (grid_fit == font::key::gf_strong)
+		if (grid_fit == hint_strong)
 		{
 			ABC abc;
 
@@ -111,7 +111,7 @@ int main(int argc, const char *argv[])
 {
 	int height = 10;
 	bool italic = false, bold = false;
-	string typeface = "Arial";
+	string family = "Arial";
 
 	for (int i = 1; i != argc; ++i)
 	{
@@ -126,12 +126,12 @@ int main(int argc, const char *argv[])
 		else if (theight = atoi(arg.c_str()), theight)
 			height = theight;
 		else
-			typeface = arg;
+			family = arg;
 	}
 	
 	dc ctx;
 	shared_ptr<void> hfont(::CreateFontA(height, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, !!italic, FALSE, FALSE, 0,
-		0, 0, ANTIALIASED_QUALITY, 0, typeface.c_str()), &delete_object);
+		0, 0, ANTIALIASED_QUALITY, 0, family.c_str()), &delete_object);
 	shared_ptr<void> selector = ctx.select(hfont.get());
 	truetype::glyph g;
 	truetype::font f;
@@ -145,7 +145,7 @@ int main(int argc, const char *argv[])
 	for (wchar_t c = 0; c != (numeric_limits<wchar_t>::max)(); ++c)
 		::GetGlyphIndicesW(ctx, &c, 1, &f.char_to_glyph[c], GGI_MARK_NONEXISTING_GLYPHS);
 
-	for (agge::uint16_t index = 0; load_glyph(ctx, font::key::gf_strong, index, g); ++index)
+	for (agge::uint16_t index = 0; load_glyph(ctx, hint_strong, index, g); ++index)
 	{
 		f.glyphs.push_back(g);
 		g = truetype::glyph();

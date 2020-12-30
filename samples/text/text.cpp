@@ -20,7 +20,7 @@ namespace demo
 	public:
 		TextDrawer(services &s)
 			: _renderer(3), _font_loader(s), _text_engine(_font_loader),
-				_font(_text_engine.create_font(L"arial", 14, false, false, font::key::gf_none)), _layout(_font),
+				_font(_text_engine.create_font(font_descriptor("arial", 14, false, false, hint_none))), _layout(_font),
 				_text(c_text_long.c_str()), _ddx(0.0f)
 		{	}
 
@@ -29,16 +29,18 @@ namespace demo
 		{
 			long long counter;
 			const rect_i area = { 0, 0, static_cast<int>(surface.width()), static_cast<int>(surface.height()) };
+			rect_r dest = _dest_rect;
 
 			stopwatch(counter);
 				agge::fill(surface, area, solid_color_brush(color::make(0, 50, 100)));
 				timings.clearing += stopwatch(counter);
 				_ddx += 0.02f;
+				dest.x1 += _ddx, dest.x2 += _ddx;
 				_rasterizer.reset();
 			stopwatch(counter);
 				_layout.process(_text);
 			double stroking = stopwatch(counter);
-				_text_engine.render(_rasterizer, _layout, center, center, _dest_rect);
+				_text_engine.render(_rasterizer, _layout, align_near, align_near, dest);
 			double append = stopwatch(counter);
 				_rasterizer.sort(true);
 			double sort = stopwatch(counter);

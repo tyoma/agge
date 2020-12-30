@@ -80,13 +80,13 @@ namespace agge
 	inline bool operator ==(const glyph::path_point &lhs, const glyph::path_point &rhs)
 	{	return lhs.command == rhs.command && tests::equal(lhs.x, rhs.x) && tests::equal(lhs.y, rhs.y);	}
 
-	inline bool operator ==(const font::metrics &lhs, const font::metrics &rhs)
+	inline bool operator ==(const font_metrics &lhs, const font_metrics &rhs)
 	{
 		return tests::equal(lhs.ascent, rhs.ascent) && tests::equal(lhs.descent, rhs.descent)
 			&& tests::equal(lhs.leading, rhs.leading);
 	}
 
-	inline font::metrics operator *(double lhs, font::metrics rhs)
+	inline font_metrics operator *(double lhs, font_metrics rhs)
 	{
 		rhs.ascent *= static_cast<real_t>(lhs);
 		rhs.descent *= static_cast<real_t>(lhs);

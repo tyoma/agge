@@ -37,12 +37,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="font.cpp" />
-    <ClCompile Include="text_engine.cpp" />
+    <ClCompile Include="text_engine_base.cpp" />
     <ClCompile Include="layout.cpp" />
+    <ClCompile Include="types.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\agge.text\annotated_string.h" />
     <ClInclude Include="..\..\agge.text\font.h" />
+    <ClInclude Include="..\..\agge.text\font_factory.h" />
     <ClInclude Include="..\..\agge.text\functional.h" />
     <ClInclude Include="..\..\agge.text\glyph.h" />
     <ClInclude Include="..\..\agge.text\layout_primitives.h" />
@@ -52,6 +54,7 @@
     <ClInclude Include="..\..\agge.text\hash_map.h" />
     <ClInclude Include="..\..\agge.text\layout.h" />
     <ClInclude Include="..\..\agge.text\shared_ptr.h" />
+    <ClInclude Include="..\..\agge.text\text_engine_base.h" />
     <ClInclude Include="..\..\agge.text\types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

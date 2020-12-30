@@ -1,4 +1,4 @@
-#include <agge.text/text_engine.h>
+#include <agge.text/text_engine_base.h>
 
 #include <agge.text/functional.h>
 
@@ -24,7 +24,7 @@ namespace agge
 		typedef hash_map< glyph_index_t, pair<glyph::outline_ptr, glyph::glyph_metrics> > glyphs;
 
 	private:
-		virtual font::metrics get_metrics() const
+		virtual font_metrics get_metrics() const
 		{	return _underlying->get_metrics();	}
 
 		virtual glyph_index_t get_glyph_index(wchar_t character) const
@@ -50,7 +50,7 @@ namespace agge
 	};
 
 
-	size_t text_engine_base::font_key_hasher::operator ()(const font::key &/*key*/) const
+	size_t text_engine_base::font_key_hasher::operator ()(const font_descriptor &/*key*/) const
 	{	return 1;	}
 
 
@@ -70,16 +70,14 @@ namespace agge
 			i = !--i->second.second ? destroy(i->second.first), _garbage.erase(i) : ++i;
 	}
 
-	font::ptr text_engine_base::create_font(const wchar_t *typeface, int height, bool bold, bool italic,
-		font::key::grid_fit grid_fit)
+	font::ptr text_engine_base::create_font(const font_descriptor &descriptor)
 	{
 		fonts_cache::iterator i;
-		font::key key(typeface, height, bold, italic, grid_fit);
 
-		if (!_fonts.insert(key, weak_ptr<font>(), i) && !i->second.expired())
+		if (!_fonts.insert(descriptor, weak_ptr<font>(), i) && !i->second.expired())
 			return i->second.lock();
 
-		garbage_container::const_iterator gi = _garbage.find(key);
+		garbage_container::const_iterator gi = _garbage.find(descriptor);
 		unique_ptr<font> pre_f;
 
 		if (_garbage.end() != gi)
@@ -89,8 +87,8 @@ namespace agge
 		}
 		else
 		{
-			pair<font::accessor_ptr, real_t> acc = create_font_accessor(key);
-			pre_f.reset(new font(key, acc.first, acc.second));
+			pair<font::accessor_ptr, real_t> acc = create_font_accessor(descriptor);
+			pre_f.reset(new font(descriptor, acc.first, acc.second));
 		}
 
 		font::ptr f(pre_f.get(), bind(&text_engine_base::on_released, this, &*i, _1));
@@ -100,19 +98,18 @@ namespace agge
 		return f;
 	}
 
-	pair<font::accessor_ptr, real_t> text_engine_base::create_font_accessor(font::key fk)
+	pair<font::accessor_ptr, real_t> text_engine_base::create_font_accessor(font_descriptor fd)
 	{
-		if (font::key::gf_none != fk.grid_fit_)
-			return make_pair(_loader.load(fk.typeface.c_str(), fk.height, fk.bold, fk.italic, fk.grid_fit_), 1.0f);
+		if (hint_none != fd.hinting)
+			return make_pair(_loader.load(fd), 1.0f);
 
 		scalabale_fonts_cache::iterator i;
-		const real_t factor = static_cast<real_t>(fk.height) / c_rescalable_height;
+		const real_t factor = static_cast<real_t>(fd.height) / c_rescalable_height;
 
-		fk.height = c_rescalable_height;
-		if (_scalable_fonts.insert(fk, weak_ptr<font::accessor>(), i) || i->second.expired())
+		fd.height = c_rescalable_height;
+		if (_scalable_fonts.insert(fd, weak_ptr<font::accessor>(), i) || i->second.expired())
 		{
-			font::accessor_ptr a(new cached_outline_accessor(_loader.load(fk.typeface.c_str(), fk.height, fk.bold,
-				fk.italic, fk.grid_fit_)));
+			font::accessor_ptr a(new cached_outline_accessor(_loader.load(fd)));
 
 			i->second = a;
 			return make_pair(a, factor);

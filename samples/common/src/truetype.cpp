@@ -42,9 +42,9 @@ namespace truetype
 			{	}
 
 		private:
-			virtual agge::font::metrics get_metrics() const
+			virtual agge::font_metrics get_metrics() const
 			{
-				agge::font::metrics m = {
+				agge::font_metrics m = {
 					fixed2real(_tt_font->metrics.ascent),
 					fixed2real(_tt_font->metrics.descent),
 					fixed2real(_tt_font->metrics.leading)

@@ -15,7 +15,7 @@ namespace agge
 	{
 		namespace
 		{
-			font::metrics c_fm1 = { 10.0f, 2.0f, 2.0f };
+			font_metrics c_fm1 = { 10.0f, 2.0f, 2.0f };
 		}
 
 		begin_test_suite( FontTests )
@@ -129,7 +129,7 @@ namespace agge
 				};
 				mocks::font_accessor::glyph glyphs[] = { { { 0, 0 } }, };
 				shared_ptr<mocks::font_accessor> a(new mocks::font_accessor(c_fm1, indices, glyphs));
-				font::ptr f(new font(font::key(wstring(), 10), a));
+				font::ptr f(new font(font_descriptor(string(), 10), a));
 
 				// INIT / ACT (caching occurs here)
 				f->map_single(L'a');
@@ -153,13 +153,13 @@ namespace agge
 				shared_ptr<mocks::font_accessor> a(new mocks::font_accessor(c_fm1, indices, glyphs));
 
 				// INIT / ACT
-				font f1(font::key(L"Arial", 13), a);
-				font f2(font::key(L"Segoe", -17), a);
+				font f1(font_descriptor("Arial", 13), a);
+				font f2(font_descriptor("Segoe", -17), a);
 
 				// ACT / ASSERT
-				assert_equal(L"Arial", f1.get_key().typeface);
+				assert_equal(L"Arial", f1.get_key().family);
 				assert_equal(13, f1.get_key().height);
-				assert_equal(L"Segoe", f2.get_key().typeface);
+				assert_equal(L"Segoe", f2.get_key().family);
 				assert_equal(-17, f2.get_key().height);
 			}
 

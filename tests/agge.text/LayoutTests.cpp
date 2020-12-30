@@ -15,8 +15,8 @@ namespace agge
 	{
 		namespace
 		{
-			font::metrics c_fm1 = { 10.0f, 2.0f, 2.0f };
-			font::metrics c_fm2 = { 14.0f, 3.0f, 1.0f };
+			font_metrics c_fm1 = { 10.0f, 2.0f, 2.0f };
+			font_metrics c_fm2 = { 14.0f, 3.0f, 1.0f };
 
 			class ref_glyph_run
 			{

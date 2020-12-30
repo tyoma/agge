@@ -9,8 +9,6 @@
 
 namespace agge
 {
-	enum text_alignment { near_, far_, center, };
-
 	class font;
 	struct glyph_run;
 	typedef std::vector<glyph_run> glyph_runs_container_t;
