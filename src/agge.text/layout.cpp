@@ -33,6 +33,9 @@ namespace agge
 			richtext_t::string_type::value_type operator *() const
 			{	return *_underlying;	}
 
+			bool operator ==(const detector_iterator &rhs) const
+			{	return _underlying == rhs._underlying;	}
+
 			bool operator !=(const detector_iterator &rhs) const
 			{	return _underlying != rhs._underlying;	}
 
@@ -142,8 +145,8 @@ namespace agge
 
 			glyph_run next(accumulator);
 
-			for (detector_iterator i = range->begin(), end = range->end();
-				populate_glyph_run(_glyphs, accumulator, next, _limit_width, i, end); )
+			for (detector_iterator i = range->begin(), end = range->end(), previous = i;
+				populate_glyph_run(_glyphs, accumulator, next, _limit_width, i, end); previous = i)
 			{
 				if (!accumulator.empty())
 				{
@@ -152,6 +155,11 @@ namespace agge
 					accumulator_tl.width = accumulator.width;
 					_text_lines.push_back(accumulator_tl);
 					accumulator_tl.set_end();
+				}
+				else if (i == previous)
+				{
+					_text_lines.clear();
+					return;
 				}
 				accumulator = next;
 				accumulator_tl.offset += create_vector(0.0f, height(m));

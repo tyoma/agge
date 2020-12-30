@@ -55,8 +55,8 @@ namespace agge
 				};
 
 				// ASSERT
-				assert_equal(L"arial", fonts[0]->get_key().family);
-				assert_equal(L"helvetica", fonts[1]->get_key().family);
+				assert_equal("arial", fonts[0]->get_key().family);
+				assert_equal("helvetica", fonts[1]->get_key().family);
 				sort(tests::begin(fonts), tests::end(fonts));
 
 				assert_equal(tests::end(fonts), unique(tests::begin(fonts), tests::end(fonts)));

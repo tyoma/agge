@@ -157,9 +157,9 @@ namespace agge
 				font f2(font_descriptor("Segoe", -17), a);
 
 				// ACT / ASSERT
-				assert_equal(L"Arial", f1.get_key().family);
+				assert_equal("Arial", f1.get_key().family);
 				assert_equal(13, f1.get_key().height);
-				assert_equal(L"Segoe", f2.get_key().family);
+				assert_equal("Segoe", f2.get_key().family);
 				assert_equal(-17, f2.get_key().height);
 			}
 

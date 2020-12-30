@@ -627,6 +627,31 @@ namespace agge
 					+ ref_text_line(0.0f, 38.0f, 0.0f, plural + ref_glyph_run(f, 0.0f, 0.0f, plural + 3 + 4 + 3)),
 					mkvector(l.begin(), l.end()));
 			}
+
+
+			test( TooNarrowLimitProducesNoLayout )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = {	{ L'Z', 0 }, { L'q', 1 }	};
+				mocks::font_accessor::glyph glyphs[] = {
+					{ { 10, 0 } },
+					{ { 8, 0 } },
+				};
+				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
+				layout l(f);
+
+				l.set_width_limit(9.0f);
+
+				// ACT / ASSERT
+				l.process(L"Z");
+				assert_equal(l.end(), l.begin());
+				l.process(L"\n");
+				assert_equal(l.end(), l.begin());
+				l.process(L"Z\nZ");
+				assert_equal(l.end(), l.begin());
+				l.process(L"qZ\n");
+				assert_equal(l.end(), l.begin());
+			}
 		end_test_suite
 	}
 }
