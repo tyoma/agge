@@ -173,7 +173,7 @@ namespace agge
 		_text_lines.clear();
 	}
 
-	box_r layout::get_box()
+	box_r layout::get_box() const
 	{
 		box_r box = {};
 

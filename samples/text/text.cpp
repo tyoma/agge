@@ -38,7 +38,7 @@ namespace demo
 			stopwatch(counter);
 				_layout.process(_text);
 			double stroking = stopwatch(counter);
-				_text_engine.render(_rasterizer, _layout, create_point(_ddx, 0.0f));
+				_text_engine.render(_rasterizer, _layout, center, center, _dest_rect);
 			double append = stopwatch(counter);
 				_rasterizer.sort(true);
 			double sort = stopwatch(counter);
@@ -50,8 +50,11 @@ namespace demo
 			timings.rendition += render;
 		}
 
-		virtual void resize(int width, int /*height*/)
-		{	_layout.set_width_limit(static_cast<real_t>(width));	}
+		virtual void resize(int width, int height)
+		{
+			_layout.set_width_limit(static_cast<real_t>(width));
+			_dest_rect = create_rect(0.0f, 0.0f, static_cast<real_t>(width), static_cast<real_t>(height));
+		}
 
 	private:
 		typedef platform_blender_solid_color solid_color_brush;
@@ -64,6 +67,7 @@ namespace demo
 		font::ptr _font;
 		layout _layout;
 		richtext_t _text;
+		rect_r _dest_rect;
 		float _ddx;
 	};
 }

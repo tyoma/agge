@@ -892,7 +892,7 @@ namespace agge
 			}
 
 
-			test( FarAndCenterAligmentIsHeldIfLimitedByWidth )
+			test( FarAndCenterAligmentAreHeldIfLimitedByWidth )
 			{
 				// INIT
 				mocks::font_accessor::char_to_index font_indices[] = { { L'a', 0 }, { L'w', 1 }, { L'z', 2 }, };

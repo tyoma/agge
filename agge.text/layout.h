@@ -17,7 +17,7 @@ namespace agge
 		void process(const richtext_t &text);
 
 		void set_width_limit(real_t width);
-		box_r get_box();
+		box_r get_box() const;
 
 		const_iterator begin() const;
 		const_iterator end() const;

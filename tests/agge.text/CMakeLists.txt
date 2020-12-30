@@ -6,9 +6,10 @@ set(AGGE_TEXT_TEST_SOURCES
 	LayoutTests.cpp
 	mocks.cpp
 	RichTextLayoutTests.cpp
+	TextEngineRichTextTests.cpp
 	TextEngineTests.cpp
 )
 
 add_library(agge.text.tests SHARED ${AGGE_TEXT_TEST_SOURCES})
 
-target_link_libraries(agge.text.tests agge.text)
+target_link_libraries(agge.text.tests agge.text agge)

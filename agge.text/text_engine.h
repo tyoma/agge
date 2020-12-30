@@ -5,6 +5,7 @@
 
 #include <agge/config.h>
 #include <agge/math.h>
+#include <agge/tools.h>
 #include <limits>
 
 namespace agge
@@ -13,6 +14,7 @@ namespace agge
 	{
 	public:
 		struct loader;
+		class offset_conv;
 
 	public:
 		explicit text_engine_base(loader &loader_, unsigned collection_cycles = 5);
@@ -20,9 +22,6 @@ namespace agge
 
 		void collect();
 		font::ptr create_font(const wchar_t *typeface, int height, bool bold, bool italic, font::key::grid_fit grid_fit);
-
-	protected:
-		class offset_conv;
 
 	private:
 		class cached_outline_accessor;
@@ -81,6 +80,9 @@ namespace agge
 		void render(RasterizerT &target, const glyph_run &glyphs, point_r reference);
 		template <typename ContainerT>
 		void render(RasterizerT &target, const ContainerT &container, const point_r &reference);
+		template <typename LayoutT>
+		void render(RasterizerT &target, const LayoutT &layout_, text_alignment halign, text_alignment valign,
+			const rect_r &reference);
 		void render_string(RasterizerT &target, const font &font_, const wchar_t *text, text_alignment halign,
 			real_t x, real_t y, real_t max_width = (std::numeric_limits<real_t>::max)());
 
@@ -130,6 +132,22 @@ namespace agge
 	{
 		for (typename ContainerT::const_iterator i = container.begin(), end = container.end(); i != end; ++i)
 			render(target, *i, ref + i->offset);
+	}
+
+	template <typename RasterizerT>
+	template <typename LayoutT>
+	inline void text_engine<RasterizerT>::render(RasterizerT &target, const LayoutT &layout_, text_alignment halign,
+		text_alignment valign, const rect_r &ref)
+	{
+		point_r running_ref = create_point(0.0f, near_ == valign ? ref.y1 : far_ == valign ? ref.y2 - layout_.get_box().h
+			: 0.5f * (ref.y1 + ref.y2 - layout_.get_box().h));
+
+		for (typename LayoutT::const_iterator i = layout_.begin(), end = layout_.end(); i != end; ++i)
+		{
+			running_ref.x = near_ == halign ? ref.x1 : far_ == halign ? ref.x2 - i->width
+				: 0.5f * (ref.x1 + ref.x2 - i->width);
+			render(target, *i, running_ref + i->offset);
+		}
 	}
 
 	template <typename RasterizerT>
