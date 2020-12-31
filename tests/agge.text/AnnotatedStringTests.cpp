@@ -367,6 +367,57 @@ namespace agge
 				assert_equal((plural + pair<string, int>("new", 17)), ranges_vector(seq1));
 				assert_equal((plural + pair<string, int>("new", 193)), ranges_vector(seq2));
 			}
+
+
+			test( SettingBaseAnnotationClearsStringAndAppliesIt )
+			{
+				typedef annotated_string<char, int> container_t;
+
+				// INIT / ACT
+				container_t seq;
+
+				seq.annotate(123);
+				seq += "one";
+				seq.annotate(12);
+				seq += "two";
+
+				// ACT
+				seq.set_base_annotation(1984);
+
+				// ASSERT
+				assert_is_empty(seq);
+				assert_equal(seq.ranges_end(), seq.ranges_begin());
+
+				// ACT
+				seq += "test";
+
+				// ASSERT
+				assert_equal((plural + pair<string, int>("test", 1984)), ranges_vector(seq));
+			}
+
+
+			test( LastAnnotationIsReturnAsCurrent )
+			{
+				typedef annotated_string<wchar_t, string> container1_t;
+				typedef annotated_string<wchar_t, int> container2_t;
+
+				// INIT / ACT
+				container1_t seq1("foe");
+				container2_t seq2(1);
+
+				// ACT / ASSERT
+				assert_equal("foe", seq1.current_annotation());
+				assert_equal(1, seq2.current_annotation());
+
+				// ACT
+				seq1.annotate("jazz");
+				seq2 += L"zzz";
+				seq2.annotate(1312);
+
+				// ACT / ASSERT
+				assert_equal("jazz", seq1.current_annotation());
+				assert_equal(1312, seq2.current_annotation());
+			}
 		end_test_suite
 	}
 }

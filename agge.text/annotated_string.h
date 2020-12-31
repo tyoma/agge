@@ -23,11 +23,13 @@ namespace agge
 		void clear();
 		void operator +=(const string_type &addition);
 		void annotate(const AnnotationT &annotation);
+		void set_base_annotation(const AnnotationT &annotation);
 
 		bool empty() const;
 		size_t size() const;
 		const_iterator ranges_begin() const;
 		const_iterator ranges_end() const;
+		const AnnotationT &current_annotation() const;
 
 	private:
 		typedef std::vector< std::pair<AnnotationT, size_t /*position*/> > annotations_t;
@@ -111,6 +113,13 @@ namespace agge
 	}
 
 	template <typename CharT, typename AnnotationT>
+	inline void annotated_string<CharT, AnnotationT>::set_base_annotation(const AnnotationT &annotation)
+	{
+		_base_annotation = annotation;
+		clear();
+	}
+
+	template <typename CharT, typename AnnotationT>
 	inline void annotated_string<CharT, AnnotationT>::clear()
 	{
 		_underlying.clear();
@@ -138,6 +147,10 @@ namespace agge
 
 		return r.set_end(), const_iterator(r, _annotations.end(), _annotations.end());
 	}
+
+	template <typename CharT, typename AnnotationT>
+	inline const AnnotationT &annotated_string<CharT, AnnotationT>::current_annotation() const
+	{	return _annotations.back().first;	}
 
 
 	template <typename CharT, typename AnnotationT>
