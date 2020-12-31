@@ -5,27 +5,11 @@
 #include <iterator>
 #include <tests/common/helpers.h>
 #include <vector>
-#include <ut/assert.h>
 
 namespace agge
 {
 	namespace tests
 	{
-		namespace
-		{
-			template <typename T1, typename T2>
-			inline bool operator ==(const std::vector<T1> &lhs, const std::vector<T2> &rhs)
-			{
-				typename std::vector<T1>::const_iterator i = lhs.begin();
-				typename std::vector<T2>::const_iterator j = rhs.begin();
-
-				for (; i != lhs.end() && j != rhs.end(); ++i, ++j)
-					if (!(*i == *j))
-						return false;
-				return i == lhs.end() && j == rhs.end();
-			}
-		}
-
 		struct plural_
 		{
 			template <typename T>
@@ -108,4 +92,16 @@ namespace agge
 			*i = lhs * *i;
 		return rhs;
 	}
+}
+
+template <typename T1, typename T2>
+inline bool operator ==(const std::vector<T1> &lhs, const std::vector<T2> &rhs)
+{
+	typename std::vector<T1>::const_iterator i = lhs.begin();
+	typename std::vector<T2>::const_iterator j = rhs.begin();
+
+	for (; i != lhs.end() && j != rhs.end(); ++i, ++j)
+		if (!(*i == *j))
+			return false;
+	return i == lhs.end() && j == rhs.end();
 }

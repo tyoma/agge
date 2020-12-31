@@ -17,9 +17,10 @@ namespace agge
 		class const_iterator;
 
 	public:
-		annotated_string();
-		annotated_string(const CharT *from);
+		annotated_string(const AnnotationT &base_annotation = AnnotationT());
+		annotated_string(const CharT *from, const AnnotationT &base_annotation = AnnotationT());
 
+		void clear();
 		void operator +=(const string_type &addition);
 		void annotate(const AnnotationT &annotation);
 
@@ -34,6 +35,7 @@ namespace agge
 	private:
 		string_type _underlying;
 		annotations_t _annotations;
+		AnnotationT _base_annotation;
 	};
 
 	template <typename CharT, typename AnnotationT>
@@ -43,7 +45,13 @@ namespace agge
 		range(const string_type &from);
 
 	public:
-		const AnnotationT *annotation;
+		const AnnotationT &get_annotation() const;
+
+	private:
+		const AnnotationT *_annotation;
+
+	private:
+		friend typename annotated_string<CharT, AnnotationT>::const_iterator;
 	};
 
 	template <typename CharT, typename AnnotationT>
@@ -78,12 +86,13 @@ namespace agge
 
 
 	template <typename CharT, typename AnnotationT>
-	inline annotated_string<CharT, AnnotationT>::annotated_string()
+	inline annotated_string<CharT, AnnotationT>::annotated_string(const AnnotationT &base_annotation)
+		: _annotations(1, std::make_pair(base_annotation, 0u)), _base_annotation(base_annotation)
 	{	}
 
 	template <typename CharT, typename AnnotationT>
-	inline annotated_string<CharT, AnnotationT>::annotated_string(const CharT *from)
-		: _underlying(from)
+	inline annotated_string<CharT, AnnotationT>::annotated_string(const CharT *from, const AnnotationT &base_annotation)
+		: _underlying(from), _annotations(1, std::make_pair(base_annotation, 0u)), _base_annotation(base_annotation)
 	{	}
 
 	template <typename CharT, typename AnnotationT>
@@ -95,10 +104,17 @@ namespace agge
 	{
 		const size_t position = _underlying.size();
 
-		if (!_annotations.empty() && _annotations.back().second == position)
+		if (_annotations.back().second == position)
 			_annotations.back().first = annotation;
 		else
 			_annotations.push_back(std::make_pair(annotation, position));
+	}
+
+	template <typename CharT, typename AnnotationT>
+	inline void annotated_string<CharT, AnnotationT>::clear()
+	{
+		_underlying.clear();
+		_annotations.assign(1, std::make_pair(_base_annotation, 0u));
 	}
 
 	template <typename CharT, typename AnnotationT>
@@ -129,6 +145,10 @@ namespace agge
 		: agge::range<const string_type>(from)
 	{	}
 
+	template <typename CharT, typename AnnotationT>
+	inline const AnnotationT &annotated_string<CharT, AnnotationT>::range::get_annotation() const
+	{	return *_annotation;	}
+
 
 	template <typename CharT, typename AnnotationT>
 	inline annotated_string<CharT, AnnotationT>::const_iterator::const_iterator(const range &from,
@@ -136,12 +156,10 @@ namespace agge
 			typename annotations_t::const_iterator annotations_end)
 		: _current(from), _next_annotation(next_annotation), _annotations_end(annotations_end)
 	{
-		if (_annotations_end == _next_annotation)
-			_current.annotation = 0, _current.extend_end();
-		else if (size_t start = _next_annotation->second)
-			_current.annotation = 0, _current.end_index = start;
-		else
+		if (_annotations_end != _next_annotation)
 			fetch_annotation();
+		else
+			_current.set_end();
 	}
 
 	template <typename CharT, typename AnnotationT>
@@ -175,7 +193,7 @@ namespace agge
 	template <typename CharT, typename AnnotationT>
 	inline void annotated_string<CharT, AnnotationT>::const_iterator::fetch_annotation()
 	{
-		_current.annotation = &_next_annotation++->first;
+		_current._annotation = &_next_annotation++->first;
 		if (_annotations_end != _next_annotation)
 			_current.end_index = _next_annotation->second;
 		else

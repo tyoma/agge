@@ -1,8 +1,9 @@
 #include <agge.text/annotated_string.h>
 
-#include <tests/common/helpers.h>
+#include "helpers.h"
 
 #include <algorithm>
+#include <tests/common/helpers.h>
 #include <ut/assert.h>
 #include <ut/test.h>
 
@@ -11,51 +12,47 @@ using namespace std;
 namespace agge
 {
 	template <typename T, typename AnnotationT>
-	inline bool operator ==(const pair<basic_string<T>, const AnnotationT *> &expected,
-		const typename agge::annotated_string<T, AnnotationT>::range &actual)
+	inline bool operator ==(const pair<basic_string<T>, AnnotationT> &expected,
+		const typename annotated_string<T, AnnotationT>::range &actual)
 	{
 		return expected.first == basic_string<T>(actual.begin(), actual.end())
-			&& !!expected.second == !!actual.annotation
-			&& (!expected.second || *expected.second == *actual.annotation);
+			&& expected.second == actual.get_annotation();
 	}
 
 	namespace tests
 	{
 		namespace
 		{
-			template <typename T, typename AnnotationT>
-			class ranges_container
+			class non_default_constructible
 			{
 			public:
-				ranges_container(const annotated_string<T, AnnotationT> &underlying)
-					: _underlying(&underlying)
+				non_default_constructible(int)
 				{	}
-
-				typename annotated_string<T, AnnotationT>::const_iterator begin() const
-				{	return _underlying->ranges_begin();	}
-
-				typename annotated_string<T, AnnotationT>::const_iterator end() const
-				{	return _underlying->ranges_end();	}
-
-			private:
-				const annotated_string<T, AnnotationT> *_underlying;
 			};
 
 			template <typename T, typename AnnotationT>
-			ranges_container<T, AnnotationT> ranges(const annotated_string<T, AnnotationT> &from)
-			{	return ranges_container<T, AnnotationT>(from);	}
+			vector<typename annotated_string<T, AnnotationT>::range> ranges_vector(
+				const annotated_string<T, AnnotationT> &from)
+			{	return mkvector(from.ranges_begin(), from.ranges_end());	}
 		}
 
 		begin_test_suite( AnnotatedStringTests )
-			test( EmptyStringContainsNoSpans )
+			test( EmptyStringContainsNoRanges )
 			{
-				typedef annotated_string<wchar_t, string> container_t;
+				typedef annotated_string<wchar_t, string> container1_t;
+				typedef annotated_string<int, non_default_constructible> container2_t;
 
 				// INIT
-				container_t seq;
+				container1_t seq1;
 
 				// ACT / ASSERT
-				assert_equal(seq.ranges_end(), seq.ranges_begin());
+				assert_equal(seq1.ranges_end(), seq1.ranges_begin());
+
+				// INIT / ACT
+				container2_t seq2(non_default_constructible(123));
+
+				// ASSERT
+				assert_equal(seq2.ranges_end(), seq2.ranges_begin());
 			}
 
 
@@ -70,21 +67,21 @@ namespace agge
 				seq += L"Lorem ipsum dolor sit amet";
 
 				// ACT / ASSERT
-				pair<wstring, const string *> reference1[] = {
-					make_pair(L"Lorem ipsum dolor sit amet", nullptr),
+				pair<wstring, string> reference1[] = {
+					make_pair(L"Lorem ipsum dolor sit amet", string()),
 				};
 
-				assert_equal(reference1, ranges(seq));
+				assert_equal(reference1, ranges_vector(seq));
 
 				// ACT
 				seq += L", consectetur adipisci elit";
 
 				// ACT / ASSERT
-				pair<wstring, const string *> reference2[] = {
-					make_pair(L"Lorem ipsum dolor sit amet, consectetur adipisci elit", nullptr),
+				pair<wstring, string> reference2[] = {
+					make_pair(L"Lorem ipsum dolor sit amet, consectetur adipisci elit", string()),
 				};
 
-				assert_equal(reference2, ranges(seq));
+				assert_equal(reference2, ranges_vector(seq));
 			}
 
 
@@ -96,21 +93,21 @@ namespace agge
 				const container_t seq1("Lorem ipsum");
 
 				// ACT / ASSERT
-				pair<string, const char *> reference1[] = {
-					make_pair("Lorem ipsum", nullptr),
+				pair<string, char> reference1[] = {
+					make_pair("Lorem ipsum", '\0'),
 				};
 
-				assert_equal(reference1, ranges(seq1));
+				assert_equal(reference1, ranges_vector(seq1));
 
 				// INIT / ACT
 				const container_t seq2("dolor sit amet");
 
 				// ACT / ASSERT
-				pair<string, const char *> reference2[] = {
-					make_pair("dolor sit amet", nullptr),
+				pair<string, char> reference2[] = {
+					make_pair("dolor sit amet", '\0'),
 				};
 
-				assert_equal(reference2, ranges(seq2));
+				assert_equal(reference2, ranges_vector(seq2));
 			}
 
 
@@ -126,11 +123,11 @@ namespace agge
 				seq.annotate(123456);
 
 				// ACT / ASSERT
-				pair<string, const int *> reference[] = {
-					make_pair("aZ", nullptr),
+				pair<string, int> reference[] = {
+					make_pair("aZ", 0),
 				};
 
-				assert_equal(reference, ranges(seq));
+				assert_equal(reference, ranges_vector(seq));
 			}
 
 
@@ -146,12 +143,11 @@ namespace agge
 				seq += "foobar";
 
 				// ACT / ASSERT
-				string m = "zamazu";
-				pair<string, const string *> reference[] = {
-					make_pair("foobar", &m),
+				pair<string, string> reference[] = {
+					make_pair("foobar", "zamazu"),
 				};
 
-				assert_equal(reference, ranges(seq));
+				assert_equal(reference, ranges_vector(seq));
 			}
 
 
@@ -170,14 +166,13 @@ namespace agge
 				seq += "BAZ";
 
 				// ACT / ASSERT
-				int annotations[] = {	17, 191,	};
-				pair<string, const int *> reference[] = {
-					make_pair("foo ", nullptr),
-					make_pair("Bar", &annotations[0]),
-					make_pair("BAZ", &annotations[1]),
+				pair<string, int> reference[] = {
+					make_pair("foo ", 0),
+					make_pair("Bar", 17),
+					make_pair("BAZ", 191),
 				};
 
-				assert_equal(reference, ranges(seq));
+				assert_equal(reference, ranges_vector(seq));
 			}
 
 
@@ -198,14 +193,13 @@ namespace agge
 				seq += " socicety political opponents survive";
 
 				// ACT / ASSERT
-				int annotations[] = {	32, 0,	};
-				pair<string, const int *> reference[] = {
-					make_pair("In a ", nullptr),
-					make_pair("free", &annotations[0]),
-					make_pair(" socicety political opponents survive", &annotations[1]),
+				pair<string, int> reference[] = {
+					make_pair("In a ", 0),
+					make_pair("free", 32),
+					make_pair(" socicety political opponents survive", 0),
 				};
 
-				assert_equal(reference, ranges(seq));
+				assert_equal(reference, ranges_vector(seq));
 			}
 
 
@@ -229,24 +223,21 @@ namespace agge
 
 				++++j;
 
-				assert_not_null(i->annotation);
-				assert_equal(171819, *i->annotation);
+				assert_equal(171819, i->get_annotation());
 				assert_equal(1, distance(i->begin(), i->end()));
 				assert_is_false(j == i);
 				assert_is_false(seq.ranges_end() == i);
 				assert_is_true(j != i);
 				assert_is_true(seq.ranges_end() != i);
 				++i;
-				assert_not_null(i->annotation);
-				assert_equal(123, *i->annotation);
+				assert_equal(123, i->get_annotation());
 				assert_equal(3, distance(i->begin(), i->end()));
 				assert_is_false(j == i);
 				assert_is_false(seq.ranges_end() == i);
 				assert_is_true(j != i);
 				assert_is_true(seq.ranges_end() != i);
 				++i;
-				assert_not_null(i->annotation);
-				assert_equal(42, *i->annotation);
+				assert_equal(42, i->get_annotation());
 				assert_equal(1, distance(i->begin(), i->end()));
 				assert_is_true(j == i);
 				assert_is_false(seq.ranges_end() == i);
@@ -287,6 +278,95 @@ namespace agge
 				assert_equal(7u, static_cast<const container_t &>(seq).size());
 			}
 
+
+			test( ClearingProducesStringWithNoRanges )
+			{
+				typedef annotated_string<char, int> container_t;
+
+				// INIT
+				container_t seq;
+
+				seq.annotate(17);
+				seq += "some text";
+				seq.annotate(19);
+				seq += "!";
+
+				// ACT
+				seq.clear();
+
+				// ACT / ASSERT
+				assert_is_empty(seq);
+				assert_equal(seq.ranges_end(), seq.ranges_begin());
+			}
+
+
+			test( PreviousRangesAreResetOnClearing )
+			{
+				typedef annotated_string<char, int> container_t;
+
+				// INIT
+				container_t seq;
+
+				seq += "some text";
+				seq.annotate(19);
+				seq += "!";
+
+				// ACT
+				seq.clear();
+				seq.annotate(1317);
+				seq += "new text";
+
+				// ASSERT
+				assert_equal((plural + pair<string, int>("new text", 1317)), ranges_vector(seq));
+			}
+
+
+			test( BaseAnnotationsAreReturnedIfNoAnnotationsWereSpecified )
+			{
+				typedef annotated_string<char, int> container1_t;
+				typedef annotated_string<char, wstring> container2_t;
+
+				// INIT / ACT
+				container1_t seq1(17);
+				container1_t seq2("text #2", 193);
+				container2_t seq3(L"foo");
+				container2_t seq4("text #4", L"bar");
+
+				seq1 += "text #1";
+				seq3 += "text #3";
+
+				// ACT / ASSERT
+				assert_equal((plural + pair<string, int>("text #1", 17)), ranges_vector(seq1));
+				assert_equal((plural + pair<string, int>("text #2", 193)), ranges_vector(seq2));
+				assert_equal((plural + pair<string, wstring>("text #3", L"foo")), ranges_vector(seq3));
+				assert_equal((plural + pair<string, wstring>("text #4", L"bar")), ranges_vector(seq4));
+			}
+
+
+			test( StartAnnotationIsResetToBaseOnClear )
+			{
+				typedef annotated_string<char, int> container_t;
+
+				// INIT / ACT
+				container_t seq1(17);
+				container_t seq2("", 193);
+
+				seq1.annotate(100);
+				seq1 += "text #1";
+				seq2.annotate(100);
+				seq2 += "text #3";
+
+				// ACT
+				seq1.clear();
+				seq2.clear();
+
+				seq1 += "new";
+				seq2 += "new";
+
+				// ACT / ASSERT
+				assert_equal((plural + pair<string, int>("new", 17)), ranges_vector(seq1));
+				assert_equal((plural + pair<string, int>("new", 193)), ranges_vector(seq2));
+			}
 		end_test_suite
 	}
 }
