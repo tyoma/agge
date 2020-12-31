@@ -1,8 +1,10 @@
 #include <agge.text/layout.h>
 
+#include <agge/config.h>
 #include <agge/math.h>
 #include <agge/tools.h>
 #include <agge.text/font.h>
+#include <agge.text/font_factory.h>
 
 using namespace std;
 
@@ -54,16 +56,17 @@ namespace agge
 		bool /*end-of-line*/ populate_glyph_run(ContainerT &glyphs, glyph_run &accumulator, glyph_run &next,
 			const real_t limit, CharIteratorT &i, CharIteratorT text_end)
 		{
-			const font &font_ = *accumulator.glyph_run_font;
+			const font &font_ = *accumulator.font_;
 			size_t eow_position = 0, sow_position = 0;
 			real_t eow_width = 0.0f, sow_width = 0.0f;
 
+			next.offset = zero();
 			next.width = 0.0f;
 			for (real_t advance; i != text_end; ++i, accumulator.width += advance)
 			{
 				if (eat_lf(i))
 				{
-					// Next line: line-feed
+					// Next line - line-feed
 					next.set_end();
 					return true;
 				}
@@ -80,12 +83,12 @@ namespace agge
 
 				if (accumulator.width + advance > limit)
 				{
-					if (eow_position)
+					next.set_end();
+					if (eow_position) // else: next line - emergency mid-word break
 					{
-						// Next line: normal word-boundary break
-						next = accumulator;
-						accumulator.end_index = eow_position;
+						// Next line - normal word-boundary break
 						sow_width = accumulator.width - sow_width;
+						accumulator.end_index = eow_position;
 						accumulator.width = eow_width;
 						if (sow_position > eow_position)
 						{
@@ -95,17 +98,10 @@ namespace agge
 						}
 						else
 						{
-							// No new word found before - let's scan ourselves.
+							// No new word found before - let's scan for it ourselves.
 							while (i != text_end && is_space(*i))
 								++i;
-							next.set_end();
-							next.width = 0.0f;
 						}
-					}
-					else
-					{
-						// Next line: emergency mid-word break
-						next.set_end();
 					}
 					return true;
 				}
@@ -119,8 +115,8 @@ namespace agge
 		}
 	}
 
-	layout::layout(font::ptr base_font)
-		: _base_font(base_font), _limit_width(1e30f)
+	layout::layout(font_factory &factory)
+		: _factory(factory), _limit_width(1e30f)
 	{	}
 
 	void layout::process(const richtext_t &text)
@@ -129,50 +125,56 @@ namespace agge
 		_glyph_runs.clear();
 		_glyphs.clear();
 
-		text_line accumulator_tl(_glyph_runs);
+		text_line *current_line = &*_text_lines.insert(_text_lines.end(), text_line(_glyph_runs));
+		glyph_run *current_grun = &*_glyph_runs.insert(_glyph_runs.end(), glyph_run(_glyphs));
 
 		for (richtext_t::const_iterator range = text.ranges_begin(); range != text.ranges_end(); ++range)
 		{
-			glyph_run accumulator(_glyphs);
-			const font_metrics m = _base_font->get_metrics();
+			current_grun->font_ = _factory.create_font(range->get_annotation().basic);
+			current_grun->offset = create_vector(current_line->width, 0.0f);
 
-			accumulator.set_end();
-			accumulator.glyph_run_font = _base_font;
-			accumulator.offset = zero();
-			accumulator.width = 0.0f;
-
-			accumulator_tl.offset = create_vector(0.0f, m.ascent);
-
-			glyph_run next(accumulator);
+			const font_metrics m = current_grun->font_->get_metrics();
+			glyph_run next_line_grun(*current_grun);
 
 			for (detector_iterator i = range->begin(), end = range->end(), previous = i;
-				populate_glyph_run(_glyphs, accumulator, next, _limit_width, i, end); previous = i)
+				populate_glyph_run(_glyphs, *current_grun, next_line_grun, _limit_width - current_line->width, i, end);
+				previous = i)
 			{
-				if (!accumulator.empty())
+				if (i == previous)
 				{
-					_glyph_runs.push_back(accumulator);
-					accumulator_tl.extend_end();
-					accumulator_tl.width = accumulator.width;
-					_text_lines.push_back(accumulator_tl);
-					accumulator_tl.set_end();
-				}
-				else if (i == previous)
-				{
+					// Emergency: width limit is too small to layout even a single character - bailing out!
 					_text_lines.clear();
 					return;
 				}
-				accumulator = next;
-				accumulator_tl.offset += create_vector(0.0f, height(m));
+				else if (!commit_glyph_run(*current_line, current_grun, next_line_grun))
+				{
+					*current_grun = next_line_grun;
+				}
+
+				current_line->offset += create_vector(0.0f, m.ascent);
+				if (!current_line->empty())
+				{
+					current_line = &*_text_lines.insert(_text_lines.end(), text_line(*current_line));
+					current_line->begin_index = current_line->end_index;
+					current_line->width = 0.0f;
+				}
+				current_line->offset += create_vector(0.0f, m.descent + m.leading);
 			}
-			if (!accumulator.empty())
+
+			if (!current_grun->empty())
 			{
-				_glyph_runs.push_back(accumulator);
-				accumulator_tl.extend_end();
-				accumulator_tl.width = accumulator.width;
-				_text_lines.push_back(accumulator_tl);
-				accumulator_tl.set_end();
+				// Remainder of the text range was not empty, we pushed it and prepare current_grun for reuse.
+				commit_glyph_run(*current_line, current_grun, glyph_run(*current_grun));
+				current_grun->set_end();
+				current_grun->width = 0.0f;
 			}
 		}
+		if (current_line->empty())
+			_text_lines.pop_back();
+		else
+			current_line->offset += create_vector(0.0f, current_line->begin()->font_->get_metrics().ascent);
+		if (current_grun->empty())
+			_glyph_runs.pop_back();
 	}
 
 	void layout::set_width_limit(real_t width)
@@ -188,11 +190,21 @@ namespace agge
 		if (_glyph_runs.empty())
 			return box;
 
-		font_metrics m = _base_font->get_metrics();
+		font_metrics m = _glyph_runs[0].font_->get_metrics();
 
 		for (const_iterator i = begin(); i != end(); ++i)
 			box.w = agge_max(box.w, i->width);
 		box.h = (end() - begin()) * height(m) - m.leading;
 		return box;
+	}
+
+	bool layout::commit_glyph_run(text_line &current_line, glyph_run *&current_grun, const glyph_run &next_line_grun)
+	{
+		if (current_grun->empty())
+			return false;	// Nothing to commit.
+		current_line.width += current_grun->width;
+		current_line.extend_end();
+		current_grun = &*_glyph_runs.insert(_glyph_runs.end(), next_line_grun);
+		return true;	// Last glyph run committed, next line's glyph run is pushed to container to be committed later.
 	}
 }

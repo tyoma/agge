@@ -15,10 +15,18 @@ namespace agge
 		};
 	}
 
-	font_descriptor::font_descriptor(const string &family_, int height_, bool bold_, bool italic_,
-			font_hinting hinting_)
-		: family(family_), height(height_), bold(bold_), italic(italic_), hinting(hinting_)
-	{	}
+	font_descriptor font_descriptor::create(const string &family, int height, bool bold, bool italic,
+		font_hinting hinting_)
+	{
+		font_descriptor d = {};
+
+		d.family = family;
+		d.height = height;
+		d.bold = bold;
+		d.italic = italic;
+		d.hinting = hinting_;
+		return d;
+	}
 
 	bool operator ==(const font_descriptor &lhs, const font_descriptor &rhs)
 	{

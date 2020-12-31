@@ -25,7 +25,7 @@ namespace agge
 	{
 		glyph_run(const positioned_glyphs_container_t &container);
 
-		shared_ptr<font> glyph_run_font;
+		shared_ptr<font> font_;
 		vector_r offset;
 		real_t width;
 	};
@@ -41,11 +41,11 @@ namespace agge
 
 
 	inline glyph_run::glyph_run(const positioned_glyphs_container_t &container)
-		: range<const positioned_glyphs_container_t>(container)
+		: range<const positioned_glyphs_container_t>(container), offset(zero()), width(0.0f)
 	{	}
 
 
 	inline text_line::text_line(const glyph_runs_container_t &container)
-		: range<const glyph_runs_container_t>(container)
+		: range<const glyph_runs_container_t>(container), offset(zero()), width(0.0f)
 	{	}
 }

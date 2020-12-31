@@ -1,6 +1,7 @@
 #include <agge.text/text_engine.h>
 
 #include "helpers.h"
+#include "helpers_layout.h"
 #include "mocks.h"
 #include "outlines.h"
 
@@ -53,17 +54,17 @@ namespace agge
 					mocks::glyph(7.725, 0, c_outline_diamond),
 				};
 				pair<font_descriptor, mocks::font_accessor> fonts[] = {
-					make_pair(font_descriptor("Arial", 10, false, false, hint_strong),
+					make_pair(font_descriptor::create("Arial", 10, false, false, hint_strong),
 						mocks::font_accessor(c_fm1, indices, glyphs)),
 				};
 				mocks::fonts_loader loader(fonts);
 				text_engine<rasterizer_t> e(loader, 4);
 				font::ptr fnt = e.create_font(fonts[0].first);
-				layout l(fnt);
+				layout l(e);
 				rasterizer_t target, reference;
 
 				// positions: 0.0f, 5.2f, 18.9f, 26.625f, width: 34.35f
-				l.process(L"astt");
+				l.process(simple_richtext(L"astt", "Arial", 10, false, false, hint_strong));
 
 				// ACT
 				e.render(target, l, align_near, align_near, create_rect(17.32f, 190.0f, 50.0f, 250.0f));
@@ -79,7 +80,7 @@ namespace agge
 				reference.reset(), target.reset();
 
 				// positions: 0.0f, 5.2f, 12.925f, width: 20.65f
-				l.process(L"att");
+				l.process(simple_richtext(L"att", "Arial", 10, false, false, hint_strong));
 
 				// ACT
 				e.render(target, l, align_far, align_near, create_rect(17.32f, 191.05f, 50.0f, 250.0f));

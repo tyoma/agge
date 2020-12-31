@@ -58,7 +58,7 @@ namespace agge
 	template <typename RasterizerT>
 	inline void text_engine<RasterizerT>::render(RasterizerT &target, const glyph_run &gr, point_r ref)
 	{
-		const font &font_ = *gr.glyph_run_font.get();
+		const font &font_ = *gr.font_.get();
 		rasters_map &rasters = get_rasters_map(font_);
 
 		for (positioned_glyphs_container_t::const_iterator g = gr.begin(), end = gr.end(); g != end; ref += g->d, ++g)

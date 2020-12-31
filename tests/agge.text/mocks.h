@@ -156,7 +156,7 @@ namespace agge
 			inline font::ptr create_font(const font_metrics &metrics_,
 				const font_accessor::char_to_index (&indices)[indices_n], font_accessor::glyph (&glyphs)[glyphs_n])
 			{
-				return font::ptr(new font(font_descriptor(std::string(), 10),
+				return font::ptr(new font(font_descriptor::create(std::string(), 10),
 					font::accessor_ptr(new font_accessor(metrics_, indices, glyphs))));
 			}
 		}

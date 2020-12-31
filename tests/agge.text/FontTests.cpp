@@ -129,7 +129,7 @@ namespace agge
 				};
 				mocks::font_accessor::glyph glyphs[] = { { { 0, 0 } }, };
 				shared_ptr<mocks::font_accessor> a(new mocks::font_accessor(c_fm1, indices, glyphs));
-				font::ptr f(new font(font_descriptor(string(), 10), a));
+				font::ptr f(new font(font_descriptor::create(string(), 10), a));
 
 				// INIT / ACT (caching occurs here)
 				f->map_single(L'a');
@@ -153,8 +153,8 @@ namespace agge
 				shared_ptr<mocks::font_accessor> a(new mocks::font_accessor(c_fm1, indices, glyphs));
 
 				// INIT / ACT
-				font f1(font_descriptor("Arial", 13), a);
-				font f2(font_descriptor("Segoe", -17), a);
+				font f1(font_descriptor::create("Arial", 13), a);
+				font f2(font_descriptor::create("Segoe", -17), a);
 
 				// ACT / ASSERT
 				assert_equal("Arial", f1.get_key().family);

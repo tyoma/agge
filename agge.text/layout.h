@@ -5,6 +5,8 @@
 
 namespace agge
 {
+	struct font_factory;
+
 	class layout : noncopyable
 	{
 	public:
@@ -12,7 +14,7 @@ namespace agge
 		typedef text_lines_container_t::const_iterator const_iterator;
 
 	public:
-		layout(shared_ptr<font> base_font);
+		layout(font_factory &factory);
 
 		void process(const richtext_t &text);
 
@@ -23,7 +25,10 @@ namespace agge
 		const_iterator end() const;
 
 	private:
-		shared_ptr<font> _base_font;
+		bool commit_glyph_run(text_line &current_line, glyph_run *&current_grun, const glyph_run &next_line_grun);
+
+	private:
+		font_factory &_factory;
 		positioned_glyphs_container_t _glyphs;
 		glyph_runs_container_t _glyph_runs;
 		text_lines_container_t _text_lines;

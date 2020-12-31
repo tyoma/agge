@@ -11,18 +11,21 @@
 using namespace agge;
 using namespace std;
 
-typedef rasterizer< clipper<int> > my_rasterizer;
-
 namespace demo
 {
+	typedef rasterizer< clipper<int> > my_rasterizer;
+
 	class TextDrawer : public application
 	{
 	public:
 		TextDrawer(services &s)
-			: _renderer(3), _font_loader(s), _text_engine(_font_loader),
-				_font(_text_engine.create_font(font_descriptor("arial", 14, false, false, hint_none))), _layout(_font),
-				_text(c_text_long.c_str()), _ddx(0.0f)
-		{	}
+			: _renderer(3), _font_loader(s), _text_engine(_font_loader), _layout(_text_engine), _ddx(0.0f)
+		{
+			font_style_annotation a = {	font_descriptor::create("arial", 14, false, false, hint_none),	};
+
+			_text.set_base_annotation(a);
+			_text += c_text_long.c_str();
+		}
 
 	private:
 		virtual void draw(platform_bitmap &surface, timings &timings)
@@ -66,7 +69,6 @@ namespace demo
 		renderer_parallel _renderer;
 		font_loader _font_loader;
 		text_engine<my_rasterizer> _text_engine;
-		font::ptr _font;
 		layout _layout;
 		richtext_t _text;
 		rect_r _dest_rect;

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 set(AGGE_TEXT_TEST_SOURCES
 	AnnotatedStringTests.cpp
 	FontTests.cpp
+	helpers_layout.cpp
 	LayoutTests.cpp
 	mocks.cpp
 	RichTextLayoutTests.cpp

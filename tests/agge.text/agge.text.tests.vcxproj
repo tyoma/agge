@@ -40,6 +40,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnnotatedStringTests.cpp" />
+    <ClCompile Include="helpers_layout.cpp" />
     <ClCompile Include="RichTextLayoutTests.cpp" />
     <ClCompile Include="TextEngineRichTextTests.cpp" />
     <ClCompile Include="TextEngineTests.cpp" />
@@ -57,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helpers.h" />
+    <ClInclude Include="helpers_layout.h" />
     <ClInclude Include="mocks.h" />
     <ClInclude Include="outlines.h" />
   </ItemGroup>

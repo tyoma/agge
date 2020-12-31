@@ -40,7 +40,7 @@ namespace agge
 
 	struct font_descriptor
 	{
-		explicit font_descriptor(const std::string &family, int height, bool bold = false, bool italic = false,
+		static font_descriptor create(const std::string &family, int height, bool bold = false, bool italic = false,
 			font_hinting hinting_ = hint_none);
 
 		std::string family;

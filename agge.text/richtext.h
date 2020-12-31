@@ -5,13 +5,10 @@
 
 namespace agge
 {
-	struct style_annotation
+	struct font_style_annotation
 	{
-		std::wstring font_families;
-		int height : 20;
-		font_weight weight : 5;
-		unsigned italic : 1;
+		font_descriptor basic;
 	};
 
-	typedef annotated_string<wchar_t, style_annotation> richtext_t;
+	typedef annotated_string<wchar_t, font_style_annotation> richtext_t;
 }
