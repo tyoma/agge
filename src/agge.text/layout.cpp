@@ -5,6 +5,7 @@
 #include <agge/tools.h>
 #include <agge.text/font.h>
 #include <agge.text/font_factory.h>
+#include <algorithm>
 
 using namespace std;
 
@@ -113,6 +114,20 @@ namespace agge
 			}
 			return false;
 		}
+
+		pair<real_t /*ascent*/, real_t /*descent + leading*/> calculate_line_metrix(font_metrics m_,
+			const text_line &line)
+		{
+			pair<real_t, real_t> m = make_pair(m_.ascent, m_.descent + m_.leading);
+			for (text_line::const_iterator i = line.begin(), end = line.end(); i != end; ++i)
+			{
+				const font_metrics grm = i->font_->get_metrics();
+
+				m.first = (max)(m.first, grm.ascent);
+				m.second = (max)(m.second, grm.descent + grm.leading);
+			}
+			return m;
+		}
 	}
 
 	layout::layout(font_factory &factory)
@@ -133,7 +148,6 @@ namespace agge
 			current_grun->font_ = _factory.create_font(range->get_annotation().basic);
 			current_grun->offset = create_vector(current_line->width, 0.0f);
 
-			const font_metrics m = current_grun->font_->get_metrics();
 			glyph_run next_line_grun(*current_grun);
 
 			for (detector_iterator i = range->begin(), end = range->end(), previous = i;
@@ -151,14 +165,16 @@ namespace agge
 					*current_grun = next_line_grun;
 				}
 
-				current_line->offset += create_vector(0.0f, m.ascent);
+				const pair<real_t, real_t> m = calculate_line_metrix(current_grun->font_->get_metrics(), *current_line);
+
+				current_line->offset += create_vector(0.0f, m.first);
 				if (!current_line->empty())
 				{
 					current_line = &*_text_lines.insert(_text_lines.end(), text_line(*current_line));
 					current_line->begin_index = current_line->end_index;
 					current_line->width = 0.0f;
 				}
-				current_line->offset += create_vector(0.0f, m.descent + m.leading);
+				current_line->offset += create_vector(0.0f, m.second);
 			}
 
 			if (!current_grun->empty())
@@ -172,7 +188,7 @@ namespace agge
 		if (current_line->empty())
 			_text_lines.pop_back();
 		else
-			current_line->offset += create_vector(0.0f, current_line->begin()->font_->get_metrics().ascent);
+			current_line->offset += create_vector(0.0f, calculate_line_metrix(zero(), *current_line).first);
 		if (current_grun->empty())
 			_glyph_runs.pop_back();
 	}

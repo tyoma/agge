@@ -79,6 +79,17 @@ namespace agge
 			std::vector<ref_glyph_run> _glyph_runs;
 		};
 
+		class ref_text_line_offsets
+		{
+		public:
+			ref_text_line_offsets(real_t offset_x, real_t offset_y);
+
+			bool operator ==(const text_line &rhs) const;
+
+		private:
+			vector_r _offset;
+		};
+
 
 
 		template <typename T>

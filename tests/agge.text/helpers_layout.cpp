@@ -44,6 +44,14 @@ namespace agge
 		}
 
 
+		ref_text_line_offsets::ref_text_line_offsets(real_t offset_x, real_t offset_y)
+			: _offset(create_vector(offset_x, offset_y))
+		{	}
+
+		bool ref_text_line_offsets::operator ==(const text_line &rhs) const
+		{	return _offset == rhs.offset;	}
+
+
 		richtext_t simple_richtext(const wstring &text, const string &family, int height, bool bold, bool italic,
 			font_hinting hinting)
 		{

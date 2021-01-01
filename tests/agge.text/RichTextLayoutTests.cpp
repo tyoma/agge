@@ -106,7 +106,7 @@ namespace agge
 
 				// ASSERT
 				assert_equal(plural
-					+ ref_text_line(0.0f, 10.0f /* should be 14.7 */, 0.0f, plural
+					+ ref_text_line(0.0f, 14.7f, 0.0f, plural
 						+ ref_glyph_run(arial, 0.0f, 0.0f, plural + 1 + 4 + 2 + 0)
 						+ ref_glyph_run(helvetica, 28.0f, 0.0f, plural + 5 + 5)
 						+ ref_glyph_run(segoe, 70.3f, 0.0f, plural + 1 + 2)),
@@ -137,6 +137,57 @@ namespace agge
 					+ ref_text_line(0.0f, 33.4f, 26.0f, plural
 						+ ref_glyph_run(helvetica, 0.0f, 0.0f, plural + 2 + 2)
 						+ ref_glyph_run(segoe, 14.0f, 0.0f, plural + 1 + 2)),
+					mkvector(l.begin(), l.end()));
+			}
+
+
+			test( FirstOffsetIsCalculatedAccordinglyToMaxAscentInFirstLine )
+			{
+				// INIT
+				layout l(factory);
+				richtext_t text;
+
+				text << modify_family("Segoe UI") << modify_height(10) << L"A"
+					<< modify_family("Arial") << modify_height(13) << L"A"
+					<< modify_family("Helvetica") << modify_height(17) << L"A";
+
+				// ACT
+				l.process(text);
+
+				// ASSERT
+				assert_equal(plural + ref_text_line_offsets(0.0f, 14.7f), mkvector(l.begin(), l.end()));
+
+				// INIT
+				text.clear();
+				text << modify_family("Segoe UI") << modify_height(10) << L"A"
+					<< modify_family("Arial") << modify_height(13) << L"A";
+
+				// ACT
+				l.process(text);
+
+				// ASSERT
+				assert_equal(plural + ref_text_line_offsets(0.0f, 10.0f), mkvector(l.begin(), l.end()));
+			}
+
+
+			test( WordBrokenTextUsesMaxDescentLeadingOfTheFirstLineAndAscentOfTheSecondToOffsetSecondLine )
+			{
+				// INIT
+				layout l(factory);
+				richtext_t text;
+
+				l.set_width_limit(84.0f);
+				text << modify_family("Segoe UI") << modify_height(10) << L"AAA" // 15
+					<< modify_family("Helvetica") << modify_height(17) << L"AAA" // 63.45
+					<< modify_family("Arial") << modify_height(13) << L"AAA"; // 15
+
+				// ACT
+				l.process(text);
+
+				// ASSERT
+				assert_equal(plural
+					+ ref_text_line_offsets(0.0f, 14.7f)
+					+ ref_text_line_offsets(0.0f, 28.7f),
 					mkvector(l.begin(), l.end()));
 			}
 		end_test_suite
