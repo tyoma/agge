@@ -1,17 +1,9 @@
 #pragma once
 
+#include "types.h"
 
 namespace agge
 {
-	template <typename CoordT>
-	struct point;
-
-	template <typename CoordT>
-	struct agge_vector;
-
-	template <typename CoordT>
-	struct rect;
-
 	struct zero
 	{
 		template <typename T>
@@ -41,6 +33,13 @@ namespace agge
 	{
 		rect<CoordT> r = { x1, y1, x2, y2 };
 		return r;
+	}
+
+	template <typename CoordT>
+	inline box<CoordT> create_box(CoordT w, CoordT h)
+	{
+		box<CoordT> b = { w, h };
+		return b;
 	}
 
 	template <typename CoordT>

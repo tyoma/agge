@@ -211,6 +211,49 @@ namespace agge
 					+ ref_text_line(0.0f, 21.0f, 0.0f, plural + ref_glyph_run(arial, 0.0f, 0.0f, plural + 1)),
 					mkvector(l.begin(), l.end()));
 			}
+
+
+			test( BoxIsCalculatedForMultiLineMultiFontRichText )
+			{
+				// INIT
+				layout l(factory);
+				richtext_t text;
+
+				text << modify_family("Arial") << modify_height(13) << L"AD\nB"
+					<< modify_family("Helvetica") << modify_height(17) << L"AAAAB\n"
+					<< modify_family("Segoe UI") << modify_height(10) << L"ACAA";
+
+				// ACT
+				l.process(text);
+
+				// ACT / ASSERT
+				box_r reference1 = {	98.6f, 14.0f + 18.7f + 10.0f	};
+
+				assert_equal(reference1, l.get_box());
+
+				// INIT
+				text << modify_family("Arial") << modify_height(13) << L"A";
+
+				// ACT
+				l.process(text);
+
+				// ACT / ASSERT
+				box_r reference2 = {	98.6f, 14.0f + 18.7f + 12.0f	};
+
+				assert_equal(reference2, l.get_box());
+
+				// INIT
+				text.clear();
+				text << modify_family("Arial") << modify_height(13) << L"A";
+
+				// ACT
+				l.process(text);
+
+				// ACT / ASSERT
+				box_r reference3 = {	5.0f, 12.0f	};
+
+				assert_equal(reference3, l.get_box());
+			}
 		end_test_suite
 	}
 }

@@ -1,11 +1,15 @@
 #pragma once
 
-#include "layout_primitives.h"
+#include "layout.h"
 #include "text_engine_base.h"
 
 #include <agge/config.h>
 #include <agge/math.h>
 #include <limits>
+
+#ifdef _MSC_VER
+	#pragma warning(disable: 4355)
+#endif
 
 namespace agge
 {
@@ -16,14 +20,18 @@ namespace agge
 		explicit text_engine(loader &loader_, uint8_t precision = 4);
 
 		void render_glyph(RasterizerT &target, const font &font_, glyph_index_t glyph_index, real_t x, real_t y);
+		void render_string(RasterizerT &target, const font &font_, const wchar_t *text, text_alignment halign,
+			real_t x, real_t y, real_t max_width = (std::numeric_limits<real_t>::max)());
 		void render(RasterizerT &target, const glyph_run &glyphs, point_r reference);
 		template <typename ContainerT>
 		void render(RasterizerT &target, const ContainerT &container, const point_r &reference);
 		template <typename LayoutT>
 		void render(RasterizerT &target, const LayoutT &layout_, text_alignment halign, text_alignment valign,
 			const rect_r &reference);
-		void render_string(RasterizerT &target, const font &font_, const wchar_t *text, text_alignment halign,
-			real_t x, real_t y, real_t max_width = (std::numeric_limits<real_t>::max)());
+		void render(RasterizerT &target, const richtext_t &text, text_alignment halign, text_alignment valign,
+			const rect_r &reference);
+
+		agge::box_r measure(const richtext_t &text) const;
 
 	private:
 		typedef hash_map<int, RasterizerT> rasters_map;
@@ -41,13 +49,15 @@ namespace agge
 		font_rasters_map _cached_fonts;
 		const int _precision, _factor;
 		const real_t _rfactor;
+		mutable layout _worker_layout;
 	};
 
 
 
 	template <typename RasterizerT>
 	inline text_engine<RasterizerT>::text_engine(loader &loader_, uint8_t precision)
-		: text_engine_base(loader_), _precision(precision), _factor(1 << precision), _rfactor(1.0f / _factor)
+		: text_engine_base(loader_), _precision(precision), _factor(1 << precision), _rfactor(1.0f / _factor),
+			_worker_layout(*this)
 	{	}
 
 	template <typename RasterizerT>
@@ -87,6 +97,23 @@ namespace agge
 				: 0.5f * (ref.x1 + ref.x2 - i->width);
 			render(target, *i, running_ref + i->offset);
 		}
+	}
+
+	template <typename RasterizerT>
+	inline void text_engine<RasterizerT>::render(RasterizerT &target, const richtext_t &text, text_alignment halign,
+		text_alignment valign, const rect_r &reference)
+	{
+		_worker_layout.set_width_limit(width(reference));
+		_worker_layout.process(text);
+		render(target, _worker_layout, halign, valign, reference);
+	}
+
+	template <typename RasterizerT>
+	inline agge::box_r text_engine<RasterizerT>::measure(const richtext_t &text) const
+	{
+		_worker_layout.set_width_limit(1e30f);
+		_worker_layout.process(text);
+		return _worker_layout.get_box();
 	}
 
 	template <typename RasterizerT>

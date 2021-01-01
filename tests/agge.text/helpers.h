@@ -61,6 +61,9 @@ namespace agge
 	inline bool operator ==(const vector_r &lhs, const vector_r &rhs)
 	{	return tests::equal(lhs.dx, rhs.dx) && tests::equal(lhs.dy, rhs.dy);	}
 
+	inline bool operator ==(const box_r &lhs, const box_r &rhs)
+	{	return tests::equal(lhs.w, rhs.w) && tests::equal(lhs.h, rhs.h);	}
+
 	inline bool operator ==(const glyph::path_point &lhs, const glyph::path_point &rhs)
 	{	return lhs.command == rhs.command && tests::equal(lhs.x, rhs.x) && tests::equal(lhs.y, rhs.y);	}
 

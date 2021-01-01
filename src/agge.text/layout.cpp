@@ -5,7 +5,6 @@
 #include <agge/tools.h>
 #include <agge.text/font.h>
 #include <agge.text/font_factory.h>
-#include <algorithm>
 
 using namespace std;
 
@@ -115,23 +114,25 @@ namespace agge
 			return false;
 		}
 
-		pair<real_t /*ascent*/, real_t /*descent + leading*/> calculate_line_metrics(const text_line &line)
+		pair<real_t /*ascent*/, real_t /*descent + leading*/> setup_line_metrics(text_line &line)
 		{
+			real_t descent = 0.0f;
 			pair<real_t, real_t> m(0.0f, 0.0f);
 
 			for (text_line::const_iterator i = line.begin(), end = line.end(); i != end; ++i)
 			{
 				const font_metrics grm = i->font_->get_metrics();
 
-				m.first = (max)(m.first, grm.ascent);
-				m.second = (max)(m.second, grm.descent + grm.leading);
+				m.first = agge_max(m.first, grm.ascent);
+				m.second = agge_max(m.second, grm.descent + grm.leading);
+				descent = agge_max(descent, grm.descent);
 			}
+			line.descent = descent;
 			return m;
 		}
 
-		pair<real_t /*ascent*/, real_t /*descent + leading*/> calculate_line_metrics(font_metrics m,
-			const text_line &line)
-		{	return line.empty() ? make_pair(m.ascent, m.descent + m.leading) : calculate_line_metrics(line);	}
+		pair<real_t /*ascent*/, real_t /*descent + leading*/> setup_line_metrics(font_metrics m, text_line &line)
+		{	return line.empty() ? make_pair(m.ascent, m.descent + m.leading) : setup_line_metrics(line);	}
 	}
 
 	layout::layout(font_factory &factory)
@@ -143,6 +144,7 @@ namespace agge
 		_text_lines.clear();
 		_glyph_runs.clear();
 		_glyphs.clear();
+		_box = zero();
 
 		text_line *current_line = &*_text_lines.insert(_text_lines.end(), text_line(_glyph_runs));
 		glyph_run *current_grun = &*_glyph_runs.insert(_glyph_runs.end(), glyph_run(_glyphs));
@@ -169,11 +171,12 @@ namespace agge
 					*current_grun = next_line_grun;
 				}
 
-				const pair<real_t, real_t> m = calculate_line_metrics(current_grun->font_->get_metrics(), *current_line);
+				const pair<real_t, real_t> m = setup_line_metrics(current_grun->font_->get_metrics(), *current_line);
 
 				current_line->offset += create_vector(0.0f, m.first);
 				if (!current_line->empty())
 				{
+					_box.w = agge_max(_box.w, current_line->width);
 					current_line = &*_text_lines.insert(_text_lines.end(), text_line(*current_line));
 					current_line->begin_index = current_line->end_index;
 					current_line->width = 0.0f;
@@ -192,30 +195,16 @@ namespace agge
 		if (current_line->empty())
 			_text_lines.pop_back();
 		else
-			current_line->offset += create_vector(0.0f, calculate_line_metrics(*current_line).first);
+			current_line->offset += create_vector(0.0f, setup_line_metrics(*current_line).first);
 		if (current_grun->empty())
 			_glyph_runs.pop_back();
-	}
+		if (!_text_lines.empty())
+		{
+			const text_line &last = _text_lines.back();
 
-	void layout::set_width_limit(real_t width)
-	{
-		_limit_width = width;
-		_text_lines.clear();
-	}
-
-	box_r layout::get_box() const
-	{
-		box_r box = {};
-
-		if (_glyph_runs.empty())
-			return box;
-
-		font_metrics m = _glyph_runs[0].font_->get_metrics();
-
-		for (const_iterator i = begin(); i != end(); ++i)
-			box.w = agge_max(box.w, i->width);
-		box.h = (end() - begin()) * height(m) - m.leading;
-		return box;
+			_box.w = agge_max(_box.w, last.width);
+			_box.h = last.offset.dy + last.descent;
+		}
 	}
 
 	bool layout::commit_glyph_run(text_line &current_line, glyph_run *&current_grun, const glyph_run &next_line_grun)

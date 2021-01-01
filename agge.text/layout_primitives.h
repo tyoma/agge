@@ -36,6 +36,7 @@ namespace agge
 
 		vector_r offset;
 		real_t width;
+		real_t descent;
 	};
 
 

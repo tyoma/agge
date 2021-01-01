@@ -33,9 +33,19 @@ namespace agge
 		glyph_runs_container_t _glyph_runs;
 		text_lines_container_t _text_lines;
 		real_t _limit_width;
+		box_r _box;
 	};
 
 
+
+	inline void layout::set_width_limit(real_t width)
+	{
+		_limit_width = width;
+		_text_lines.clear();
+	}
+
+	inline box_r layout::get_box() const
+	{	return _box;	}
 
 	inline layout::const_iterator layout::begin() const
 	{	return _text_lines.begin();	}
