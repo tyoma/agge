@@ -190,6 +190,27 @@ namespace agge
 					+ ref_text_line_offsets(0.0f, 28.7f),
 					mkvector(l.begin(), l.end()));
 			}
+
+
+			test( BreakingAtTheBeginingOfNewTextRangeDoesNotStopProcessing )
+			{
+				// INIT
+				layout l(factory);
+				richtext_t text;
+
+				l.set_width_limit(17.0f);
+				text << modify_family("Segoe UI") << modify_height(10) << L"AAA" // 15
+					<< modify_family("Arial") << modify_height(13) << L"A"; // 5
+
+				// ACT
+				l.process(text);
+
+				// ASSERT
+				assert_equal(plural
+					+ ref_text_line(0.0f, 9.0f, 0.0f, plural + ref_glyph_run(segoe, 0.0f, 0.0f, plural + 1 + 1 + 1))
+					+ ref_text_line(0.0f, 21.0f, 0.0f, plural + ref_glyph_run(arial, 0.0f, 0.0f, plural + 1)),
+					mkvector(l.begin(), l.end()));
+			}
 		end_test_suite
 	}
 }

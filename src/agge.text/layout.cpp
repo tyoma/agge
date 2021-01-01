@@ -115,10 +115,10 @@ namespace agge
 			return false;
 		}
 
-		pair<real_t /*ascent*/, real_t /*descent + leading*/> calculate_line_metrix(font_metrics m_,
-			const text_line &line)
+		pair<real_t /*ascent*/, real_t /*descent + leading*/> calculate_line_metrics(const text_line &line)
 		{
-			pair<real_t, real_t> m = make_pair(m_.ascent, m_.descent + m_.leading);
+			pair<real_t, real_t> m(0.0f, 0.0f);
+
 			for (text_line::const_iterator i = line.begin(), end = line.end(); i != end; ++i)
 			{
 				const font_metrics grm = i->font_->get_metrics();
@@ -128,6 +128,10 @@ namespace agge
 			}
 			return m;
 		}
+
+		pair<real_t /*ascent*/, real_t /*descent + leading*/> calculate_line_metrics(font_metrics m,
+			const text_line &line)
+		{	return line.empty() ? make_pair(m.ascent, m.descent + m.leading) : calculate_line_metrics(line);	}
 	}
 
 	layout::layout(font_factory &factory)
@@ -154,7 +158,7 @@ namespace agge
 				populate_glyph_run(_glyphs, *current_grun, next_line_grun, _limit_width - current_line->width, i, end);
 				previous = i)
 			{
-				if (i == previous)
+				if (i == previous & current_line->empty())
 				{
 					// Emergency: width limit is too small to layout even a single character - bailing out!
 					_text_lines.clear();
@@ -165,7 +169,7 @@ namespace agge
 					*current_grun = next_line_grun;
 				}
 
-				const pair<real_t, real_t> m = calculate_line_metrix(current_grun->font_->get_metrics(), *current_line);
+				const pair<real_t, real_t> m = calculate_line_metrics(current_grun->font_->get_metrics(), *current_line);
 
 				current_line->offset += create_vector(0.0f, m.first);
 				if (!current_line->empty())
@@ -188,7 +192,7 @@ namespace agge
 		if (current_line->empty())
 			_text_lines.pop_back();
 		else
-			current_line->offset += create_vector(0.0f, calculate_line_metrix(zero(), *current_line).first);
+			current_line->offset += create_vector(0.0f, calculate_line_metrics(*current_line).first);
 		if (current_grun->empty())
 			_glyph_runs.pop_back();
 	}
