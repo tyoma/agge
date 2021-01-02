@@ -4,16 +4,16 @@ using namespace std;
 
 namespace agge
 {
-	font::font(const font_descriptor &key_, const accessor_ptr &accessor_, real_t factor)
-		: _accessor(accessor_), _key(key_), _metrics(accessor_->get_metrics()), _factor(factor)
+	font::font(const accessor_ptr &accessor_, real_t factor)
+		: _accessor(accessor_), _metrics(accessor_->get_metrics()), _factor(factor)
 	{
 		_metrics.ascent *= _factor;
 		_metrics.descent *= _factor;
 		_metrics.leading *= _factor;
 	}
-	
+
 	font_descriptor font::get_key() const
-	{	return _key;	}
+	{	return _accessor->get_descriptor();	}
 
 	font_metrics font::get_metrics() const
 	{	return _metrics;	}

@@ -46,11 +46,13 @@ namespace agge
 			public:
 				mutable int glyph_mapping_calls;
 				shared_ptr<size_t> glyphs_loaded;
+				font_descriptor descriptor;
 
 			private:
 				typedef std::map<wchar_t, glyph_index_t> indices_map_t;
 
 			private:
+				virtual font_descriptor get_descriptor() const;
 				virtual font_metrics get_metrics() const;
 				virtual glyph_index_t get_glyph_index(wchar_t character) const;
 				virtual agge::glyph::outline_ptr load_glyph(glyph_index_t index, agge::glyph::glyph_metrics &m) const;
@@ -155,10 +157,7 @@ namespace agge
 			template <size_t indices_n, size_t glyphs_n>
 			inline font::ptr create_font(const font_metrics &metrics_,
 				const font_accessor::char_to_index (&indices)[indices_n], font_accessor::glyph (&glyphs)[glyphs_n])
-			{
-				return font::ptr(new font(font_descriptor::create(std::string(), 10),
-					font::accessor_ptr(new font_accessor(metrics_, indices, glyphs))));
-			}
+			{	return font::ptr(new font(font::accessor_ptr(new font_accessor(metrics_, indices, glyphs))));	}
 		}
 	}
 

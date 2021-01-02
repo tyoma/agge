@@ -17,7 +17,7 @@ namespace agge
 		typedef shared_ptr<font> ptr;
 
 	public:
-		explicit font(const font_descriptor &key_, const accessor_ptr &accessor_, real_t factor = 1.0f);
+		explicit font(const accessor_ptr &accessor_, real_t factor = 1.0f);
 
 		font_descriptor get_key() const;
 		font_metrics get_metrics() const;
@@ -35,7 +35,6 @@ namespace agge
 
 	private:
 		const accessor_ptr _accessor;
-		const font_descriptor _key;
 		font_metrics _metrics;
 		mutable glyphs_cache_t _glyphs;
 		mutable char2index_cache_t _char2glyph;
@@ -44,7 +43,7 @@ namespace agge
 
 	struct font::accessor
 	{
-		virtual ~accessor() { }
+		virtual font_descriptor get_descriptor() const = 0;
 		virtual font_metrics get_metrics() const = 0;
 		virtual glyph_index_t get_glyph_index(wchar_t character) const = 0;
 		virtual glyph::outline_ptr load_glyph(glyph_index_t index, glyph::glyph_metrics &m) const = 0;

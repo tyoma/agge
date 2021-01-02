@@ -41,5 +41,5 @@ font::accessor_ptr font_loader::load(const font_descriptor &descriptor)
 	shared_ptr<truetype::font> font(new truetype::font);
 
 	dser(*font);
-	return truetype::create_accessor(font);
+	return truetype::create_accessor(font, descriptor);
 }

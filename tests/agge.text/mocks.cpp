@@ -34,6 +34,9 @@ namespace agge
 					++*_allocated;
 			}
 
+			font_descriptor font_accessor::get_descriptor() const
+			{	return descriptor;	}
+
 			font_metrics font_accessor::get_metrics() const
 			{	return _metrics;	}
 
@@ -69,6 +72,8 @@ namespace agge
 			{
 				shared_ptr<font_accessor> a(new font_accessor(fonts[descriptor]));
 
+				if (a->descriptor.family.empty())
+					a->descriptor = descriptor;
 				created_log.push_back(make_pair(descriptor, a));
 				a->track(allocated);
 				return a;
@@ -97,14 +102,5 @@ namespace agge
 				append_log.push_back(make_pair(&source, mkpoint(dx, dy)));
 			}
 		}
-	}
-
-	bool operator <(const font_descriptor &lhs, const font_descriptor &rhs)
-	{
-		return lhs.family < rhs.family ? true : rhs.family < lhs.family ? false :
-			lhs.height < rhs.height ? true : rhs.height < lhs.height ? false :
-			lhs.bold < rhs.bold ? true : rhs.bold < lhs.bold ? false :
-			lhs.italic < rhs.italic ? true : rhs.italic < lhs.italic ? false :
-			lhs.hinting < rhs.hinting;
 	}
 }

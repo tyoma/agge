@@ -53,11 +53,10 @@ namespace agge
 					e.create_font(font_descriptor::create("helvetica", 13, true, true, hint_strong)),
 					e.create_font(font_descriptor::create("helvetica", 13, true, true, hint_vertical)),
 					e.create_font(font_descriptor::create("helvetica", 13, true, true, hint_none)),
+					e.create_font(font_descriptor::create("helvetica", 15, true, true, hint_none)),
 				};
 
 				// ASSERT
-				assert_equal("arial", fonts[0]->get_key().family);
-				assert_equal("helvetica", fonts[1]->get_key().family);
 				sort(tests::begin(fonts), tests::end(fonts));
 
 				assert_equal(tests::end(fonts), unique(tests::begin(fonts), tests::end(fonts)));
@@ -257,6 +256,37 @@ namespace agge
 				assert_equal(0.71 * c_fm2, f->get_metrics());
 				assert_equal(c_outline_2, (1 / 0.71) * o3);
 				assert_equal(c_outline_1, (1 / 0.71) * o4);
+			}
+
+
+			test( DifferentNamesCanProduceTheSameFont )
+			{
+				// INIT
+				mocks::font_accessor accessors[] = {	mocks::font_accessor(), mocks::font_accessor(),	};
+				accessors[0].descriptor = font_descriptor::create("plain #1", 10, true, false);
+				accessors[1].descriptor = font_descriptor::create("plain #2", 1000, false, false);
+				pair<font_descriptor, mocks::font_accessor> fonts[] = {
+					make_pair(font_descriptor::create("Tahoma", 11, false, false, hint_strong), accessors[0]),
+					make_pair(font_descriptor::create("Segoe", 10, false, false, hint_strong), accessors[0]),
+					make_pair(font_descriptor::create("Verdana", 1000, true, false, hint_vertical), accessors[1]),
+					make_pair(font_descriptor::create("Verdana,Helvetica", 1000, true, false, hint_vertical), accessors[1]),
+					make_pair(font_descriptor::create("Verdana,sans-serif", 1000, true, false, hint_vertical), accessors[1]),
+					make_pair(font_descriptor::create("Verdana,Helvetica", 100, true, false, hint_none), accessors[1]),
+					make_pair(font_descriptor::create("Verdana,sans-serif", 10, true, false, hint_none), accessors[1]),
+				};
+				mocks::fonts_loader loader(fonts);
+				text_engine_base e(loader);
+
+				// ACT
+				shared_ptr<font> f1 = e.create_font(font_descriptor::create("Tahoma", 11, false, false, hint_strong));
+				shared_ptr<font> f2 = e.create_font(font_descriptor::create("Verdana", 1000, true, false, hint_vertical));
+				shared_ptr<font> f3 = e.create_font(font_descriptor::create("Verdana,Helvetica", 100, true, false, hint_none));
+
+				// ACT / ASSERT
+				assert_equal(f1, e.create_font(font_descriptor::create("Segoe", 10, false, false, hint_strong)));
+				assert_equal(f2, e.create_font(font_descriptor::create("verdana,helvetica", 1000, true, false, hint_vertical)));
+				assert_equal(f2, e.create_font(font_descriptor::create("Verdana,Sans-Serif", 1000, true, false, hint_vertical)));
+				assert_not_equal(f3, e.create_font(font_descriptor::create("Verdana,Sans-Serif", 10, true, false, hint_none)));
 			}
 
 

@@ -42,5 +42,5 @@ namespace truetype
 		std::vector<glyph> glyphs;
 	};
 
-	agge::font::accessor_ptr create_accessor(const std::shared_ptr<font> &tt_font);
+	agge::font::accessor_ptr create_accessor(const std::shared_ptr<font> &tt_font, const agge::font_descriptor &d);
 }

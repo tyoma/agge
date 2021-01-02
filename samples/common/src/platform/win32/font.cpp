@@ -35,13 +35,16 @@ namespace
 	}
 }
 
-font_accessor::font_accessor(int height, const char *family, bool bold, bool italic, agge::font_hinting grid_fit)
-	: _native(::CreateFontA(height, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, !!italic, FALSE, FALSE, 0,
-		0, 0, ANTIALIASED_QUALITY, 0, family), &::DeleteObject), _grid_fit(grid_fit)
+font_accessor::font_accessor(const agge::font_descriptor &d)
+	: _native(::CreateFontA(d.height, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, !!d.italic, FALSE, FALSE, 0,
+	0, 0, ANTIALIASED_QUALITY, 0, d.family.c_str()), &::DeleteObject), _descriptor(d)
 {	}
 
 HFONT font_accessor::native() const
 {	return static_cast<HFONT>(_native.get());	}
+
+font_descriptor font_accessor::get_descriptor() const
+{	return _descriptor;	}
 
 font_metrics font_accessor::get_metrics() const
 {
@@ -72,8 +75,8 @@ glyph::outline_ptr font_accessor::load_glyph(agge::uint16_t index, glyph::glyph_
 	typedef const void *pvoid;
 
 	const UINT format = GGO_GLYPH_INDEX | GGO_NATIVE | GGO_METRICS
-		| (hint_none == _grid_fit ? GGO_UNHINTED : 0);
-	const int xfactor = hint_vertical == _grid_fit ? 48 : 1;
+		| (hint_none == _descriptor.hinting ? GGO_UNHINTED : 0);
+	const int xfactor = hint_vertical == _descriptor.hinting ? 48 : 1;
 	const MAT2 c_identity = { { 0, (short)xfactor }, { 0, 0 }, { 0, 0 }, { 0, -1 }, };
 
 	GLYPHMETRICS gm;
@@ -85,7 +88,7 @@ glyph::outline_ptr font_accessor::load_glyph(agge::uint16_t index, glyph::glyph_
 	if (size == GDI_ERROR)
 		return o;
 
-	if (_grid_fit == hint_strong)
+	if (_descriptor.hinting == hint_strong)
 	{
 		ABC abc;
 
@@ -151,7 +154,4 @@ glyph::outline_ptr font_accessor::load_glyph(agge::uint16_t index, glyph::glyph_
 }
 
 font::accessor_ptr native_font_loader::load(const agge::font_descriptor &descriptor)
-{
-	return font::accessor_ptr(new font_accessor(descriptor.height, descriptor.family.c_str(), descriptor.bold,
-		descriptor.italic, descriptor.hinting));
-}
+{	return font::accessor_ptr(new font_accessor(descriptor));	}

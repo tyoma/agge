@@ -129,7 +129,7 @@ namespace agge
 				};
 				mocks::font_accessor::glyph glyphs[] = { { { 0, 0 } }, };
 				shared_ptr<mocks::font_accessor> a(new mocks::font_accessor(c_fm1, indices, glyphs));
-				font::ptr f(new font(font_descriptor::create(string(), 10), a));
+				font::ptr f(new font(a));
 
 				// INIT / ACT (caching occurs here)
 				f->map_single(L'a');
@@ -143,7 +143,7 @@ namespace agge
 			}
 
 
-			test( FontStoresItsKey )
+			test( FontProvidesItsAccessorDescriptor )
 			{
 				// INIT
 				mocks::font_accessor::char_to_index indices[] = {
@@ -152,15 +152,19 @@ namespace agge
 				mocks::font_accessor::glyph glyphs[] = { { { 0, 0 } }, };
 				shared_ptr<mocks::font_accessor> a(new mocks::font_accessor(c_fm1, indices, glyphs));
 
+				a->descriptor = font_descriptor::create("Tahoma", 10, true, false, hint_strong);
+
 				// INIT / ACT
-				font f1(font_descriptor::create("Arial", 13), a);
-				font f2(font_descriptor::create("Segoe", -17), a);
+				font f(a);
 
 				// ACT / ASSERT
-				assert_equal("Arial", f1.get_key().family);
-				assert_equal(13, f1.get_key().height);
-				assert_equal("Segoe", f2.get_key().family);
-				assert_equal(-17, f2.get_key().height);
+				assert_equal(a->descriptor, f.get_key());
+
+				// INIT
+				a->descriptor = font_descriptor::create("Verdana", 13, false, true, hint_none);
+
+				// ACT / ASSERT
+				assert_equal(a->descriptor, f.get_key());
 			}
 
 		end_test_suite

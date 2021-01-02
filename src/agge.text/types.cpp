@@ -10,8 +10,8 @@ namespace agge
 	{
 		struct nc_compare
 		{
-			bool operator ()(wchar_t lhs, wchar_t rhs) const
-			{	return toupper(lhs) == toupper(rhs);	}
+			bool operator ()(char lhs, char rhs) const
+			{	return toupper(lhs) < toupper(rhs);	}
 		};
 	}
 
@@ -28,13 +28,13 @@ namespace agge
 		return d;
 	}
 
-	bool operator ==(const font_descriptor &lhs, const font_descriptor &rhs)
+	bool operator <(const font_descriptor &lhs, const font_descriptor &rhs)
 	{
-		return lhs.family.size() == rhs.family.size()
-			&& lhs.height == rhs.height
-			&& lhs.bold == rhs.bold
-			&& lhs.italic == rhs.italic
-			&& lhs.hinting == rhs.hinting
-			&& equal(lhs.family.begin(), lhs.family.end(), rhs.family.begin(), nc_compare());
+		return lhs.height < rhs.height ? true : rhs.height < lhs.height ? false :
+			lhs.bold < rhs.bold ? true : rhs.bold < lhs.bold ? false :
+			lhs.italic < rhs.italic ? true : rhs.italic < lhs.italic ? false :
+			lhs.hinting < rhs.hinting ? true : rhs.hinting < lhs.hinting ? false :
+			lexicographical_compare(lhs.family.begin(), lhs.family.end(), rhs.family.begin(), rhs.family.end(),
+				nc_compare());
 	}
 }

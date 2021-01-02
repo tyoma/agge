@@ -32,16 +32,19 @@ namespace truetype
 		}
 	}
 
-	agge::font::accessor_ptr create_accessor(const shared_ptr<font> &tt_font)
+	agge::font::accessor_ptr create_accessor(const shared_ptr<font> &tt_font, const agge::font_descriptor &d)
 	{
 		class accessor : public agge::font::accessor
 		{
 		public:
-			accessor(shared_ptr<font> tt_font)
-				: _tt_font(tt_font)
+			accessor(shared_ptr<font> tt_font, const agge::font_descriptor &d)
+				: _tt_font(tt_font), _descriptor(d)
 			{	}
 
 		private:
+			virtual font_descriptor get_descriptor() const
+			{	return _descriptor;	}
+
 			virtual agge::font_metrics get_metrics() const
 			{
 				agge::font_metrics m = {
@@ -109,8 +112,9 @@ namespace truetype
 
 		private:
 			shared_ptr<font> _tt_font;
+			font_descriptor _descriptor;
 		};
 
-		return agge::font::accessor_ptr(new accessor(tt_font));
+		return agge::font::accessor_ptr(new accessor(tt_font, d));
 	}
 }
