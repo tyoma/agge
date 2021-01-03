@@ -37,6 +37,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="font.cpp" />
+    <ClCompile Include="richtext.cpp" />
     <ClCompile Include="text_engine_base.cpp" />
     <ClCompile Include="layout.cpp" />
     <ClCompile Include="types.cpp" />

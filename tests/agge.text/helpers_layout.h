@@ -15,39 +15,6 @@ namespace agge
 
 	namespace tests
 	{
-		struct modify_family
-		{
-			modify_family(const std::string &family_)
-				: family(family_)
-			{	}
-
-			void operator ()(richtext_t &target) const
-			{
-				font_style_annotation a = target.current_annotation();
-				a.basic.family = family;
-				target.annotate(a);
-			}
-
-			std::string family;
-		};
-
-		struct modify_height
-		{
-			modify_height(int height_)
-				: height(height_)
-			{	}
-
-			void operator ()(richtext_t &target) const
-			{
-				font_style_annotation a = target.current_annotation();
-				a.basic.height = height;
-				target.annotate(a);
-			}
-
-			int height;
-		};
-
-
 		class ref_glyph_run
 		{
 		public:
@@ -114,10 +81,6 @@ namespace agge
 
 		richtext_t simple_richtext(const std::wstring &text, const std::string &family, int height, bool bold = false,
 			bool italic = false, font_hinting hinting = hint_strong);
-
-		template <typename StyleModifier>
-		inline richtext_t &operator <<(richtext_t &lhs, const StyleModifier &rhs)
-		{	return rhs(lhs), lhs;	}
 
 		inline richtext_t &operator <<(richtext_t &lhs, const wchar_t *rhs)
 		{	return lhs += std::wstring(rhs), lhs;	}

@@ -158,8 +158,8 @@ namespace agge
 				text.set_base_annotation(a);
 
 				// w: 26.625, h: 24.6
-				text << modify_family("Arial") << modify_height(10) << L"as\n"	// 18.9 x (7.3 + 3.3)
-					<< modify_family("Arial") << modify_height(15) << L"sat";	// 26.625 x (14 + 2)
+				text << style::family("Arial") << style::height(10) << L"as\n"	// 18.9 x (7.3 + 3.3)
+					<< style::family("Arial") << style::height(15) << L"sat";	// 26.625 x (14 + 2)
 
 				// ACT / ASSERT
 				assert_equal(create_box(26.625f, 24.6f), e.measure(text));

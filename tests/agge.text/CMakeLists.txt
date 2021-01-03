@@ -7,6 +7,7 @@ set(AGGE_TEXT_TEST_SOURCES
 	LayoutTests.cpp
 	mocks.cpp
 	RichTextLayoutTests.cpp
+	RichTextTests.cpp
 	TextEngineRichTextTests.cpp
 	TextEngineTests.cpp
 )
