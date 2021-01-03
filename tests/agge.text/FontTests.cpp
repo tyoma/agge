@@ -152,7 +152,7 @@ namespace agge
 				mocks::font_accessor::glyph glyphs[] = { { { 0, 0 } }, };
 				shared_ptr<mocks::font_accessor> a(new mocks::font_accessor(c_fm1, indices, glyphs));
 
-				a->descriptor = font_descriptor::create("Tahoma", 10, true, false, hint_strong);
+				a->descriptor = font_descriptor::create("Tahoma", 10, bold, false, hint_strong);
 
 				// INIT / ACT
 				font f(a);
@@ -161,7 +161,7 @@ namespace agge
 				assert_equal(a->descriptor, f.get_key());
 
 				// INIT
-				a->descriptor = font_descriptor::create("Verdana", 13, false, true, hint_none);
+				a->descriptor = font_descriptor::create("Verdana", 13, regular, true, hint_none);
 
 				// ACT / ASSERT
 				assert_equal(a->descriptor, f.get_key());

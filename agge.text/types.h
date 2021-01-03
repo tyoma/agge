@@ -40,12 +40,12 @@ namespace agge
 
 	struct font_descriptor
 	{
-		static font_descriptor create(const std::string &family, int height, bool bold = false, bool italic = false,
-			font_hinting hinting_ = hint_none);
+		static font_descriptor create(const std::string &family, int height, font_weight weight = regular,
+			bool italic = false, font_hinting hinting_ = hint_none);
 
 		std::string family;
 		int height : 20;
-		unsigned bold : 1;
+		font_weight weight : 4;
 		unsigned italic : 1;
 		font_hinting hinting : 2;
 	};

@@ -38,7 +38,7 @@ namespace agge
 			test( StyleModifierApplicationSetsExpectedProperties )
 			{
 				// INIT
-				font_style_annotation a = {	font_descriptor::create("Arial", 15, false, true, hint_none),	};
+				font_style_annotation a = {	font_descriptor::create("Arial", 15, regular, true, hint_none),	};
 				richtext_t text(a);
 
 				text += L"Z";
@@ -47,74 +47,74 @@ namespace agge
 				text << style::family("Verdana");
 
 				// ASSERT
-				assert_equal(font_descriptor::create("Verdana", 15, false, true, hint_none), text.current_annotation().basic);
+				assert_equal(font_descriptor::create("Verdana", 15, regular, true, hint_none), text.current_annotation().basic);
 
 				// ACT
 				text << style::family("Tahoma");
 
 				// ASSERT
-				assert_equal(font_descriptor::create("Tahoma", 15, false, true, hint_none), text.current_annotation().basic);
+				assert_equal(font_descriptor::create("Tahoma", 15, regular, true, hint_none), text.current_annotation().basic);
 
 				// ACT
 				text << style::height(10);
 
 				// ASSERT
-				assert_equal(font_descriptor::create("Tahoma", 10, false, true, hint_none), text.current_annotation().basic);
+				assert_equal(font_descriptor::create("Tahoma", 10, regular, true, hint_none), text.current_annotation().basic);
 
 				// ACT
 				text << style::height(20);
 
 				// ASSERT
-				assert_equal(font_descriptor::create("Tahoma", 20, false, true, hint_none), text.current_annotation().basic);
+				assert_equal(font_descriptor::create("Tahoma", 20, regular, true, hint_none), text.current_annotation().basic);
 
 				// ACT
 				text << style::weight(bold);
 
 				// ASSERT
-				assert_equal(font_descriptor::create("Tahoma", 20, true, true, hint_none), text.current_annotation().basic);
+				assert_equal(font_descriptor::create("Tahoma", 20, bold, true, hint_none), text.current_annotation().basic);
 
 				// ACT
 				text << style::weight(regular);
 
 				// ASSERT
-				assert_equal(font_descriptor::create("Tahoma", 20, false, true, hint_none), text.current_annotation().basic);
+				assert_equal(font_descriptor::create("Tahoma", 20, regular, true, hint_none), text.current_annotation().basic);
 
 				// ACT
 				text << style::italic(false);
 
 				// ASSERT
-				assert_equal(font_descriptor::create("Tahoma", 20, false, false, hint_none), text.current_annotation().basic);
+				assert_equal(font_descriptor::create("Tahoma", 20, regular, false, hint_none), text.current_annotation().basic);
 
 				// ACT
 				text << style::italic(true);
 
 				// ASSERT
-				assert_equal(font_descriptor::create("Tahoma", 20, false, true, hint_none), text.current_annotation().basic);
+				assert_equal(font_descriptor::create("Tahoma", 20, regular, true, hint_none), text.current_annotation().basic);
 
 				// ACT
 				text << style::hinting(hint_vertical);
 
 				// ASSERT
-				assert_equal(font_descriptor::create("Tahoma", 20, false, true, hint_vertical), text.current_annotation().basic);
+				assert_equal(font_descriptor::create("Tahoma", 20, regular, true, hint_vertical), text.current_annotation().basic);
 
 				// ACT
 				text << style::hinting(hint_strong) << style::family("arial");
 
 				// ASSERT
-				assert_equal(font_descriptor::create("arial", 20, false, true, hint_strong), text.current_annotation().basic);
+				assert_equal(font_descriptor::create("arial", 20, regular, true, hint_strong), text.current_annotation().basic);
 			}
 
 
 			test( StyleModifyingStringCanBeAppendedToRichText )
 			{
 				// INIT
-				font_style_annotation a = {	font_descriptor::create("Arial", 15, false, true, hint_none),	}, a2 = a,
+				font_style_annotation a = {	font_descriptor::create("Arial", 15, regular, true, hint_none),	}, a2 = a,
 					a3 = a;
 				richtext_t text(a);
 				richtext_modifier_t mtext(L"", zero());
 
 				a2.basic.height = 5;
-				a2.basic.bold = true;
+				a2.basic.weight = bold;
 				a3 = a2;
 				a3.basic.family = "Segoe";
 				a3.basic.height = 10;

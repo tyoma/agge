@@ -79,7 +79,7 @@ namespace agge
 		{	}
 
 
-		richtext_t simple_richtext(const std::wstring &text, const std::string &family, int height, bool bold = false,
+		richtext_t simple_richtext(const std::wstring &text, const std::string &family, int height, font_weight weight = regular,
 			bool italic = false, font_hinting hinting = hint_strong);
 
 		inline richtext_t &operator <<(richtext_t &lhs, const wchar_t *rhs)

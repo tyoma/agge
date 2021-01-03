@@ -16,7 +16,7 @@ namespace agge
 			if (modifier.use_height)
 				target.basic.height = modifier.basic.height;
 			if (modifier.use_weight)
-				target.basic.bold = modifier.basic.bold;
+				target.basic.weight = modifier.basic.weight;
 			if (modifier.use_italic)
 				target.basic.italic = modifier.basic.italic;
 			if (modifier.use_hinting)
@@ -48,7 +48,7 @@ namespace agge
 	{	style_modifier m = {}; return m.basic.height = value, m.use_height = true, m;	}
 
 	style_modifier style::weight(font_weight value)
-	{	style_modifier m = {}; return m.basic.bold = value >= bold, m.use_weight = true, m;	}
+	{	style_modifier m = {}; return m.basic.weight = value, m.use_weight = true, m;	}
 
 	style_modifier style::italic(bool value)
 	{	style_modifier m = {}; return m.basic.italic = !!value, m.use_italic = true, m;	}

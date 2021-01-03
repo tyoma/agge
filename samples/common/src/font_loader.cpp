@@ -21,9 +21,9 @@ namespace
 		return buffer;
 	}
 
-	string format_font_name(const string &family, int height, bool bold, bool italic, font_hinting grid_fit)
+	string format_font_name(const string &family, int height, font_weight weight, bool italic, font_hinting grid_fit)
 	{
-		return family + "-" + to_string(height) + (bold ? "b" : "") + (italic ? "i" : "")
+		return family + "-" + to_string(height) + (weight >= bold ? "b" : "") + (italic ? "i" : "")
 			+ (grid_fit == hint_strong ? "h" : grid_fit == hint_vertical ? "v" : "") + ".fnt";
 	}
 }
@@ -36,7 +36,7 @@ font_loader::font_loader(services &s)
 font::accessor_ptr font_loader::load(const font_descriptor &descriptor)
 {
 	tests::scoped_ptr<stream> r(_services.open_file(format_font_name(descriptor.family, descriptor.height,
-		descriptor.bold, descriptor.italic, descriptor.hinting).c_str()));
+		descriptor.weight, descriptor.italic, descriptor.hinting).c_str()));
 	deserializer<stream, varint> dser(*r);
 	shared_ptr<truetype::font> font(new truetype::font);
 

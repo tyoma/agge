@@ -21,7 +21,7 @@ namespace demo
 		TextDrawer(services &s)
 			: _renderer(3), _font_loader(s), _text_engine(_font_loader), _layout(_text_engine), _ddx(0.0f)
 		{
-			font_style_annotation a = {	font_descriptor::create("arial", 14, false, false, hint_none),	};
+			font_style_annotation a = {	font_descriptor::create("arial", 14, regular, false, hint_none),	};
 
 			_text.set_base_annotation(a);
 			_text += c_text_long.c_str();

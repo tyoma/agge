@@ -77,8 +77,8 @@ namespace demo
 
 		shared_ptr<void> create_font(const font_descriptor &fd)
 		{
-			return shared_ptr<void>(::CreateFontA(-fd.height, 0, 0, 0, fd.bold ? FW_BOLD : FW_NORMAL, !!fd.italic, FALSE, FALSE, 0,
-				0, 0, ANTIALIASED_QUALITY, 0, fd.family.c_str()), &::DeleteObject);
+			return shared_ptr<void>(::CreateFontA(-fd.height, 0, 0, 0, fd.weight >= bold ? FW_BOLD : FW_NORMAL,
+				!!fd.italic, FALSE, FALSE, 0, 0, 0, ANTIALIASED_QUALITY, 0, fd.family.c_str()), &::DeleteObject);
 		}
 
 	private:
