@@ -18,20 +18,6 @@ namespace agge
 	font_metrics font::get_metrics() const
 	{	return _metrics;	}
 
-	glyph_index_t font::map_single(wchar_t character) const
-	{
-		char2index_cache_t::const_iterator i = _char2glyph.find(character);
-
-		return _char2glyph.end() != i ? i->second : load_mapping(character);
-	}
-
-	const glyph *font::get_glyph(glyph_index_t index) const
-	{
-		glyphs_cache_t::iterator i = _glyphs.find(index);
-
-		return _glyphs.end() != i ? i->second.outline ? &i->second : 0 : load_glyph(index);
-	}
-
 	glyph_index_t font::load_mapping(wchar_t character) const
 	{
 		char2index_cache_t::iterator inserted;

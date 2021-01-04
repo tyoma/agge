@@ -5,6 +5,7 @@
 #include "shared_ptr.h"
 #include "types.h"
 
+#include <agge/config.h>
 #include <string>
 
 namespace agge
@@ -48,4 +49,20 @@ namespace agge
 		virtual glyph_index_t get_glyph_index(wchar_t character) const = 0;
 		virtual glyph::outline_ptr load_glyph(glyph_index_t index, glyph::glyph_metrics &m) const = 0;
 	};
+
+
+
+	AGGE_INLINE glyph_index_t font::map_single(wchar_t character) const
+	{
+		char2index_cache_t::const_iterator i = _char2glyph.find(character);
+
+		return _char2glyph.end() != i ? i->second : load_mapping(character);
+	}
+
+	AGGE_INLINE const glyph* font::get_glyph(glyph_index_t index) const
+	{
+		glyphs_cache_t::iterator i = _glyphs.find(index);
+
+		return _glyphs.end() != i ? i->second.outline ? &i->second : 0 : load_glyph(index);
+	}
 }
