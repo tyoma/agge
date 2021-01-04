@@ -211,7 +211,7 @@ namespace agge
 				font_style_annotation a = {	d,	};
 
 				text.set_base_annotation(a);
-				text += L"aaaaa"; // w: 36
+				text.append(L"aaaaa"); // w: 36
 
 				// ACT / ASSERT
 				assert_equal(create_box(36.0f, 7.3f), e.measure(text));

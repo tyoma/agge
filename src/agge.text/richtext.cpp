@@ -72,7 +72,7 @@ namespace agge
 		{
 			apply(a, i->get_annotation());
 			lhs.annotate(a);
-			lhs += wstring(i->begin(), i->end());
+			lhs.append(i->begin(), i->end());
 		}
 		return lhs;
 	}
@@ -81,14 +81,14 @@ namespace agge
 	{
 		richtext_modifier_t s(L"", zero());
 
-		return s += lhs, s.annotate(rhs), s;
+		return s.append(lhs), s.annotate(rhs), s;
 	}
 
 	richtext_modifier_t operator +(const richtext_modifier_t &lhs, const wchar_t *rhs)
 	{
 		richtext_modifier_t s(lhs);
 
-		return s += rhs, s;
+		return s.append(rhs), s;
 	}
 
 	richtext_modifier_t operator +(const richtext_modifier_t &lhs, const style_modifier &rhs)

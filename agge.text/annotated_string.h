@@ -21,7 +21,9 @@ namespace agge
 		annotated_string(const CharT *from, const AnnotationT &base_annotation = AnnotationT());
 
 		void clear();
-		void operator +=(const string_type &addition);
+		template <typename CharIteratorT>
+		void append(CharIteratorT begin, CharIteratorT end);
+		void append(const string_type &addition);
 		void annotate(const AnnotationT &annotation);
 		void set_base_annotation(const AnnotationT &annotation);
 
@@ -98,7 +100,12 @@ namespace agge
 	{	}
 
 	template <typename CharT, typename AnnotationT>
-	inline void annotated_string<CharT, AnnotationT>::operator +=(const string_type &addition)
+	template <typename CharIteratorT>
+	inline void annotated_string<CharT, AnnotationT>::append(CharIteratorT begin, CharIteratorT end)
+	{	_underlying.append(begin, end);	}
+
+	template <typename CharT, typename AnnotationT>
+	inline void annotated_string<CharT, AnnotationT>::append(const string_type &addition)
 	{	_underlying += addition;	}
 
 	template <typename CharT, typename AnnotationT>

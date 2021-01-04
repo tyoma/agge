@@ -83,6 +83,6 @@ namespace agge
 			bool italic = false, font_hinting hinting = hint_strong);
 
 		inline richtext_t &operator <<(richtext_t &lhs, const wchar_t *rhs)
-		{	return lhs += std::wstring(rhs), lhs;	}
+		{	return lhs.append(rhs), lhs;	}
 	}
 }

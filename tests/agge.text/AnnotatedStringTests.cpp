@@ -64,7 +64,7 @@ namespace agge
 				container_t seq;
 
 				// ACT
-				seq += L"Lorem ipsum dolor sit amet";
+				seq.append(L"Lorem ipsum dolor sit amet");
 
 				// ACT / ASSERT
 				pair<wstring, string> reference1[] = {
@@ -74,7 +74,7 @@ namespace agge
 				assert_equal(reference1, ranges_vector(seq));
 
 				// ACT
-				seq += L", consectetur adipisci elit";
+				seq.append(L", consectetur adipisci elit");
 
 				// ACT / ASSERT
 				pair<wstring, string> reference2[] = {
@@ -82,6 +82,29 @@ namespace agge
 				};
 
 				assert_equal(reference2, ranges_vector(seq));
+
+				// INIT
+				wstring appendix = L"lorem-lorem";
+
+				// ACT
+				seq.append(appendix.begin(), appendix.begin() + 3);
+
+				// ASSERT
+				pair<wstring, string> reference3[] = {
+					make_pair(L"Lorem ipsum dolor sit amet, consectetur adipisci elitlor", string()),
+				};
+
+				assert_equal(reference3, ranges_vector(seq));
+
+				// ACT
+				seq.append(appendix.begin() + 3, appendix.end());
+
+				// ASSERT
+				pair<wstring, string> reference4[] = {
+					make_pair(L"Lorem ipsum dolor sit amet, consectetur adipisci elitlorem-lorem", string()),
+				};
+
+				assert_equal(reference4, ranges_vector(seq));
 			}
 
 
@@ -119,7 +142,7 @@ namespace agge
 				container_t seq;
 
 				// ACT
-				seq += "aZ";
+				seq.append("aZ");
 				seq.annotate(123456);
 
 				// ACT / ASSERT
@@ -140,7 +163,7 @@ namespace agge
 
 				// ACT
 				seq.annotate("zamazu");
-				seq += "foobar";
+				seq.append("foobar");
 
 				// ACT / ASSERT
 				pair<string, string> reference[] = {
@@ -159,11 +182,11 @@ namespace agge
 				container_t seq;
 
 				// ACT
-				seq += "foo ";
+				seq.append("foo ");
 				seq.annotate(17);
-				seq += "Bar";
+				seq.append("Bar");
 				seq.annotate(191);
-				seq += "BAZ";
+				seq.append("BAZ");
 
 				// ACT / ASSERT
 				pair<string, int> reference[] = {
@@ -184,13 +207,13 @@ namespace agge
 				container_t seq;
 
 				// ACT
-				seq += "In a ";
+				seq.append("In a ");
 				seq.annotate(100);
 				seq.annotate(90);
 				seq.annotate(32);
-				seq += "free";
+				seq.append("free");
 				seq.annotate(0);
-				seq += " socicety political opponents survive";
+				seq.append(" socicety political opponents survive");
 
 				// ACT / ASSERT
 				pair<string, int> reference[] = {
@@ -212,11 +235,11 @@ namespace agge
 
 				// ACT
 				seq.annotate(171819);
-				seq += "A";
+				seq.append("A");
 				seq.annotate(123);
-				seq += "BCD";
+				seq.append("BCD");
 				seq.annotate(42);
-				seq += "q";
+				seq.append("q");
 
 				// ACT / ASSERT
 				container_t::const_iterator i = seq.ranges_begin(), j = i;
@@ -263,7 +286,7 @@ namespace agge
 				assert_equal(0u, static_cast<const container_t &>(seq).size());
 
 				// ACT
-				seq += "Astra";
+				seq.append("Astra");
 
 				// ACT / ASSERT
 				assert_is_false(seq.empty());
@@ -271,7 +294,7 @@ namespace agge
 
 				// ACT
 				seq.annotate(123);
-				seq += "BC";
+				seq.append("BC");
 				seq.annotate(1);
 
 				// ACT / ASSERT
@@ -287,9 +310,9 @@ namespace agge
 				container_t seq;
 
 				seq.annotate(17);
-				seq += "some text";
+				seq.append("some text");
 				seq.annotate(19);
-				seq += "!";
+				seq.append("!");
 
 				// ACT
 				seq.clear();
@@ -307,14 +330,14 @@ namespace agge
 				// INIT
 				container_t seq;
 
-				seq += "some text";
+				seq.append("some text");
 				seq.annotate(19);
-				seq += "!";
+				seq.append("!");
 
 				// ACT
 				seq.clear();
 				seq.annotate(1317);
-				seq += "new text";
+				seq.append("new text");
 
 				// ASSERT
 				assert_equal((plural + pair<string, int>("new text", 1317)), ranges_vector(seq));
@@ -332,8 +355,8 @@ namespace agge
 				container2_t seq3(L"foo");
 				container2_t seq4("text #4", L"bar");
 
-				seq1 += "text #1";
-				seq3 += "text #3";
+				seq1.append("text #1");
+				seq3.append("text #3");
 
 				// ACT / ASSERT
 				assert_equal((plural + pair<string, int>("text #1", 17)), ranges_vector(seq1));
@@ -352,16 +375,16 @@ namespace agge
 				container_t seq2("", 193);
 
 				seq1.annotate(100);
-				seq1 += "text #1";
+				seq1.append("text #1");
 				seq2.annotate(100);
-				seq2 += "text #3";
+				seq2.append("text #3");
 
 				// ACT
 				seq1.clear();
 				seq2.clear();
 
-				seq1 += "new";
-				seq2 += "new";
+				seq1.append("new");
+				seq2.append("new");
 
 				// ACT / ASSERT
 				assert_equal((plural + pair<string, int>("new", 17)), ranges_vector(seq1));
@@ -377,9 +400,9 @@ namespace agge
 				container_t seq;
 
 				seq.annotate(123);
-				seq += "one";
+				seq.append("one");
 				seq.annotate(12);
-				seq += "two";
+				seq.append("two");
 
 				// ACT
 				seq.set_base_annotation(1984);
@@ -389,7 +412,7 @@ namespace agge
 				assert_equal(seq.ranges_end(), seq.ranges_begin());
 
 				// ACT
-				seq += "test";
+				seq.append("test");
 
 				// ASSERT
 				assert_equal((plural + pair<string, int>("test", 1984)), ranges_vector(seq));
@@ -411,7 +434,7 @@ namespace agge
 
 				// ACT
 				seq1.annotate("jazz");
-				seq2 += L"zzz";
+				seq2.append(L"zzz");
 				seq2.annotate(1312);
 
 				// ACT / ASSERT

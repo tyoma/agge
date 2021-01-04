@@ -41,7 +41,7 @@ namespace agge
 				font_style_annotation a = {	font_descriptor::create("Arial", 15, regular, true, hint_none),	};
 				richtext_t text(a);
 
-				text += L"Z";
+				text.append(L"Z");
 
 				// ACT
 				text << style::family("Verdana");
@@ -121,11 +121,11 @@ namespace agge
 				a3.basic.italic = false;
 
 				// INIT / ACT
-				mtext += L"Z";
+				mtext.append(L"Z");
 				mtext.annotate(style::height(5) + style::weight(bold));
-				mtext += L"ebra";
+				mtext.append(L"ebra");
 				mtext.annotate(style::height(10) + style::italic(false) + style::family("Segoe"));
-				mtext += L"fish";
+				mtext.append(L"fish");
 
 				// ACT
 				text << mtext;
