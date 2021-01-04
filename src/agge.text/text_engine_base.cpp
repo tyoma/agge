@@ -59,55 +59,34 @@ namespace agge
 
 
 	text_engine_base::text_engine_base(loader &loader_, unsigned collection_cycles)
-		: _loader(loader_), _collection_cycles(collection_cycles)			
+		: _loader(loader_), _collection_cycles(collection_cycles)
 	{	}
 
 	text_engine_base::~text_engine_base()
-	{
-		for (garbage_container::iterator i = _garbage.begin(); i != _garbage.end(); ++i)
-			destroy(i->second.first);
-	}
+	{	}
 
 	void text_engine_base::collect()
-	{
-		for (garbage_container::iterator i = _garbage.begin(); i != _garbage.end(); )
-			i = !--i->second.second ? destroy(i->second.first), _garbage.erase(i) : ++i;
-	}
+	{	}
 
 	font::ptr text_engine_base::create_font(const font_descriptor &descriptor)
 	{
 		fonts_cache::iterator i = _fonts.find(descriptor);
 
 		if (_fonts.end() != i)
-		{
-			if (shared_ptr<font> f = i->second.lock())
-				return f;
-
-			garbage_container::const_iterator gi = _garbage.find(descriptor);
-
-			if (_garbage.end() != gi)
-			{
-				font *f = gi->second.first;
-
-				_garbage.erase(gi);
-
-				font::ptr fptr(f, bind(&text_engine_base::on_released, this, &*i, _1));
-
-				return i->second = fptr, fptr;
-			}
-		}
+			return i->second.first;
 
 		pair<font::accessor_ptr, real_t> acc = create_font_accessor(descriptor);
 		font_descriptor descriptor_normalized = acc.first->get_descriptor();
 		if (hint_none == descriptor.hinting)
 			descriptor_normalized.height = descriptor.height;
-		pair<fonts_cache::iterator, bool> inserted = _fonts.insert(make_pair(descriptor_normalized, shared_ptr<font>()));
+		pair<fonts_cache::iterator, bool> inserted = _fonts.insert(make_pair(descriptor_normalized,
+			make_pair(shared_ptr<font>(), 0u)));
 
-		if (inserted.second || inserted.first->second.expired())
+		if (inserted.second)
 		{
-			font::ptr fptr(new font(acc.first, acc.second), bind(&text_engine_base::on_released, this, &*inserted.first, _1));
-
-			return inserted.first->second = fptr, fptr;
+			inserted.first->second.first.reset(new font(acc.first, acc.second), bind(&text_engine_base::on_released, this,
+				&*inserted.first, _1));
+			return inserted.first->second.first;
 		}
 		return create_font(descriptor_normalized);
 	}
@@ -134,14 +113,9 @@ namespace agge
 		return make_pair(i->second.lock(), factor);
 	}
 
-	void text_engine_base::on_released(const fonts_cache::value_type *entry, font *font_)
+	void text_engine_base::on_released(const fonts_cache::value_type * /*entry*/, font *font_)
 	{
-		garbage_container::iterator i ;
-
-		if (_collection_cycles)
-			_garbage.insert(entry->first, make_pair(font_, _collection_cycles), i);
-		else
-			destroy(font_);
+		destroy(font_);
 	}
 
 	void text_engine_base::destroy(font *font_) throw()

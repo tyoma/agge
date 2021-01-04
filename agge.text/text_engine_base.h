@@ -28,9 +28,8 @@ namespace agge
 			size_t operator ()(const font_descriptor &key) const;
 		};
 
-		typedef hash_map<font_descriptor, weak_ptr<font>, font_key_hasher> fonts_cache;
+		typedef hash_map<font_descriptor, std::pair<shared_ptr<font>, unsigned /*generation*/>, font_key_hasher> fonts_cache;
 		typedef hash_map<font_descriptor, weak_ptr<font::accessor>, font_key_hasher> scalabale_fonts_cache;
-		typedef hash_map<font_descriptor, std::pair<font*, unsigned /*age*/>, font_key_hasher> garbage_container;
 
 	private:
 		std::pair<font::accessor_ptr, real_t> create_font_accessor(font_descriptor fk);
@@ -44,7 +43,6 @@ namespace agge
 		const unsigned _collection_cycles;
 		fonts_cache _fonts;
 		scalabale_fonts_cache _scalable_fonts;
-		garbage_container _garbage;
 	};
 
 	struct text_engine_base::loader

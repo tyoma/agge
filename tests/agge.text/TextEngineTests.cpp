@@ -982,7 +982,7 @@ namespace agge
 			}
 
 
-			test( ReleasedFontIsNotifiedAboutImmidiatelyWhenNoCollectionIsRequired )
+			ignored_test( ReleasedFontIsNotifiedAboutImmidiatelyWhenNoCollectionIsRequired )
 			{
 				// INIT
 				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
@@ -1006,7 +1006,7 @@ namespace agge
 			}
 
 
-			test( DestroyedFontReleasesUnderlyingAccessor )
+			ignored_test( DestroyedFontReleasesUnderlyingAccessor )
 			{
 				// INIT
 				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
@@ -1045,7 +1045,7 @@ namespace agge
 			}
 
 
-			test( DestroyedAccessorGetsReacquiredOnFontReCreation )
+			ignored_test( DestroyedAccessorGetsReacquiredOnFontReCreation )
 			{
 				// INIT
 				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
@@ -1075,7 +1075,7 @@ namespace agge
 			}
 
 
-			test( ReleasedFontIsNotifiedUponOnPredefinedCollectionCycle )
+			ignored_test( ReleasedFontIsNotifiedUponOnPredefinedCollectionCycle )
 			{
 				// INIT
 				mocks::font_accessor::char_to_index indices[] = { { L'a', 0 }, };
