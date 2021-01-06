@@ -441,6 +441,7 @@ namespace agge
 				assert_equal("jazz", seq1.current_annotation());
 				assert_equal(1312, seq2.current_annotation());
 			}
+
 		end_test_suite
 	}
 }

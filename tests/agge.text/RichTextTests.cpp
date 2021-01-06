@@ -153,6 +153,93 @@ namespace agge
 					+ pair<wstring, style_modifier>(L"font", style::family("Segoe"))),
 					mkvector(L"different " + style::family("Segoe") + L"font"));
 			}
+
+
+			test( StyleAtributesCanBeResetToBase )
+			{
+				// INIT
+				font_style_annotation a1 = {	font_descriptor::create("Arial", 15, regular, true, hint_none),	};
+				richtext_t text(a1);
+
+				text.append(L"foobar");
+				text << style::family("Tahoma") + style::height(20) + style::weight(bold) + style::italic(false)
+					+ style::hinting(hint_strong);
+
+				// ACT / ASSERT
+				text << style::family_base();
+				assert_equal("Arial", text.current_annotation().basic.family);
+				text << style::height_base();
+				assert_equal(15, text.current_annotation().basic.height);
+				text << style::weight_base();
+				assert_equal(regular, text.current_annotation().basic.weight);
+				text << style::italic_base();
+				assert_is_true(text.current_annotation().basic.italic);
+				text << style::hinting_base();
+				assert_equal(hint_none, text.current_annotation().basic.hinting);
+
+				// INIT
+				font_style_annotation a2 = {	font_descriptor::create("Segoe", 16, light, false, hint_vertical),	};
+
+				text.set_base_annotation(a2);
+				text.append(L"foobar");
+				text << style::family("Tahoma") + style::height(20) + style::weight(bold) + style::italic(true)
+					+ style::hinting(hint_strong);
+
+				// ACT / ASSERT
+				text << style::family_base();
+				assert_equal("Segoe", text.current_annotation().basic.family);
+				text << style::height_base();
+				assert_equal(16, text.current_annotation().basic.height);
+				text << style::weight_base();
+				assert_equal(light, text.current_annotation().basic.weight);
+				text << style::italic_base();
+				assert_is_false(text.current_annotation().basic.italic);
+				text << style::hinting_base();
+				assert_equal(hint_vertical, text.current_annotation().basic.hinting);
+			}
+
+
+			test( StyleAtributesCanScaleCurrentFont )
+			{
+				// INIT
+				const font_style_annotation a1 = {	font_descriptor::create("Arial", 15, regular, true, hint_none),	};
+				richtext_t text(a1);
+
+				// ACT / ASSERT
+				text << style::height_scale(0.84);
+
+				// ASSERT
+				assert_equal(12, text.current_annotation().basic.height);
+
+				// ACT / ASSERT
+				text << style::height_scale(1.44);
+
+				// ASSERT
+				assert_equal(17, text.current_annotation().basic.height);
+			}
+
+
+			test( StyleAtributesCanScaleBaseFont )
+			{
+				// INIT
+				const font_style_annotation a1 = {	font_descriptor::create("Arial", 21, regular, true, hint_none),	};
+				richtext_t text(a1);
+
+				text.append(L"foobar");
+				text << style::height(10);
+
+				// ACT / ASSERT
+				text << style::height_scale_base(0.84);
+
+				// ASSERT
+				assert_equal(17, text.current_annotation().basic.height);
+
+				// ACT / ASSERT
+				text << style::height_scale_base(1.44);
+
+				// ASSERT
+				assert_equal(30, text.current_annotation().basic.height);
+			}
 		end_test_suite
 	}
 }

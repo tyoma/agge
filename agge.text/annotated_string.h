@@ -32,6 +32,7 @@ namespace agge
 		const_iterator ranges_begin() const;
 		const_iterator ranges_end() const;
 		const AnnotationT &current_annotation() const;
+		const AnnotationT &base_annotation() const;
 
 	private:
 		typedef std::vector< std::pair<AnnotationT, size_t /*position*/> > annotations_t;
@@ -158,6 +159,10 @@ namespace agge
 	template <typename CharT, typename AnnotationT>
 	inline const AnnotationT &annotated_string<CharT, AnnotationT>::current_annotation() const
 	{	return _annotations.back().first;	}
+
+	template <typename CharT, typename AnnotationT>
+	inline const AnnotationT &annotated_string<CharT, AnnotationT>::base_annotation() const
+	{	return _base_annotation;	}
 
 
 	template <typename CharT, typename AnnotationT>
