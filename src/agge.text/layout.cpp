@@ -12,9 +12,6 @@ namespace agge
 {
 	namespace
 	{
-		real_t height(const font_metrics &m)
-		{	return m.ascent + m.descent + m.leading; }
-
 		bool is_space(wchar_t c)
 		{	return c == L' ';	}
 
