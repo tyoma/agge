@@ -1,7 +1,7 @@
 #pragma once
 
 #include <agge/types.h>
-#include <cmath>
+#include <math.h>
 #include <ut/assert.h>
 
 namespace ut
@@ -9,7 +9,7 @@ namespace ut
 	const double agge_tests_tolerance = 0.001;
 
 	inline void is_on_circle(double cx, double cy, double r, double x, double y, const LocationInfo &location)
-	{	ut::are_approx_equal(std::sqrt((x -= cx, x * x) + (y -= cy, y * y)), r, agge_tests_tolerance, location);	}
+	{	ut::are_approx_equal(sqrt((x -= cx, x * x) + (y -= cy, y * y)), r, agge_tests_tolerance, location);	}
 
 	template <typename ContainerT>
 	inline void are_on_circle(double cx, double cy, double r, const ContainerT &points, const LocationInfo &location)

@@ -21,12 +21,22 @@ elseif(APPLE)
 		platform/apple/main.mm
 		platform/apple/ShellView.mm
 	)
+elseif(ANDROID)
+	include_directories(platform/android)
+	
+	set(SAMPLES_COMMON_SOURCES ${SAMPLES_COMMON_SOURCES}
+		platform/android/bitmap.cpp
+		platform/android/shell.cpp
+		platform/android/timing.cpp
+	)
 endif()
 
 add_library(samples.common STATIC ${SAMPLES_COMMON_SOURCES})
 
 target_link_libraries(samples.common agge agge.text)
 
-if(APPLE)
+if (APPLE)
 	target_link_libraries(samples.common "-framework Foundation -framework Cocoa")
+elseif (ANDROID)
+	target_link_libraries(samples.common log android)
 endif()

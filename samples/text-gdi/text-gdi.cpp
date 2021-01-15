@@ -27,7 +27,7 @@ namespace demo
 			font_style_annotation a = {	font_descriptor::create("Tahoma", 14),	};
 
 			_text.set_base_annotation(a);
-			_text += c_text_long;
+			_text.append(c_text_long);
 		}
 
 	private:

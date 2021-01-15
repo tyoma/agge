@@ -24,7 +24,7 @@ namespace demo
 			font_style_annotation a = {	font_descriptor::create("arial", 14, regular, false, hint_none),	};
 
 			_text.set_base_annotation(a);
-			_text += c_text_long.c_str();
+			_text << c_text_long.c_str();
 		}
 
 	private:
