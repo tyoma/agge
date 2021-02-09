@@ -54,7 +54,7 @@ namespace agge
 				// INIT / ACT
 				layout l(*f);
 
-				l.process(L"");
+				l.process("");
 
 				// ACT
 				box_r box = l.get_box();
@@ -80,9 +80,9 @@ namespace agge
 				layout l2(*f1);
 				layout l3(*f1);
 
-				l1.process(L"A");
-				l2.process(L"AAB");
-				l3.process(L"BQA");
+				l1.process("A");
+				l2.process("AAB");
+				l3.process("BQA");
 
 				// ACT
 				box_r box1 = l1.get_box();
@@ -102,8 +102,8 @@ namespace agge
 				layout l4(*f2);
 				layout l5(*f2);
 
-				l4.process(L"A");
-				l5.process(L"ABQABQABQ");
+				l4.process("A");
+				l5.process("ABQABQABQ");
 
 				// ACT
 				box_r box4 = l4.get_box();
@@ -137,11 +137,11 @@ namespace agge
 				layout l4(*f2);
 				layout l5(*f2);
 
-				l1.process(L"A");
-				l2.process(L"AAB");
-				l3.process(L"BQA");
-				l4.process(L"A");
-				l5.process(L"ABQ A  QA");
+				l1.process("A");
+				l2.process("AAB");
+				l3.process("BQA");
+				l4.process("A");
+				l5.process("ABQ A  QA");
 
 				// ASSERT
 				positioned_glyph reference1[] = { { 11.0f, 0.0f, 1 } };
@@ -194,9 +194,9 @@ namespace agge
 				layout l2(*f);
 				layout l3(*f);
 
-				l1.process(L"ABC CBA AB\nABB BBC\n");
-				l2.process(L"AC CB\nA AB\nABB BBC\n");
-				l3.process(L"AC CB\nA AB\nABB BBC"); // Last row will be checked even if no newline is encountered.
+				l1.process("ABC CBA AB\nABB BBC\n");
+				l2.process("AC CB\nA AB\nABB BBC\n");
+				l3.process("AC CB\nA AB\nABB BBC"); // Last row will be checked even if no newline is encountered.
 
 				box_r box1 = l1.get_box();
 				box_r box2 = l2.get_box();
@@ -227,8 +227,8 @@ namespace agge
 				layout l1(*f1);
 				layout l2(*f2);
 
-				l1.process(L"ABC CBA AB\nABB BBC\n");
-				l2.process(L"AC CB\nA AB\nABB BBC");
+				l1.process("ABC CBA AB\nABB BBC\n");
+				l2.process("AC CB\nA AB\nABB BBC");
 
 				// ASSERT
 				positioned_glyph reference11[] = {
@@ -280,7 +280,7 @@ namespace agge
 				// ACT
 				layout l(*f);
 
-				l.process(L"ABC CBA AB\n\n\nABB BBC\n\n");
+				l.process("ABC CBA AB\n\n\nABB BBC\n\n");
 
 				// ASSERT
 				assert_equal(plural
@@ -313,11 +313,11 @@ namespace agge
 				// ACT
 				// 44 + 7.1 + 48 + 7.1 + 26 + 7.1 + 48 + 7.1 + 44
 				l1.set_width_limit(139.1f); // AAAA BBBB CC|BBBB AAAA
-				l1.process (L"AAAA BBBB CC BBBB AAAA");
+				l1.process ("AAAA BBBB CC BBBB AAAA");
 
 				// 55 + 7.1 + 36 + 7.1 + 22 + 7.1 + 22 + 7.1 + 80 + 7.1 + 52 + 7.1 + 44 + 7.1 + 118
 				l2.set_width_limit(139.1f); // CCC'C BBB AA|AA AAAABBB|CCCC AAAA|ABABABABAB.
-				l2.process(L"CCC'C BBB AA AA AAAABBB CCCC AAAA ABABABABAB.");
+				l2.process("CCC'C BBB AA AA AAAABBB CCCC AAAA ABABABABAB.");
 
 				// ASSERT
 				assert_equal(plural
@@ -349,7 +349,7 @@ namespace agge
 
 				// ACT
 				l.set_width_limit(6);
-				l.process(L"ABCABCABC");
+				l.process("ABCABCABC");
 
 				// ASSERT
 				assert_equal(plural
@@ -360,7 +360,7 @@ namespace agge
 
 				// ACT
 				l.set_width_limit(8);
-				l.process(L"ABCABCABC");
+				l.process("ABCABCABC");
 
 				// ASSERT
 				assert_equal(plural
@@ -381,7 +381,7 @@ namespace agge
 				factory_ptr f1 = create_single_font_factory(c_fm1, indices, glyphs);
 				layout l1(*f1);
 
-				l1.process(L"AAAAA");
+				l1.process("AAAAA");
 
 				// ACT
 				box_r box1 = l1.get_box();
@@ -393,7 +393,7 @@ namespace agge
 				factory_ptr f2 = create_single_font_factory(c_fm2, indices, glyphs);
 				layout l2(*f2);
 
-				l2.process(L"AAAAA");
+				l2.process("AAAAA");
 
 				// ACT
 				box_r box2 = l2.get_box();
@@ -413,7 +413,7 @@ namespace agge
 				factory_ptr f1 = create_single_font_factory(c_fm1, indices, glyphs);
 				layout l1(*f1);
 
-				l1.process(L"AAAAA\nAA");
+				l1.process("AAAAA\nAA");
 
 				// ACT
 				box_r box1 = l1.get_box();
@@ -425,7 +425,7 @@ namespace agge
 				factory_ptr f2 = create_single_font_factory(c_fm2, indices, glyphs);
 				layout l2(*f2);
 
-				l2.process(L"AAAAA\nA\nA");
+				l2.process("AAAAA\nA\nA");
 
 				// ACT
 				box_r box2 = l2.get_box();
@@ -445,7 +445,7 @@ namespace agge
 				factory_ptr f = create_single_font_factory(c_fm1, indices, glyphs);
 				layout l(*f);
 
-				l.process(L"AAAAA\nAA");
+				l.process("AAAAA\nAA");
 
 				// ACT
 				l.set_width_limit(15.0f);
@@ -454,7 +454,7 @@ namespace agge
 				assert_equal(l.end(), l.begin());
 
 				// ACT
-				l.process(L"A");
+				l.process("A");
 
 				// ASSERT
 				assert_equal(1, distance(l.begin(), l.end()));
@@ -476,7 +476,7 @@ namespace agge
 				l.set_width_limit(39.0f);
 
 				// ACT
-				l.process(L"AAAAA   AAAA    AA");
+				l.process("AAAAA   AAAA    AA");
 
 				// ASSERT
 				assert_equal(plural
@@ -501,7 +501,7 @@ namespace agge
 				l.set_width_limit(26.0f);
 
 				// ACT
-				l.process(L"AAAAA   A   A");
+				l.process("AAAAA   A   A");
 
 				// ASSERT
 				assert_equal(plural
@@ -530,7 +530,7 @@ namespace agge
 				// ACT
 				// 36 + 3 + 61
 				// ABCD|ABCDCD[]C
-				l.process(L"ABCD ABCDCDC");
+				l.process("ABCD ABCDCDC");
 
 				// ASSERT
 				assert_equal(plural
@@ -560,7 +560,7 @@ namespace agge
 				// ACT
 				// 36 + 3 + 61
 				// ABCD|ABCD[]CDC
-				l.process(L"ABCD ABCDCDC");
+				l.process("ABCD ABCDCDC");
 
 				// ASSERT
 				assert_equal(plural
@@ -585,13 +585,13 @@ namespace agge
 				l.set_width_limit(9.0f);
 
 				// ACT / ASSERT
-				l.process(L"Z");
+				l.process("Z");
 				assert_equal(l.end(), l.begin());
-				l.process(L"\n");
+				l.process("\n");
 				assert_equal(l.end(), l.begin());
-				l.process(L"Z\nZ");
+				l.process("Z\nZ");
 				assert_equal(l.end(), l.begin());
-				l.process(L"qZ\n");
+				l.process("qZ\n");
 				assert_equal(l.end(), l.begin());
 			}
 		end_test_suite

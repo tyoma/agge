@@ -49,12 +49,12 @@ namespace agge
 				font_descriptor descriptor;
 
 			private:
-				typedef std::map<wchar_t, glyph_index_t> indices_map_t;
+				typedef std::map<codepoint_t, glyph_index_t> indices_map_t;
 
 			private:
 				virtual font_descriptor get_descriptor() const;
 				virtual font_metrics get_metrics() const;
-				virtual glyph_index_t get_glyph_index(wchar_t character) const;
+				virtual glyph_index_t get_glyph_index(codepoint_t character) const;
 				virtual agge::glyph::outline_ptr load_glyph(glyph_index_t index, agge::glyph::glyph_metrics &m) const;
 
 			private:
@@ -84,7 +84,7 @@ namespace agge
 
 			struct font_accessor::char_to_index
 			{
-				wchar_t symbol;
+				codepoint_t symbol;
 				glyph_index_t index;
 
 				template <typename T1, typename T2>

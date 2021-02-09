@@ -8,8 +8,8 @@ namespace agge
 	struct font_style_annotation;
 	struct style_modifier;
 
-	typedef annotated_string<wchar_t, font_style_annotation> richtext_t;
-	typedef annotated_string<wchar_t, style_modifier> richtext_modifier_t;
+	typedef annotated_string<char, font_style_annotation> richtext_t;
+	typedef annotated_string<char, style_modifier> richtext_modifier_t;
 
 
 	struct font_style_annotation
@@ -59,7 +59,7 @@ namespace agge
 	richtext_t &operator <<(richtext_t &lhs, const style_modifier &rhs);
 	richtext_t &operator <<(richtext_t &lhs, const richtext_modifier_t &rhs);
 
-	richtext_modifier_t operator +(const wchar_t *lhs, const style_modifier &rhs);
-	richtext_modifier_t operator +(const richtext_modifier_t &lhs, const wchar_t *rhs);
+	richtext_modifier_t operator +(const char *lhs, const style_modifier &rhs);
+	richtext_modifier_t operator +(const richtext_modifier_t &lhs, const char *rhs);
 	richtext_modifier_t operator +(const richtext_modifier_t &lhs, const style_modifier &rhs);
 }

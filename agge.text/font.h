@@ -23,15 +23,15 @@ namespace agge
 		font_descriptor get_key() const;
 		font_metrics get_metrics() const;
 
-		glyph_index_t map_single(wchar_t character) const;
+		glyph_index_t map_single(codepoint_t character) const;
 		const glyph *get_glyph(glyph_index_t index) const;
 
 	private:
 		typedef hash_map<glyph_index_t, glyph> glyphs_cache_t;
-		typedef hash_map<wchar_t, glyph_index_t> char2index_cache_t;
+		typedef hash_map<codepoint_t, glyph_index_t> char2index_cache_t;
 
 	private:
-		glyph_index_t load_mapping(wchar_t character) const;
+		glyph_index_t load_mapping(codepoint_t character) const;
 		const glyph* load_glyph(glyph_index_t index) const;
 
 	private:
@@ -46,13 +46,13 @@ namespace agge
 	{
 		virtual font_descriptor get_descriptor() const = 0;
 		virtual font_metrics get_metrics() const = 0;
-		virtual glyph_index_t get_glyph_index(wchar_t character) const = 0;
+		virtual glyph_index_t get_glyph_index(codepoint_t character) const = 0;
 		virtual glyph::outline_ptr load_glyph(glyph_index_t index, glyph::glyph_metrics &m) const = 0;
 	};
 
 
 
-	AGGE_INLINE glyph_index_t font::map_single(wchar_t character) const
+	AGGE_INLINE glyph_index_t font::map_single(codepoint_t character) const
 	{
 		char2index_cache_t::const_iterator i = _char2glyph.find(character);
 

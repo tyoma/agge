@@ -65,7 +65,7 @@ namespace agge
 				rasterizer_t target, reference;
 
 				// positions: 0.0f, 5.2f, 18.9f, 26.625f, width: 34.35f
-				l.process(simple_richtext(L"astt", "Arial", 10, regular, false, hint_strong));
+				l.process(simple_richtext("astt", "Arial", 10, regular, false, hint_strong));
 
 				// ACT
 				e.render(target, l, align_near, align_near, create_rect(17.32f, 190.0f, 50.0f, 250.0f));
@@ -81,7 +81,7 @@ namespace agge
 				reference.reset(), target.reset();
 
 				// positions: 0.0f, 5.2f, 12.925f, width: 20.65f
-				l.process(simple_richtext(L"att", "Arial", 10, regular, false, hint_strong));
+				l.process(simple_richtext("att", "Arial", 10, regular, false, hint_strong));
 
 				// ACT
 				e.render(target, l, align_far, align_near, create_rect(17.32f, 191.05f, 50.0f, 250.0f));
@@ -159,8 +159,8 @@ namespace agge
 				text.set_base_annotation(a);
 
 				// w: 26.625, h: 24.6
-				text << style::family("Arial") << style::height(10) << L"as\n"	// 18.9 x (7.3 + 3.3)
-					<< style::family("Arial") << style::height(15) << L"sat";	// 26.625 x (14 + 2)
+				text << style::family("Arial") << style::height(10) << "as\n"	// 18.9 x (7.3 + 3.3)
+					<< style::family("Arial") << style::height(15) << "sat";	// 26.625 x (14 + 2)
 
 				// ACT / ASSERT
 				assert_equal(create_box(26.625f, 24.6f), e.measure(text));
@@ -211,7 +211,7 @@ namespace agge
 				font_style_annotation a = {	d,	};
 
 				text.set_base_annotation(a);
-				text.append(L"aaaaa"); // w: 36
+				text.append("aaaaa"); // w: 36
 
 				// ACT / ASSERT
 				assert_equal(create_box(36.0f, 7.3f), e.measure(text));

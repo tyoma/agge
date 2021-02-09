@@ -5,7 +5,6 @@ namespace agge
 	struct utf8
 	{
 		typedef unsigned int codepoint;
-		typedef unsigned char uchar;
 
 		template <typename CharIteratorT>
 		static codepoint next(CharIteratorT &iterator, CharIteratorT end, codepoint invalid = '?');
@@ -16,6 +15,8 @@ namespace agge
 	template <typename CharIteratorT>
 	inline utf8::codepoint utf8::next(CharIteratorT &iterator, CharIteratorT end, codepoint invalid)
 	{
+		typedef unsigned char uchar;
+
 		uchar remainder;
 		codepoint c = static_cast<uchar>(*iterator++);
 

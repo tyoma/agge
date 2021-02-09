@@ -60,13 +60,14 @@ font_metrics font_accessor::get_metrics() const
 	return m;
 }
 
-agge::uint16_t font_accessor::get_glyph_index(wchar_t character) const
+agge::uint16_t font_accessor::get_glyph_index(codepoint_t character) const
 {
 	dc ctx;
 	dc::handle h(ctx.select(native()));
+	wchar_t character2 = static_cast<wchar_t>(character);
 	WORD index = 0;
 
-	::GetGlyphIndicesW(ctx, &character, 1, &index, 0/*GGI_MARK_NONEXISTING_GLYPHS*/);
+	::GetGlyphIndicesW(ctx, &character2, 1, &index, 0/*GGI_MARK_NONEXISTING_GLYPHS*/);
 	return index;
 }
 

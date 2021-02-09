@@ -38,7 +38,7 @@ namespace truetype
 		};
 
 		font_metrics metrics;
-		std::unordered_map<wchar_t, agge::uint16_t> char_to_glyph;
+		std::unordered_map<agge::codepoint_t, agge::uint16_t> char_to_glyph;
 		std::vector<glyph> glyphs;
 	};
 

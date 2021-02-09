@@ -18,7 +18,7 @@ namespace agge
 	font_metrics font::get_metrics() const
 	{	return _metrics;	}
 
-	glyph_index_t font::load_mapping(wchar_t character) const
+	glyph_index_t font::load_mapping(codepoint_t character) const
 	{
 		char2index_cache_t::iterator inserted;
 

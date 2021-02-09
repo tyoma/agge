@@ -20,7 +20,7 @@ namespace agge
 		explicit text_engine(loader &loader_, uint8_t precision = 4);
 
 		void render_glyph(RasterizerT &target, const font &font_, glyph_index_t glyph_index, real_t x, real_t y);
-		void render_string(RasterizerT &target, const font &font_, const wchar_t *text, text_alignment halign,
+		void render_string(RasterizerT &target, const font &font_, const char *text, text_alignment halign,
 			real_t x, real_t y, real_t max_width = (std::numeric_limits<real_t>::max)());
 		void render(RasterizerT &target, const glyph_run &glyphs, point_r reference);
 		template <typename ContainerT>
@@ -117,7 +117,7 @@ namespace agge
 	}
 
 	template <typename RasterizerT>
-	inline void text_engine<RasterizerT>::render_string(RasterizerT &target, const font &font_, const wchar_t *text,
+	inline void text_engine<RasterizerT>::render_string(RasterizerT &target, const font &font_, const char *text,
 		text_alignment halign, real_t x, real_t y, real_t max_width)
 	{
 		rasters_map &rasters = get_rasters_map(font_);
@@ -125,7 +125,7 @@ namespace agge
 
 		if (align_near != halign)
 		{
-			for (const wchar_t *c = text; *c; ++c)
+			for (const char *c = text; *c; ++c)
 			{
 				const real_t dx2 = dx + font_.get_glyph(font_.map_single(*c))->metrics.advance_x;
 
@@ -136,7 +136,7 @@ namespace agge
 			x -= align_center == halign ? 0.5f * dx : dx;
 		}
 
-		for (const wchar_t *c = text; *c; ++c)
+		for (const char *c = text; *c; ++c)
 		{
 			const glyph_index_t index = font_.map_single(*c);
 			const glyph *g = font_.get_glyph(index);

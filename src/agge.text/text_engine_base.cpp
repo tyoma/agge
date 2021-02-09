@@ -30,7 +30,7 @@ namespace agge
 		virtual font_metrics get_metrics() const
 		{	return _underlying->get_metrics();	}
 
-		virtual glyph_index_t get_glyph_index(wchar_t character) const
+		virtual glyph_index_t get_glyph_index(codepoint_t character) const
 		{	return _underlying->get_glyph_index(character);	}
 
 		virtual glyph::outline_ptr load_glyph(glyph_index_t index, glyph::glyph_metrics &m) const

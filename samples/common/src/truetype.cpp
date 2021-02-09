@@ -56,9 +56,9 @@ namespace truetype
 				return m;
 			}
 
-			virtual agge::uint16_t get_glyph_index(wchar_t character) const
+			virtual agge::uint16_t get_glyph_index(codepoint_t character) const
 			{
-				unordered_map<wchar_t, agge::uint16_t>::const_iterator i = _tt_font->char_to_glyph.find(character);
+				unordered_map<codepoint_t, agge::uint16_t>::const_iterator i = _tt_font->char_to_glyph.find(character);
 				return i != _tt_font->char_to_glyph.end() ? i->second : 0;
 			}
 

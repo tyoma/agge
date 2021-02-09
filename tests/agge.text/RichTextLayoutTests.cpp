@@ -75,9 +75,9 @@ namespace agge
 				layout l(factory);
 				richtext_t text;
 
-				text << style::family("Arial") << style::height(13) << L"ADB\n"
-					<< style::family("Helvetica") << style::height(17) << L"AAAAB\n"
-					<< style::family("Segoe UI") << style::height(10) << L"ACAA\n";
+				text << style::family("Arial") << style::height(13) << "ADB\n"
+					<< style::family("Helvetica") << style::height(17) << "AAAAB\n"
+					<< style::family("Segoe UI") << style::height(10) << "ACAA\n";
 
 				// ACT
 				l.process(text);
@@ -97,9 +97,9 @@ namespace agge
 				layout l(factory);
 				richtext_t text;
 
-				text << style::family("Arial") << style::height(13) << L"ADB " // width: 28
-					<< style::family("Helvetica") << style::height(17) << L"AA" // width: 42.3
-					<< style::family("Segoe UI") << style::height(10) << L"AB"; // width: 12
+				text << style::family("Arial") << style::height(13) << "ADB " // width: 28
+					<< style::family("Helvetica") << style::height(17) << "AA" // width: 42.3
+					<< style::family("Segoe UI") << style::height(10) << "AB"; // width: 12
 
 				// ACT
 				l.process(text);
@@ -120,9 +120,9 @@ namespace agge
 				layout l(factory);
 				richtext_t text;
 
-				text << style::family("Arial") << style::height(13) << L"ADB " // width: 28
-					<< style::family("Helvetica") << style::height(17) << L"AA BB" // width: 42.3 + 3 + 14
-					<< style::family("Segoe UI") << style::height(10) << L"AB"; // width: 12
+				text << style::family("Arial") << style::height(13) << "ADB " // width: 28
+					<< style::family("Helvetica") << style::height(17) << "AA BB" // width: 42.3 + 3 + 14
+					<< style::family("Segoe UI") << style::height(10) << "AB"; // width: 12
 
 				l.set_width_limit(70.4f);
 
@@ -147,9 +147,9 @@ namespace agge
 				layout l(factory);
 				richtext_t text;
 
-				text << style::family("Segoe UI") << style::height(10) << L"A"
-					<< style::family("Arial") << style::height(13) << L"A"
-					<< style::family("Helvetica") << style::height(17) << L"A";
+				text << style::family("Segoe UI") << style::height(10) << "A"
+					<< style::family("Arial") << style::height(13) << "A"
+					<< style::family("Helvetica") << style::height(17) << "A";
 
 				// ACT
 				l.process(text);
@@ -159,8 +159,8 @@ namespace agge
 
 				// INIT
 				text.clear();
-				text << style::family("Segoe UI") << style::height(10) << L"A"
-					<< style::family("Arial") << style::height(13) << L"A";
+				text << style::family("Segoe UI") << style::height(10) << "A"
+					<< style::family("Arial") << style::height(13) << "A";
 
 				// ACT
 				l.process(text);
@@ -177,9 +177,9 @@ namespace agge
 				richtext_t text;
 
 				l.set_width_limit(84.0f);
-				text << style::family("Segoe UI") << style::height(10) << L"AAA" // 15
-					<< style::family("Helvetica") << style::height(17) << L"AAA" // 63.45
-					<< style::family("Arial") << style::height(13) << L"AAA"; // 15
+				text << style::family("Segoe UI") << style::height(10) << "AAA" // 15
+					<< style::family("Helvetica") << style::height(17) << "AAA" // 63.45
+					<< style::family("Arial") << style::height(13) << "AAA"; // 15
 
 				// ACT
 				l.process(text);
@@ -199,8 +199,8 @@ namespace agge
 				richtext_t text;
 
 				l.set_width_limit(17.0f);
-				text << style::family("Segoe UI") << style::height(10) << L"AAA" // 15
-					<< style::family("Arial") << style::height(13) << L"A"; // 5
+				text << style::family("Segoe UI") << style::height(10) << "AAA" // 15
+					<< style::family("Arial") << style::height(13) << "A"; // 5
 
 				// ACT
 				l.process(text);
@@ -219,9 +219,9 @@ namespace agge
 				layout l(factory);
 				richtext_t text;
 
-				text << style::family("Arial") << style::height(13) << L"AD\nB"
-					<< style::family("Helvetica") << style::height(17) << L"AAAAB\n"
-					<< style::family("Segoe UI") << style::height(10) << L"ACAA";
+				text << style::family("Arial") << style::height(13) << "AD\nB"
+					<< style::family("Helvetica") << style::height(17) << "AAAAB\n"
+					<< style::family("Segoe UI") << style::height(10) << "ACAA";
 
 				// ACT
 				l.process(text);
@@ -232,7 +232,7 @@ namespace agge
 				assert_equal(reference1, l.get_box());
 
 				// INIT
-				text << style::family("Arial") << style::height(13) << L"A";
+				text << style::family("Arial") << style::height(13) << "A";
 
 				// ACT
 				l.process(text);
@@ -244,7 +244,7 @@ namespace agge
 
 				// INIT
 				text.clear();
-				text << style::family("Arial") << style::height(13) << L"A";
+				text << style::family("Arial") << style::height(13) << "A";
 
 				// ACT
 				l.process(text);

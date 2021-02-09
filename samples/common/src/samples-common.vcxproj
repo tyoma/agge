@@ -50,7 +50,6 @@
     <ClInclude Include="..\timing.h" />
     <ClInclude Include="..\truetype.h" />
     <ClInclude Include="platform\android\bitmap.h" />
-    <ClInclude Include="platform\android\sys\timerfd.h" />
     <ClInclude Include="shell-inline.h" />
   </ItemGroup>
   <ItemGroup>

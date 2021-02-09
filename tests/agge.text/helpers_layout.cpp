@@ -52,7 +52,7 @@ namespace agge
 		{	return _offset == rhs.offset;	}
 
 
-		richtext_t simple_richtext(const wstring &text, const string &family, int height, font_weight weight, bool italic,
+		richtext_t simple_richtext(const string &text, const string &family, int height, font_weight weight, bool italic,
 			font_hinting hinting)
 		{
 			font_style_annotation a = {	font_descriptor::create(family, height, weight, italic, hinting),	};

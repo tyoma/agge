@@ -12,12 +12,19 @@ namespace agge
 {
 	namespace
 	{
-		bool is_space(wchar_t c)
-		{	return c == L' ';	}
+		bool is_space(char c)
+		{	return c == ' ';	}
+
+		template <typename IteratorT>
+		void eat_spaces(IteratorT &i, IteratorT end)
+		{
+			while (i != end && is_space(*i))
+				++i;
+		}
 
 		template <typename IteratorT>
 		bool eat_lf(IteratorT &i)
-		{	return *i == L'\n' ? ++i, true : false;	}
+		{	return *i == '\n' ? ++i, true : false;	}
 
 		class detector_iterator
 		{
@@ -96,8 +103,7 @@ namespace agge
 						else
 						{
 							// No new word found before - let's scan for it ourselves.
-							while (i != text_end && is_space(*i))
-								++i;
+							eat_spaces(i, text_end);
 						}
 					}
 					return true;

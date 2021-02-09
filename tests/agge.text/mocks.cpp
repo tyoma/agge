@@ -40,7 +40,7 @@ namespace agge
 			font_metrics font_accessor::get_metrics() const
 			{	return _metrics;	}
 
-			glyph_index_t font_accessor::get_glyph_index(wchar_t character) const
+			glyph_index_t font_accessor::get_glyph_index(codepoint_t character) const
 			{
 				indices_map_t::const_iterator i = _indices.find(character);
 

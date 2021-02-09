@@ -122,14 +122,14 @@ namespace agge
 		return lhs;
 	}
 
-	richtext_modifier_t operator +(const wchar_t *lhs, const style_modifier &rhs)
+	richtext_modifier_t operator +(const char *lhs, const style_modifier &rhs)
 	{
-		richtext_modifier_t s(L"", zero());
+		richtext_modifier_t s("", zero());
 
 		return s.append(lhs), s.annotate(rhs), s;
 	}
 
-	richtext_modifier_t operator +(const richtext_modifier_t &lhs, const wchar_t *rhs)
+	richtext_modifier_t operator +(const richtext_modifier_t &lhs, const char *rhs)
 	{
 		richtext_modifier_t s(lhs);
 
