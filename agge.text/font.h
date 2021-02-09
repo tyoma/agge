@@ -25,16 +25,20 @@ namespace agge
 
 		glyph_index_t map_single(codepoint_t character) const;
 		const glyph *get_glyph(glyph_index_t index) const;
+		const glyph *get_glyph_for_codepoint(codepoint_t codepoint) const;
 
 	private:
+		enum {	ansi_range = 128,	};
 		typedef hash_map<glyph_index_t, glyph> glyphs_cache_t;
 		typedef hash_map<codepoint_t, glyph_index_t> char2index_cache_t;
 
 	private:
 		glyph_index_t load_mapping(codepoint_t character) const;
 		const glyph* load_glyph(glyph_index_t index) const;
+		const glyph* get_glyph_for_codepoint_slow(codepoint_t character) const;
 
 	private:
+		mutable const glyph *_ansi_glyphs[ansi_range];
 		const accessor_ptr _accessor;
 		font_metrics _metrics;
 		mutable glyphs_cache_t _glyphs;
@@ -64,5 +68,18 @@ namespace agge
 		glyphs_cache_t::iterator i = _glyphs.find(index);
 
 		return _glyphs.end() != i ? i->second.outline ? &i->second : 0 : load_glyph(index);
+	}
+
+	AGGE_INLINE const glyph *font::get_glyph_for_codepoint(codepoint_t codepoint) const
+	{
+		if (codepoint < ansi_range)
+			if (const glyph *g = _ansi_glyphs[codepoint])
+				return g;
+
+		const glyph *g = get_glyph_for_codepoint_slow(codepoint);
+
+		if (codepoint < ansi_range)
+			_ansi_glyphs[codepoint] = g;
+		return g;
 	}
 }

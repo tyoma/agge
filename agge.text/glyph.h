@@ -1,6 +1,7 @@
 #pragma once
 
 #include "shared_ptr.h"
+#include "types.h"
 
 #include <agge/path.h>
 #include <agge/pod_vector.h>
@@ -27,6 +28,7 @@ namespace agge
 		real_t factor;
 		glyph_metrics metrics;
 		outline_ptr outline;
+		glyph_index_t index;
 	};
 
 	struct glyph::path_point

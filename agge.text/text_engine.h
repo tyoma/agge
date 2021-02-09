@@ -126,7 +126,7 @@ namespace agge
 
 		for (std::string::const_iterator i = text.begin(); i != end; ++i)
 		{
-			const real_t dx2 = dx + font_.get_glyph(font_.map_single(*i))->metrics.advance_x;
+			const real_t dx2 = dx + font_.get_glyph_for_codepoint(*i)->metrics.advance_x;
 
 			if (dx2 > max_width)
 			{
@@ -140,10 +140,9 @@ namespace agge
 
 		for (std::string::const_iterator i = text.begin(); i != end; ++i)
 		{
-			const glyph_index_t index = font_.map_single(*i);
-			const glyph *g = font_.get_glyph(index);
+			const glyph *g = font_.get_glyph_for_codepoint(*i);
 
-			render_glyph(target, font_, rasters, index, x, y);
+			render_glyph(target, font_, rasters, g->index, x, y);
 			x += g->metrics.advance_x, y += g->metrics.advance_y;
 		}
 	}

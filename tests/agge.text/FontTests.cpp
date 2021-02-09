@@ -2,6 +2,7 @@
 
 #include "helpers.h"
 #include "mocks.h"
+#include "outlines.h"
 
 #include <agge/path.h>
 #include <ut/assert.h>
@@ -165,6 +166,44 @@ namespace agge
 
 				// ACT / ASSERT
 				assert_equal(a->descriptor, f.get_key());
+			}
+
+
+			test( MappingCodepointToGlyphReturnsExpectedResults )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = {
+					{	'A', 0	},
+					{	0xE0, 1	},
+					{	0xE101, 2	},
+					{	0x901, 0	},
+					{	'B', 1	},
+				};
+				mocks::font_accessor::glyph glyphs[] = {
+					mocks::glyph(1.1, 1.2, c_outline_1),
+					mocks::glyph(1.3, 1.4, c_outline_2),
+					mocks::glyph(1.5, 1.6, c_outline_diamond),
+				};
+				font::ptr f = mocks::create_font(c_fm1, indices, glyphs);
+
+				// ACT / ASSERT
+				const glyph *g = f->get_glyph_for_codepoint('A');
+				const glyph *g0 = g;
+				assert_not_null(g);
+				assert_equal(0, g->index);
+				assert_equal(c_outline_1, convert_copy(g->get_outline()));
+				const glyph *g1 = g = f->get_glyph_for_codepoint(0xE0);
+				assert_not_null(g);
+				assert_equal(1, g->index);
+				assert_equal(c_outline_2, convert_copy(g->get_outline()));
+				g = f->get_glyph_for_codepoint(0xE101);
+				assert_not_null(g);
+				assert_equal(2, g->index);
+				assert_equal(c_outline_diamond, convert_copy(g->get_outline()));
+				g = f->get_glyph_for_codepoint(0x901);
+				assert_equal(g0, g);
+				g = f->get_glyph_for_codepoint('B');
+				assert_equal(g1, g);
 			}
 
 		end_test_suite

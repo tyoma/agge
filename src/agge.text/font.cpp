@@ -1,5 +1,7 @@
 #include <agge.text/font.h>
 
+#include <agge/memory.h>
+
 using namespace std;
 
 namespace agge
@@ -10,6 +12,7 @@ namespace agge
 		_metrics.ascent *= _factor;
 		_metrics.descent *= _factor;
 		_metrics.leading *= _factor;
+		memset(_ansi_glyphs, static_cast<const glyph *>(nullptr), ansi_range);
 	}
 
 	font_descriptor font::get_key() const
@@ -35,7 +38,11 @@ namespace agge
 		g.outline = _accessor->load_glyph(index, g.metrics);
 		g.metrics.advance_x *= _factor;
 		g.metrics.advance_y *= _factor;
+		g.index = index;
 		_glyphs.insert(index, g, inserted);
 		return inserted->second.outline ? &inserted->second : 0;
 	}
+
+	const glyph* font::get_glyph_for_codepoint_slow(codepoint_t codepoint) const
+	{	return get_glyph(map_single(codepoint));	}
 }

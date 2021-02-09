@@ -91,8 +91,7 @@ namespace agge
 				}
 
 				CharIteratorT i_next = i;
-				const glyph_index_t index = font_.map_single(utf8::next(i_next, text_end));
-				const glyph *g = font_.get_glyph(index);
+				const glyph *const g = font_.get_glyph_for_codepoint(utf8::next(i_next, text_end));
 
 				advance = g->metrics.advance_x;
 
@@ -126,7 +125,7 @@ namespace agge
 					return true;
 				}
 
-				const positioned_glyph pg = {	create_vector(advance, 0.0f), index	};
+				const positioned_glyph pg = {	create_vector(advance, 0.0f), g->index	};
 
 				glyphs.push_back(pg);
 				accumulator.extend_end();
