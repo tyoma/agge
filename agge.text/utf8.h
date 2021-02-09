@@ -21,15 +21,14 @@ namespace agge
 	template <typename CharIteratorT>
 	AGGE_INLINE utf8::codepoint utf8::next(CharIteratorT &iterator, CharIteratorT end, codepoint invalid)
 	{
-		codepoint c = static_cast<unsigned char>(*iterator++);
+		codepoint c = static_cast<unsigned char>(*iterator);
 
-		if (c < 0x80)
-			return c;
-		return next_slow(iterator, end, c, invalid);
+		++iterator;
+		return c < 0x80 ? c : next_slow(iterator, end, c, invalid);
 	}
 
 	template <typename CharIteratorT>
-	inline utf8::codepoint utf8::next_slow(CharIteratorT &iterator, CharIteratorT end, codepoint c, codepoint invalid)
+	AGGE_AVOID_INLINE inline utf8::codepoint utf8::next_slow(CharIteratorT &iterator, CharIteratorT end, codepoint c, codepoint invalid)
 	{
 		typedef unsigned char uchar;
 
@@ -46,17 +45,17 @@ namespace agge
 		else
 			return invalid;
 
-		if (remainder > end - iterator)
-			return iterator = end, invalid;
-
-		while (remainder--)
+		for (bool continuation_valid = true; remainder--; ++iterator)
 		{
-			const uchar continuation = static_cast<uchar>(*iterator++);
+			if (iterator == end)
+				return invalid;
 
-			if ((continuation < 0x80) | (0xC0 <= continuation))
-				return iterator += remainder, invalid;
-			c <<= 6;
-			c += continuation & 0x3F;
+			const uchar continuation = static_cast<uchar>(*iterator);
+
+			if (((continuation & 0xC0) == 0x80) & continuation_valid)
+				c <<= 6, c += continuation & 0x3F;
+			else
+				continuation_valid = false, c = invalid;
 		}
 		return c;
 	}

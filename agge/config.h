@@ -1,11 +1,14 @@
 #pragma once
 
-#if defined(_MSC_VER) && (defined(_M_X64) || defined(_M_IX86))
+#if defined(_MSC_VER)
 	#define AGGE_INLINE __forceinline
-#elif defined(__GNUC__) && (defined(__x86_64) || defined(__i386))
+	#define AGGE_AVOID_INLINE __declspec(noinline)
+#elif defined(__GNUC__)
 	#define AGGE_INLINE __attribute__((always_inline)) inline
+	#define AGGE_AVOID_INLINE __attribute__((noinline))
 #else
 	#define AGGE_INLINE inline
+	#define AGGE_AVOID_INLINE
 #endif
 
 #if defined(_M_IX86) || defined(__i386) || defined(_M_X64) || defined(__x86_64__)

@@ -60,7 +60,7 @@ font_metrics font_accessor::get_metrics() const
 	return m;
 }
 
-agge::uint16_t font_accessor::get_glyph_index(codepoint_t character) const
+agge::glyph_index_t font_accessor::get_glyph_index(codepoint_t character) const
 {
 	dc ctx;
 	dc::handle h(ctx.select(native()));
@@ -71,7 +71,7 @@ agge::uint16_t font_accessor::get_glyph_index(codepoint_t character) const
 	return index;
 }
 
-glyph::outline_ptr font_accessor::load_glyph(agge::uint16_t index, glyph::glyph_metrics &m) const
+glyph::outline_ptr font_accessor::load_glyph(agge::glyph_index_t index, glyph::glyph_metrics &m) const
 {
 	typedef const void *pvoid;
 

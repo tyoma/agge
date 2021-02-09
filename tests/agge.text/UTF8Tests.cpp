@@ -76,7 +76,7 @@ namespace agge
 			test( InsufficientLengthOfRangeSpitsInvalidCharacterAndPositionsIteratorToEnd )
 			{
 				// INIT
-				char c[4] = {	0	};
+				char c[] = {	'\0', '\x81', '\x81', '\x81',	};
 				char *iterator = c;
 
 				// ACT / ASSERT

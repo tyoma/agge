@@ -190,15 +190,15 @@ namespace agge
 				const glyph *g = f->get_glyph_for_codepoint('A');
 				const glyph *g0 = g;
 				assert_not_null(g);
-				assert_equal(0, g->index);
+				assert_equal(0u, g->index);
 				assert_equal(c_outline_1, convert_copy(g->get_outline()));
 				const glyph *g1 = g = f->get_glyph_for_codepoint(0xE0);
 				assert_not_null(g);
-				assert_equal(1, g->index);
+				assert_equal(1u, g->index);
 				assert_equal(c_outline_2, convert_copy(g->get_outline()));
 				g = f->get_glyph_for_codepoint(0xE101);
 				assert_not_null(g);
-				assert_equal(2, g->index);
+				assert_equal(2u, g->index);
 				assert_equal(c_outline_diamond, convert_copy(g->get_outline()));
 				g = f->get_glyph_for_codepoint(0x901);
 				assert_equal(g0, g);

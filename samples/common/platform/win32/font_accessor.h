@@ -15,8 +15,8 @@ public:
 private:
 	virtual agge::font_descriptor get_descriptor() const;
 	virtual agge::font_metrics get_metrics() const;
-	virtual agge::uint16_t get_glyph_index(agge::codepoint_t character) const;
-	virtual agge::glyph::outline_ptr load_glyph(agge::uint16_t index, agge::glyph::glyph_metrics &m) const;
+	virtual agge::glyph_index_t get_glyph_index(agge::codepoint_t character) const;
+	virtual agge::glyph::outline_ptr load_glyph(agge::glyph_index_t index, agge::glyph::glyph_metrics &m) const;
 
 private:
 	agge::shared_ptr<void> _native;

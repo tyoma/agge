@@ -37,22 +37,8 @@ namespace agge
 			void operator ++()
 			{	_previous = *_underlying++;	}
 
-			detector_iterator operator ++(int)
-			{
-				const detector_iterator previous = *this;
-
-				++*this;
-				return previous;
-			}
-
-			void operator +=(ptrdiff_t rhs)
-			{	_underlying += rhs;	}
-
 			richtext_t::string_type::value_type operator *() const
 			{	return *_underlying;	}
-
-			ptrdiff_t operator -(const detector_iterator &rhs) const
-			{	return _underlying - rhs._underlying;	}
 
 			bool operator ==(const detector_iterator &rhs) const
 			{	return _underlying == rhs._underlying;	}
@@ -76,12 +62,12 @@ namespace agge
 			const real_t limit, CharIteratorT &i, CharIteratorT text_end)
 		{
 			const font &font_ = *accumulator.font_;
-			size_t eow_position = 0, sow_position = 0;
+			size_t eow_index = 0, sow_index = 0;
 			real_t eow_width = 0.0f, sow_width = 0.0f;
 
 			next.offset = zero();
 			next.width = 0.0f;
-			for (real_t advance; i != text_end; accumulator.width += advance)
+			while (i != text_end)
 			{
 				if (eat_lf(i))
 				{
@@ -92,27 +78,26 @@ namespace agge
 
 				CharIteratorT i_next = i;
 				const glyph *const g = font_.get_glyph_for_codepoint(utf8::next(i_next, text_end));
-
-				advance = g->metrics.advance_x;
+				const real_t advance = g->metrics.advance_x;
 
 				if (i.at_end_of_word())
-					eow_position = accumulator.end_index, eow_width = accumulator.width;
+					eow_index = accumulator.end_index, eow_width = accumulator.width;
 				if (i.at_start_of_word())
-					sow_position = accumulator.end_index, sow_width = accumulator.width;
+					sow_index = accumulator.end_index, sow_width = accumulator.width;
 
 				if (accumulator.width + advance > limit)
 				{
 					next.set_end();
-					if (eow_position) // else: next line - emergency mid-word break
+					if (eow_index) // else: next line - emergency mid-word break
 					{
 						// Next line - normal word-boundary break
 						sow_width = accumulator.width - sow_width;
-						accumulator.end_index = eow_position;
+						accumulator.end_index = eow_index;
 						accumulator.width = eow_width;
-						if (sow_position > eow_position)
+						if (sow_index > eow_index)
 						{
 							// New word was actually found after the last matched end-of-word.
-							next.begin_index = sow_position;
+							next.begin_index = sow_index;
 							next.width = sow_width;
 						}
 						else
@@ -128,7 +113,8 @@ namespace agge
 				const positioned_glyph pg = {	create_vector(advance, 0.0f), g->index	};
 
 				glyphs.push_back(pg);
-				accumulator.extend_end();
+				accumulator.end_index++;
+				accumulator.width += advance;
 				i = i_next;
 			}
 			return false;
