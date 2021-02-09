@@ -48,6 +48,7 @@
     <ClCompile Include="FontTests.cpp" />
     <ClCompile Include="LayoutTests.cpp" />
     <ClCompile Include="mocks.cpp" />
+    <ClCompile Include="UTF8Tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\agge.text\agge.text.vcxproj">

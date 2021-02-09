@@ -10,6 +10,7 @@ set(AGGE_TEXT_TEST_SOURCES
 	RichTextTests.cpp
 	TextEngineRichTextTests.cpp
 	TextEngineTests.cpp
+	UTF8Tests.cpp
 )
 
 add_library(agge.text.tests SHARED ${AGGE_TEXT_TEST_SOURCES})

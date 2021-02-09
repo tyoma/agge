@@ -57,6 +57,7 @@
     <ClInclude Include="..\..\agge.text\shared_ptr.h" />
     <ClInclude Include="..\..\agge.text\text_engine_base.h" />
     <ClInclude Include="..\..\agge.text\types.h" />
+    <ClInclude Include="..\..\agge.text\utf8.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
