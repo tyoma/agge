@@ -20,7 +20,7 @@ namespace agge
 		explicit text_engine(loader &loader_, uint8_t precision = 4);
 
 		void render_glyph(RasterizerT &target, const font &font_, glyph_index_t glyph_index, real_t x, real_t y);
-		void render_string(RasterizerT &target, const font &font_, const char *text, text_alignment halign,
+		void render_string(RasterizerT &target, const font &font_, const std::string &text, text_alignment halign,
 			real_t x, real_t y, real_t max_width = (std::numeric_limits<real_t>::max)());
 		void render(RasterizerT &target, const glyph_run &glyphs, point_r reference);
 		template <typename ContainerT>
@@ -117,32 +117,32 @@ namespace agge
 	}
 
 	template <typename RasterizerT>
-	inline void text_engine<RasterizerT>::render_string(RasterizerT &target, const font &font_, const char *text,
+	inline void text_engine<RasterizerT>::render_string(RasterizerT &target, const font &font_, const std::string &text,
 		text_alignment halign, real_t x, real_t y, real_t max_width)
 	{
+		std::string::const_iterator end = text.end();
 		rasters_map &rasters = get_rasters_map(font_);
 		real_t dx = 0.0f;
 
-		if (align_near != halign)
+		for (std::string::const_iterator i = text.begin(); i != end; ++i)
 		{
-			for (const char *c = text; *c; ++c)
+			const real_t dx2 = dx + font_.get_glyph(font_.map_single(*i))->metrics.advance_x;
+
+			if (dx2 > max_width)
 			{
-				const real_t dx2 = dx + font_.get_glyph(font_.map_single(*c))->metrics.advance_x;
-
-				if (dx2 > max_width)
-					break;
-				dx = dx2;
+				end = i;
+				break;
 			}
-			x -= align_center == halign ? 0.5f * dx : dx;
+			dx = dx2;
 		}
+		if (align_near != halign)
+			x -= align_center == halign ? 0.5f * dx : dx;
 
-		for (const char *c = text; *c; ++c)
+		for (std::string::const_iterator i = text.begin(); i != end; ++i)
 		{
-			const glyph_index_t index = font_.map_single(*c);
+			const glyph_index_t index = font_.map_single(*i);
 			const glyph *g = font_.get_glyph(index);
 
-			if ((max_width -= g->metrics.advance_x) < 0.0f)
-				break;
 			render_glyph(target, font_, rasters, index, x, y);
 			x += g->metrics.advance_x, y += g->metrics.advance_y;
 		}

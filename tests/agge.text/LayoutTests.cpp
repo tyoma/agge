@@ -265,6 +265,62 @@ namespace agge
 			}
 
 
+			test( MultiLineUnboundLayoutProducesGlyphRunsForEachLineUTF8 )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = { { L' ', 0 }, { 0x2713, 1 }, { L'B', 2 }, { 0xE0, 3 }, };
+				mocks::font_accessor::glyph glyphs[] = {
+					{ { 7.1, 0 } },
+					{ { 11, 0 } },
+					{ { 13, 0 } },
+					{ { 17, 0 } },
+				};
+				factory_ptr f1 = create_single_font_factory(c_fm1, indices, glyphs);
+				factory_ptr f2 = create_single_font_factory(c_fm2, indices, glyphs);
+				layout::const_iterator gr;
+
+				// INIT / ACT
+				layout l1(*f1);
+				layout l2(*f2);
+
+				l1.process("\xE2\x9C\x93""B\xC3\xA0 \xC3\xA0""B\xE2\x9C\x93 \xE2\x9C\x93""B\n\xE2\x9C\x93""BB BB\xC3\xA0\n");
+				l2.process("\xE2\x9C\x93""\xC3\xA0 \xC3\xA0""B\n\xE2\x9C\x93 \xE2\x9C\x93""B\n\xE2\x9C\x93""BB BB\xC3\xA0");
+
+				// ASSERT
+				positioned_glyph reference11[] = {
+					{ 11.0f, 0.0f, 1 }, { 13.0f, 0.0f, 2 }, { 17.0f, 0.0f, 3 }, { 7.1f, 0.0f, 0 }, { 17.0f, 0.0f, 3 },
+						{ 13.0f, 0.0f, 2 }, { 11.0f, 0.0f, 1 }, { 7.1f, 0.0f, 0 }, { 11.0f, 0.0f, 1 }, { 13.0f, 0.0f, 2 },
+				};
+				positioned_glyph reference12[] = {
+					{ 11.0f, 0.0f, 1 }, { 13.0f, 0.0f, 2 }, { 13.0f, 0.0f, 2 }, { 7.1f, 0.0f, 0 }, { 13.0f, 0.0f, 2 },
+						{ 13.0f, 0.0f, 2 }, { 17.0f, 0.0f, 3 }, 
+				};
+
+				assert_equal(plural
+					+ ref_text_line(0.0f, 10.0f, 120.2f, plural + ref_glyph_run(**f1, 0.0f, 0.0f, reference11))
+					+ ref_text_line(0.0f, 24.0f, 87.1f, plural + ref_glyph_run(**f1, 0.0f, 0.0f, reference12)),
+					mkvector(l1.begin(), l1.end()));
+
+
+				positioned_glyph reference21[] = {
+					{ 11.0f, 0.0f, 1 }, { 17.0f, 0.0f, 3 }, { 7.1f, 0.0f, 0 }, { 17.0f, 0.0f, 3 }, { 13.0f, 0.0f, 2 },
+				};
+				positioned_glyph reference22[] = {
+					{ 11.0f, 0.0f, 1 }, { 7.1f, 0.0f, 0 }, { 11.0f, 0.0f, 1 }, { 13.0f, 0.0f, 2 },
+				};
+				positioned_glyph reference23[] = {
+					{ 11.0f, 0.0f, 1 }, { 13.0f, 0.0f, 2 }, { 13.0f, 0.0f, 2 }, { 7.1f, 0.0f, 0 }, { 13.0f, 0.0f, 2 },
+						{ 13.0f, 0.0f, 2 }, { 17.0f, 0.0f, 3 },
+				};
+
+				assert_equal(plural
+					+ ref_text_line(0.0f, 14.0f, 65.1f, plural + ref_glyph_run(**f2, 0.0f, 0.0f, reference21))
+					+ ref_text_line(0.0f, 32.0f, 42.1f, plural + ref_glyph_run(**f2, 0.0f, 0.0f, reference22))
+					+ ref_text_line(0.0f, 50.0f, 87.1f, plural + ref_glyph_run(**f2, 0.0f, 0.0f, reference23)),
+					mkvector(l2.begin(), l2.end()));
+			}
+
+
 			test( TrivialLineFeedsDoNotProduceEmptyLines )
 			{
 				// INIT

@@ -5,6 +5,7 @@
 #include <agge/tools.h>
 #include <agge.text/font.h>
 #include <agge.text/font_factory.h>
+#include <agge.text/utf8.h>
 
 using namespace std;
 
@@ -36,8 +37,22 @@ namespace agge
 			void operator ++()
 			{	_previous = *_underlying++;	}
 
+			detector_iterator operator ++(int)
+			{
+				const detector_iterator previous = *this;
+
+				++*this;
+				return previous;
+			}
+
+			void operator +=(ptrdiff_t rhs)
+			{	_underlying += rhs;	}
+
 			richtext_t::string_type::value_type operator *() const
 			{	return *_underlying;	}
+
+			ptrdiff_t operator -(const detector_iterator &rhs) const
+			{	return _underlying - rhs._underlying;	}
 
 			bool operator ==(const detector_iterator &rhs) const
 			{	return _underlying == rhs._underlying;	}
@@ -66,7 +81,7 @@ namespace agge
 
 			next.offset = zero();
 			next.width = 0.0f;
-			for (real_t advance; i != text_end; ++i, accumulator.width += advance)
+			for (real_t advance; i != text_end; accumulator.width += advance)
 			{
 				if (eat_lf(i))
 				{
@@ -75,7 +90,8 @@ namespace agge
 					return true;
 				}
 
-				const glyph_index_t index = font_.map_single(*i);
+				CharIteratorT i_next = i;
+				const glyph_index_t index = font_.map_single(utf8::next(i_next, text_end));
 				const glyph *g = font_.get_glyph(index);
 
 				advance = g->metrics.advance_x;
@@ -103,7 +119,8 @@ namespace agge
 						else
 						{
 							// No new word found before - let's scan for it ourselves.
-							eat_spaces(i, text_end);
+							eat_spaces(i_next, text_end);
+							i = i_next;
 						}
 					}
 					return true;
@@ -113,6 +130,7 @@ namespace agge
 
 				glyphs.push_back(pg);
 				accumulator.extend_end();
+				i = i_next;
 			}
 			return false;
 		}
