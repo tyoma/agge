@@ -17,13 +17,11 @@ namespace agge
 		class const_iterator;
 
 	public:
-		annotated_string(const AnnotationT &base_annotation = AnnotationT());
-		annotated_string(const CharT *from, const AnnotationT &base_annotation = AnnotationT());
+		annotated_string(const AnnotationT &base_annotation);
 
 		void clear();
 		template <typename CharIteratorT>
 		void append(CharIteratorT begin, CharIteratorT end);
-		void append(const string_type &addition);
 		void annotate(const AnnotationT &annotation);
 		void set_base_annotation(const AnnotationT &annotation);
 
@@ -96,18 +94,9 @@ namespace agge
 	{	}
 
 	template <typename CharT, typename AnnotationT>
-	inline annotated_string<CharT, AnnotationT>::annotated_string(const CharT *from, const AnnotationT &base_annotation)
-		: _underlying(from), _annotations(1, std::make_pair(base_annotation, 0u)), _base_annotation(base_annotation)
-	{	}
-
-	template <typename CharT, typename AnnotationT>
 	template <typename CharIteratorT>
 	inline void annotated_string<CharT, AnnotationT>::append(CharIteratorT begin, CharIteratorT end)
 	{	_underlying.append(begin, end);	}
-
-	template <typename CharT, typename AnnotationT>
-	inline void annotated_string<CharT, AnnotationT>::append(const string_type &addition)
-	{	_underlying += addition;	}
 
 	template <typename CharT, typename AnnotationT>
 	inline void annotated_string<CharT, AnnotationT>::annotate(const AnnotationT &annotation)

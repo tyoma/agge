@@ -29,13 +29,15 @@ namespace agge
 
 		font_descriptor basic;
 
-		unsigned use_family : 2;
-		unsigned use_height : 3; // Only this action can accept scale_flag.
-		unsigned use_weight : 2;
-		unsigned use_italic : 2;
-		unsigned use_hinting : 2;
+		unsigned int use_family : 2,
+			use_height : 3, // Only this action can accept scale_flag.
+			use_weight : 2,
+			use_italic : 2,
+			use_hinting : 2;
 
 		style_modifier operator +(const style_modifier &rhs) const;
+
+		static const style_modifier empty;
 	};
 
 	struct style
@@ -55,6 +57,17 @@ namespace agge
 	};
 
 
+
+	template <typename T1, typename T2>
+	inline annotated_string<T1, T2> &operator <<(annotated_string<T1, T2> &lhs, const char *rhs)
+	{
+		const char *e = rhs;
+
+		while (*e)
+			e++;
+		lhs.append(rhs, e);
+		return lhs;
+	}
 
 	richtext_t &operator <<(richtext_t &lhs, const style_modifier &rhs);
 	richtext_t &operator <<(richtext_t &lhs, const richtext_modifier_t &rhs);

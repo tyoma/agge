@@ -22,12 +22,12 @@ namespace demo
 	{
 	public:
 		TextDrawerGDI()
-			: _text_engine(_font_loader), _layout(_text_engine)
+			: _text_engine(_font_loader), _text(font_style_annotation()), _layout(_text_engine)
 		{
 			font_style_annotation a = {	font_descriptor::create("Tahoma", 14),	};
 
 			_text.set_base_annotation(a);
-			_text.append(c_text_long);
+			_text << c_text_long.c_str();
 		}
 
 	private:

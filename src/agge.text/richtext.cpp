@@ -1,7 +1,5 @@
 #include <agge.text/richtext.h>
 
-#include <agge/tools.h>
-
 using namespace std;
 
 #define apply_single(target, modifier, base, action)\
@@ -54,6 +52,8 @@ namespace agge
 				target.basic.hinting = modifier.basic.hinting, target.use_hinting = modifier.use_hinting;
 		}
 	}
+
+	const style_modifier style_modifier::empty = {};
 
 	style_modifier style_modifier::operator +(const style_modifier &rhs) const
 	{
@@ -124,16 +124,16 @@ namespace agge
 
 	richtext_modifier_t operator +(const char *lhs, const style_modifier &rhs)
 	{
-		richtext_modifier_t s("", zero());
+		richtext_modifier_t s = style_modifier::empty;
 
-		return s.append(lhs), s.annotate(rhs), s;
+		return s << lhs, s.annotate(rhs), s;
 	}
 
 	richtext_modifier_t operator +(const richtext_modifier_t &lhs, const char *rhs)
 	{
 		richtext_modifier_t s(lhs);
 
-		return s.append(rhs), s;
+		return s << rhs, s;
 	}
 
 	richtext_modifier_t operator +(const richtext_modifier_t &lhs, const style_modifier &rhs)

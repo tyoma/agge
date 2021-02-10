@@ -56,7 +56,13 @@ namespace agge
 			font_hinting hinting)
 		{
 			font_style_annotation a = {	font_descriptor::create(family, height, weight, italic, hinting),	};
-			return richtext_t(text.c_str(), a);
+			richtext_t result(a);
+
+			result.append(text.begin(), text.end());
+			return result;
 		}
+
+		richtext_t R(const std::string &text)
+		{	return simple_richtext(text, "Arial", 10);	}
 	}
 }

@@ -73,7 +73,7 @@ namespace agge
 			{
 				// INIT
 				layout l(factory);
-				richtext_t text;
+				richtext_t text((font_style_annotation()));
 
 				text << style::family("Arial") << style::height(13) << "ADB\n"
 					<< style::family("Helvetica") << style::height(17) << "AAAAB\n"
@@ -95,7 +95,7 @@ namespace agge
 			{
 				// INIT
 				layout l(factory);
-				richtext_t text;
+				richtext_t text((font_style_annotation()));
 
 				text << style::family("Arial") << style::height(13) << "ADB " // width: 28
 					<< style::family("Helvetica") << style::height(17) << "AA" // width: 42.3
@@ -118,7 +118,7 @@ namespace agge
 			{
 				// INIT
 				layout l(factory);
-				richtext_t text;
+				richtext_t text((font_style_annotation()));
 
 				text << style::family("Arial") << style::height(13) << "ADB " // width: 28
 					<< style::family("Helvetica") << style::height(17) << "AA BB" // width: 42.3 + 3 + 14
@@ -145,7 +145,7 @@ namespace agge
 			{
 				// INIT
 				layout l(factory);
-				richtext_t text;
+				richtext_t text((font_style_annotation()));
 
 				text << style::family("Segoe UI") << style::height(10) << "A"
 					<< style::family("Arial") << style::height(13) << "A"
@@ -174,7 +174,7 @@ namespace agge
 			{
 				// INIT
 				layout l(factory);
-				richtext_t text;
+				richtext_t text((font_style_annotation()));
 
 				l.set_width_limit(84.0f);
 				text << style::family("Segoe UI") << style::height(10) << "AAA" // 15
@@ -196,7 +196,7 @@ namespace agge
 			{
 				// INIT
 				layout l(factory);
-				richtext_t text;
+				richtext_t text((font_style_annotation()));
 
 				l.set_width_limit(17.0f);
 				text << style::family("Segoe UI") << style::height(10) << "AAA" // 15
@@ -217,7 +217,7 @@ namespace agge
 			{
 				// INIT
 				layout l(factory);
-				richtext_t text;
+				richtext_t text((font_style_annotation()));
 
 				text << style::family("Arial") << style::height(13) << "AD\nB"
 					<< style::family("Helvetica") << style::height(17) << "AAAAB\n"

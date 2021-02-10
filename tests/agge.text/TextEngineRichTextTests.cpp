@@ -151,12 +151,7 @@ namespace agge
 				font::ptr f1 = e.create_font(fonts[0].first);
 				font::ptr f2 = e.create_font(fonts[1].first);
 				rasterizer_t target, reference;
-				richtext_t text;
-				font_style_annotation a = {};
-
-				a.basic.weight = regular;
-				a.basic.hinting = hint_strong;
-				text.set_base_annotation(a);
+				richtext_t text = simple_richtext("", "", 0);
 
 				// w: 26.625, h: 24.6
 				text << style::family("Arial") << style::height(10) << "as\n"	// 18.9 x (7.3 + 3.3)
@@ -207,11 +202,10 @@ namespace agge
 				text_engine<rasterizer_t> e(loader, 4);
 				font::ptr f = e.create_font(fonts[0].first);
 				rasterizer_t target, reference;
-				richtext_t text;
 				font_style_annotation a = {	d,	};
+				richtext_t text(a);
 
-				text.set_base_annotation(a);
-				text.append("aaaaa"); // w: 36
+				text << "aaaaa"; // w: 36
 
 				// ACT / ASSERT
 				assert_equal(create_box(36.0f, 7.3f), e.measure(text));

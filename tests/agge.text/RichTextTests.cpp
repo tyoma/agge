@@ -41,7 +41,7 @@ namespace agge
 				font_style_annotation a = {	font_descriptor::create("Arial", 15, regular, true, hint_none),	};
 				richtext_t text(a);
 
-				text.append("Z");
+				text << "Z";
 
 				// ACT
 				text << style::family("Verdana");
@@ -111,7 +111,7 @@ namespace agge
 				font_style_annotation a = {	font_descriptor::create("Arial", 15, regular, true, hint_none),	}, a2 = a,
 					a3 = a;
 				richtext_t text(a);
-				richtext_modifier_t mtext("", zero());
+				richtext_modifier_t mtext(style_modifier::empty);
 
 				a2.basic.height = 5;
 				a2.basic.weight = bold;
@@ -121,11 +121,11 @@ namespace agge
 				a3.basic.italic = false;
 
 				// INIT / ACT
-				mtext.append("Z");
+				mtext << "Z";
 				mtext.annotate(style::height(5) + style::weight(bold));
-				mtext.append("ebra");
+				mtext << "ebra";
 				mtext.annotate(style::height(10) + style::italic(false) + style::family("Segoe"));
-				mtext.append("fish");
+				mtext << "fish";
 
 				// ACT
 				text << mtext;
@@ -143,13 +143,13 @@ namespace agge
 			{
 				// ACT / ASSERT
 				assert_equal((plural
-					+ pair<string, style_modifier>("That's a ", zero())
+					+ pair<string, style_modifier>("That's a ", style_modifier::empty)
 					+ pair<string, style_modifier>("bold", style::weight(bold))
 					+ pair<string, style_modifier>(" statement!", style::weight(regular))),
 					mkvector("That's a " + style::weight(bold) + "bold" + style::weight(regular) + " statement!"));
 
 				assert_equal((plural
-					+ pair<string, style_modifier>("different ", zero())
+					+ pair<string, style_modifier>("different ", style_modifier::empty)
 					+ pair<string, style_modifier>("font", style::family("Segoe"))),
 					mkvector("different " + style::family("Segoe") + "font"));
 			}
@@ -161,8 +161,7 @@ namespace agge
 				font_style_annotation a1 = {	font_descriptor::create("Arial", 15, regular, true, hint_none),	};
 				richtext_t text(a1);
 
-				text.append("foobar");
-				text << style::family("Tahoma") + style::height(20) + style::weight(bold) + style::italic(false)
+				text << "foobar" << style::family("Tahoma") + style::height(20) + style::weight(bold) + style::italic(false)
 					+ style::hinting(hint_strong);
 
 				// ACT / ASSERT
@@ -181,8 +180,7 @@ namespace agge
 				font_style_annotation a2 = {	font_descriptor::create("Segoe", 16, light, false, hint_vertical),	};
 
 				text.set_base_annotation(a2);
-				text.append("foobar");
-				text << style::family("Tahoma") + style::height(20) + style::weight(bold) + style::italic(true)
+				text << "foobar" << style::family("Tahoma") + style::height(20) + style::weight(bold) + style::italic(true)
 					+ style::hinting(hint_strong);
 
 				// ACT / ASSERT
@@ -225,7 +223,7 @@ namespace agge
 				const font_style_annotation a1 = {	font_descriptor::create("Arial", 21, regular, true, hint_none),	};
 				richtext_t text(a1);
 
-				text.append("foobar");
+				text << "foobar";
 				text << style::height(10);
 
 				// ACT / ASSERT

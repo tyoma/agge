@@ -81,8 +81,6 @@ namespace agge
 
 		richtext_t simple_richtext(const std::string &text, const std::string &family, int height, font_weight weight = regular,
 			bool italic = false, font_hinting hinting = hint_strong);
-
-		inline richtext_t &operator <<(richtext_t &lhs, const char *rhs)
-		{	return lhs.append(rhs), lhs;	}
+		richtext_t R(const std::string &text);
 	}
 }
