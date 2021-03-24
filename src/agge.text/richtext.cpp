@@ -36,6 +36,7 @@ namespace agge
 			apply_single(target.basic.weight, modifier.basic.weight, base.basic.weight, modifier.use_weight);
 			apply_single(target.basic.italic, modifier.basic.italic, base.basic.italic, modifier.use_italic);
 			apply_single(target.basic.hinting, modifier.basic.hinting, base.basic.hinting, modifier.use_hinting);
+			apply_single(target.foreground, modifier.foreground, base.foreground, modifier.use_foreground);
 		}
 
 		void apply(style_modifier &target, const style_modifier &modifier)
@@ -50,6 +51,8 @@ namespace agge
 				target.basic.italic = modifier.basic.italic, target.use_italic = modifier.use_italic;
 			if (modifier.use_hinting)
 				target.basic.hinting = modifier.basic.hinting, target.use_hinting = modifier.use_hinting;
+			if (modifier.use_foreground)
+				target.foreground = modifier.foreground, target.use_foreground = modifier.use_foreground;
 		}
 	}
 
@@ -98,6 +101,12 @@ namespace agge
 
 	style_modifier style::hinting_base()
 	{	style_modifier m = {}; return m.use_hinting = style_modifier::reset, m;	}
+
+	style_modifier style::foreground(color value)
+	{	style_modifier m = {}; return m.foreground = value, m.use_foreground = style_modifier::set, m;	}
+
+	style_modifier style::foreground_base()
+	{	style_modifier m = {}; return m.use_foreground = style_modifier::reset, m;	}
 
 
 	richtext_t &operator <<(richtext_t &lhs, const style_modifier &rhs)

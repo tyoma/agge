@@ -2,6 +2,7 @@
 
 #include "helpers.h"
 
+#include <tests/common/helpers.h>
 #include <ut/assert.h>
 #include <ut/test.h>
 
@@ -18,7 +19,7 @@ namespace agge
 	}
 
 	inline bool operator ==(const font_style_annotation &lhs, const font_style_annotation &rhs)
-	{	return lhs.basic == rhs.basic;	}
+	{	return lhs.basic == rhs.basic && lhs.foreground == rhs.foreground;	}
 
 	inline bool operator ==(const style_modifier &lhs, const style_modifier &rhs)
 	{
@@ -35,7 +36,7 @@ namespace agge
 		}
 
 		begin_test_suite( RichTextTests )
-			test( StyleModifierApplicationSetsExpectedProperties )
+			test( StyleModifierApplicationSetsExpectedFontProperties )
 			{
 				// INIT
 				font_style_annotation a = {	font_descriptor::create("Arial", 15, regular, true, hint_none),	};
@@ -105,26 +106,58 @@ namespace agge
 			}
 
 
+			test( StyleModifierApplicationSetsExpectedForeground )
+			{
+				// INIT
+				const font_style_annotation base_annotation = {	font_descriptor::create("Arial", 15), color::make(123, 231, 31, 100)	};
+				richtext_t text(base_annotation);
+
+				text << "Z";
+
+				// ACT
+				text << style::foreground(color::make(11, 12, 13, 150));
+
+				// ASSERT
+				assert_equal(color::make(11, 12, 13, 150), text.current_annotation().foreground);
+
+				// ACT
+				text << style::foreground(color::make(0, 255, 0, 255));
+
+				// ASSERT
+				assert_equal(color::make(0, 255, 0, 255), text.current_annotation().foreground);
+
+				// ACT
+				text << style::foreground_base();
+
+				// ASSERT
+				assert_equal(color::make(123,231, 31, 100), text.current_annotation().foreground);
+			}
+
+
 			test( StyleModifyingStringCanBeAppendedToRichText )
 			{
 				// INIT
-				font_style_annotation a = {	font_descriptor::create("Arial", 15, regular, true, hint_none),	}, a2 = a,
-					a3 = a;
+				font_style_annotation a = {
+					font_descriptor::create("Arial", 15, regular, true, hint_none), color::make(100, 200, 50, 200),
+				};
+				font_style_annotation a2 = a, a3 = a;
 				richtext_t text(a);
 				richtext_modifier_t mtext(style_modifier::empty);
 
 				a2.basic.height = 5;
 				a2.basic.weight = bold;
+				a2.foreground = color::make(1, 2, 3, 4);
 				a3 = a2;
 				a3.basic.family = "Segoe";
 				a3.basic.height = 10;
 				a3.basic.italic = false;
+				a3.foreground = color::make(100, 200, 50, 200);
 
 				// INIT / ACT
 				mtext << "Z";
-				mtext.annotate(style::height(5) + style::weight(bold));
+				mtext.annotate(style::height(5) + style::weight(bold) + style::foreground(color::make(1, 2, 3, 4)));
 				mtext << "ebra";
-				mtext.annotate(style::height(10) + style::italic(false) + style::family("Segoe"));
+				mtext.annotate(style::height(10) + style::italic(false) + style::foreground_base() + style::family("Segoe"));
 				mtext << "fish";
 
 				// ACT

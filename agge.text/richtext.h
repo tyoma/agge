@@ -3,6 +3,8 @@
 #include "annotated_string.h"
 #include "types.h"
 
+#include <agge/color.h>
+
 namespace agge
 {
 	struct font_style_annotation;
@@ -15,6 +17,7 @@ namespace agge
 	struct font_style_annotation
 	{
 		font_descriptor basic;
+		color foreground;
 	};
 
 	struct style_modifier
@@ -28,12 +31,14 @@ namespace agge
 		};
 
 		font_descriptor basic;
+		color foreground;
 
 		unsigned int use_family : 2,
 			use_height : 3, // Only this action can accept scale_flag.
 			use_weight : 2,
 			use_italic : 2,
-			use_hinting : 2;
+			use_hinting : 2,
+			use_foreground : 2;
 
 		style_modifier operator +(const style_modifier &rhs) const;
 
@@ -54,6 +59,8 @@ namespace agge
 		static style_modifier italic_base();
 		static style_modifier hinting(font_hinting value);
 		static style_modifier hinting_base();
+		static style_modifier foreground(color value);
+		static style_modifier foreground_base();
 	};
 
 

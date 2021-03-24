@@ -166,7 +166,7 @@ namespace agge
 				populate_glyph_run(_glyphs, *current_grun, next_line_grun, _limit_width - current_line->width, i, end);
 				previous = i)
 			{
-				if (i == previous & current_line->empty())
+				if ((i == previous) & current_line->empty())
 				{
 					// Emergency: width limit is too small to layout even a single character - bailing out!
 					_text_lines.clear();
