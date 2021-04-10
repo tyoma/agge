@@ -27,88 +27,90 @@ namespace agge
 		bool eat_lf(IteratorT &i)
 		{	return *i == '\n' ? ++i, true : false;	}
 
-		class detector_iterator
+
+		class wrap_processor
 		{
 		public:
-			detector_iterator(richtext_t::string_type::const_iterator from)
-				: _underlying(from), _previous(0)
+			wrap_processor(glyph_run &carry)
+				: _carry(carry)
 			{	}
 
-			void operator ++()
-			{	_previous = *_underlying++;	}
+			void on_new_run()
+			{
+				_carry.offset = zero(), _carry.width = real_t();
+				_eow_index = _sow_index = size_t();
+				_eow_width = _sow_width = real_t();
+				_previous_space = false;
+			}
 
-			richtext_t::string_type::value_type operator *() const
-			{	return *_underlying;	}
+			void on_linefeed()
+			{	_carry.set_end();	}
 
-			bool operator ==(const detector_iterator &rhs) const
-			{	return _underlying == rhs._underlying;	}
+			void analyze_character(char c, const glyph_run &accumulator)
+			{
+				const auto space = is_space(c);
 
-			bool operator !=(const detector_iterator &rhs) const
-			{	return _underlying != rhs._underlying;	}
+				if (_previous_space == space)
+					return;
+				else if (space)
+					_eow_index = accumulator.end_index, _eow_width = accumulator.width;
+				else
+					_sow_index = accumulator.end_index, _sow_width = accumulator.width;
+				_previous_space = space;
+			}
 
-			bool at_end_of_word() const
-			{	return is_space(*_underlying) & !is_space(_previous);	}
+			template <typename CharIteratorT>
+			void on_limit_reached(CharIteratorT &i, CharIteratorT text_end, glyph_run &accumulator)
+			{
+				_carry.set_end();
+				if (!_eow_index)
+					return;	// Next line - emergency mid-word break
 
-			bool at_start_of_word() const
-			{	return !is_space(*_underlying) & is_space(_previous);	}
+				// Next line - normal word-boundary break
+				_sow_width = accumulator.width - _sow_width;
+				accumulator.end_index = _eow_index;
+				accumulator.width = _eow_width;
+				if (_sow_index > _eow_index)
+				{
+					// New word was actually found after the last matched end-of-word.
+					_carry.begin_index = _sow_index;
+					_carry.width = _sow_width;
+				}
+				else
+				{
+					// No new word found before - let's scan for it ourselves.
+					eat_spaces(i, text_end);
+				}
+			}
 
 		private:
-			richtext_t::string_type::const_iterator _underlying;
-			richtext_t::string_type::value_type _previous;
+			const wrap_processor &operator =(const wrap_processor &rhs);
+
+		private:
+			glyph_run &_carry;
+			size_t _eow_index, _sow_index;
+			real_t _eow_width, _sow_width;
+			bool _previous_space;
 		};
 
-		template <typename ContainerT, typename CharIteratorT>
-		bool /*end-of-line*/ populate_glyph_run(ContainerT &glyphs, glyph_run &accumulator, glyph_run &next,
+
+		template <typename ContainerT, typename ProcessorT, typename CharIteratorT>
+		bool /*end-of-line*/ populate_glyph_run(ContainerT &glyphs, glyph_run &accumulator, ProcessorT &limit_processor,
 			const real_t limit, CharIteratorT &i, CharIteratorT text_end)
 		{
-			const font &font_ = *accumulator.font_;
-			size_t eow_index = 0, sow_index = 0;
-			real_t eow_width = 0.0f, sow_width = 0.0f;
-
-			next.offset = zero();
-			next.width = 0.0f;
+			limit_processor.on_new_run();
 			while (i != text_end)
 			{
-				if (eat_lf(i))
-				{
-					// Next line - line-feed
-					next.set_end();
-					return true;
-				}
+				if (eat_lf(i)) // Next line - line-feed
+					return limit_processor.on_linefeed(), true;
 
 				CharIteratorT i_next = i;
-				const glyph *const g = font_.get_glyph_for_codepoint(utf8::next(i_next, text_end));
+				const glyph *const g = accumulator.font_->get_glyph_for_codepoint(utf8::next(i_next, text_end));
 				const real_t advance = g->metrics.advance_x;
 
-				if (i.at_end_of_word())
-					eow_index = accumulator.end_index, eow_width = accumulator.width;
-				if (i.at_start_of_word())
-					sow_index = accumulator.end_index, sow_width = accumulator.width;
-
+				limit_processor.analyze_character(*i, accumulator);
 				if (accumulator.width + advance > limit)
-				{
-					next.set_end();
-					if (eow_index) // else: next line - emergency mid-word break
-					{
-						// Next line - normal word-boundary break
-						sow_width = accumulator.width - sow_width;
-						accumulator.end_index = eow_index;
-						accumulator.width = eow_width;
-						if (sow_index > eow_index)
-						{
-							// New word was actually found after the last matched end-of-word.
-							next.begin_index = sow_index;
-							next.width = sow_width;
-						}
-						else
-						{
-							// No new word found before - let's scan for it ourselves.
-							eat_spaces(i_next, text_end);
-							i = i_next;
-						}
-					}
-					return true;
-				}
+					return limit_processor.on_limit_reached(i, text_end, accumulator), true;
 
 				const positioned_glyph pg = {	create_vector(advance, 0.0f), g->index	};
 
@@ -129,9 +131,12 @@ namespace agge
 			{
 				const font_metrics grm = i->font_->get_metrics();
 
-				m.first = agge_max(m.first, grm.ascent);
-				m.second = agge_max(m.second, grm.descent + grm.leading);
-				descent = agge_max(descent, grm.descent);
+				if (m.first < grm.ascent)
+					m.first = grm.ascent;
+				if (m.second < grm.descent + grm.leading)
+					m.second = grm.descent + grm.leading;
+				if (descent < grm.descent)
+					descent = grm.descent;
 			}
 			line.descent = descent;
 			return m;
@@ -153,17 +158,18 @@ namespace agge
 		_box = zero();
 
 		text_line *current_line = &*_text_lines.insert(_text_lines.end(), text_line(_glyph_runs));
-		glyph_run *current_grun = &*_glyph_runs.insert(_glyph_runs.end(), glyph_run(_glyphs));
+		glyph_run *current_grun = &*_glyph_runs.insert(_glyph_runs.end(), glyph_run(_glyphs)), carry(*current_grun);
+		wrap_processor limit_processor(carry);
 
 		for (richtext_t::const_iterator range = text.ranges_begin(); range != text.ranges_end(); ++range)
 		{
 			current_grun->font_ = _factory.create_font(range->get_annotation().basic);
 			current_grun->offset = create_vector(current_line->width, 0.0f);
 
-			glyph_run next_line_grun(*current_grun);
+			carry = *current_grun;
 
-			for (detector_iterator i = range->begin(), end = range->end(), previous = i;
-				populate_glyph_run(_glyphs, *current_grun, next_line_grun, _limit_width - current_line->width, i, end);
+			for (auto i = range->begin(), end = range->end(), previous = i;
+				populate_glyph_run(_glyphs, *current_grun, limit_processor, _limit_width - current_line->width, i, end);
 				previous = i)
 			{
 				if ((i == previous) & current_line->empty())
@@ -172,9 +178,9 @@ namespace agge
 					_text_lines.clear();
 					return;
 				}
-				else if (!commit_glyph_run(*current_line, current_grun, next_line_grun))
+				else if (!commit_glyph_run(*current_line, current_grun, carry))
 				{
-					*current_grun = next_line_grun;
+					*current_grun = carry;
 				}
 
 				const pair<real_t, real_t> m = setup_line_metrics(current_grun->font_->get_metrics(), *current_line);
@@ -213,13 +219,13 @@ namespace agge
 		}
 	}
 
-	bool layout::commit_glyph_run(text_line &current_line, glyph_run *&current_grun, const glyph_run &next_line_grun)
+	bool layout::commit_glyph_run(text_line &current_line, glyph_run *&current_grun, const glyph_run &carry)
 	{
 		if (current_grun->empty())
 			return false;	// Nothing to commit.
 		current_line.width += current_grun->width;
 		current_line.extend_end();
-		current_grun = &*_glyph_runs.insert(_glyph_runs.end(), next_line_grun);
+		current_grun = &*_glyph_runs.insert(_glyph_runs.end(), carry);
 		return true;	// Last glyph run committed, next line's glyph run is pushed to container to be committed later.
 	}
 }
