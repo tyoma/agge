@@ -49,6 +49,7 @@
     <ClInclude Include="..\..\agge.text\functional.h" />
     <ClInclude Include="..\..\agge.text\glyph.h" />
     <ClInclude Include="..\..\agge.text\layout_primitives.h" />
+    <ClInclude Include="..\..\agge.text\limit_processors.h" />
     <ClInclude Include="..\..\agge.text\range.h" />
     <ClInclude Include="..\..\agge.text\richtext.h" />
     <ClInclude Include="..\..\agge.text\text_engine.h" />
@@ -56,6 +57,7 @@
     <ClInclude Include="..\..\agge.text\layout.h" />
     <ClInclude Include="..\..\agge.text\shared_ptr.h" />
     <ClInclude Include="..\..\agge.text\text_engine_base.h" />
+    <ClInclude Include="..\..\agge.text\tools.h" />
     <ClInclude Include="..\..\agge.text\types.h" />
     <ClInclude Include="..\..\agge.text\utf8.h" />
   </ItemGroup>

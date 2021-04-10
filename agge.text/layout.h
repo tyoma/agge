@@ -1,7 +1,12 @@
 #pragma once
 
+#include "font.h"
 #include "layout_primitives.h"
 #include "richtext.h"
+#include "tools.h"
+#include "utf8.h"
+
+#include <agge/tools.h>
 
 namespace agge
 {
@@ -24,8 +29,16 @@ namespace agge
 		const_iterator begin() const;
 		const_iterator end() const;
 
+		template <typename ContainerT, typename LimitProcessorT, typename CharIteratorT>
+		static bool /*end-of-line*/ populate_glyph_run(ContainerT &glyphs, glyph_run &accumulator,
+			LimitProcessorT &limit_processor, const real_t limit, CharIteratorT &i, CharIteratorT text_end);
+
 	private:
-		bool commit_glyph_run(text_line &current_line, glyph_run *&current_grun, const glyph_run &next_line_grun);
+		void commit_glyph_run(text_line &current_line, glyph_run *&current);
+		void commit_glyph_run(text_line &current_line, glyph_run *&current, const glyph_run &carry);
+		static std::pair<real_t /*ascent*/, real_t /*descent + leading*/> setup_line_metrics(text_line &line);
+		static std::pair<real_t /*ascent*/, real_t /*descent + leading*/> setup_line_metrics(text_line &line,
+			const font_metrics &m);
 
 	private:
 		font_factory &_factory;
@@ -52,4 +65,32 @@ namespace agge
 
 	inline layout::const_iterator layout::end() const
 	{	return _text_lines.end();	}
+
+	template <typename ContainerT, typename LimitProcessorT, typename CharIteratorT>
+	inline bool /*end-of-line*/ layout::populate_glyph_run(ContainerT &glyphs, glyph_run &accumulator,
+		LimitProcessorT &limit_processor, const real_t limit, CharIteratorT &i, CharIteratorT text_end)
+	{
+		limit_processor.on_new_run();
+		while (i != text_end)
+		{
+			if (eat_lf(i)) // Next line - line-feed
+				return limit_processor.on_linefeed(), true;
+
+			CharIteratorT i_next = i;
+			const glyph *const g = accumulator.font_->get_glyph_for_codepoint(utf8::next(i_next, text_end));
+			const real_t advance = g->metrics.advance_x;
+
+			limit_processor.analyze_character(*i, accumulator);
+			if (accumulator.width + advance > limit)
+				return limit_processor.on_limit_reached(i, text_end, accumulator), true;
+
+			const positioned_glyph pg = {	create_vector(advance, 0.0f), g->index	};
+
+			glyphs.push_back(pg);
+			accumulator.end_index++;
+			accumulator.width += advance;
+			i = i_next;
+		}
+		return false;
+	}
 }
