@@ -44,5 +44,11 @@ namespace agge
 	}
 
 	const glyph* font::get_glyph_for_codepoint_slow(codepoint_t codepoint) const
-	{	return get_glyph(map_single(codepoint));	}
+	{
+		const glyph* g = get_glyph(map_single(codepoint));
+
+		if (codepoint < ansi_range)
+			_ansi_glyphs[codepoint] = g;
+		return g;
+	}
 }

@@ -67,7 +67,7 @@ namespace agge
 	{
 		glyphs_cache_t::iterator i = _glyphs.find(index);
 
-		return _glyphs.end() != i ? i->second.outline ? &i->second : 0 : load_glyph(index);
+		return _glyphs.end() != i ? &i->second : load_glyph(index);
 	}
 
 	AGGE_INLINE const glyph *font::get_glyph_for_codepoint(codepoint_t codepoint) const
@@ -75,11 +75,6 @@ namespace agge
 		if (codepoint < ansi_range)
 			if (const glyph *g = _ansi_glyphs[codepoint])
 				return g;
-
-		const glyph *g = get_glyph_for_codepoint_slow(codepoint);
-
-		if (codepoint < ansi_range)
-			_ansi_glyphs[codepoint] = g;
-		return g;
+		return get_glyph_for_codepoint_slow(codepoint);
 	}
 }
