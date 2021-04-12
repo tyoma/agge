@@ -15,6 +15,13 @@ namespace agge
 		template <typename VectorT>
 		typename VectorT::value_type &duplicate_last(VectorT &container)
 		{	return container.reserve(container.size() + 1), *container.insert(container.end(), container.back());	}
+
+		template <typename T>
+		real_t reset_width(T &range_)
+		{
+			real_t w = range_.width;
+			return range_.width = real_t(), w;
+		}
 	}
 
 	pair<real_t, real_t> layout::setup_line_metrics(text_line &line)
@@ -80,8 +87,7 @@ namespace agge
 				{
 					current_line = &duplicate_last(_text_lines);
 					current_line->begin_index = current_line->end_index;
-					_box.w = agge_max(_box.w, current_line->width);
-					current_line->width = real_t();
+					_box.w = agge_max(_box.w, reset_width(*current_line));
 				}
 				current_line->offset += create_vector(real_t(), m.second);
 			}
@@ -108,9 +114,8 @@ namespace agge
 		{
 			current_line.extend_end();
 			current = &duplicate_last(_glyph_runs);
-			current_line.width += current->width;
-			current->width = real_t();
 			current->set_end();
+			current_line.width += reset_width(*current);
 		}
 	}
 }
