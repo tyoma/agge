@@ -35,7 +35,6 @@ namespace agge
 
 	private:
 		void commit_glyph_run(text_line &current_line, glyph_run *&current);
-		void commit_glyph_run(text_line &current_line, glyph_run *&current, const glyph_run &carry);
 		static std::pair<real_t /*ascent*/, real_t /*descent + leading*/> setup_line_metrics(text_line &line);
 		static std::pair<real_t /*ascent*/, real_t /*descent + leading*/> setup_line_metrics(text_line &line,
 			const font_metrics &m);
@@ -70,11 +69,10 @@ namespace agge
 	inline bool /*end-of-line*/ layout::populate_glyph_run(ContainerT &glyphs, glyph_run &accumulator,
 		LimitProcessorT &limit_processor, const real_t limit, CharIteratorT &i, CharIteratorT text_end)
 	{
-		limit_processor.on_new_run();
 		while (i != text_end)
 		{
 			if (eat_lf(i)) // Next line - line-feed
-				return limit_processor.on_linefeed(), true;
+				return true;
 
 			CharIteratorT i_next = i;
 			const glyph *const g = accumulator.font_->get_glyph_for_codepoint(utf8::next(i_next, text_end));

@@ -204,7 +204,7 @@ namespace
 			::GetClientRect(_window, &rc);
 
 			_stprintf_s(caption, _T("Total (%dx%d): %gms, clear: %gms, stroking: %gms, raster: %gms, render: %gms, blitting: %gms"), rc.right, rc.bottom,
-				(_timings.clearing + _timings.rasterization + _timings.rendition) / _cycles,
+				(_timings.clearing + _timings.stroking + _timings.rasterization + _timings.rendition) / _cycles,
 				_timings.clearing / _cycles,
 				_timings.stroking / _cycles,
 				_timings.rasterization / _cycles,

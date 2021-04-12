@@ -10,6 +10,13 @@ using namespace std;
 
 namespace agge
 {
+	namespace
+	{
+		template <typename VectorT>
+		typename VectorT::value_type &duplicate_last(VectorT &container)
+		{	return container.reserve(container.size() + 1), *container.insert(container.end(), container.back());	}
+	}
+
 	pair<real_t, real_t> layout::setup_line_metrics(text_line &line)
 	{
 		real_t descent = real_t();
@@ -45,15 +52,13 @@ namespace agge
 		_box = zero();
 
 		text_line *current_line = &*_text_lines.insert(_text_lines.end(), text_line(_glyph_runs));
-		glyph_run *current = &*_glyph_runs.insert(_glyph_runs.end(), glyph_run(_glyphs)), carry(*current);
-		wrap_processor limit_processor(carry);
+		glyph_run *current = &*_glyph_runs.insert(_glyph_runs.end(), glyph_run(_glyphs));
+		wrap_processor limit_processor;
 
 		for (richtext_t::const_iterator range = text.ranges_begin(); range != text.ranges_end(); ++range)
 		{
 			current->font_ = _factory.create_font(range->get_annotation().basic);
 			current->offset = create_vector(current_line->width, real_t());
-
-			carry = *current;
 
 			for (string::const_iterator i = range->begin(), end = range->end(), previous = i;
 				populate_glyph_run(_glyphs, *current, limit_processor, _limit_width - current_line->width, i, end);
@@ -65,16 +70,17 @@ namespace agge
 					_text_lines.clear();
 					return;
 				}
-				commit_glyph_run(*current_line, current, carry);
+				commit_glyph_run(*current_line, current);
+				limit_processor.init_newline(*current);
 
 				const pair<real_t, real_t> m = setup_line_metrics(*current_line, current->font_->get_metrics());
 
 				current_line->offset += create_vector(real_t(), m.first);
 				if (!current_line->empty())
 				{
-					_box.w = agge_max(_box.w, current_line->width);
-					current_line = &*_text_lines.insert(_text_lines.end(), text_line(*current_line));
+					current_line = &duplicate_last(_text_lines);
 					current_line->begin_index = current_line->end_index;
+					_box.w = agge_max(_box.w, current_line->width);
 					current_line->width = real_t();
 				}
 				current_line->offset += create_vector(real_t(), m.second);
@@ -100,23 +106,11 @@ namespace agge
 	{
 		if (!current->empty())
 		{
-			commit_glyph_run(current_line, current, glyph_run(*current));
+			current_line.extend_end();
+			current = &duplicate_last(_glyph_runs);
+			current_line.width += current->width;
 			current->width = real_t();
 			current->set_end();
-		}
-	}
-
-	void layout::commit_glyph_run(text_line &current_line, glyph_run *&current, const glyph_run &carry)
-	{
-		if (!current->empty())
-		{
-			current_line.width += current->width;
-			current_line.extend_end();
-			current = &*_glyph_runs.insert(_glyph_runs.end(), carry);
-		}
-		else
-		{
-			*current = carry;
 		}
 	}
 }

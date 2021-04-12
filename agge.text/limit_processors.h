@@ -8,20 +8,19 @@ namespace agge
 	class wrap_processor
 	{
 	public:
-		wrap_processor(glyph_run &carry)
-			: _carry(carry)
-		{	}
+		wrap_processor()
+		{	reset();	}
 
-		void on_new_run()
+		void init_newline(glyph_run &accumulator)
 		{
-			_carry.offset = zero()/*, _carry.width = real_t()*/;
-			_eow_index = _sow_index = size_t();
-			_eow_width = _sow_width = real_t();
-			_previous_space = false;
+			if (_carry)
+			{
+				accumulator.begin_index = _sow_index;
+				accumulator.width = _sow_width;
+			}
+			reset();
+			accumulator.offset = zero();
 		}
-
-		void on_linefeed() const
-		{	_carry.set_end();	}
 
 		void analyze_character(char c, const glyph_run &accumulator)
 		{
@@ -37,9 +36,8 @@ namespace agge
 		}
 
 		template <typename CharIteratorT>
-		void on_limit_reached(CharIteratorT &i, CharIteratorT text_end, glyph_run &accumulator) const
+		void on_limit_reached(CharIteratorT &i, CharIteratorT text_end, glyph_run &accumulator)
 		{
-			_carry.set_end();
 			if (!_eow_index)
 				return;	// Next line - emergency mid-word break
 
@@ -51,8 +49,8 @@ namespace agge
 			if (_sow_index > _eow_index)
 			{
 				// New word was actually found after the last matched end-of-word.
-				_carry.begin_index = _sow_index;
-				_carry.width = sow_width;
+				_sow_width = sow_width;
+				_carry = true;
 			}
 			else
 			{
@@ -62,12 +60,19 @@ namespace agge
 		}
 
 	private:
+		void reset()
+		{
+			_carry = false;
+			_eow_index = _sow_index = size_t();
+			_eow_width = _sow_width = real_t();
+			_previous_space = false;
+		}
+
 		const wrap_processor &operator =(const wrap_processor &rhs);
 
 	private:
-		glyph_run &_carry;
 		size_t _eow_index, _sow_index;
 		real_t _eow_width, _sow_width;
-		bool _previous_space;
+		bool _previous_space, _carry;
 	};
 }
