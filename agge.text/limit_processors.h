@@ -5,14 +5,36 @@
 
 namespace agge
 {
-	class wrap_processor
+	namespace limit
 	{
-	public:
-		wrap_processor(real_t limit)
+		class wrap
+		{
+		public:
+			wrap(real_t limit);
+
+			real_t init_newline(glyph_run &accumulator);
+
+			template <typename CharIteratorT>
+			bool accept_glyph(real_t advance, CharIteratorT &i, CharIteratorT text_end, size_t &end_index, real_t &occupied);
+
+		private:
+			void reset();
+			const wrap &operator =(const wrap &rhs);
+
+		private:
+			const real_t _limit;
+			real_t _eow_width, _sow_width;
+			size_t _eow_index, _sow_index;
+			bool _previous_space : 1, _carry : 1;
+		};
+
+
+
+		inline wrap::wrap(real_t limit)
 			: _limit(limit)
 		{	reset();	}
 
-		real_t init_newline(glyph_run &accumulator)
+		inline real_t wrap::init_newline(glyph_run &accumulator)
 		{
 			real_t occupied = real_t();
 
@@ -26,7 +48,7 @@ namespace agge
 		}
 
 		template <typename CharIteratorT>
-		bool accept_glyph(real_t advance, CharIteratorT &i, CharIteratorT text_end, size_t &end_index, real_t &occupied)
+		inline bool wrap::accept_glyph(real_t advance, CharIteratorT &i, CharIteratorT text_end, size_t &end_index, real_t &occupied)
 		{
 			const bool space = is_space(*i);
 
@@ -64,8 +86,7 @@ namespace agge
 			return true;
 		}
 
-	private:
-		void reset()
+		inline void wrap::reset()
 		{
 			_carry = false;
 			_eow_index = _sow_index = size_t();
@@ -73,12 +94,5 @@ namespace agge
 			_previous_space = false;
 		}
 
-		const wrap_processor &operator =(const wrap_processor &rhs);
-
-	private:
-		const real_t _limit;
-		size_t _eow_index, _sow_index;
-		real_t _eow_width, _sow_width;
-		bool _previous_space, _carry;
-	};
+	}
 }
