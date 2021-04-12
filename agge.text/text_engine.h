@@ -7,10 +7,6 @@
 #include <agge/math.h>
 #include <limits>
 
-#ifdef _MSC_VER
-	#pragma warning(disable: 4355)
-#endif
-
 namespace agge
 {
 	template <typename RasterizerT>
@@ -23,15 +19,20 @@ namespace agge
 		void render_string(RasterizerT &target, const font &font_, const std::string &text, text_alignment halign,
 			real_t x, real_t y, real_t max_width = (std::numeric_limits<real_t>::max)());
 		void render(RasterizerT &target, const glyph_run &glyphs, point_r reference);
+
 		template <typename ContainerT>
 		void render(RasterizerT &target, const ContainerT &container, const point_r &reference);
+
 		template <typename LayoutT>
 		void render(RasterizerT &target, const LayoutT &layout_, text_alignment halign, text_alignment valign,
 			const rect_r &reference);
-		void render(RasterizerT &target, const richtext_t &text, text_alignment halign, text_alignment valign,
-			const rect_r &reference);
 
-		agge::box_r measure(const richtext_t &text) const;
+		template <typename LimitProcessorT>
+		void render(RasterizerT &target, const richtext_t &text, text_alignment halign, text_alignment valign,
+			const rect_r &reference, const LimitProcessorT &limit_processor);
+
+		template <typename LimitProcessorT>
+		agge::box_r measure(const richtext_t &text, const LimitProcessorT &limit_processor);
 
 	private:
 		typedef hash_map<int, RasterizerT> rasters_map;
@@ -56,8 +57,7 @@ namespace agge
 
 	template <typename RasterizerT>
 	inline text_engine<RasterizerT>::text_engine(loader &loader_, uint8_t precision)
-		: text_engine_base(loader_), _precision(precision), _factor(1 << precision), _rfactor(1.0f / _factor),
-			_worker_layout(*this)
+		: text_engine_base(loader_), _precision(precision), _factor(1 << precision), _rfactor(1.0f / _factor)
 	{	}
 
 	template <typename RasterizerT>
@@ -100,19 +100,19 @@ namespace agge
 	}
 
 	template <typename RasterizerT>
+	template <typename LimitProcessorT>
 	inline void text_engine<RasterizerT>::render(RasterizerT &target, const richtext_t &text, text_alignment halign,
-		text_alignment valign, const rect_r &reference)
+		text_alignment valign, const rect_r &reference, const LimitProcessorT &limit_processor)
 	{
-		_worker_layout.set_width_limit(width(reference));
-		_worker_layout.process(text);
+		_worker_layout.process(text, limit_processor, *this);
 		render(target, _worker_layout, halign, valign, reference);
 	}
 
 	template <typename RasterizerT>
-	inline agge::box_r text_engine<RasterizerT>::measure(const richtext_t &text) const
+	template <typename LimitProcessorT>
+	inline agge::box_r text_engine<RasterizerT>::measure(const richtext_t &text, const LimitProcessorT &limit_processor)
 	{
-		_worker_layout.set_width_limit(1e30f);
-		_worker_layout.process(text);
+		_worker_layout.process(text, limit_processor, *this);
 		return _worker_layout.get_box();
 	}
 

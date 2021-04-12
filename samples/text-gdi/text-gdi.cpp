@@ -2,6 +2,7 @@
 #include <agge/rasterizer.h>
 #include <agge/renderer.h>
 #include <agge.text/layout.h>
+#include <agge.text/limit_processors.h>
 #include <map>
 #include <samples/common/font_loader.h>
 #include <samples/common/lipsum.h>
@@ -22,9 +23,9 @@ namespace demo
 	{
 	public:
 		TextDrawerGDI()
-			: _text_engine(_font_loader), _text(font_style_annotation()), _layout(_text_engine)
+			: _text_engine(_font_loader), _text(font_style_annotation())
 		{
-			font_style_annotation a = {	font_descriptor::create("Tahoma", 14),	};
+			font_style_annotation a = {	font_descriptor::create("arial", 14, regular, false, hint_none),	};
 
 			_text.set_base_annotation(a);
 			_text << c_text_long.c_str();
@@ -40,7 +41,7 @@ namespace demo
 			stopwatch(counter);
 				agge::fill(surface, area, platform_blender_solid_color(color::make(255, 255, 255)));
 			timings.clearing += stopwatch(counter);
-				_layout.process(_text);
+				_layout.process(_text, limit::wrap(_width), _text_engine);
 			double layouting = stopwatch(counter);
 				::SetTextAlign(ctx, TA_BASELINE | TA_LEFT);
 				for (layout::const_iterator i = _layout.begin(); i != _layout.end(); ++i)
@@ -73,7 +74,7 @@ namespace demo
 		}
 
 		virtual void resize(int width, int /*height*/)
-		{	_layout.set_width_limit(static_cast<real_t>(width));	}
+		{	_width = static_cast<real_t>(width);	}
 
 		shared_ptr<void> create_font(const font_descriptor &fd)
 		{
@@ -85,6 +86,7 @@ namespace demo
 		native_font_loader _font_loader;
 		text_engine<my_rasterizer> _text_engine;
 		richtext_t _text;
+		real_t _width;
 		layout _layout;
 		vector<agge::uint16_t> _glyph_indices;
 	};

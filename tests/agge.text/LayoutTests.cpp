@@ -4,6 +4,7 @@
 #include "helpers_layout.h"
 #include "mocks.h"
 
+#include <agge.text/limit_processors.h>
 #include <iterator>
 #include <ut/assert.h>
 #include <ut/test.h>
@@ -52,9 +53,9 @@ namespace agge
 				factory_ptr f = create_single_font_factory(c_fm1, indices, glyphs);
 
 				// INIT / ACT
-				layout l(*f);
+				layout l;
 
-				l.process(richtext_t(font_style_annotation()));
+				l.process(richtext_t(font_style_annotation()), limit::unlimited(), *f);
 
 				// ACT
 				box_r box = l.get_box();
@@ -76,13 +77,13 @@ namespace agge
 				factory_ptr f1 = create_single_font_factory(c_fm1, indices1, glyphs);
 
 				// INIT / ACT
-				layout l1(*f1);
-				layout l2(*f1);
-				layout l3(*f1);
+				layout l1;
+				layout l2;
+				layout l3;
 
-				l1.process(R("A"));
-				l2.process(R("AAB"));
-				l3.process(R("BQA"));
+				l1.process(R("A"), limit::unlimited(), *f1);
+				l2.process(R("AAB"), limit::unlimited(), *f1);
+				l3.process(R("BQA"), limit::unlimited(), *f1);
 
 				// ACT
 				box_r box1 = l1.get_box();
@@ -99,11 +100,11 @@ namespace agge
 				factory_ptr f2 = create_single_font_factory(c_fm1, indices2, glyphs);
 
 				// INIT / ACT
-				layout l4(*f2);
-				layout l5(*f2);
+				layout l4;
+				layout l5;
 
-				l4.process(R("A"));
-				l5.process(R("ABQABQABQ"));
+				l4.process(R("A"), limit::unlimited(), *f2);
+				l5.process(R("ABQABQABQ"), limit::unlimited(), *f2);
 
 				// ACT
 				box_r box4 = l4.get_box();
@@ -131,17 +132,17 @@ namespace agge
 				layout::const_iterator gr;
 
 				// INIT / ACT
-				layout l1(*f1);
-				layout l2(*f1);
-				layout l3(*f1);
-				layout l4(*f2);
-				layout l5(*f2);
+				layout l1;
+				layout l2;
+				layout l3;
+				layout l4;
+				layout l5;
 
-				l1.process(R("A"));
-				l2.process(R("AAB"));
-				l3.process(R("BQA"));
-				l4.process(R("A"));
-				l5.process(R("ABQ A  QA"));
+				l1.process(R("A"), limit::unlimited(), *f1);
+				l2.process(R("AAB"), limit::unlimited(), *f1);
+				l3.process(R("BQA"), limit::unlimited(), *f1);
+				l4.process(R("A"), limit::unlimited(), *f2);
+				l5.process(R("ABQ A  QA"), limit::unlimited(), *f2);
 
 				// ASSERT
 				positioned_glyph reference1[] = { { 1, { 11.0f, 0.0f } } };
@@ -190,13 +191,13 @@ namespace agge
 				factory_ptr f = create_single_font_factory(c_fm1, indices, glyphs);
 
 				// ACT
-				layout l1(*f);
-				layout l2(*f);
-				layout l3(*f);
+				layout l1;
+				layout l2;
+				layout l3;
 
-				l1.process(R("ABC CBA AB\nABB BBC\n"));
-				l2.process(R("AC CB\nA AB\nABB BBC\n"));
-				l3.process(R("AC CB\nA AB\nABB BBC")); // Last row will be checked even if no newline is encountered.
+				l1.process(R("ABC CBA AB\nABB BBC\n"), limit::unlimited(), *f);
+				l2.process(R("AC CB\nA AB\nABB BBC\n"), limit::unlimited(), *f);
+				l3.process(R("AC CB\nA AB\nABB BBC"), limit::unlimited(), *f); // Last row will be checked even if no newline is encountered.
 
 				box_r box1 = l1.get_box();
 				box_r box2 = l2.get_box();
@@ -224,11 +225,11 @@ namespace agge
 				layout::const_iterator gr;
 
 				// INIT / ACT
-				layout l1(*f1);
-				layout l2(*f2);
+				layout l1;
+				layout l2;
 
-				l1.process(R("ABC CBA AB\nABB BBC\n"));
-				l2.process(R("AC CB\nA AB\nABB BBC"));
+				l1.process(R("ABC CBA AB\nABB BBC\n"), limit::unlimited(), *f1);
+				l2.process(R("AC CB\nA AB\nABB BBC"), limit::unlimited(), *f2);
 
 				// ASSERT
 				positioned_glyph reference11[] = {
@@ -280,11 +281,11 @@ namespace agge
 				layout::const_iterator gr;
 
 				// INIT / ACT
-				layout l1(*f1);
-				layout l2(*f2);
+				layout l1;
+				layout l2;
 
-				l1.process(R("\xE2\x9C\x93""B\xC3\xA0 \xC3\xA0""B\xE2\x9C\x93 \xE2\x9C\x93""B\n\xE2\x9C\x93""BB BB\xC3\xA0\n"));
-				l2.process(R("\xE2\x9C\x93""\xC3\xA0 \xC3\xA0""B\n\xE2\x9C\x93 \xE2\x9C\x93""B\n\xE2\x9C\x93""BB BB\xC3\xA0"));
+				l1.process(R("\xE2\x9C\x93""B\xC3\xA0 \xC3\xA0""B\xE2\x9C\x93 \xE2\x9C\x93""B\n\xE2\x9C\x93""BB BB\xC3\xA0\n"), limit::unlimited(), *f1);
+				l2.process(R("\xE2\x9C\x93""\xC3\xA0 \xC3\xA0""B\n\xE2\x9C\x93 \xE2\x9C\x93""B\n\xE2\x9C\x93""BB BB\xC3\xA0"), limit::unlimited(), *f2);
 
 				// ASSERT
 				positioned_glyph reference11[] = {
@@ -334,9 +335,9 @@ namespace agge
 				factory_ptr f = create_single_font_factory(c_fm1, indices, glyphs);
 
 				// ACT
-				layout l(*f);
+				layout l;
 
-				l.process(R("ABC CBA AB\n\n\nABB BBC\n\n"));
+				l.process(R("ABC CBA AB\n\n\nABB BBC\n\n"), limit::unlimited(), *f);
 
 				// ASSERT
 				assert_equal(plural
@@ -363,17 +364,17 @@ namespace agge
 				factory_ptr f = create_single_font_factory(c_fm1, indices, glyphs);
 				layout::const_iterator gr;
 
-				layout l1(*f);
-				layout l2(*f);
+				layout l1;
+				layout l2;
 
 				// ACT
 				// 44 + 7.1 + 48 + 7.1 + 26 + 7.1 + 48 + 7.1 + 44
-				l1.set_width_limit(139.1f); // AAAA BBBB CC|BBBB AAAA
-				l1.process (R("AAAA BBBB CC BBBB AAAA"));
+				// AAAA BBBB CC|BBBB AAAA
+				l1.process (R("AAAA BBBB CC BBBB AAAA"), limit::wrap(139.1f), *f);
 
 				// 55 + 7.1 + 36 + 7.1 + 22 + 7.1 + 22 + 7.1 + 80 + 7.1 + 52 + 7.1 + 44 + 7.1 + 118
-				l2.set_width_limit(139.1f); // CCC'C BBB AA|AA AAAABBB|CCCC AAAA|ABABABABAB.
-				l2.process(R("CCC'C BBB AA AA AAAABBB CCCC AAAA ABABABABAB."));
+				// CCC'C BBB AA|AA AAAABBB|CCCC AAAA|ABABABABAB.
+				l2.process(R("CCC'C BBB AA AA AAAABBB CCCC AAAA ABABABABAB."), limit::wrap(139.1f), *f);
 
 				// ASSERT
 				assert_equal(plural
@@ -401,11 +402,10 @@ namespace agge
 				};
 				factory_ptr f = create_single_font_factory(c_fm1, indices, glyphs);
 				layout::const_iterator gr;
-				layout l(*f);
+				layout l;
 
 				// ACT
-				l.set_width_limit(6);
-				l.process(R("ABCABCABC"));
+				l.process(R("ABCABCABC"), limit::wrap(6.0f), *f);
 
 				// ASSERT
 				assert_equal(plural
@@ -415,8 +415,7 @@ namespace agge
 					mkvector(l.begin(), l.end()));
 
 				// ACT
-				l.set_width_limit(8);
-				l.process(R("ABCABCABC"));
+				l.process(R("ABCABCABC"), limit::wrap(8.0f), *f);
 
 				// ASSERT
 				assert_equal(plural
@@ -435,9 +434,9 @@ namespace agge
 					{ { 5, 0 } },
 				};
 				factory_ptr f1 = create_single_font_factory(c_fm1, indices, glyphs);
-				layout l1(*f1);
+				layout l1;
 
-				l1.process(R("AAAAA"));
+				l1.process(R("AAAAA"), limit::unlimited(), *f1);
 
 				// ACT
 				box_r box1 = l1.get_box();
@@ -447,9 +446,9 @@ namespace agge
 
 				// INIT
 				factory_ptr f2 = create_single_font_factory(c_fm2, indices, glyphs);
-				layout l2(*f2);
+				layout l2;
 
-				l2.process(R("AAAAA"));
+				l2.process(R("AAAAA"), limit::unlimited(), *f2);
 
 				// ACT
 				box_r box2 = l2.get_box();
@@ -467,9 +466,9 @@ namespace agge
 					{ { 5, 0 } },
 				};
 				factory_ptr f1 = create_single_font_factory(c_fm1, indices, glyphs);
-				layout l1(*f1);
+				layout l1;
 
-				l1.process(R("AAAAA\nAA"));
+				l1.process(R("AAAAA\nAA"), limit::unlimited(), *f1);
 
 				// ACT
 				box_r box1 = l1.get_box();
@@ -479,42 +478,15 @@ namespace agge
 
 				// INIT
 				factory_ptr f2 = create_single_font_factory(c_fm2, indices, glyphs);
-				layout l2(*f2);
+				layout l2;
 
-				l2.process(R("AAAAA\nA\nA"));
+				l2.process(R("AAAAA\nA\nA"), limit::unlimited(), *f2);
 
 				// ACT
 				box_r box2 = l2.get_box();
 
 				// ASSERT
 				assert_equal(53.0f, box2.h);
-			}
-
-
-			test( SettingWidthResetsLayoutContent )
-			{
-				// INIT
-				mocks::font_accessor::char_to_index indices[] = { { L'A', 0 }, };
-				mocks::font_accessor::glyph glyphs[] = {
-					{ { 5, 0 } },
-				};
-				factory_ptr f = create_single_font_factory(c_fm1, indices, glyphs);
-				layout l(*f);
-
-				l.process(R("AAAAA\nAA"));
-
-				// ACT
-				l.set_width_limit(15.0f);
-
-				// ASSERT
-				assert_equal(l.end(), l.begin());
-
-				// ACT
-				l.process(R("A"));
-
-				// ASSERT
-				assert_equal(1, distance(l.begin(), l.end()));
-				assert_equal(0u, l.begin()->begin_index);
 			}
 
 
@@ -527,12 +499,10 @@ namespace agge
 					{ { 4, 0 } },
 				};
 				factory_ptr f = create_single_font_factory(c_fm1, indices, glyphs);
-				layout l(*f);
-
-				l.set_width_limit(39.0f);
+				layout l;
 
 				// ACT
-				l.process(R("AAAAA   AAAA    AA"));
+				l.process(R("AAAAA   AAAA    AA"), limit::wrap(39.0f), *f);
 
 				// ASSERT
 				assert_equal(plural
@@ -552,12 +522,10 @@ namespace agge
 					{ { 5, 0 } },
 				};
 				factory_ptr f = create_single_font_factory(c_fm1, indices, glyphs);
-				layout l(*f);
-
-				l.set_width_limit(26.0f);
+				layout l;
 
 				// ACT
-				l.process(R("AAAAA   A   A"));
+				l.process(R("AAAAA   A   A"), limit::wrap(26.0f), *f);
 
 				// ASSERT
 				assert_equal(plural
@@ -579,14 +547,12 @@ namespace agge
 					{ { 13, 0 } },
 				};
 				factory_ptr f = create_single_font_factory(c_fm1, indices, glyphs);
-				layout l(*f);
-
-				l.set_width_limit(60.0f);
+				layout l;
 
 				// ACT
 				// 36 + 3 + 61
 				// ABCD|ABCDCD[]C
-				l.process(R("ABCD ABCDCDC"));
+				l.process(R("ABCD ABCDCDC"), limit::wrap(60.0f), *f);
 
 				// ASSERT
 				assert_equal(plural
@@ -609,14 +575,12 @@ namespace agge
 					{ { 13, 0 } },
 				};
 				factory_ptr f = create_single_font_factory(c_fm1, indices, glyphs);
-				layout l(*f);
-
-				l.set_width_limit(38.0f);
+				layout l;
 
 				// ACT
 				// 36 + 3 + 61
 				// ABCD|ABCD[]CDC
-				l.process(R("ABCD ABCDCDC"));
+				l.process(R("ABCD ABCDCDC"), limit::wrap(38.0f), *f);
 
 				// ASSERT
 				assert_equal(plural
@@ -636,18 +600,16 @@ namespace agge
 					{ { 8, 0 } },
 				};
 				factory_ptr f = create_single_font_factory(c_fm1, indices, glyphs);
-				layout l(*f);
-
-				l.set_width_limit(9.0f);
+				layout l;
 
 				// ACT / ASSERT
-				l.process(R("Z"));
+				l.process(R("Z"), limit::wrap(9.0f), *f);
 				assert_equal(l.end(), l.begin());
-				l.process(R("\n"));
+				l.process(R("\n"), limit::wrap(9.0f), *f);
 				assert_equal(l.end(), l.begin());
-				l.process(R("Z\nZ"));
+				l.process(R("Z\nZ"), limit::wrap(9.0f), *f);
 				assert_equal(l.end(), l.begin());
-				l.process(R("qZ\n"));
+				l.process(R("qZ\n"), limit::wrap(9.0f), *f);
 				assert_equal(l.end(), l.begin());
 			}
 		end_test_suite

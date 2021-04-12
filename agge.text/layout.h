@@ -1,9 +1,7 @@
 #pragma once
 
 #include "font.h"
-#include "font_factory.h"
 #include "layout_primitives.h"
-#include "limit_processors.h"
 #include "richtext.h"
 #include "tools.h"
 #include "utf8.h"
@@ -13,8 +11,6 @@
 
 namespace agge
 {
-	struct font_factory;
-
 	class layout : noncopyable
 	{
 	public:
@@ -22,11 +18,9 @@ namespace agge
 		typedef text_lines_container_t::const_iterator const_iterator;
 
 	public:
-		layout(font_factory &factory);
+		template <typename LimitProcessorT, typename FontFactoryT>
+		void process(const richtext_t &text, LimitProcessorT limit_processor, FontFactoryT &font_factory_);
 
-		void process(const richtext_t &text);
-
-		void set_width_limit(real_t width);
 		box_r get_box() const;
 
 		const_iterator begin() const;
@@ -40,22 +34,21 @@ namespace agge
 		template <typename VectorT>
 		typename VectorT::value_type &duplicate_last(VectorT &container);
 		void commit_glyph_run(text_line &current_line, glyph_run *&current);
-		static std::pair<real_t /*ascent*/, real_t /*descent + leading*/> setup_line_metrics(text_line &line);
-		static std::pair<real_t /*ascent*/, real_t /*descent + leading*/> setup_line_metrics(text_line &line,
+		static std::pair<real_t /*ascent*/, real_t /*descent + leading*/> setup_line_metrics(text_line &text_line_);
+		static std::pair<real_t /*ascent*/, real_t /*descent + leading*/> setup_line_metrics(text_line &text_line_,
 			const font_metrics &m);
 
 	private:
-		font_factory &_factory;
 		positioned_glyphs_container_t _glyphs;
 		glyph_runs_container_t _glyph_runs;
 		text_lines_container_t _text_lines;
-		real_t _limit_width;
 		box_r _box;
 	};
 
 
 
-	inline void layout::process(const richtext_t &text)
+	template <typename LimitProcessorT, typename FontFactoryT>
+	inline void layout::process(const richtext_t &text, LimitProcessorT limit_processor, FontFactoryT &font_factory_)
 	{
 		_text_lines.clear();
 		_glyph_runs.clear();
@@ -64,11 +57,10 @@ namespace agge
 
 		text_line *current_line = &*_text_lines.insert(_text_lines.end(), text_line(_glyph_runs));
 		glyph_run *current = &*_glyph_runs.insert(_glyph_runs.end(), glyph_run(_glyphs));
-		limit::wrap limit_processor(_limit_width);
 
 		for (richtext_t::const_iterator range = text.ranges_begin(); range != text.ranges_end(); ++range)
 		{
-			current->font_ = _factory.create_font(range->get_annotation().basic);
+			current->font_ = font_factory_.create_font(range->get_annotation().basic);
 			current->offset = create_vector(current_line->width, real_t());
 
 			for (std::string::const_iterator i = range->begin(), end = range->end(), previous = i;
@@ -111,12 +103,6 @@ namespace agge
 			_box.w = agge_max(_box.w, last.width);
 			_box.h = last.offset.dy + last.descent;
 		}
-	}
-
-	inline void layout::set_width_limit(real_t width)
-	{
-		_limit_width = width;
-		_text_lines.clear();
 	}
 
 	inline box_r layout::get_box() const

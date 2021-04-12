@@ -7,6 +7,15 @@ namespace agge
 {
 	namespace limit
 	{
+		struct unlimited
+		{
+			real_t init_newline(glyph_run &accumulator);
+
+			template <typename CharIteratorT>
+			bool accept_glyph(real_t advance, CharIteratorT &i, CharIteratorT text_end, size_t &end_index,
+				real_t &occupied);
+		};
+
 		class wrap
 		{
 		public:
@@ -15,7 +24,8 @@ namespace agge
 			real_t init_newline(glyph_run &accumulator);
 
 			template <typename CharIteratorT>
-			bool accept_glyph(real_t advance, CharIteratorT &i, CharIteratorT text_end, size_t &end_index, real_t &occupied);
+			bool accept_glyph(real_t advance, CharIteratorT &i, CharIteratorT text_end, size_t &end_index,
+				real_t &occupied);
 
 		private:
 			void reset();
@@ -28,6 +38,15 @@ namespace agge
 			bool _previous_space : 1, _carry : 1;
 		};
 
+
+
+		inline real_t unlimited::init_newline(glyph_run &/*accumulator*/)
+		{	return real_t();	}
+
+		template <typename CharIteratorT>
+		inline bool unlimited::accept_glyph(real_t /*advance*/, CharIteratorT &/*i*/, CharIteratorT /*text_end*/,
+			size_t &/*end_index*/, real_t &/*occupied*/)
+		{	return true;	}
 
 
 		inline wrap::wrap(real_t limit)

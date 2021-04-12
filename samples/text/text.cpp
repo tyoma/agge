@@ -3,6 +3,7 @@
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
 #include <agge.text/layout.h>
+#include <agge.text/limit_processors.h>
 #include <samples/common/font_loader.h>
 #include <samples/common/lipsum.h>
 #include <samples/common/shell.h>
@@ -19,8 +20,7 @@ namespace demo
 	{
 	public:
 		TextDrawer(services &s)
-			: _renderer(3), _font_loader(s), _text_engine(_font_loader), _text(font_style_annotation()),
-				_layout(_text_engine), _ddx(0.0f)
+			: _renderer(3), _font_loader(s), _text_engine(_font_loader), _text(font_style_annotation()), _ddx(0.0f)
 		{
 			font_style_annotation a = {	font_descriptor::create("arial", 14, regular, false, hint_none),	};
 
@@ -42,7 +42,7 @@ namespace demo
 				dest.x1 += _ddx, dest.x2 += _ddx;
 				_rasterizer.reset();
 			stopwatch(counter);
-				_layout.process(_text);
+				_layout.process(_text, limit::wrap(_dest_rect.x2), _text_engine);
 			double stroking = stopwatch(counter);
 				_text_engine.render(_rasterizer, _layout, align_near, align_near, dest);
 			double append = stopwatch(counter);
@@ -58,7 +58,6 @@ namespace demo
 
 		virtual void resize(int width, int height)
 		{
-			_layout.set_width_limit(static_cast<real_t>(width));
 			_dest_rect = create_rect(0.0f, 0.0f, static_cast<real_t>(width), static_cast<real_t>(height));
 		}
 

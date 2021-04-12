@@ -4,6 +4,7 @@
 #include "helpers.h"
 #include "helpers_layout.h"
 
+#include <agge.text/limit_processors.h>
 #include <agge.text/font_factory.h>
 #include <map>
 #include <ut/assert.h>
@@ -29,9 +30,6 @@ namespace agge
 				typedef map<font_descriptor, shared_ptr<font>, font_descriptor_less> fonts_map;
 
 			public:
-				fonts_map fonts;
-
-			private:
 				virtual shared_ptr<font> create_font(const font_descriptor &descriptor)
 				{
 					fonts_map::const_iterator i = fonts.find(descriptor);
@@ -39,6 +37,9 @@ namespace agge
 					assert_not_equal(fonts.end(), i);
 					return i->second;
 				}
+
+			public:
+				fonts_map fonts;
 			};
 		}
 
@@ -72,7 +73,7 @@ namespace agge
 			test( FontSpecifiedByAnnotationIsAssignedToTheRange )
 			{
 				// INIT
-				layout l(factory);
+				layout l;
 				richtext_t text((font_style_annotation()));
 
 				text << style::family("Arial") << style::height(13) << "ADB\n"
@@ -80,7 +81,7 @@ namespace agge
 					<< style::family("Segoe UI") << style::height(10) << "ACAA\n";
 
 				// ACT
-				l.process(text);
+				l.process(text, limit::unlimited(), factory);
 
 				// ASSERT
 				assert_equal(plural
@@ -94,7 +95,7 @@ namespace agge
 			test( MultipleFontsShareTheSameSingleTextLine )
 			{
 				// INIT
-				layout l(factory);
+				layout l;
 				richtext_t text((font_style_annotation()));
 
 				text << style::family("Arial") << style::height(13) << "ADB " // width: 28
@@ -102,7 +103,7 @@ namespace agge
 					<< style::family("Segoe UI") << style::height(10) << "AB"; // width: 12
 
 				// ACT
-				l.process(text);
+				l.process(text, limit::unlimited(), factory);
 
 				// ASSERT
 				assert_equal(plural
@@ -117,17 +118,15 @@ namespace agge
 			test( RegularWordBreakMovesNextGlyphRunToStartOfString )
 			{
 				// INIT
-				layout l(factory);
+				layout l;
 				richtext_t text((font_style_annotation()));
 
 				text << style::family("Arial") << style::height(13) << "ADB " // width: 28
 					<< style::family("Helvetica") << style::height(17) << "AA BB" // width: 42.3 + 3 + 14
 					<< style::family("Segoe UI") << style::height(10) << "AB"; // width: 12
 
-				l.set_width_limit(70.4f);
-
 				// ACT
-				l.process(text);
+				l.process(text, limit::wrap(70.4f), factory);
 
 				// ASSERT
 				assert_equal(plural
@@ -144,7 +143,7 @@ namespace agge
 			test( FirstOffsetIsCalculatedAccordinglyToMaxAscentInFirstLine )
 			{
 				// INIT
-				layout l(factory);
+				layout l;
 				richtext_t text((font_style_annotation()));
 
 				text << style::family("Segoe UI") << style::height(10) << "A"
@@ -152,7 +151,7 @@ namespace agge
 					<< style::family("Helvetica") << style::height(17) << "A";
 
 				// ACT
-				l.process(text);
+				l.process(text, limit::unlimited(), factory);
 
 				// ASSERT
 				assert_equal(plural + ref_text_line_offsets(0.0f, 14.7f), mkvector(l.begin(), l.end()));
@@ -163,7 +162,7 @@ namespace agge
 					<< style::family("Arial") << style::height(13) << "A";
 
 				// ACT
-				l.process(text);
+				l.process(text, limit::unlimited(), factory);
 
 				// ASSERT
 				assert_equal(plural + ref_text_line_offsets(0.0f, 10.0f), mkvector(l.begin(), l.end()));
@@ -173,16 +172,15 @@ namespace agge
 			test( WordBrokenTextUsesMaxDescentLeadingOfTheFirstLineAndAscentOfTheSecondToOffsetSecondLine )
 			{
 				// INIT
-				layout l(factory);
+				layout l;
 				richtext_t text((font_style_annotation()));
 
-				l.set_width_limit(84.0f);
 				text << style::family("Segoe UI") << style::height(10) << "AAA" // 15
 					<< style::family("Helvetica") << style::height(17) << "AAA" // 63.45
 					<< style::family("Arial") << style::height(13) << "AAA"; // 15
 
 				// ACT
-				l.process(text);
+				l.process(text, limit::wrap(84.0f), factory);
 
 				// ASSERT
 				assert_equal(plural
@@ -195,15 +193,14 @@ namespace agge
 			test( BreakingAtTheBeginingOfNewTextRangeDoesNotStopProcessing )
 			{
 				// INIT
-				layout l(factory);
+				layout l;
 				richtext_t text((font_style_annotation()));
 
-				l.set_width_limit(17.0f);
 				text << style::family("Segoe UI") << style::height(10) << "AAA" // 15
 					<< style::family("Arial") << style::height(13) << "A"; // 5
 
 				// ACT
-				l.process(text);
+				l.process(text, limit::wrap(17.0f), factory);
 
 				// ASSERT
 				assert_equal(plural
@@ -216,7 +213,7 @@ namespace agge
 			test( BoxIsCalculatedForMultiLineMultiFontRichText )
 			{
 				// INIT
-				layout l(factory);
+				layout l;
 				richtext_t text((font_style_annotation()));
 
 				text << style::family("Arial") << style::height(13) << "AD\nB"
@@ -224,7 +221,7 @@ namespace agge
 					<< style::family("Segoe UI") << style::height(10) << "ACAA";
 
 				// ACT
-				l.process(text);
+				l.process(text, limit::unlimited(), factory);
 
 				// ACT / ASSERT
 				box_r reference1 = {	98.6f, 14.0f + 18.7f + 10.0f	};
@@ -235,7 +232,7 @@ namespace agge
 				text << style::family("Arial") << style::height(13) << "A";
 
 				// ACT
-				l.process(text);
+				l.process(text, limit::unlimited(), factory);
 
 				// ACT / ASSERT
 				box_r reference2 = {	98.6f, 14.0f + 18.7f + 12.0f	};
@@ -247,7 +244,7 @@ namespace agge
 				text << style::family("Arial") << style::height(13) << "A";
 
 				// ACT
-				l.process(text);
+				l.process(text, limit::unlimited(), factory);
 
 				// ACT / ASSERT
 				box_r reference3 = {	5.0f, 12.0f	};
