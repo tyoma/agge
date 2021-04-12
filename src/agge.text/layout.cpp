@@ -17,10 +17,10 @@ namespace agge
 		{	return container.reserve(container.size() + 1), *container.insert(container.end(), container.back());	}
 
 		template <typename T>
-		real_t reset_width(T &range_)
+		real_t reset_width(T &range_, real_t value = real_t())
 		{
 			real_t w = range_.width;
-			return range_.width = real_t(), w;
+			return range_.width = value, w;
 		}
 	}
 
@@ -117,5 +117,6 @@ namespace agge
 			current->set_end();
 			current_line.width += reset_width(*current);
 		}
+		current->offset = zero();
 	}
 }

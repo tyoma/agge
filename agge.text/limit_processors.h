@@ -19,33 +19,32 @@ namespace agge
 				accumulator.width = _sow_width;
 			}
 			reset();
-			accumulator.offset = zero();
 		}
 
-		void analyze_character(char c, const glyph_run &accumulator)
+		void analyze_character(char c, size_t end_index, real_t occupied)
 		{
 			const bool space = is_space(c);
 
 			if (_previous_space == space)
 				return;
 			else if (space)
-				_eow_index = accumulator.end_index, _eow_width = accumulator.width;
+				_eow_index = end_index, _eow_width = occupied;
 			else
-				_sow_index = accumulator.end_index, _sow_width = accumulator.width;
+				_sow_index = end_index, _sow_width = occupied;
 			_previous_space = space;
 		}
 
 		template <typename CharIteratorT>
-		void on_limit_reached(CharIteratorT &i, CharIteratorT text_end, glyph_run &accumulator)
+		void on_limit_reached(CharIteratorT &i, CharIteratorT text_end, size_t &end_index, real_t &occupied)
 		{
 			if (!_eow_index)
 				return;	// Next line - emergency mid-word break
 
 			// Next line - normal word-boundary break
-			real_t sow_width = accumulator.width - _sow_width;
+			real_t sow_width = occupied - _sow_width;
 
-			accumulator.end_index = _eow_index;
-			accumulator.width = _eow_width;
+			end_index = _eow_index;
+			occupied = _eow_width;
 			if (_sow_index > _eow_index)
 			{
 				// New word was actually found after the last matched end-of-word.

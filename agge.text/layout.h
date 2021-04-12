@@ -69,26 +69,39 @@ namespace agge
 	inline bool /*end-of-line*/ layout::populate_glyph_run(ContainerT &glyphs, glyph_run &accumulator,
 		LimitProcessorT &limit_processor, const real_t limit, CharIteratorT &i, CharIteratorT text_end)
 	{
+		bool eol = false;
+		real_t occupied = accumulator.width;
+		size_t end_index = accumulator.end_index;
+
 		while (i != text_end)
 		{
 			if (eat_lf(i)) // Next line - line-feed
-				return true;
+			{
+				eol = true;
+				break;
+			}
 
 			CharIteratorT i_next = i;
 			const glyph *const g = accumulator.font_->get_glyph_for_codepoint(utf8::next(i_next, text_end));
 			const real_t advance = g->metrics.advance_x;
 
-			limit_processor.analyze_character(*i, accumulator);
-			if (accumulator.width + advance > limit)
-				return limit_processor.on_limit_reached(i, text_end, accumulator), true;
+			limit_processor.analyze_character(*i, end_index, occupied);
+			if (occupied + advance > limit)
+			{
+				limit_processor.on_limit_reached(i, text_end, end_index, occupied);
+				eol = true;
+				break;
+			}
 
 			const positioned_glyph pg = {	create_vector(advance, 0.0f), g->index	};
 
 			glyphs.push_back(pg);
-			accumulator.end_index++;
-			accumulator.width += advance;
+			occupied += advance;
+			end_index++;
 			i = i_next;
 		}
-		return false;
+		accumulator.width = occupied;
+		accumulator.end_index = end_index;
+		return eol;
 	}
 }
