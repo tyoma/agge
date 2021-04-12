@@ -538,7 +538,7 @@ namespace agge
 				font::ptr f = e.create_font(font_descriptor::create("Arial", 10, regular, false, hint_strong));
 				mocks::rasterizer target;
 				positioned_glyph glyphs_[] = {
-					{ 5.0f, 0.0f, 0 }, { 7.0f, 0.0f, 1 }, { 7.0f, 2.0f, 1 }, { 5.0f, -3.0f, 0 }, { 7.0f, 2.0f, 0 }
+					{ 0, { 5.0f, 0.0f } }, { 1, { 7.0f, 0.0f } }, { 1, { 7.0f, 2.0f } }, { 0, { 5.0f, -3.0f } }, { 0, { 7.0f, 2.0f } }
 				};
 				positioned_glyphs_container_t glyphs = mkpodvector(glyphs_ + 0, glyphs_ + 5);
 				glyph_run gr(glyphs);

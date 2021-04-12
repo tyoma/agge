@@ -17,8 +17,8 @@ namespace agge
 
 	struct positioned_glyph
 	{
-		vector_r d;
 		glyph_index_t index;
+		vector_r d;
 	};
 
 	struct glyph_run : range<const positioned_glyphs_container_t>
@@ -27,7 +27,6 @@ namespace agge
 
 		shared_ptr<font> font_;
 		vector_r offset;
-		real_t width;
 	};
 
 	struct text_line : range<const glyph_runs_container_t>
@@ -42,7 +41,7 @@ namespace agge
 
 
 	inline glyph_run::glyph_run(const positioned_glyphs_container_t &container)
-		: range<const positioned_glyphs_container_t>(container), offset(zero()), width(0.0f)
+		: range<const positioned_glyphs_container_t>(container), offset(zero())
 	{	}
 
 

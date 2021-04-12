@@ -5,7 +5,7 @@
 
 namespace agge
 {
-	typedef uint16_t glyph_index_t;
+	typedef unsigned int glyph_index_t;
 	typedef unsigned int codepoint_t;
 
 	enum text_alignment {

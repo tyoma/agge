@@ -15,13 +15,6 @@ namespace agge
 		template <typename VectorT>
 		typename VectorT::value_type &duplicate_last(VectorT &container)
 		{	return container.reserve(container.size() + 1), *container.insert(container.end(), container.back());	}
-
-		template <typename T>
-		real_t reset_width(T &range_, real_t value = real_t())
-		{
-			real_t w = range_.width;
-			return range_.width = value, w;
-		}
 	}
 
 	pair<real_t, real_t> layout::setup_line_metrics(text_line &line)
@@ -60,7 +53,7 @@ namespace agge
 
 		text_line *current_line = &*_text_lines.insert(_text_lines.end(), text_line(_glyph_runs));
 		glyph_run *current = &*_glyph_runs.insert(_glyph_runs.end(), glyph_run(_glyphs));
-		wrap_processor limit_processor;
+		wrap_processor limit_processor(_limit_width);
 
 		for (richtext_t::const_iterator range = text.ranges_begin(); range != text.ranges_end(); ++range)
 		{
@@ -68,7 +61,7 @@ namespace agge
 			current->offset = create_vector(current_line->width, real_t());
 
 			for (string::const_iterator i = range->begin(), end = range->end(), previous = i;
-				populate_glyph_run(_glyphs, *current, limit_processor, _limit_width - current_line->width, i, end);
+				populate_glyph_run(_glyphs, *current, limit_processor, current_line->width, i, end);
 				previous = i)
 			{
 				if ((i == previous) & current_line->empty())
@@ -78,7 +71,7 @@ namespace agge
 					return;
 				}
 				commit_glyph_run(*current_line, current);
-				limit_processor.init_newline(*current);
+				real_t carry_occupied = limit_processor.init_newline(*current);
 
 				const pair<real_t, real_t> m = setup_line_metrics(*current_line, current->font_->get_metrics());
 
@@ -87,8 +80,9 @@ namespace agge
 				{
 					current_line = &duplicate_last(_text_lines);
 					current_line->begin_index = current_line->end_index;
-					_box.w = agge_max(_box.w, reset_width(*current_line));
+					_box.w = agge_max(_box.w, current_line->width);
 				}
+				current_line->width = carry_occupied;
 				current_line->offset += create_vector(real_t(), m.second);
 			}
 
@@ -115,7 +109,6 @@ namespace agge
 			current_line.extend_end();
 			current = &duplicate_last(_glyph_runs);
 			current->set_end();
-			current_line.width += reset_width(*current);
 		}
 		current->offset = zero();
 	}

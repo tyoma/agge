@@ -66,7 +66,7 @@ namespace agge
 		{
 			for (typename std::vector<T>::const_iterator i = indices.begin(); i != indices.end(); ++i)
 			{
-				positioned_glyph g = {	create_vector(0.0f, 0.0f), static_cast<glyph_index_t>(*i)	};
+				positioned_glyph g = {	static_cast<glyph_index_t>(*i), create_vector(0.0f, 0.0f)	};
 				_glyphs.push_back(g);
 			}
 		}
