@@ -28,7 +28,7 @@ namespace agge
 
 		template <typename ContainerT, typename LimitProcessorT, typename CharIteratorT>
 		static bool /*end-of-line*/ populate_glyph_run(ContainerT &glyphs, glyph_run &accumulator,
-			LimitProcessorT &limit_processor, real_t &occupied, CharIteratorT &i, CharIteratorT text_end);
+			LimitProcessorT &limit_processor, real_t &extent, CharIteratorT &i, CharIteratorT text_end);
 
 	private:
 		template <typename VectorT>
@@ -61,20 +61,20 @@ namespace agge
 		for (richtext_t::const_iterator range = text.ranges_begin(); range != text.ranges_end(); ++range)
 		{
 			current->font_ = font_factory_.create_font(range->get_annotation().basic);
-			current->offset = create_vector(current_line->width, real_t());
+			current->offset = create_vector(current_line->extent, real_t());
 
 			for (std::string::const_iterator i = range->begin(), end = range->end(), previous = i;
-				populate_glyph_run(_glyphs, *current, limit_processor, current_line->width, i, end);
+				populate_glyph_run(_glyphs, *current, limit_processor, current_line->extent, i, end);
 				previous = i)
 			{
 				if ((i == previous) & current_line->empty())
 				{
-					// Emergency: width limit is too small to layout even a single character - bailing out!
+					// Emergency: extent limit is too small to layout even a single character - bailing out!
 					_text_lines.clear();
 					return;
 				}
 				commit_glyph_run(*current_line, current);
-				real_t carry_occupied = limit_processor.init_newline(*current);
+				real_t carry_extent = limit_processor.init_newline(*current);
 
 				const std::pair<real_t, real_t> m = setup_line_metrics(*current_line, current->font_->get_metrics());
 
@@ -83,9 +83,9 @@ namespace agge
 				{
 					current_line = &duplicate_last(_text_lines);
 					current_line->begin_index = current_line->end_index;
-					_box.w = agge_max(_box.w, current_line->width);
+					_box.w = agge_max(_box.w, current_line->extent);
 				}
-				current_line->width = carry_occupied;
+				current_line->extent = carry_extent;
 				current_line->offset += create_vector(real_t(), m.second);
 			}
 
@@ -100,7 +100,7 @@ namespace agge
 		{
 			const text_line &last = _text_lines.back();
 
-			_box.w = agge_max(_box.w, last.width);
+			_box.w = agge_max(_box.w, last.extent);
 			_box.h = last.offset.dy + last.descent;
 		}
 	}
@@ -116,11 +116,11 @@ namespace agge
 
 	template <typename ContainerT, typename LimitProcessorT, typename CharIteratorT>
 	inline bool /*end-of-line*/ layout::populate_glyph_run(ContainerT &glyphs, glyph_run &accumulator,
-		LimitProcessorT &limit_processor, real_t &occupied, CharIteratorT &i, CharIteratorT text_end)
+		LimitProcessorT &limit_processor, real_t &extent, CharIteratorT &i, CharIteratorT text_end)
 	{
 		bool eol = false;
 		size_t end_index = accumulator.end_index;
-		real_t occupied_local = occupied;
+		real_t extent_local = extent;
 
 		while (i != text_end)
 		{
@@ -134,7 +134,7 @@ namespace agge
 			const glyph *const g = accumulator.font_->get_glyph_for_codepoint(utf8::next(i_next, text_end));
 			const real_t advance = g->metrics.advance_x;
 
-			if (!limit_processor.accept_glyph(advance, i, text_end, end_index, occupied_local))
+			if (!limit_processor.accept_glyph(advance, i, text_end, end_index, extent_local))
 			{
 				eol = true;
 				break;
@@ -143,12 +143,12 @@ namespace agge
 			const positioned_glyph pg = {	g->index, create_vector(advance, 0.0f) 	};
 
 			glyphs.push_back(pg);
-			occupied_local += advance;
+			extent_local += advance;
 			end_index++;
 			i = i_next;
 		}
 		accumulator.end_index = end_index;
-		occupied = occupied_local;
+		extent = extent_local;
 		return eol;
 	}
 

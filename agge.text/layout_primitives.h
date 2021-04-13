@@ -34,7 +34,7 @@ namespace agge
 		text_line(const glyph_runs_container_t &container);
 
 		vector_r offset;
-		real_t width;
+		real_t extent;
 		real_t descent;
 	};
 
@@ -46,6 +46,6 @@ namespace agge
 
 
 	inline text_line::text_line(const glyph_runs_container_t &container)
-		: range<const glyph_runs_container_t>(container), offset(zero()), width(0.0f)
+		: range<const glyph_runs_container_t>(container), offset(zero()), extent(real_t())
 	{	}
 }

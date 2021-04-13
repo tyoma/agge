@@ -30,7 +30,7 @@ namespace agge
 
 		bool ref_text_line::operator ==(const text_line &rhs) const
 		{
-			if (_offset == rhs.offset && (!_width || tests::equal(_width, rhs.width)))
+			if (_offset == rhs.offset && (!_width || tests::equal(_width, rhs.extent)))
 			{
 				vector<ref_glyph_run>::const_iterator i = _glyph_runs.begin();
 				glyph_runs_container_t::const_iterator j = rhs.begin();

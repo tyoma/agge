@@ -13,7 +13,7 @@ namespace agge
 
 			template <typename CharIteratorT>
 			bool accept_glyph(real_t advance, CharIteratorT &i, CharIteratorT text_end, size_t &end_index,
-				real_t &occupied);
+				real_t &extent);
 		};
 
 		class wrap
@@ -25,7 +25,7 @@ namespace agge
 
 			template <typename CharIteratorT>
 			bool accept_glyph(real_t advance, CharIteratorT &i, CharIteratorT text_end, size_t &end_index,
-				real_t &occupied);
+				real_t &extent);
 
 		private:
 			void reset();
@@ -45,7 +45,7 @@ namespace agge
 
 		template <typename CharIteratorT>
 		inline bool unlimited::accept_glyph(real_t /*advance*/, CharIteratorT &/*i*/, CharIteratorT /*text_end*/,
-			size_t &/*end_index*/, real_t &/*occupied*/)
+			size_t &/*end_index*/, real_t &/*extent*/)
 		{	return true;	}
 
 
@@ -55,40 +55,40 @@ namespace agge
 
 		inline real_t wrap::init_newline(glyph_run &accumulator)
 		{
-			real_t occupied = real_t();
+			real_t extent = real_t();
 
 			if (_carry)
 			{
 				accumulator.begin_index = _sow_index;
-				occupied = _sow_width;
+				extent = _sow_width;
 			}
 			reset();
-			return occupied;
+			return extent;
 		}
 
 		template <typename CharIteratorT>
-		inline bool wrap::accept_glyph(real_t advance, CharIteratorT &i, CharIteratorT text_end, size_t &end_index, real_t &occupied)
+		inline bool wrap::accept_glyph(real_t advance, CharIteratorT &i, CharIteratorT text_end, size_t &end_index, real_t &extent)
 		{
 			const bool space = is_space(*i);
 
 			if (_previous_space != space)
 			{
 				if (space)
-					_eow_index = end_index, _eow_width = occupied;
+					_eow_index = end_index, _eow_width = extent;
 				else
-					_sow_index = end_index, _sow_width = occupied;
+					_sow_index = end_index, _sow_width = extent;
 				_previous_space = space;
 			}
-			if (occupied + advance > _limit)
+			if (extent + advance > _limit)
 			{
 				if (!_eow_index)
 					return false;	// Next line - emergency mid-word break
 
 				// Next line - normal word-boundary break
-				real_t sow_width = occupied - _sow_width;
+				real_t sow_width = extent - _sow_width;
 
 				end_index = _eow_index;
-				occupied = _eow_width;
+				extent = _eow_width;
 				if (_sow_index > _eow_index)
 				{
 					// New word was actually found after the last matched end-of-word.

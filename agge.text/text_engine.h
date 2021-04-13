@@ -93,8 +93,8 @@ namespace agge
 
 		for (typename LayoutT::const_iterator i = layout_.begin(), end = layout_.end(); i != end; ++i)
 		{
-			running_ref.x = align_near == halign ? ref.x1 : align_far == halign ? ref.x2 - i->width
-				: 0.5f * (ref.x1 + ref.x2 - i->width);
+			running_ref.x = align_near == halign ? ref.x1 : align_far == halign ? ref.x2 - i->extent
+				: 0.5f * (ref.x1 + ref.x2 - i->extent);
 			render(target, *i, running_ref + i->offset);
 		}
 	}
