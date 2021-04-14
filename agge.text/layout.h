@@ -14,6 +14,8 @@ namespace agge
 	class layout : noncopyable
 	{
 	public:
+		class manipulator;
+		struct state;
 		typedef std::vector<text_line> text_lines_container_t;
 		typedef text_lines_container_t::const_iterator const_iterator;
 
@@ -26,18 +28,6 @@ namespace agge
 		const_iterator begin() const;
 		const_iterator end() const;
 
-		template <typename ContainerT, typename LimitProcessorT, typename CharIteratorT>
-		static bool /*end-of-line*/ populate_glyph_run(ContainerT &glyphs, glyph_run &accumulator,
-			LimitProcessorT &limit_processor, real_t &extent, CharIteratorT &i, CharIteratorT text_end);
-
-	private:
-		template <typename VectorT>
-		typename VectorT::value_type &duplicate_last(VectorT &container);
-		void commit_glyph_run(text_line &current_line, glyph_run *&current);
-		static std::pair<real_t /*ascent*/, real_t /*descent + leading*/> setup_line_metrics(text_line &text_line_);
-		static std::pair<real_t /*ascent*/, real_t /*descent + leading*/> setup_line_metrics(text_line &text_line_,
-			const font_metrics &m);
-
 	private:
 		positioned_glyphs_container_t _glyphs;
 		glyph_runs_container_t _glyph_runs;
@@ -45,63 +35,93 @@ namespace agge
 		box_r _box;
 	};
 
+	struct layout::state
+	{
+		size_t glyph_index;
+		real_t extent;
+
+		bool operator !() const;
+		bool operator <(const state &rhs) const;
+	};
+
+	class layout::manipulator
+	{
+	public:
+		void append_glyph(glyph_index_t g, real_t advance);
+
+		bool break_current_line();
+		void break_current_line(const layout::state &at);
+		void break_current_line(const layout::state &at, const layout::state &resume_at);
+		const layout::state &get_state() const;
+
+	private:
+		manipulator(positioned_glyphs_container_t &glyphs, glyph_runs_container_t &glyph_runs,
+			layout::text_lines_container_t &text_lines);
+
+		void set_current(const shared_ptr<font> &font_);
+		void commit_run();
+		void commit_line();
+
+		void operator =(const manipulator &rhs);
+
+	private:
+		layout::state _state;
+
+		glyph_run *_current_run;
+		text_line *_current_line;
+		real_t _implicit_height;
+
+		positioned_glyphs_container_t &_glyphs;
+		glyph_runs_container_t &_glyph_runs;
+		layout::text_lines_container_t &_text_lines;
+
+	private:
+		friend class layout;
+	};
+
 
 
 	template <typename LimitProcessorT, typename FontFactoryT>
 	inline void layout::process(const richtext_t &text, LimitProcessorT limit_processor, FontFactoryT &font_factory_)
 	{
-		_text_lines.clear();
-		_glyph_runs.clear();
-		_glyphs.clear();
+		_glyphs.resize(static_cast<count_t>(text.size()));
 		_box = zero();
 
-		text_line *current_line = &*_text_lines.insert(_text_lines.end(), text_line(_glyph_runs));
-		glyph_run *current = &*_glyph_runs.insert(_glyph_runs.end(), glyph_run(_glyphs));
+		manipulator m(_glyphs, _glyph_runs, _text_lines);
 
-		for (richtext_t::const_iterator range = text.ranges_begin(); range != text.ranges_end(); ++range)
+		for (richtext_t::const_iterator range = text.ranges_begin(), ranges_end = text.ranges_end(); range != ranges_end;
+			++range)
 		{
-			current->font_ = font_factory_.create_font(range->get_annotation().basic);
-			current->offset = create_vector(current_line->extent, real_t());
+			const shared_ptr<font> font_ = font_factory_.create_font(range->get_annotation().basic);
 
-			for (std::string::const_iterator i = range->begin(), end = range->end(), previous = i;
-				populate_glyph_run(_glyphs, *current, limit_processor, current_line->extent, i, end);
-				previous = i)
+			m.set_current(font_);
+			for (std::string::const_iterator i = range->begin(), end = range->end(); i != end; )
 			{
-				if ((i == previous) & current_line->empty())
+				if (eat_lf(i))
 				{
-					// Emergency: extent limit is too small to layout even a single character - bailing out!
+					m.break_current_line();
+					// TODO: limit_processor.new_line();
+					continue;
+				}
+
+				std::string::const_iterator next = i;
+				const glyph &g = *font_->get_glyph_for_codepoint(utf8::next(next, end));
+
+				if (!limit_processor.add_glyph(m, g.index, g.metrics.advance_x, i, next, end))
+				{
 					_text_lines.clear();
 					return;
 				}
-				commit_glyph_run(*current_line, current);
-				real_t carry_extent = limit_processor.init_newline(*current);
-
-				const std::pair<real_t, real_t> m = setup_line_metrics(*current_line, current->font_->get_metrics());
-
-				current_line->offset += create_vector(real_t(), m.first);
-				if (!current_line->empty())
-				{
-					current_line = &duplicate_last(_text_lines);
-					current_line->begin_index = current_line->end_index;
-					_box.w = agge_max(_box.w, current_line->extent);
-				}
-				current_line->extent = carry_extent;
-				current_line->offset += create_vector(real_t(), m.second);
 			}
-
-			// Commit any non-empty content of the current glyph run and prepare the next one.
-			commit_glyph_run(*current_line, current);
+			m.commit_run();
 		}
-		if (current_line->empty())
-			_text_lines.pop_back();
-		else
-			current_line->offset += create_vector(real_t(), setup_line_metrics(*current_line).first);
-		if (!_text_lines.empty())
+		m.commit_line();
+		_text_lines.pop_back();
+		for (auto i = _text_lines.begin(); i != _text_lines.end(); ++i)
 		{
-			const text_line &last = _text_lines.back();
-
-			_box.w = agge_max(_box.w, last.extent);
-			_box.h = last.offset.dy + last.descent;
+			if (i->extent > _box.w)
+				_box.w = i->extent;
+			_box.h = i->offset.dy + i->descent;
 		}
 	}
 
@@ -113,46 +133,4 @@ namespace agge
 
 	inline layout::const_iterator layout::end() const
 	{	return _text_lines.end();	}
-
-	template <typename ContainerT, typename LimitProcessorT, typename CharIteratorT>
-	inline bool /*end-of-line*/ layout::populate_glyph_run(ContainerT &glyphs, glyph_run &accumulator,
-		LimitProcessorT &limit_processor, real_t &extent, CharIteratorT &i, CharIteratorT text_end)
-	{
-		bool eol = false;
-		size_t end_index = accumulator.end_index;
-		real_t extent_local = extent;
-
-		while (i != text_end)
-		{
-			if (eat_lf(i)) // Next line - line-feed
-			{
-				eol = true;
-				break;
-			}
-
-			CharIteratorT i_next = i;
-			const glyph *const g = accumulator.font_->get_glyph_for_codepoint(utf8::next(i_next, text_end));
-			const real_t advance = g->metrics.advance_x;
-
-			if (!limit_processor.accept_glyph(advance, i, text_end, end_index, extent_local))
-			{
-				eol = true;
-				break;
-			}
-
-			const positioned_glyph pg = {	g->index, create_vector(advance, 0.0f) 	};
-
-			glyphs.push_back(pg);
-			extent_local += advance;
-			end_index++;
-			i = i_next;
-		}
-		accumulator.end_index = end_index;
-		extent = extent_local;
-		return eol;
-	}
-
-	template <typename VectorT>
-	inline typename VectorT::value_type &layout::duplicate_last(VectorT &container)
-	{	return container.reserve(container.size() + 1), *container.insert(container.end(), container.back());	}
 }
