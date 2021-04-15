@@ -6,23 +6,27 @@ namespace agge
 {
 	namespace limit
 	{
-		struct unlimited
+		struct base
 		{
+			void begin_style(const font::ptr &font_);
+			void new_line();
 			template <typename CharIteratorT>
 			bool add_glyph(layout::manipulator &manipulator, glyph_index_t glyph_index, real_t advance,
 				CharIteratorT &i, CharIteratorT next, CharIteratorT end);
-			void new_line();
 		};
 
-		class wrap
+		typedef base unlimited;
+
+		class wrap : public base
 		{
 		public:
 			wrap(real_t limit);
 
+			void new_line();
+
 			template <typename CharIteratorT>
 			bool add_glyph(layout::manipulator &manipulator, glyph_index_t glyph_index, real_t advance,
 				CharIteratorT &i, CharIteratorT next, CharIteratorT end);
-			void new_line();
 
 		private:
 			const wrap &operator =(const wrap &rhs);
@@ -38,17 +42,20 @@ namespace agge
 
 
 
+		inline void base::begin_style(const font::ptr &/*font_*/)
+		{	}
+
+		inline void base::new_line()
+		{	}
+
 		template <typename CharIteratorT>
-		inline bool unlimited::add_glyph(layout::manipulator &manipulator, glyph_index_t glyph_index, real_t advance,
+		inline bool base::add_glyph(layout::manipulator &manipulator, glyph_index_t glyph_index, real_t advance,
 			CharIteratorT &i, CharIteratorT next, CharIteratorT /*end*/)
 		{
 			manipulator.append_glyph(glyph_index, advance);
 			i = next;
 			return true;
 		}
-
-		inline void unlimited::new_line()
-		{	}
 
 
 		inline wrap::wrap(real_t limit)
@@ -63,16 +70,9 @@ namespace agge
 			const layout::state &state = manipulator.get_state();
 
 			if (_previous_space != space)
-			{
-				(space ? _eow : _sow) = state;
-				_previous_space = space;
-			}
-
-			if (state.extent + advance > _limit)
-				return break_current_line(manipulator, i, end);
-			manipulator.append_glyph(glyph_index, advance);
-			i = next;
-			return true;
+				(space ? _eow : _sow) = state, _previous_space = space;
+			return state.extent + advance > _limit ? break_current_line(manipulator, i, end)
+				: base::add_glyph(manipulator, glyph_index, advance, i, next, end);
 		}
 
 		inline void wrap::new_line()
@@ -97,7 +97,8 @@ namespace agge
 			else
 			{
 				// No new word found before - let's scan for it ourselves.
-				manipulator.break_current_line(_eow);
+				manipulator.trim_current_line(_eow);
+				manipulator.break_current_line();
 				eat_spaces(i, end);
 			}
 			new_line();

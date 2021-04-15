@@ -251,6 +251,63 @@ namespace agge
 
 				assert_equal(reference3, l.get_box());
 			}
+
+
+			struct StyleDetector
+			{
+				StyleDetector(font::ptr f1, font::ptr f2, font::ptr f3)
+					: history(new vector<int>)
+				{	fonts[0] = f1, fonts[1] = f2, fonts[2] = f3;	}
+
+				void begin_style(font::ptr font_)
+				{
+					for (int i = 0; i != 3; ++i)
+					{
+						if (font_ == fonts[i])
+						{
+							history->push_back(-i - 1);
+							return;
+						}
+					}
+					history->push_back(-100);
+				}
+
+				void new_line()
+				{	history->push_back(-10);	}
+				
+				template <typename CharIteratorT>
+				bool add_glyph(layout::manipulator &/*manipulator*/, glyph_index_t glyph_index, real_t /*advance*/,
+					CharIteratorT &i, CharIteratorT next, CharIteratorT /*end*/)
+				{
+					history->push_back(glyph_index);
+					i = next;
+					return true;
+				}
+
+				shared_ptr< vector<int> > history;
+				font::ptr fonts[3];
+			};
+
+			test( LimitProcessorIsNotifiedOfNewLines )
+			{
+				// INIT
+				StyleDetector d(arial, helvetica, segoe);
+				layout l;
+				richtext_t text((font_style_annotation()));
+
+				text << style::family("Arial") << style::height(13) << "AD\nB"
+					<< style::family("Helvetica") << style::height(17) << "AAAAB\n"
+					<< style::family("Segoe UI") << style::height(10) << "ACAA";
+
+				// ACT
+				l.process(text, d, factory);
+
+				// ASSERT
+				int reference[] = {	-1, 1, 4, -10, 2, -2, 5, 5, 5, 5, 2, -10, -3, 1, 3, 1, 1,	};
+
+				assert_equal(reference, *d.history);
+			}
+
 		end_test_suite
 	}
 }

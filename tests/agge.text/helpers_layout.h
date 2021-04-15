@@ -36,13 +36,13 @@ namespace agge
 		class ref_text_line
 		{
 		public:
-			ref_text_line(real_t offset_x, real_t offset_y, real_t width, const std::vector<ref_glyph_run> &glyph_runs);
+			ref_text_line(real_t offset_x, real_t offset_y, real_t extent, const std::vector<ref_glyph_run> &glyph_runs);
 
 			bool operator ==(const text_line &rhs) const;
 
 		private:
 			vector_r _offset;
-			real_t _width;
+			real_t _extent;
 			std::vector<ref_glyph_run> _glyph_runs;
 		};
 
@@ -82,5 +82,6 @@ namespace agge
 		richtext_t simple_richtext(const std::string &text, const std::string &family, int height, font_weight weight = regular,
 			bool italic = false, font_hinting hinting = hint_strong);
 		richtext_t R(const std::string &text);
+
 	}
 }

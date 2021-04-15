@@ -18,19 +18,19 @@ namespace agge
 				for (; i != _glyphs.end() && j != rhs.end(); ++i, ++j)
 					if (i->index != j->index || (_check_glyph_advances && !(i->d == j->d)))
 						return false;
-				return true;
+				return i == _glyphs.end() && j == rhs.end();
 			}
 			return false;
 		}
 
 
-		ref_text_line::ref_text_line(real_t offset_x, real_t offset_y, real_t width, const vector<ref_glyph_run> &glyph_runs)
-			: _offset(create_vector(offset_x, offset_y)), _width(width), _glyph_runs(glyph_runs)
+		ref_text_line::ref_text_line(real_t offset_x, real_t offset_y, real_t extent_, const vector<ref_glyph_run> &glyph_runs)
+			: _offset(create_vector(offset_x, offset_y)), _extent(extent_), _glyph_runs(glyph_runs)
 		{	}
 
 		bool ref_text_line::operator ==(const text_line &rhs) const
 		{
-			if (_offset == rhs.offset && (!_width || tests::equal(_width, rhs.extent)))
+			if (_offset == rhs.offset && (!_extent || tests::equal(_extent, rhs.extent)))
 			{
 				vector<ref_glyph_run>::const_iterator i = _glyph_runs.begin();
 				glyph_runs_container_t::const_iterator j = rhs.begin();

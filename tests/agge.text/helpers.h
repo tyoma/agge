@@ -1,7 +1,7 @@
 #pragma once
 
 #include <agge.text/font.h>
-#include <agge.text/layout.h>
+#include <agge.text/layout_primitives.h>
 #include <iterator>
 #include <tests/common/helpers.h>
 #include <vector>
@@ -72,6 +72,9 @@ namespace agge
 		return tests::equal(lhs.ascent, rhs.ascent) && tests::equal(lhs.descent, rhs.descent)
 			&& tests::equal(lhs.leading, rhs.leading);
 	}
+
+	inline bool operator ==(const positioned_glyph &lhs, const positioned_glyph &rhs)
+	{	return lhs.index == rhs.index && lhs.d == rhs.d;	}
 
 	inline font_metrics operator *(double lhs, font_metrics rhs)
 	{

@@ -4,6 +4,7 @@ set(AGGE_TEXT_TEST_SOURCES
 	AnnotatedStringTests.cpp
 	FontTests.cpp
 	helpers_layout.cpp
+	LayoutManipulatorTests.cpp
 	LayoutTests.cpp
 	mocks.cpp
 	RichTextLayoutTests.cpp

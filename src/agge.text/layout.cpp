@@ -18,10 +18,10 @@ namespace agge
 
 
 	bool layout::state::operator !() const
-	{	return !glyph_index;	}
+	{	return !next;	}
 
 	bool layout::state::operator <(const state &rhs) const
-	{	return glyph_index < rhs.glyph_index;	}
+	{	return next < rhs.next;	}
 
 
 	layout::manipulator::manipulator(positioned_glyphs_container_t &glyphs, glyph_runs_container_t &glyph_runs,
@@ -32,15 +32,33 @@ namespace agge
 		_current_run = &*_glyph_runs.insert(_glyph_runs.end(), glyph_run(_glyphs));
 		_text_lines.clear();
 		_current_line = &*_text_lines.insert(_text_lines.end(), text_line(_glyph_runs));
+		_state.runs_size = 1;
 	}
 
-	void layout::manipulator::append_glyph(glyph_index_t g, real_t advance)
+	void layout::manipulator::begin_style(const font::ptr &font_)
 	{
-		positioned_glyph &pg = _glyphs[static_cast<count_t>(_state.glyph_index++)];
+		const font_metrics m = font_->get_metrics();
 
-		pg.index = g;
+		commit_run();
+		_current_run->font_ = font_;
+		_implicit_height = m.ascent + m.descent + m.leading;
+	}
+
+	void layout::manipulator::append_glyph(glyph_index_t index, real_t advance)
+	{
+		positioned_glyph &pg = _glyphs[static_cast<count_t>(_state.next++)];
+
+		pg.index = index;
 		pg.d.dx = advance, pg.d.dy = real_t();
 		_state.extent += advance;
+	}
+
+	void layout::manipulator::trim_current_line(const layout::state &at)
+	{
+		_glyph_runs.erase(_glyph_runs.begin() + at.runs_size, _glyph_runs.end());
+		_current_run = &_glyph_runs.back();
+		_current_run->end_index = at.next;
+		_state = at;
 	}
 
 	bool layout::manipulator::break_current_line()
@@ -52,47 +70,35 @@ namespace agge
 		return !was_empty;
 	}
 
-	void layout::manipulator::break_current_line(const layout::state &at)
-	{
-		_state = at;
-		break_current_line();
-	}
-
 	void layout::manipulator::break_current_line(const layout::state &at, const layout::state &resume_at)
 	{
 		layout::state store = _state;
 
 		_state = at;
 		break_current_line();
-		_state = store, _state.extent -= resume_at.extent;
-		_current_run->end_index = _current_run->begin_index = resume_at.glyph_index;
+		_state = store, _state.extent -= resume_at.extent, _state.runs_size = _glyph_runs.size();
+		_current_run->end_index = _current_run->begin_index = resume_at.next;
 	}
 
 	const layout::state &layout::manipulator::get_state() const
 	{	return _state;	}
 
-	void layout::manipulator::set_current(const shared_ptr<font> &font_)
-	{
-		const font_metrics m = font_->get_metrics();
-
-		_current_run->font_ = font_;
-		_implicit_height = m.ascent + m.descent + m.leading;
-	}
-
 	void layout::manipulator::commit_run()
 	{
-		if (_current_run->begin_index < _state.glyph_index)
+		if (_current_run->begin_index < _state.next)
 		{
-			_current_run->end_index = _state.glyph_index;
+			_current_run->end_index = _state.next;
 			_current_line->extend_end();
 			_current_run = &duplicate_last(_glyph_runs);
-			_current_run->begin_index = _state.glyph_index;
+			_current_run->begin_index = _state.next;
+			_state.runs_size = _glyph_runs.size();
 		}
 		_current_run->offset = create_vector(_state.extent, real_t());
 	}
 
 	void layout::manipulator::commit_line()
 	{
+		commit_run();
 		if (_current_line->empty())
 		{
 			_current_line->extent = _state.extent = real_t();

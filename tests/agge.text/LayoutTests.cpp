@@ -612,6 +612,66 @@ namespace agge
 				l.process(R("qZ\n"), limit::wrap(9.0f), *f);
 				assert_equal(l.end(), l.begin());
 			}
+
+
+			struct LineFeedDetector
+			{
+				LineFeedDetector()
+					: history(new vector<int>)
+				{	}
+
+				void begin_style(font::ptr)
+				{	}
+
+				void new_line()
+				{	history->push_back(-1);	}
+				
+				template <typename CharIteratorT>
+				bool add_glyph(layout::manipulator &/*manipulator*/, glyph_index_t glyph_index, real_t /*advance*/,
+					CharIteratorT &i, CharIteratorT next, CharIteratorT /*end*/)
+				{
+					history->push_back(glyph_index);
+					i = next;
+					return true;
+				}
+
+				shared_ptr< vector<int> > history;
+			};
+
+			test( LimitProcessorIsNotifiedOfNewLines )
+			{
+				// INIT
+				mocks::font_accessor::char_to_index indices[] = {	{ L'Z', 0 }, { L'q', 1 }	};
+				mocks::font_accessor::glyph glyphs[] = {
+					{ { 10, 0 } },
+					{ { 8, 0 } },
+				};
+				LineFeedDetector d;
+				factory_ptr f = create_single_font_factory(c_fm1, indices, glyphs);
+				layout l;
+
+				// ACT
+				l.process(R("Zq\nZ"), d, *f);
+
+				// ASSERT
+				int reference1[] = {	0, 1, -1, 0,	};
+
+				assert_equal(reference1, *d.history);
+
+				// ACT
+				l.process(R("Zq\nZ"), d, *f);
+
+				// INIT
+				d = LineFeedDetector();
+
+				// ACT
+				l.process(R("qqqZ\nZ\n\nqZ\n"), d, *f);
+
+				// ASSERT
+				int reference2[] = {	1, 1, 1, 0, -1, 0, -1, -1, 1, 0, -1,	};
+
+				assert_equal(reference2, *d.history);
+			}
 		end_test_suite
 	}
 }

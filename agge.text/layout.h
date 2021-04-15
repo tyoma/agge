@@ -37,7 +37,7 @@ namespace agge
 
 	struct layout::state
 	{
-		size_t glyph_index;
+		size_t next, runs_size;
 		real_t extent;
 
 		bool operator !() const;
@@ -47,18 +47,19 @@ namespace agge
 	class layout::manipulator
 	{
 	public:
-		void append_glyph(glyph_index_t g, real_t advance);
+		manipulator(positioned_glyphs_container_t &glyphs, glyph_runs_container_t &glyph_runs,
+			layout::text_lines_container_t &text_lines);
 
+		void begin_style(const font::ptr &font_);
+
+		void append_glyph(glyph_index_t index, real_t advance);
+		void trim_current_line(const layout::state &at);
 		bool break_current_line();
-		void break_current_line(const layout::state &at);
 		void break_current_line(const layout::state &at, const layout::state &resume_at);
 		const layout::state &get_state() const;
 
 	private:
-		manipulator(positioned_glyphs_container_t &glyphs, glyph_runs_container_t &glyph_runs,
-			layout::text_lines_container_t &text_lines);
-
-		void set_current(const shared_ptr<font> &font_);
+		void set_current(const font::ptr &font_);
 		void commit_run();
 		void commit_line();
 
@@ -92,15 +93,16 @@ namespace agge
 		for (richtext_t::const_iterator range = text.ranges_begin(), ranges_end = text.ranges_end(); range != ranges_end;
 			++range)
 		{
-			const shared_ptr<font> font_ = font_factory_.create_font(range->get_annotation().basic);
+			const font::ptr font_ = font_factory_.create_font(range->get_annotation().basic);
 
-			m.set_current(font_);
+			m.begin_style(font_);
+			limit_processor.begin_style(font_);
 			for (std::string::const_iterator i = range->begin(), end = range->end(); i != end; )
 			{
 				if (eat_lf(i))
 				{
 					m.break_current_line();
-					// TODO: limit_processor.new_line();
+					limit_processor.new_line();
 					continue;
 				}
 
@@ -113,7 +115,6 @@ namespace agge
 					return;
 				}
 			}
-			m.commit_run();
 		}
 		m.commit_line();
 		_text_lines.pop_back();
