@@ -54,7 +54,5 @@ namespace agge
 
 
 	bool operator <(const font_descriptor &lhs, const font_descriptor &rhs);
-
-	inline bool operator ==(const font_descriptor &lhs, const font_descriptor &rhs)
-	{	return !(lhs < rhs) && !(rhs < lhs);	}
+	bool operator ==(const font_descriptor &lhs, const font_descriptor &rhs);
 }

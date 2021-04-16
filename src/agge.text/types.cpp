@@ -13,6 +13,12 @@ namespace agge
 			bool operator ()(char lhs, char rhs) const
 			{	return toupper(lhs) < toupper(rhs);	}
 		};
+
+		struct nc_equal
+		{
+			bool operator ()(char lhs, char rhs) const
+			{	return toupper(lhs) == toupper(rhs);	}
+		};
 	}
 
 	font_descriptor font_descriptor::create(const string &family, int height, font_weight weight, bool italic,
@@ -36,5 +42,14 @@ namespace agge
 			lhs.hinting < rhs.hinting ? true : rhs.hinting < lhs.hinting ? false :
 			lexicographical_compare(lhs.family.begin(), lhs.family.end(), rhs.family.begin(), rhs.family.end(),
 				nc_compare());
+	}
+
+	bool operator ==(const font_descriptor& lhs, const font_descriptor& rhs)
+	{
+		return (lhs.height == rhs.height)
+			& (lhs.weight == rhs.weight)
+			& (lhs.italic == rhs.italic)
+			& (lhs.hinting == rhs.hinting)
+			& (lhs.family.size() == rhs.family.size() && equal(lhs.family.begin(), lhs.family.end(), rhs.family.begin(), nc_equal()));
 	}
 }
