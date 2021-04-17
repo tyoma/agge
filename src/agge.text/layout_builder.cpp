@@ -7,12 +7,13 @@ namespace agge
 {
 	namespace
 	{
-		template <typename VectorT>
-		inline typename VectorT::value_type &duplicate_last(VectorT &container)
+		template <typename VectorT, typename T>
+		typename VectorT::value_type &duplicate_last(VectorT &container, T pivot)
 		{
 			container.reserve(container.size() + 1);
+			container.back().end_index = pivot;
 			typename VectorT::value_type &entry = *container.insert(container.end(), container.back());
-			entry.begin_index = entry.end_index;
+			entry.begin_index = pivot;
 			return entry;
 		}
 	}
@@ -57,10 +58,8 @@ namespace agge
 	bool layout_builder::break_current_line()
 	{
 		commit_run();
-		bool was_empty = _current_line->empty();
-		commit_line();
 		_current_run->offset = zero();
-		return !was_empty;
+		return commit_line();
 	}
 
 	void layout_builder::break_current_line(const state &at, const state &resume_at)
@@ -77,27 +76,27 @@ namespace agge
 	{
 		if (_current_run->begin_index == _state.next)
 			return;
-		_current_run->end_index = _state.next;
-		_current_run = &duplicate_last(_glyph_runs);
-		_current_line->end_index = (_state.runs_size = _glyph_runs.size()) - 1;
+		_current_run = &duplicate_last(_glyph_runs, _state.next);
+		_state.runs_size++;
 	}
 
-	void layout_builder::commit_line()
+	bool layout_builder::commit_line()
 	{
-		if (_current_line->empty())
+		const size_t end_index = _state.runs_size - 1;
+
+		if (_current_line->begin_index == end_index)
 		{
-			_current_line->extent = _state.extent = real_t();
 			_current_line->offset += create_vector(real_t(), _implicit_height);
+			_state.extent = _current_line->extent = real_t();
+			return false;
 		}
 		else
 		{
-			real_t ascent = real_t();
-			real_t descent = real_t();
-			real_t descent_leading = real_t();
+			real_t ascent = real_t(), descent = real_t(), descent_leading = real_t();
 
-			for (text_line::const_iterator i = _current_line->begin(), end = _current_line->end(); i != end; ++i)
+			for (size_t i = _current_line->begin_index; i != end_index; ++i)
 			{
-				const font_metrics grm = i->font_->get_metrics();
+				const font_metrics grm = _glyph_runs[i].font_->get_metrics();
 
 				update_max(ascent, grm.ascent);
 				update_max(descent_leading, grm.descent + grm.leading);
@@ -107,9 +106,10 @@ namespace agge
 			_current_line->offset += create_vector(real_t(), ascent);
 			_current_line->extent = _state.extent;
 			_current_line->descent = descent;
-			_current_line = &duplicate_last(_text_lines);
+			_current_line = &duplicate_last(_text_lines, end_index);
 			_current_line->offset += create_vector(real_t(), descent_leading);
-			_current_line->extent = _state.extent = real_t();
+			_state.extent = _current_line->extent = real_t();
+			return true;
 		}
 	}
 }

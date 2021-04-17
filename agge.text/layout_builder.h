@@ -32,7 +32,7 @@ namespace agge
 
 	private:
 		void commit_run();
-		void commit_line();
+		bool commit_line();
 
 	private:
 		state _state;
