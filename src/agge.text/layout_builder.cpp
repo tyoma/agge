@@ -11,7 +11,9 @@ namespace agge
 		inline typename VectorT::value_type &duplicate_last(VectorT &container)
 		{
 			container.reserve(container.size() + 1);
-			return *container.insert(container.end(), container.back());
+			typename VectorT::value_type &entry = *container.insert(container.end(), container.back());
+			entry.begin_index = entry.end_index;
+			return entry;
 		}
 	}
 
@@ -40,6 +42,7 @@ namespace agge
 
 		commit_run();
 		_current_run->font_ = font_;
+		_current_run->offset = create_vector(_state.extent, real_t());
 		_implicit_height = m.ascent + m.descent + m.leading;
 	}
 
@@ -72,14 +75,11 @@ namespace agge
 
 	void layout_builder::commit_run()
 	{
-		if (_current_run->begin_index < _state.next)
-		{
-			_current_run->end_index = _state.next;
-			_current_run = &duplicate_last(_glyph_runs);
-			_current_run->begin_index = _state.next;
-			_current_line->end_index = (_state.runs_size = _glyph_runs.size()) - 1;
-		}
-		_current_run->offset = create_vector(_state.extent, real_t());
+		if (_current_run->begin_index == _state.next)
+			return;
+		_current_run->end_index = _state.next;
+		_current_run = &duplicate_last(_glyph_runs);
+		_current_line->end_index = (_state.runs_size = _glyph_runs.size()) - 1;
 	}
 
 	void layout_builder::commit_line()
@@ -108,7 +108,6 @@ namespace agge
 			_current_line->extent = _state.extent;
 			_current_line->descent = descent;
 			_current_line = &duplicate_last(_text_lines);
-			_current_line->begin_index = _current_line->end_index;
 			_current_line->offset += create_vector(real_t(), descent_leading);
 			_current_line->extent = _state.extent = real_t();
 		}
