@@ -279,9 +279,9 @@ namespace agge
 				text_engine_base e(loader);
 
 				// ACT
-				shared_ptr<font> f1 = e.create_font(font_descriptor::create("Tahoma", 11, regular, false, hint_strong));
-				shared_ptr<font> f2 = e.create_font(font_descriptor::create("Verdana", 1000, bold, false, hint_vertical));
-				shared_ptr<font> f3 = e.create_font(font_descriptor::create("Verdana,Helvetica", 100, bold, false, hint_none));
+				font::ptr f1 = e.create_font(font_descriptor::create("Tahoma", 11, regular, false, hint_strong));
+				font::ptr f2 = e.create_font(font_descriptor::create("Verdana", 1000, bold, false, hint_vertical));
+				font::ptr f3 = e.create_font(font_descriptor::create("Verdana,Helvetica", 100, bold, false, hint_none));
 
 				// ACT / ASSERT
 				assert_equal(f1, e.create_font(font_descriptor::create("Segoe", 10, regular, false, hint_strong)));
@@ -998,7 +998,7 @@ namespace agge
 				void *pvf = f.get();
 
 				// ACT
-				f.reset();
+				f = font::ptr();
 
 				// ASSERT
 				void *reference[] = { pvf, };
@@ -1027,19 +1027,19 @@ namespace agge
 				};
 
 				// ACT
-				f[0].reset();
+				f[0] = font::ptr();
 
 				// ASSERT
 				assert_equal(2u, *loader.allocated);
 
 				// ACT
-				f[1].reset();
+				f[1] = font::ptr();
 
 				// ASSERT
 				assert_equal(1u, *loader.allocated);
 
 				// ACT
-				f[2].reset();
+				f[2] = font::ptr();
 
 				// ASSERT
 				assert_equal(0u, *loader.allocated);
@@ -1061,7 +1061,7 @@ namespace agge
 				mocks::logging_text_engine e(loader, 0);
 				font::ptr f = e.create_font(font_descriptor::create("Arial", 10, regular, false, hint_none));
 
-				f.reset();
+				f = font::ptr();
 
 				// ACT
 				f = e.create_font(font_descriptor::create("Arial", 10, regular, false, hint_none));
@@ -1098,7 +1098,7 @@ namespace agge
 				void *pvf3 = f3.get();
 
 				// ACT
-				f1.reset();
+				f1 = font::ptr();
 				e1.collect();
 
 				// ASSERT
@@ -1106,7 +1106,7 @@ namespace agge
 				assert_equal(3u, *loader.allocated);
 
 				// ACT
-				f2.reset();
+				f2 = font::ptr();
 				e1.collect();
 
 				// ASSERT
@@ -1125,7 +1125,7 @@ namespace agge
 				assert_equal(1u, *loader.allocated);
 
 				// ACT
-				f3.reset();
+				f3 = font::ptr();
 				e2.collect();
 				e2.collect();
 				e2.collect();
@@ -1165,8 +1165,8 @@ namespace agge
 				void *pvf2 = f2.get();
 
 				loader.created_log.clear();
-				f1.reset();
-				f2.reset();
+				f1 = font::ptr();
+				f2 = font::ptr();
 
 				// ACT
 				f2 = e.create_font(font_descriptor::create("Tahoma", 10, bold, false, hint_strong));
@@ -1204,8 +1204,8 @@ namespace agge
 				font::ptr f1 = e->create_font(font_descriptor::create("Arial", 101, regular, false, hint_none));
 				font::ptr f2 = e->create_font(font_descriptor::create("Arial", 15, regular, false, hint_none));
 
-				f1.reset();
-				f2.reset();
+				f1 = font::ptr();
+				f2 = font::ptr();
 
 				// ACT
 				e.reset();

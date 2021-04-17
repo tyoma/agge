@@ -9,6 +9,6 @@ namespace agge
 
 	struct font_factory
 	{
-		virtual shared_ptr<font> create_font(const font_descriptor &descriptor) = 0;
+		virtual ptr<font> create_font(const font_descriptor &descriptor) = 0;
 	};
 }

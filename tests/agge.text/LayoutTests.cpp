@@ -24,13 +24,13 @@ namespace agge
 		begin_test_suite( LayoutTests )
 			struct font_factory : public agge::font_factory
 			{
-				virtual shared_ptr<font> create_font(const font_descriptor &/*descriptor*/)
+				virtual font::ptr create_font(const font_descriptor &/*descriptor*/)
 				{	return font_;	}
 
-				shared_ptr<font> operator *() const
+				font::ptr operator *() const
 				{	return font_;	}
 
-				shared_ptr<font> font_;
+				font::ptr font_;
 			};
 
 			typedef shared_ptr<font_factory> factory_ptr;

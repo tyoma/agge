@@ -15,7 +15,7 @@ namespace agge
 	public:
 		struct accessor;
 		typedef shared_ptr<accessor> accessor_ptr;
-		typedef shared_ptr<font> ptr;
+		typedef ptr<font> ptr;
 
 	public:
 		explicit font(const accessor_ptr &accessor_, real_t factor = 1.0f);

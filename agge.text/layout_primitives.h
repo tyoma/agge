@@ -29,7 +29,7 @@ namespace agge
 	{
 		glyph_run(const positioned_glyphs_container_t &container);
 
-		shared_ptr<font> font_;
+		ptr<font> font_;
 		vector_r offset;
 	};
 

@@ -27,10 +27,10 @@ namespace agge
 					{	return lhs.family < rhs.family ? true : rhs.family < lhs.family ? false : lhs.height < rhs.height;	}
 				};
 
-				typedef map<font_descriptor, shared_ptr<font>, font_descriptor_less> fonts_map;
+				typedef map<font_descriptor, font::ptr, font_descriptor_less> fonts_map;
 
 			public:
-				virtual shared_ptr<font> create_font(const font_descriptor &descriptor)
+				virtual font::ptr create_font(const font_descriptor &descriptor)
 				{
 					fonts_map::const_iterator i = fonts.find(descriptor);
 
@@ -46,7 +46,7 @@ namespace agge
 		begin_test_suite( RichTextLayoutTests )
 
 			mocks::font_factory factory;
-			shared_ptr<font> arial, helvetica, segoe;
+			font::ptr arial, helvetica, segoe;
 
 			init( InitFonts )
 			{

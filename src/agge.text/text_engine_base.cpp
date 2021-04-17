@@ -78,11 +78,11 @@ namespace agge
 		if (hint_none == descriptor.hinting)
 			descriptor_normalized.height = descriptor.height;
 		pair<fonts_cache::iterator, bool> inserted = _fonts.insert(make_pair(descriptor_normalized,
-			make_pair(shared_ptr<font>(), 0u)));
+			make_pair(font::ptr(), 0u)));
 
 		if (inserted.second)
 		{
-			inserted.first->second.first.reset(new font(acc.first, acc.second), bind(&text_engine_base::on_released, this,
+			inserted.first->second.first = font::ptr(new font(acc.first, acc.second), bind(&text_engine_base::on_released, this,
 				&*inserted.first, _1));
 			return inserted.first->second.first;
 		}

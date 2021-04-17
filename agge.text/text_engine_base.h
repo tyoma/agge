@@ -18,7 +18,7 @@ namespace agge
 		virtual ~text_engine_base();
 
 		void collect();
-		virtual shared_ptr<font> create_font(const font_descriptor &descriptor);
+		virtual font::ptr create_font(const font_descriptor &descriptor);
 
 	private:
 		class cached_outline_accessor;
@@ -28,7 +28,7 @@ namespace agge
 			size_t operator ()(const font_descriptor &key) const;
 		};
 
-		typedef hash_map<font_descriptor, std::pair<shared_ptr<font>, unsigned /*generation*/>, font_key_hasher> fonts_cache;
+		typedef hash_map<font_descriptor, std::pair<font::ptr, unsigned /*generation*/>, font_key_hasher> fonts_cache;
 		typedef hash_map<font_descriptor, weak_ptr<font::accessor>, font_key_hasher> scalabale_fonts_cache;
 
 	private:

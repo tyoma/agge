@@ -19,15 +19,15 @@ namespace agge
 		{
 		public:
 			template <typename T>
-			ref_glyph_run(shared_ptr<font> font_, real_t offset_x, real_t offset_y, const std::vector<T> &indices);
+			ref_glyph_run(ptr<font> font_, real_t offset_x, real_t offset_y, const std::vector<T> &indices);
 			template <size_t n>
-			ref_glyph_run(shared_ptr<font> font_, real_t offset_x, real_t offset_y,
+			ref_glyph_run(ptr<font> font_, real_t offset_x, real_t offset_y,
 					positioned_glyph (&positioned)[n]);
 
 			bool operator ==(const glyph_run &rhs) const;
 
 		private:
-			shared_ptr<font> _font;
+			ptr<font> _font;
 			vector_r _offset;
 			std::vector<positioned_glyph> _glyphs;
 			bool _check_glyph_advances;
@@ -60,7 +60,7 @@ namespace agge
 
 
 		template <typename T>
-		inline ref_glyph_run::ref_glyph_run(shared_ptr<font> font_, real_t offset_x, real_t offset_y,
+		inline ref_glyph_run::ref_glyph_run(ptr<font> font_, real_t offset_x, real_t offset_y,
 				const std::vector<T> &indices)
 			: _font(font_), _offset(create_vector(offset_x, offset_y)), _check_glyph_advances(false)
 		{
@@ -72,7 +72,7 @@ namespace agge
 		}
 
 		template <size_t n>
-		inline ref_glyph_run::ref_glyph_run(shared_ptr<font> font_, real_t offset_x, real_t offset_y,
+		inline ref_glyph_run::ref_glyph_run(ptr<font> font_, real_t offset_x, real_t offset_y,
 				positioned_glyph (&positioned)[n])
 			: _font(font_), _offset(create_vector(offset_x, offset_y)), _glyphs(mkvector(begin(positioned),
 				end(positioned))), _check_glyph_advances(true)
