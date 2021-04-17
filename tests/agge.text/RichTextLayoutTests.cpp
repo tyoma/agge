@@ -4,7 +4,7 @@
 #include "helpers.h"
 #include "helpers_layout.h"
 
-#include <agge.text/limit_processors.h>
+#include <agge.text/limit.h>
 #include <agge.text/font_factory.h>
 #include <map>
 #include <ut/assert.h>
@@ -81,7 +81,7 @@ namespace agge
 					<< style::family("Segoe UI") << style::height(10) << "ACAA\n";
 
 				// ACT
-				l.process(text, limit::unlimited(), factory);
+				l.process(text, limit::none(), factory);
 
 				// ASSERT
 				assert_equal(plural
@@ -103,7 +103,7 @@ namespace agge
 					<< style::family("Segoe UI") << style::height(10) << "AB"; // width: 12
 
 				// ACT
-				l.process(text, limit::unlimited(), factory);
+				l.process(text, limit::none(), factory);
 
 				// ASSERT
 				assert_equal(plural
@@ -151,7 +151,7 @@ namespace agge
 					<< style::family("Helvetica") << style::height(17) << "A";
 
 				// ACT
-				l.process(text, limit::unlimited(), factory);
+				l.process(text, limit::none(), factory);
 
 				// ASSERT
 				assert_equal(plural + ref_text_line_offsets(0.0f, 14.7f), mkvector(l.begin(), l.end()));
@@ -162,7 +162,7 @@ namespace agge
 					<< style::family("Arial") << style::height(13) << "A";
 
 				// ACT
-				l.process(text, limit::unlimited(), factory);
+				l.process(text, limit::none(), factory);
 
 				// ASSERT
 				assert_equal(plural + ref_text_line_offsets(0.0f, 10.0f), mkvector(l.begin(), l.end()));
@@ -221,7 +221,7 @@ namespace agge
 					<< style::family("Segoe UI") << style::height(10) << "ACAA";
 
 				// ACT
-				l.process(text, limit::unlimited(), factory);
+				l.process(text, limit::none(), factory);
 
 				// ACT / ASSERT
 				box_r reference1 = {	98.6f, 14.0f + 18.7f + 10.0f	};
@@ -232,7 +232,7 @@ namespace agge
 				text << style::family("Arial") << style::height(13) << "A";
 
 				// ACT
-				l.process(text, limit::unlimited(), factory);
+				l.process(text, limit::none(), factory);
 
 				// ACT / ASSERT
 				box_r reference2 = {	98.6f, 14.0f + 18.7f + 12.0f	};
@@ -244,7 +244,7 @@ namespace agge
 				text << style::family("Arial") << style::height(13) << "A";
 
 				// ACT
-				l.process(text, limit::unlimited(), factory);
+				l.process(text, limit::none(), factory);
 
 				// ACT / ASSERT
 				box_r reference3 = {	5.0f, 12.0f	};
@@ -276,7 +276,7 @@ namespace agge
 				{	history->push_back(-10);	}
 				
 				template <typename CharIteratorT>
-				bool add_glyph(layout::manipulator &/*manipulator*/, glyph_index_t glyph_index, real_t /*advance*/,
+				bool add_glyph(layout_builder &/*builder*/, glyph_index_t glyph_index, real_t /*advance*/,
 					CharIteratorT &i, CharIteratorT next, CharIteratorT /*end*/)
 				{
 					history->push_back(glyph_index);

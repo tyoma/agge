@@ -11,9 +11,12 @@ namespace agge
 {
 	class font;
 	struct glyph_run;
-	typedef std::vector<glyph_run> glyph_runs_container_t;
 	struct positioned_glyph;
+	struct text_line;
+
+	typedef std::vector<glyph_run> glyph_runs_container_t;
 	typedef pod_vector<positioned_glyph> positioned_glyphs_container_t;
+	typedef std::vector<text_line> text_lines_container_t;
 
 	struct positioned_glyph
 	{

@@ -4,7 +4,7 @@
 #include "helpers_layout.h"
 #include "mocks.h"
 
-#include <agge.text/limit_processors.h>
+#include <agge.text/limit.h>
 #include <iterator>
 #include <ut/assert.h>
 #include <ut/test.h>
@@ -55,7 +55,7 @@ namespace agge
 				// INIT / ACT
 				layout l;
 
-				l.process(richtext_t(font_style_annotation()), limit::unlimited(), *f);
+				l.process(richtext_t(font_style_annotation()), limit::none(), *f);
 
 				// ACT
 				box_r box = l.get_box();
@@ -81,9 +81,9 @@ namespace agge
 				layout l2;
 				layout l3;
 
-				l1.process(R("A"), limit::unlimited(), *f1);
-				l2.process(R("AAB"), limit::unlimited(), *f1);
-				l3.process(R("BQA"), limit::unlimited(), *f1);
+				l1.process(R("A"), limit::none(), *f1);
+				l2.process(R("AAB"), limit::none(), *f1);
+				l3.process(R("BQA"), limit::none(), *f1);
 
 				// ACT
 				box_r box1 = l1.get_box();
@@ -103,8 +103,8 @@ namespace agge
 				layout l4;
 				layout l5;
 
-				l4.process(R("A"), limit::unlimited(), *f2);
-				l5.process(R("ABQABQABQ"), limit::unlimited(), *f2);
+				l4.process(R("A"), limit::none(), *f2);
+				l5.process(R("ABQABQABQ"), limit::none(), *f2);
 
 				// ACT
 				box_r box4 = l4.get_box();
@@ -138,11 +138,11 @@ namespace agge
 				layout l4;
 				layout l5;
 
-				l1.process(R("A"), limit::unlimited(), *f1);
-				l2.process(R("AAB"), limit::unlimited(), *f1);
-				l3.process(R("BQA"), limit::unlimited(), *f1);
-				l4.process(R("A"), limit::unlimited(), *f2);
-				l5.process(R("ABQ A  QA"), limit::unlimited(), *f2);
+				l1.process(R("A"), limit::none(), *f1);
+				l2.process(R("AAB"), limit::none(), *f1);
+				l3.process(R("BQA"), limit::none(), *f1);
+				l4.process(R("A"), limit::none(), *f2);
+				l5.process(R("ABQ A  QA"), limit::none(), *f2);
 
 				// ASSERT
 				positioned_glyph reference1[] = { { 1, { 11.0f, 0.0f } } };
@@ -195,9 +195,9 @@ namespace agge
 				layout l2;
 				layout l3;
 
-				l1.process(R("ABC CBA AB\nABB BBC\n"), limit::unlimited(), *f);
-				l2.process(R("AC CB\nA AB\nABB BBC\n"), limit::unlimited(), *f);
-				l3.process(R("AC CB\nA AB\nABB BBC"), limit::unlimited(), *f); // Last row will be checked even if no newline is encountered.
+				l1.process(R("ABC CBA AB\nABB BBC\n"), limit::none(), *f);
+				l2.process(R("AC CB\nA AB\nABB BBC\n"), limit::none(), *f);
+				l3.process(R("AC CB\nA AB\nABB BBC"), limit::none(), *f); // Last row will be checked even if no newline is encountered.
 
 				box_r box1 = l1.get_box();
 				box_r box2 = l2.get_box();
@@ -228,8 +228,8 @@ namespace agge
 				layout l1;
 				layout l2;
 
-				l1.process(R("ABC CBA AB\nABB BBC\n"), limit::unlimited(), *f1);
-				l2.process(R("AC CB\nA AB\nABB BBC"), limit::unlimited(), *f2);
+				l1.process(R("ABC CBA AB\nABB BBC\n"), limit::none(), *f1);
+				l2.process(R("AC CB\nA AB\nABB BBC"), limit::none(), *f2);
 
 				// ASSERT
 				positioned_glyph reference11[] = {
@@ -284,8 +284,8 @@ namespace agge
 				layout l1;
 				layout l2;
 
-				l1.process(R("\xE2\x9C\x93""B\xC3\xA0 \xC3\xA0""B\xE2\x9C\x93 \xE2\x9C\x93""B\n\xE2\x9C\x93""BB BB\xC3\xA0\n"), limit::unlimited(), *f1);
-				l2.process(R("\xE2\x9C\x93""\xC3\xA0 \xC3\xA0""B\n\xE2\x9C\x93 \xE2\x9C\x93""B\n\xE2\x9C\x93""BB BB\xC3\xA0"), limit::unlimited(), *f2);
+				l1.process(R("\xE2\x9C\x93""B\xC3\xA0 \xC3\xA0""B\xE2\x9C\x93 \xE2\x9C\x93""B\n\xE2\x9C\x93""BB BB\xC3\xA0\n"), limit::none(), *f1);
+				l2.process(R("\xE2\x9C\x93""\xC3\xA0 \xC3\xA0""B\n\xE2\x9C\x93 \xE2\x9C\x93""B\n\xE2\x9C\x93""BB BB\xC3\xA0"), limit::none(), *f2);
 
 				// ASSERT
 				positioned_glyph reference11[] = {
@@ -337,7 +337,7 @@ namespace agge
 				// ACT
 				layout l;
 
-				l.process(R("ABC CBA AB\n\n\nABB BBC\n\n"), limit::unlimited(), *f);
+				l.process(R("ABC CBA AB\n\n\nABB BBC\n\n"), limit::none(), *f);
 
 				// ASSERT
 				assert_equal(plural
@@ -436,7 +436,7 @@ namespace agge
 				factory_ptr f1 = create_single_font_factory(c_fm1, indices, glyphs);
 				layout l1;
 
-				l1.process(R("AAAAA"), limit::unlimited(), *f1);
+				l1.process(R("AAAAA"), limit::none(), *f1);
 
 				// ACT
 				box_r box1 = l1.get_box();
@@ -448,7 +448,7 @@ namespace agge
 				factory_ptr f2 = create_single_font_factory(c_fm2, indices, glyphs);
 				layout l2;
 
-				l2.process(R("AAAAA"), limit::unlimited(), *f2);
+				l2.process(R("AAAAA"), limit::none(), *f2);
 
 				// ACT
 				box_r box2 = l2.get_box();
@@ -468,7 +468,7 @@ namespace agge
 				factory_ptr f1 = create_single_font_factory(c_fm1, indices, glyphs);
 				layout l1;
 
-				l1.process(R("AAAAA\nAA"), limit::unlimited(), *f1);
+				l1.process(R("AAAAA\nAA"), limit::none(), *f1);
 
 				// ACT
 				box_r box1 = l1.get_box();
@@ -480,7 +480,7 @@ namespace agge
 				factory_ptr f2 = create_single_font_factory(c_fm2, indices, glyphs);
 				layout l2;
 
-				l2.process(R("AAAAA\nA\nA"), limit::unlimited(), *f2);
+				l2.process(R("AAAAA\nA\nA"), limit::none(), *f2);
 
 				// ACT
 				box_r box2 = l2.get_box();
@@ -627,7 +627,7 @@ namespace agge
 				{	history->push_back(-1);	}
 				
 				template <typename CharIteratorT>
-				bool add_glyph(layout::manipulator &/*manipulator*/, glyph_index_t glyph_index, real_t /*advance*/,
+				bool add_glyph(layout_builder &/*builder*/, glyph_index_t glyph_index, real_t /*advance*/,
 					CharIteratorT &i, CharIteratorT next, CharIteratorT /*end*/)
 				{
 					history->push_back(glyph_index);

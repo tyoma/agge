@@ -1,6 +1,6 @@
 #pragma once
 
-#include "layout.h"
+#include "layout_builder.h"
 
 namespace agge
 {
@@ -11,11 +11,11 @@ namespace agge
 			void begin_style(const font::ptr &font_);
 			void new_line();
 			template <typename CharIteratorT>
-			bool add_glyph(layout::manipulator &manipulator, glyph_index_t glyph_index, real_t advance,
+			bool add_glyph(layout_builder &builder, glyph_index_t glyph_index, real_t advance,
 				CharIteratorT &i, CharIteratorT next, CharIteratorT end);
 		};
 
-		typedef base unlimited;
+		typedef base none;
 
 		class wrap : public base
 		{
@@ -25,18 +25,18 @@ namespace agge
 			void new_line();
 
 			template <typename CharIteratorT>
-			bool add_glyph(layout::manipulator &manipulator, glyph_index_t glyph_index, real_t advance,
+			bool add_glyph(layout_builder &builder, glyph_index_t glyph_index, real_t advance,
 				CharIteratorT &i, CharIteratorT next, CharIteratorT end);
 
 		private:
 			const wrap &operator =(const wrap &rhs);
 
 			template <typename CharIteratorT>
-			bool break_current_line(layout::manipulator &manipulator, CharIteratorT &i, CharIteratorT end);
+			bool break_current_line(layout_builder &builder, CharIteratorT &i, CharIteratorT end);
 
 		private:
 			const real_t _limit;
-			layout::state _eow, _sow;
+			layout_builder::state _eow, _sow;
 			bool _previous_space;
 		};
 
@@ -49,10 +49,10 @@ namespace agge
 		{	}
 
 		template <typename CharIteratorT>
-		inline bool base::add_glyph(layout::manipulator &manipulator, glyph_index_t glyph_index, real_t advance,
+		inline bool base::add_glyph(layout_builder &builder, glyph_index_t glyph_index, real_t advance,
 			CharIteratorT &i, CharIteratorT next, CharIteratorT /*end*/)
 		{
-			manipulator.append_glyph(glyph_index, advance);
+			builder.append_glyph(glyph_index, advance);
 			i = next;
 			return true;
 		}
@@ -63,16 +63,16 @@ namespace agge
 		{	new_line();	}
 
 		template <typename CharIteratorT>
-		inline bool wrap::add_glyph(layout::manipulator &manipulator, glyph_index_t glyph_index, real_t advance,
+		inline bool wrap::add_glyph(layout_builder &builder, glyph_index_t glyph_index, real_t advance,
 			CharIteratorT &i, CharIteratorT next, CharIteratorT end)
 		{
 			const bool space = is_space(*i);
-			const layout::state &state = manipulator.get_state();
+			const layout_builder::state &state = builder.get_state();
 
 			if (_previous_space != space)
 				(space ? _eow : _sow) = state, _previous_space = space;
-			return state.extent + advance > _limit ? break_current_line(manipulator, i, end)
-				: base::add_glyph(manipulator, glyph_index, advance, i, next, end);
+			return state.extent + advance > _limit ? break_current_line(builder, i, end)
+				: base::add_glyph(builder, glyph_index, advance, i, next, end);
 		}
 
 		inline void wrap::new_line()
@@ -82,23 +82,23 @@ namespace agge
 		}
 
 		template <typename CharIteratorT>
-		AGGE_AVOID_INLINE inline bool wrap::break_current_line(layout::manipulator &manipulator, CharIteratorT &i, CharIteratorT end)
+		AGGE_AVOID_INLINE inline bool wrap::break_current_line(layout_builder &builder, CharIteratorT &i, CharIteratorT end)
 		{
 			if (!_eow)
 			{
 				// Emergency mid-word break.
-				return manipulator.break_current_line();
+				return builder.break_current_line();
 			}
 			else if (_eow < _sow)
 			{
 				// New word was actually found after the last matched end-of-word.
-				manipulator.break_current_line(_eow, _sow);
+				builder.break_current_line(_eow, _sow);
 			}
 			else
 			{
 				// No new word found before - let's scan for it ourselves.
-				manipulator.trim_current_line(_eow);
-				manipulator.break_current_line();
+				builder.trim_current_line(_eow);
+				builder.break_current_line();
 				eat_spaces(i, end);
 			}
 			new_line();

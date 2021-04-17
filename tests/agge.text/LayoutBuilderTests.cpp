@@ -1,4 +1,4 @@
-#include <agge.text/layout.h>
+#include <agge.text/layout_builder.h>
 
 #include "helpers.h"
 #include "helpers_layout.h"
@@ -32,10 +32,10 @@ namespace agge
 			}
 		}
 
-		begin_test_suite( LayoutManipulatorTests )
+		begin_test_suite( LayoutBuilderTests )
 			positioned_glyphs_container_t glyphs;
 			glyph_runs_container_t glyph_runs;
-			layout::text_lines_container_t text_lines;
+			text_lines_container_t text_lines;
 			font::ptr font1, font2;
 
 			init( TrashContainers )
@@ -56,10 +56,10 @@ namespace agge
 			}
 
 
-			test( ConstructingManipulatorInitializesUnderlyingContainers )
+			test( ConstructingBuilderInitializesUnderlyingContainers )
 			{
 				// INIT / ACT
-				layout::manipulator m(glyphs, glyph_runs, text_lines);
+				layout_builder m(glyphs, glyph_runs, text_lines);
 
 				// ASSERT
 				assert_equal(0u, m.get_state().next);
@@ -73,7 +73,7 @@ namespace agge
 			test( AppendingGlyphsPutsThemToStorageAndIncreasesTheRunningExtentButLeavesUncommittedDataIntact )
 			{
 				// INIT
-				layout::manipulator m(glyphs, glyph_runs, text_lines);
+				layout_builder m(glyphs, glyph_runs, text_lines);
 
 				// ACT
 				m.append_glyph(1291, 12.1f);
@@ -103,7 +103,7 @@ namespace agge
 			test( BeginingNewStyleWhenCurrentRunIsEmptySetsCurrentRunAttributes )
 			{
 				// INIT
-				layout::manipulator m(glyphs, glyph_runs, text_lines);				
+				layout_builder m(glyphs, glyph_runs, text_lines);				
 
 				// ACT
 				m.begin_style(font1);
@@ -125,7 +125,7 @@ namespace agge
 			test( BeginingNewStyleForNonEmptyRunStoresItCreatesNewRunAndSetsItsAttributes )
 			{
 				// INIT
-				layout::manipulator m(glyphs, glyph_runs, text_lines);
+				layout_builder m(glyphs, glyph_runs, text_lines);
 
 				m.begin_style(font1);
 
@@ -184,7 +184,7 @@ namespace agge
 			test( BreakingEmptyLineOffsetsCurrentOneByLastSetFontCumulativeHeight )
 			{
 				// INIT
-				layout::manipulator m(glyphs, glyph_runs, text_lines);
+				layout_builder m(glyphs, glyph_runs, text_lines);
 
 				m.begin_style(font1);
 
@@ -215,7 +215,7 @@ namespace agge
 			test( BreakingNonEmptyLineBreaksCurrentRangeCommitsLineDataAndCreatesNewOne )
 			{
 				// INIT
-				layout::manipulator m(glyphs, glyph_runs, text_lines);
+				layout_builder m(glyphs, glyph_runs, text_lines);
 
 				m.begin_style(font1);
 				m.append_glyph(11, 3.0f);
@@ -268,7 +268,7 @@ namespace agge
 			test( TrimmingEmptyRangeDoesNothing )
 			{
 				// INIT
-				layout::manipulator m(glyphs, glyph_runs, text_lines);
+				layout_builder m(glyphs, glyph_runs, text_lines);
 
 				// ACT
 				m.trim_current_line(m.get_state());
@@ -282,12 +282,12 @@ namespace agge
 			test( TrimmingSingleRangeRestoresExtentAndGlyphs )
 			{
 				// INIT
-				layout::manipulator m(glyphs, glyph_runs, text_lines);
+				layout_builder m(glyphs, glyph_runs, text_lines);
 
 				m.begin_style(font2);
 				m.append_glyph(11, 3.0f);
 				m.append_glyph(12, 5.3f);
-				layout::state s1 = m.get_state();
+				layout_builder::state s1 = m.get_state();
 				m.append_glyph(13, 3.1f);
 
 				// ACT
@@ -317,7 +317,7 @@ namespace agge
 				m.begin_style(font1);
 				m.append_glyph(15, 3.2f);
 				m.append_glyph(16, 2.9f);
-				layout::state s2 = m.get_state();
+				layout_builder::state s2 = m.get_state();
 				m.append_glyph(17, 3.6f);
 
 				// ACT
@@ -344,18 +344,18 @@ namespace agge
 			test( TrimmingToAPreviousStateThrowsUnnecessaryRunsAway )
 			{
 				// INIT
-				layout::manipulator m(glyphs, glyph_runs, text_lines);
+				layout_builder m(glyphs, glyph_runs, text_lines);
 
 				m.begin_style(font1);
 				m.append_glyph(11, 3.0f);
-				layout::state s2 = m.get_state();
+				layout_builder::state s2 = m.get_state();
 				m.append_glyph(12, 5.0f);
 				m.append_glyph(13, 3.1f);
 				m.begin_style(font2);
 				m.append_glyph(14, 5.7f);
 				m.append_glyph(15, 3.2f);
 				m.append_glyph(16, 2.9f);
-				layout::state s1 = m.get_state();
+				layout_builder::state s1 = m.get_state();
 				m.append_glyph(17, 3.6f);
 				m.begin_style(font1);
 
@@ -419,14 +419,14 @@ namespace agge
 			test( OnlyGlyphRunsRemainedAreCountedWhenBreakingALine )
 			{
 				// INIT
-				layout::manipulator m(glyphs, glyph_runs, text_lines);
+				layout_builder m(glyphs, glyph_runs, text_lines);
 
 				m.begin_style(font1);
 				m.append_glyph(11, 3.0f);
 				m.append_glyph(13, 3.1f);
 				m.begin_style(font1);
 				m.append_glyph(14, 5.7f);
-				layout::state s1 = m.get_state();
+				layout_builder::state s1 = m.get_state();
 				m.append_glyph(15, 3.2f);
 				m.begin_style(font2);
 				m.append_glyph(15, 3.2f);
@@ -453,7 +453,7 @@ namespace agge
 				m.append_glyph(2, 1.3f);
 				m.begin_style(font1);
 				m.append_glyph(3, 1.4f);
-				layout::state s2 = m.get_state();
+				layout_builder::state s2 = m.get_state();
 				m.begin_style(font2);
 				m.append_glyph(4, 1.5f);
 				m.begin_style(font1);
@@ -484,7 +484,7 @@ namespace agge
 			test( OnlyNonEmptyGlyphRunsRemainedAreCountedWhenBreakingALine )
 			{
 				// INIT
-				layout::manipulator m(glyphs, glyph_runs, text_lines);
+				layout_builder m(glyphs, glyph_runs, text_lines);
 
 				m.begin_style(font1);
 				m.append_glyph(11, 3.0f);
@@ -493,7 +493,7 @@ namespace agge
 				m.append_glyph(14, 5.7f);
 				m.append_glyph(15, 3.2f);
 				m.begin_style(font2);
-				layout::state s = m.get_state();
+				layout_builder::state s = m.get_state();
 				m.append_glyph(100, 5.7f);
 				m.append_glyph(100, 3.2f);
 

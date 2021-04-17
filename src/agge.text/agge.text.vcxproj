@@ -39,7 +39,7 @@
     <ClCompile Include="font.cpp" />
     <ClCompile Include="richtext.cpp" />
     <ClCompile Include="text_engine_base.cpp" />
-    <ClCompile Include="layout.cpp" />
+    <ClCompile Include="layout_builder.cpp" />
     <ClCompile Include="types.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -48,8 +48,9 @@
     <ClInclude Include="..\..\agge.text\font_factory.h" />
     <ClInclude Include="..\..\agge.text\functional.h" />
     <ClInclude Include="..\..\agge.text\glyph.h" />
+    <ClInclude Include="..\..\agge.text\layout_builder.h" />
     <ClInclude Include="..\..\agge.text\layout_primitives.h" />
-    <ClInclude Include="..\..\agge.text\limit_processors.h" />
+    <ClInclude Include="..\..\agge.text\limit.h" />
     <ClInclude Include="..\..\agge.text\range.h" />
     <ClInclude Include="..\..\agge.text\richtext.h" />
     <ClInclude Include="..\..\agge.text\text_engine.h" />

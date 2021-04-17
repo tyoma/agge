@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="layout.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="font.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -14,6 +11,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="richtext.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="layout_builder.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -39,6 +39,7 @@
     <ClInclude Include="..\..\agge.text\text_engine_base.h" />
     <ClInclude Include="..\..\agge.text\utf8.h" />
     <ClInclude Include="..\..\agge.text\tools.h" />
-    <ClInclude Include="..\..\agge.text\limit_processors.h" />
+    <ClInclude Include="..\..\agge.text\limit.h" />
+    <ClInclude Include="..\..\agge.text\layout_builder.h" />
   </ItemGroup>
 </Project>

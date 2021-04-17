@@ -7,7 +7,7 @@
 
 #include <agge/clipper.h>
 #include <agge/rasterizer.h>
-#include <agge.text/limit_processors.h>
+#include <agge.text/limit.h>
 #include <ut/assert.h>
 #include <ut/test.h>
 
@@ -66,7 +66,7 @@ namespace agge
 				rasterizer_t target, reference;
 
 				// positions: 0.0f, 5.2f, 18.9f, 26.625f, width: 34.35f
-				l.process(simple_richtext("astt", "Arial", 10, regular, false, hint_strong), limit::unlimited(), e);
+				l.process(simple_richtext("astt", "Arial", 10, regular, false, hint_strong), limit::none(), e);
 
 				// ACT
 				e.render(target, l, align_near, align_near, create_rect(17.32f, 190.0f, 50.0f, 250.0f));
@@ -82,7 +82,7 @@ namespace agge
 				reference.reset(), target.reset();
 
 				// positions: 0.0f, 5.2f, 12.925f, width: 20.65f
-				l.process(simple_richtext("att", "Arial", 10, regular, false, hint_strong), limit::unlimited(), e);
+				l.process(simple_richtext("att", "Arial", 10, regular, false, hint_strong), limit::none(), e);
 
 				// ACT
 				e.render(target, l, align_far, align_near, create_rect(17.32f, 191.05f, 50.0f, 250.0f));
@@ -159,7 +159,7 @@ namespace agge
 					<< style::family("Arial") << style::height(15) << "sat";	// 26.625 x (14 + 2)
 
 				// ACT / ASSERT
-				assert_equal(create_box(26.625f, 24.6f), e.measure(text, limit::unlimited()));
+				assert_equal(create_box(26.625f, 24.6f), e.measure(text, limit::none()));
 
 				// ACT (baseline1 = 80.5, x_line1 = 81.1, baseline2 = 96, x_line2 = 73.375)
 				e.render(target, text, align_far, align_far, create_rect(10.0f, 10.0f, 100.0f, 100.0f), limit::wrap(90.0f));
@@ -209,7 +209,7 @@ namespace agge
 				text << "aaaaa"; // w: 36
 
 				// ACT / ASSERT
-				assert_equal(create_box(36.0f, 7.3f), e.measure(text, limit::unlimited()));
+				assert_equal(create_box(36.0f, 7.3f), e.measure(text, limit::none()));
 
 				// ACT
 				e.render(target, text, align_near, align_near, create_rect(0.0f, 0.0f, 35.9f, 100.0f), limit::wrap(35.9f));
@@ -238,7 +238,7 @@ namespace agge
 				assert_equal(reference, target);
 
 				// ACT / ASSERT (previous limits do not affect measurements)
-				assert_equal(create_box(36.0f, 7.3f), e.measure(text, limit::unlimited()));
+				assert_equal(create_box(36.0f, 7.3f), e.measure(text, limit::none()));
 			}
 		end_test_suite
 	}

@@ -6,7 +6,7 @@
 #include "outlines.h"
 
 #include <agge/path.h>
-#include <agge.text/limit_processors.h>
+#include <agge.text/limit.h>
 #include <algorithm>
 #include <tests/common/helpers.h>
 #include <tests/common/scoped_ptr.h>
@@ -606,7 +606,7 @@ namespace agge
 				mocks::rasterizer target;
 				layout l1;
 
-				l1.process(simple_richtext("aww", "Arial", 10, regular, false, hint_strong), limit::unlimited(), e);
+				l1.process(simple_richtext("aww", "Arial", 10, regular, false, hint_strong), limit::none(), e);
 
 				// ACT
 				e.render(target, l1, create_point(0.0f, 0.0f));
@@ -642,7 +642,7 @@ namespace agge
 				mocks::rasterizer target;
 				layout l;
 
-				l.process(simple_richtext("wa", "Arial", 10, regular, false, hint_strong), limit::unlimited(), e);
+				l.process(simple_richtext("wa", "Arial", 10, regular, false, hint_strong), limit::none(), e);
 
 				// ACT
 				e.render(target, l, create_point(0.0f, 0.0f));
@@ -675,7 +675,7 @@ namespace agge
 				mocks::rasterizer target;
 				layout l;
 
-				l.process(simple_richtext("aww\nww\na", "Arial", 10, regular, false, hint_strong), limit::unlimited(), e);
+				l.process(simple_richtext("aww\nww\na", "Arial", 10, regular, false, hint_strong), limit::none(), e);
 
 				// ACT
 				e.render(target, l, create_point(0.0f, 0.0f));
@@ -722,7 +722,7 @@ namespace agge
 				mocks::rasterizer target;
 				layout l;
 
-				l.process(simple_richtext("aaa", "Arial", 10, regular, false, hint_strong), limit::unlimited(), e);
+				l.process(simple_richtext("aaa", "Arial", 10, regular, false, hint_strong), limit::none(), e);
 
 				// ACT
 				e.render(target, l, create_point(7.7f, 13.2f));

@@ -2,7 +2,7 @@
 #include <agge/rasterizer.h>
 #include <agge/renderer.h>
 #include <agge.text/layout.h>
-#include <agge.text/limit_processors.h>
+#include <agge.text/limit.h>
 #include <map>
 #include <samples/common/font_loader.h>
 #include <samples/common/lipsum.h>

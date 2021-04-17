@@ -3,7 +3,7 @@
 #include <agge/rasterizer.h>
 #include <agge/renderer_parallel.h>
 #include <agge.text/layout.h>
-#include <agge.text/limit_processors.h>
+#include <agge.text/limit.h>
 #include <samples/common/font_loader.h>
 #include <samples/common/lipsum.h>
 #include <samples/common/shell.h>
