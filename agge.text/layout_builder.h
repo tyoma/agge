@@ -10,8 +10,8 @@ namespace agge
 	public:
 		struct state
 		{
-			size_t next, runs_size;
 			real_t extent;
+			count_t next;
 
 			bool operator !() const;
 			bool operator <(const state &rhs) const;
@@ -31,7 +31,6 @@ namespace agge
 		void break_current_line(const state &at, const state &resume_at);
 
 	private:
-		void commit_run();
 		bool commit_line();
 
 	private:

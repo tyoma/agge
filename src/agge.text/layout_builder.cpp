@@ -34,14 +34,14 @@ namespace agge
 		_current_run = &*_glyph_runs.insert(_glyph_runs.end(), glyph_run(_glyphs));
 		_text_lines.clear();
 		_current_line = &*_text_lines.insert(_text_lines.end(), text_line(_glyph_runs));
-		_state.runs_size = 1;
 	}
 
 	void layout_builder::begin_style(const font::ptr &font_)
 	{
 		const font_metrics m = font_->get_metrics();
 
-		commit_run();
+		if (_current_run->begin_index < _state.next)
+			_current_run = &duplicate_last(_glyph_runs, _state.next);
 		_current_run->font_ = font_;
 		_current_run->offset = create_vector(_state.extent, real_t());
 		_implicit_height = m.ascent + m.descent + m.leading;
@@ -49,15 +49,19 @@ namespace agge
 
 	void layout_builder::trim_current_line(const state &at)
 	{
-		_glyph_runs.erase(_glyph_runs.begin() + at.runs_size, _glyph_runs.end());
-		_current_run = &_glyph_runs.back();
+		while (at.next < _current_run->begin_index)
+		{
+			_glyph_runs.pop_back();
+			_current_run = &_glyph_runs.back();
+		}
 		_current_run->end_index = at.next;
 		_state = at;
 	}
 
 	bool layout_builder::break_current_line()
 	{
-		commit_run();
+		if (_current_run->begin_index < _state.next)
+			_current_run = &duplicate_last(_glyph_runs, _state.next);
 		_current_run->offset = zero();
 		return commit_line();
 	}
@@ -68,21 +72,13 @@ namespace agge
 
 		_state = at;
 		break_current_line();
-		_state = store, _state.extent -= resume_at.extent, _state.runs_size = _glyph_runs.size();
+		_state = store, _state.extent -= resume_at.extent;
 		_current_run->end_index = _current_run->begin_index = resume_at.next;
-	}
-
-	void layout_builder::commit_run()
-	{
-		if (_current_run->begin_index == _state.next)
-			return;
-		_current_run = &duplicate_last(_glyph_runs, _state.next);
-		_state.runs_size++;
 	}
 
 	bool layout_builder::commit_line()
 	{
-		const size_t end_index = _state.runs_size - 1;
+		const size_t end_index = _glyph_runs.size() - 1;
 
 		if (_current_line->begin_index == end_index)
 		{
