@@ -2,8 +2,6 @@
 
 #include <agge.text/functional.h>
 
-using namespace std;
-
 namespace agge
 {
 	namespace
@@ -41,7 +39,7 @@ namespace agge
 			{
 				glyph::outline_ptr o = _underlying->load_glyph(index, m);
 					
-				_glyphs.insert(index, make_pair(o, m), i);
+				i = _glyphs.insert(make_pair(index, make_pair(o, m))).first;
 			}
 			m = i->second.second;
 			return i->second.first;
@@ -96,21 +94,23 @@ namespace agge
 		if (hint_none != fd.hinting)
 			return make_pair(_loader.load(fd), 1.0f);
 
-		scalabale_fonts_cache::iterator i;
 		const real_t factor = static_cast<real_t>(fd.height) / c_rescalable_height;
 		const int height = fd.height;
 
 		fd.height = c_rescalable_height;
-		if (_scalable_fonts.insert(fd, weak_ptr<font::accessor>(), i) || i->second.expired())
+
+		pair<scalabale_fonts_cache::iterator, bool> i = _scalable_fonts.insert(make_pair(fd, weak_ptr<font::accessor>()));
+
+		if (i.second || i.first->second.expired())
 		{
 			font::accessor_ptr a_ = _loader.load(fd);
 			fd.height = height;
 			font::accessor_ptr a(new cached_outline_accessor(fd, a_));
 
-			i->second = a;
+			i.first->second = a;
 			return make_pair(a, factor);
 		}
-		return make_pair(i->second.lock(), factor);
+		return make_pair(i.first->second.lock(), factor);
 	}
 
 	void text_engine_base::on_released(const fonts_cache::value_type * /*entry*/, font *font_)

@@ -49,12 +49,4 @@ namespace agge
 	template <typename CoordT>
 	inline CoordT height(const rect<CoordT> &rc)
 	{	return rc.y2 - rc.y1;	}
-
-	template <typename T>
-	inline T agge_min(const T &lhs, const T &rhs)
-	{	return lhs < rhs ? lhs : rhs;	}
-
-	template <typename T>
-	inline T agge_max(const T &lhs, const T &rhs)
-	{	return lhs > rhs ? lhs : rhs;	}
 }

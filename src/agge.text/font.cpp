@@ -2,8 +2,6 @@
 
 #include <agge/memory.h>
 
-using namespace std;
-
 namespace agge
 {
 	font::font(const accessor_ptr &accessor_, real_t factor)
@@ -23,10 +21,11 @@ namespace agge
 
 	glyph_index_t font::load_mapping(codepoint_t character) const
 	{
-		char2index_cache_t::iterator inserted;
+		char2index_cache_t::iterator m = _char2glyph.find(character);
 
-		_char2glyph.insert(character, _accessor->get_glyph_index(character), inserted);
-		return inserted->second;
+		return m != _char2glyph.end()
+			? m->second
+			: _char2glyph.insert(make_pair(character, _accessor->get_glyph_index(character))).first->second;
 	}
 
 	const glyph* font::load_glyph(glyph_index_t index) const
@@ -34,13 +33,14 @@ namespace agge
 		glyphs_cache_t::iterator inserted;
 		glyph g;
 
-		g.factor = _factor;
 		g.outline = _accessor->load_glyph(index, g.metrics);
+		if (!g.outline)
+			return 0;
+		g.factor = _factor;
 		g.metrics.advance_x *= _factor;
 		g.metrics.advance_y *= _factor;
 		g.index = index;
-		_glyphs.insert(index, g, inserted);
-		return inserted->second.outline ? &inserted->second : 0;
+		return &_glyphs.insert(make_pair(index, g)).first->second;
 	}
 
 	const glyph* font::get_glyph_for_codepoint_slow(codepoint_t codepoint) const

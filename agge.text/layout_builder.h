@@ -29,10 +29,10 @@ namespace agge
 		const state &get_state() const;
 
 		void break_current_line(const state &at, const state &resume_at);
-		void commit_line();
 
 	private:
 		void commit_run();
+		void commit_line();
 
 	private:
 		state _state;
@@ -47,6 +47,15 @@ namespace agge
 	};
 
 
+
+	inline void layout_builder::append_glyph(glyph_index_t index, real_t advance)
+	{
+		positioned_glyph &pg = _glyphs[static_cast<count_t>(_state.next++)];
+
+		pg.index = index;
+		pg.d.dx = advance, pg.d.dy = real_t();
+		_state.extent += advance;
+	}
 
 	inline const layout_builder::state &layout_builder::get_state() const
 	{	return _state;	}

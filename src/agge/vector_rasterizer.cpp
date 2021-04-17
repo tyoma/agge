@@ -1,6 +1,7 @@
 #include <agge/vector_rasterizer.h>
 
 #include <agge/config.h>
+#include <agge/minmax.h>
 #include <agge/precise_delta.h>
 
 namespace agge
@@ -8,20 +9,6 @@ namespace agge
 	namespace
 	{
 		typedef vector_rasterizer::cells_container::iterator cells_iterator;
-
-		template <typename T>
-		void update_min(T &value, T candidate)
-		{
-			if (candidate < value)
-				value = candidate;
-		}
-
-		template <typename T>
-		void update_max(T &value, T candidate)
-		{
-			if (candidate > value)
-				value = candidate;
-		}
 
 		template <typename T>
 		AGGE_INLINE cells_iterator resize_by(T &container, int by)

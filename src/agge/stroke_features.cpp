@@ -2,6 +2,7 @@
 
 #include <agge/curves.h>
 #include <agge/math.h>
+#include <agge/tools.h>
 
 namespace agge
 {

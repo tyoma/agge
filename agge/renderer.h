@@ -1,5 +1,6 @@
 #pragma once
 
+#include "minmax.h"
 #include "scanline.h"
 #include "tools.h"
 
@@ -75,8 +76,7 @@ namespace agge
 			length += dx;
 			covers -= dx;
 		}
-		if (x + length > _window.x2)
-			length = _window.x2 - x;
+		update_min(length, _window.x2 - x);
 		if (length > 0)
 			_blender(_row + x, x, _y, length, covers);
 	}
@@ -92,14 +92,10 @@ namespace agge
 
 		if (window)
 		{
-			if (window->x1 > w.x1)
-				w.x1 = window->x1;
-			if (window->y1 > w.y1)
-				w.y1 = window->y1;
-			if (window->x2 < w.x2)
-				w.x2 = window->x2;
-			if (window->y2 < w.y2)
-				w.y2 = window->y2;
+			update_max(w.x1, window->x1);
+			update_max(w.y1, window->y1);
+			update_min(w.x2, window->x2);
+			update_min(w.y2, window->y2);
 		}
 		return w;
 	}

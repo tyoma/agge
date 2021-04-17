@@ -86,6 +86,7 @@
     <ClInclude Include="..\..\agge\hybrid_event.h" />
     <ClInclude Include="..\..\agge\math.h" />
     <ClInclude Include="..\..\agge\memory.h" />
+    <ClInclude Include="..\..\agge\minmax.h" />
     <ClInclude Include="..\..\agge\parallel.h" />
     <ClInclude Include="..\..\agge\path.h" />
     <ClInclude Include="..\..\agge\pixel.h" />

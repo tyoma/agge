@@ -152,9 +152,9 @@ namespace agge
 	{
 		typename font_rasters_map::iterator ri = _cached_fonts.find(&font_);
 
-		if (_cached_fonts.end() == ri)
-			_cached_fonts.insert(&font_, rasters_map(), ri);
-		return ri->second;
+		return _cached_fonts.end() != ri
+			? ri->second
+			: _cached_fonts.insert(make_pair(&font_, rasters_map())).first->second;
 	}
 
 	template <typename RasterizerT>
@@ -179,7 +179,7 @@ namespace agge
 		const glyph *g = font_.get_glyph(glyph_index);
 		offset_conv converted_pi(g->get_outline(), _rfactor * xf, _rfactor * yf);
 
-		rasters.insert(precise_glyph_index, RasterizerT(), glyph_iterator);
+		glyph_iterator = rasters.insert(make_pair(precise_glyph_index, RasterizerT())).first;
 		add_path(glyph_iterator->second, converted_pi);
 		glyph_iterator->second.compact();
 	}

@@ -68,7 +68,7 @@ namespace agge
 				}
 			}
 		}
-		builder.commit_line();
+		builder.break_current_line();
 		_text_lines.pop_back();
 		for (auto i = _text_lines.begin(); i != _text_lines.end(); ++i)
 		{

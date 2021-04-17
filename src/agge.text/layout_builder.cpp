@@ -1,6 +1,7 @@
 #include <agge.text/layout_builder.h>
 
 #include <agge/math.h>
+#include <agge/minmax.h>
 
 namespace agge
 {
@@ -42,15 +43,6 @@ namespace agge
 		_implicit_height = m.ascent + m.descent + m.leading;
 	}
 
-	void layout_builder::append_glyph(glyph_index_t index, real_t advance)
-	{
-		positioned_glyph &pg = _glyphs[static_cast<count_t>(_state.next++)];
-
-		pg.index = index;
-		pg.d.dx = advance, pg.d.dy = real_t();
-		_state.extent += advance;
-	}
-
 	void layout_builder::trim_current_line(const state &at)
 	{
 		_glyph_runs.erase(_glyph_runs.begin() + at.runs_size, _glyph_runs.end());
@@ -83,17 +75,15 @@ namespace agge
 		if (_current_run->begin_index < _state.next)
 		{
 			_current_run->end_index = _state.next;
-			_current_line->extend_end();
 			_current_run = &duplicate_last(_glyph_runs);
 			_current_run->begin_index = _state.next;
-			_state.runs_size = _glyph_runs.size();
+			_current_line->end_index = (_state.runs_size = _glyph_runs.size()) - 1;
 		}
 		_current_run->offset = create_vector(_state.extent, real_t());
 	}
 
 	void layout_builder::commit_line()
 	{
-		commit_run();
 		if (_current_line->empty())
 		{
 			_current_line->extent = _state.extent = real_t();
@@ -101,27 +91,25 @@ namespace agge
 		}
 		else
 		{
+			real_t ascent = real_t();
 			real_t descent = real_t();
-			std::pair<real_t, real_t> voffset;
+			real_t descent_leading = real_t();
 
 			for (text_line::const_iterator i = _current_line->begin(), end = _current_line->end(); i != end; ++i)
 			{
 				const font_metrics grm = i->font_->get_metrics();
 
-				if (voffset.first < grm.ascent)
-					voffset.first = grm.ascent;
-				if (voffset.second < grm.descent + grm.leading)
-					voffset.second = grm.descent + grm.leading;
-				if (descent < grm.descent)
-					descent = grm.descent;
+				update_max(ascent, grm.ascent);
+				update_max(descent_leading, grm.descent + grm.leading);
+				update_max(descent, grm.descent);
 			}
 
-			_current_line->offset += create_vector(real_t(), voffset.first);
+			_current_line->offset += create_vector(real_t(), ascent);
 			_current_line->extent = _state.extent;
 			_current_line->descent = descent;
 			_current_line = &duplicate_last(_text_lines);
 			_current_line->begin_index = _current_line->end_index;
-			_current_line->offset += create_vector(real_t(), voffset.second);
+			_current_line->offset += create_vector(real_t(), descent_leading);
 			_current_line->extent = _state.extent = real_t();
 		}
 	}

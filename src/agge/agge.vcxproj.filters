@@ -122,5 +122,6 @@
     <ClInclude Include="..\..\agge\hybrid_event.h" />
     <ClInclude Include="..\..\agge\thread.h" />
     <ClInclude Include="..\..\agge\color.h" />
+    <ClInclude Include="..\..\agge\minmax.h" />
   </ItemGroup>
 </Project>

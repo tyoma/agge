@@ -1,6 +1,6 @@
 #include <agge/platform/bitmap.h>
 
-#include <agge/tools.h>
+#include <agge/minmax.h>
 
 #include <memory>
 #include <windows.h>

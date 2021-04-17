@@ -5,6 +5,7 @@
 #include "types.h"
 
 #include <agge/pod_vector.h>
+#include <agge/tools.h>
 #include <vector>
 
 namespace agge
