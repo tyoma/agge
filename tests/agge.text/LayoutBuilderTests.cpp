@@ -49,10 +49,16 @@ namespace agge
 				text_lines[0].begin_index = 1, text_lines[0].end_index = 11;
 				text_lines[1].begin_index = 3, text_lines[1].end_index = 5;
 
-				mocks::font_accessor::char_to_index indices[] = { { L'A', 0 }, };
-				mocks::font_accessor::glyph glyphs_[] = { { { 0, 0 } }, };
-				font1 = mocks::create_font(c_fm1, indices, glyphs_);
-				font2 = mocks::create_font(c_fm2, indices, glyphs_);
+				mocks::font_accessor::char_to_index indices1[] = {
+					{ L'A', 0 }, { L'B', 3 }, { L'C', 1 }, { 0x1219, 2 },
+				}, indices2[] = {
+					{ L'A', 3 }, { L'B', 4 }, { 0x9191, 2 }, { L'D', 0 },
+				};
+				mocks::font_accessor::glyph glyphs_[] = {
+					{ { 3.4f, 0 } }, { { 5.6f, 0 } }, { { 91.9f, 0 } }, { { 14.1f, 0 } }, { { 0.9f, 0 } },
+				};
+				font1 = mocks::create_font(c_fm1, indices1, glyphs_);
+				font2 = mocks::create_font(c_fm2, indices2, glyphs_);
 			}
 
 
@@ -525,6 +531,30 @@ namespace agge
 						+ ref_glyph_run(font2, 0.0f, 0.0f, plural + 110u))
 					+ ref_text_line(0.0f, 56.4f, 0.0f, vector<ref_glyph_run>()),
 					text_lines);
+			}
+
+
+			test( LayoutBuilderReturnsExtentsAccordinglyToCodepoints )
+			{
+				// INIT
+				layout_builder b(glyphs, glyph_runs, text_lines);
+
+				b.begin_style(font1);
+
+				// ACT / ASSERT
+				assert_equal(3.4f, b.current_extent(L'A'));
+				assert_equal(14.1f, b.current_extent(L'B'));
+				assert_equal(5.6f, b.current_extent(L'C'));
+				assert_equal(91.9f, b.current_extent(0x1219));
+
+				// INIT
+				b.begin_style(font2);
+
+				// ACT / ASSERT
+				assert_equal(14.1f, b.current_extent(L'A'));
+				assert_equal(0.9f, b.current_extent(L'B'));
+				assert_equal(91.9f, b.current_extent(0x9191));
+				assert_equal(3.4f, b.current_extent(L'D'));
 			}
 
 		end_test_suite

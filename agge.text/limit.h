@@ -2,13 +2,15 @@
 
 #include "layout_builder.h"
 
+#include <agge/config.h>
+
 namespace agge
 {
 	namespace limit
 	{
 		struct base
 		{
-			void begin_style(const font::ptr &font_);
+			void begin_style(const layout_builder &builder);
 			void new_line();
 			template <typename CharIteratorT>
 			bool add_glyph(layout_builder &builder, glyph_index_t glyph_index, real_t advance,
@@ -40,9 +42,15 @@ namespace agge
 			bool _previous_space;
 		};
 
+		class ellipsis : public base
+		{
+		public:
+			ellipsis(real_t limit, codepoint_t symbol = 0x2026 /*h-ellipsis*/);
+		};
 
 
-		inline void base::begin_style(const font::ptr &/*font_*/)
+
+		inline void base::begin_style(const layout_builder &/*builder*/)
 		{	}
 
 		inline void base::new_line()

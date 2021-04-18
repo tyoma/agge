@@ -6,6 +6,7 @@ set(AGGE_TEXT_TEST_SOURCES
 	helpers_layout.cpp
 	LayoutBuilderTests.cpp
 	LayoutTests.cpp
+	LineLimitTests.cpp
 	mocks.cpp
 	RichTextLayoutTests.cpp
 	RichTextTests.cpp

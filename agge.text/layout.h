@@ -48,7 +48,7 @@ namespace agge
 			const font::ptr font_ = font_factory_.create_font(range->get_annotation().basic);
 
 			builder.begin_style(font_);
-			limiter.begin_style(font_);
+			limiter.begin_style(static_cast<const layout_builder &>(builder));
 			for (std::string::const_iterator i = range->begin(), end = range->end(); i != end; )
 			{
 				if (eat_lf(i))

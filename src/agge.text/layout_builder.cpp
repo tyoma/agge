@@ -2,6 +2,7 @@
 
 #include <agge/math.h>
 #include <agge/minmax.h>
+#include <agge.text/font.h>
 
 namespace agge
 {
@@ -36,7 +37,7 @@ namespace agge
 		_current_line = &*_text_lines.insert(_text_lines.end(), text_line(_glyph_runs));
 	}
 
-	void layout_builder::begin_style(const font::ptr &font_)
+	void layout_builder::begin_style(const shared_ptr<font> &font_)
 	{
 		const font_metrics m = font_->get_metrics();
 
@@ -46,6 +47,9 @@ namespace agge
 		_current_run->offset = create_vector(_state.extent, real_t());
 		_implicit_height = m.ascent + m.descent + m.leading;
 	}
+
+	real_t layout_builder::current_extent(codepoint_t codepoint) const
+	{	return _current_run->font_->get_glyph_for_codepoint(codepoint)->metrics.advance_x;	}
 
 	void layout_builder::trim_current_line(const state &at)
 	{

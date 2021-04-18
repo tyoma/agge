@@ -620,7 +620,7 @@ namespace agge
 					: history(new vector<int>)
 				{	}
 
-				void begin_style(font::ptr)
+				void begin_style(const layout_builder &/*builder*/)
 				{	}
 
 				void new_line()

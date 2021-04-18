@@ -1,6 +1,5 @@
 #pragma once
 
-#include "font.h"
 #include "layout_primitives.h"
 
 namespace agge
@@ -21,8 +20,8 @@ namespace agge
 		layout_builder(positioned_glyphs_container_t &glyphs, glyph_runs_container_t &glyph_runs,
 			text_lines_container_t &text_lines);
 
-		void begin_style(const font::ptr &font_);
-
+		void begin_style(const shared_ptr<font> &font_);
+		real_t current_extent(codepoint_t codepoint) const;
 		void append_glyph(glyph_index_t index, real_t advance);
 		void trim_current_line(const state &at);
 		bool break_current_line();

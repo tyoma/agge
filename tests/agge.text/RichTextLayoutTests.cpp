@@ -255,43 +255,43 @@ namespace agge
 
 			struct StyleDetector
 			{
-				StyleDetector(font::ptr f1, font::ptr f2, font::ptr f3)
-					: history(new vector<int>)
-				{	fonts[0] = f1, fonts[1] = f2, fonts[2] = f3;	}
+				StyleDetector()
+					: history(new vector<real_t>)
+				{	}
 
-				void begin_style(font::ptr font_)
+				template <typename T>
+				void begin_style(T &/*builder*/)
 				{
-					for (int i = 0; i != 3; ++i)
-					{
-						if (font_ == fonts[i])
-						{
-							history->push_back(-i - 1);
-							return;
-						}
-					}
-					history->push_back(-100);
+					// ASSERT (mutating the builder is prohibited at this step)
+					assert_is_false(true);
+				}
+
+				template <typename T>
+				void begin_style(const T &builder)
+				{
+					history->push_back(builder.current_extent('A'));
+					history->push_back(builder.current_extent('B'));
 				}
 
 				void new_line()
-				{	history->push_back(-10);	}
+				{	history->push_back(1000.0f);	}
 				
 				template <typename CharIteratorT>
-				bool add_glyph(layout_builder &/*builder*/, glyph_index_t glyph_index, real_t /*advance*/,
+				bool add_glyph(layout_builder &/*builder*/, glyph_index_t /*glyph_index*/, real_t advance,
 					CharIteratorT &i, CharIteratorT next, CharIteratorT /*end*/)
 				{
-					history->push_back(glyph_index);
+					history->push_back(advance);
 					i = next;
 					return true;
 				}
 
-				shared_ptr< vector<int> > history;
-				font::ptr fonts[3];
+				shared_ptr< vector<real_t> > history;
 			};
 
 			test( LimitProcessorIsNotifiedOfNewLines )
 			{
 				// INIT
-				StyleDetector d(arial, helvetica, segoe);
+				StyleDetector d;
 				layout l;
 				richtext_t text((font_style_annotation()));
 
@@ -303,9 +303,28 @@ namespace agge
 				l.process(text, d, factory);
 
 				// ASSERT
-				int reference[] = {	-1, 1, 4, -10, 2, -2, 5, 5, 5, 5, 2, -10, -3, 1, 3, 1, 1,	};
+				real_t reference1[] = {
+					5.0f, 7.0f, 5.0f, 13.0f, 1000.0f,
+					7.0f, 21.15f, 7.0f, 21.15f, 21.15f, 21.15f, 21.15f, 7.0f, 1000.0f,
+					5.0f, 7.0f, 5.0f, 11.0f, 5.0f, 5.0f,
+				};
 
-				assert_equal(reference, *d.history);
+				assert_equal(reference1, *d.history);
+
+				// INIT
+				text.clear();
+				text << style::family("Helvetica") << style::height(17) << "ACA";
+				d.history->clear();
+
+				// ACT
+				l.process(text, d, factory);
+
+				// ASSERT
+				real_t reference2[] = {
+					21.15f, 7.0f, 21.15f, 11.0f, 21.15f,
+				};
+
+				assert_equal(reference2, *d.history);
 			}
 
 		end_test_suite

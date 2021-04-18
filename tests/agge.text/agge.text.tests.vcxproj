@@ -42,6 +42,7 @@
     <ClCompile Include="AnnotatedStringTests.cpp" />
     <ClCompile Include="helpers_layout.cpp" />
     <ClCompile Include="LayoutBuilderTests.cpp" />
+    <ClCompile Include="LineLimitTests.cpp" />
     <ClCompile Include="RichTextLayoutTests.cpp" />
     <ClCompile Include="RichTextTests.cpp" />
     <ClCompile Include="TextEngineRichTextTests.cpp" />
