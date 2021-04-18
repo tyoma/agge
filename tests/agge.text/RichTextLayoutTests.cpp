@@ -269,18 +269,18 @@ namespace agge
 				template <typename T>
 				void begin_style(const T &builder)
 				{
-					history->push_back(builder.current_extent('A'));
-					history->push_back(builder.current_extent('B'));
+					history->push_back(builder.current_glyph('A').second);
+					history->push_back(builder.current_glyph('B').second);
 				}
 
 				void new_line()
 				{	history->push_back(1000.0f);	}
 				
 				template <typename CharIteratorT>
-				bool add_glyph(layout_builder &/*builder*/, glyph_index_t /*glyph_index*/, real_t advance,
+				bool add_glyph(layout_builder &/*builder*/, glyph_index_t /*glyph_index*/, real_t extent_,
 					CharIteratorT &i, CharIteratorT next, CharIteratorT /*end*/)
 				{
-					history->push_back(advance);
+					history->push_back(extent_);
 					i = next;
 					return true;
 				}

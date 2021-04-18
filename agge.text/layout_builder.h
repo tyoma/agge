@@ -21,8 +21,8 @@ namespace agge
 			text_lines_container_t &text_lines);
 
 		void begin_style(const shared_ptr<font> &font_);
-		real_t current_extent(codepoint_t codepoint) const;
-		void append_glyph(glyph_index_t index, real_t advance);
+		std::pair<glyph_index_t, real_t> current_glyph(codepoint_t codepoint) const;
+		void append_glyph(glyph_index_t index, real_t extent);
 		void trim_current_line(const state &at);
 		bool break_current_line();
 		const state &get_state() const;
@@ -46,13 +46,13 @@ namespace agge
 
 
 
-	inline void layout_builder::append_glyph(glyph_index_t index, real_t advance)
+	inline void layout_builder::append_glyph(glyph_index_t index, real_t extent)
 	{
 		positioned_glyph &pg = _glyphs[static_cast<count_t>(_state.next++)];
 
 		pg.index = index;
-		pg.d.dx = advance, pg.d.dy = real_t();
-		_state.extent += advance;
+		pg.d.dx = extent /* TODO: ... * stepping */, pg.d.dy = real_t();
+		_state.extent += extent;
 	}
 
 	inline const layout_builder::state &layout_builder::get_state() const

@@ -627,7 +627,7 @@ namespace agge
 				{	history->push_back(-1);	}
 				
 				template <typename CharIteratorT>
-				bool add_glyph(layout_builder &/*builder*/, glyph_index_t glyph_index, real_t /*advance*/,
+				bool add_glyph(layout_builder &/*builder*/, glyph_index_t glyph_index, real_t /*extent*/,
 					CharIteratorT &i, CharIteratorT next, CharIteratorT /*end*/)
 				{
 					history->push_back(glyph_index);

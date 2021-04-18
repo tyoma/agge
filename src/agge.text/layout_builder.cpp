@@ -48,8 +48,12 @@ namespace agge
 		_implicit_height = m.ascent + m.descent + m.leading;
 	}
 
-	real_t layout_builder::current_extent(codepoint_t codepoint) const
-	{	return _current_run->font_->get_glyph_for_codepoint(codepoint)->metrics.advance_x;	}
+	std::pair<glyph_index_t, real_t> layout_builder::current_glyph(codepoint_t codepoint) const
+	{
+		const glyph *g = _current_run->font_->get_glyph_for_codepoint(codepoint);
+
+		return std::make_pair(g->index, g->metrics.advance_x);
+	}
 
 	void layout_builder::trim_current_line(const state &at)
 	{

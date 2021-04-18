@@ -542,19 +542,19 @@ namespace agge
 				b.begin_style(font1);
 
 				// ACT / ASSERT
-				assert_equal(3.4f, b.current_extent(L'A'));
-				assert_equal(14.1f, b.current_extent(L'B'));
-				assert_equal(5.6f, b.current_extent(L'C'));
-				assert_equal(91.9f, b.current_extent(0x1219));
+				assert_equal(make_pair(0u, 3.4f), b.current_glyph(L'A'));
+				assert_equal(make_pair(3u, 14.1f), b.current_glyph(L'B'));
+				assert_equal(make_pair(1u, 5.6f), b.current_glyph(L'C'));
+				assert_equal(make_pair(2u, 91.9f), b.current_glyph(0x1219));
 
 				// INIT
 				b.begin_style(font2);
 
 				// ACT / ASSERT
-				assert_equal(14.1f, b.current_extent(L'A'));
-				assert_equal(0.9f, b.current_extent(L'B'));
-				assert_equal(91.9f, b.current_extent(0x9191));
-				assert_equal(3.4f, b.current_extent(L'D'));
+				assert_equal(make_pair(3u, 14.1f), b.current_glyph(L'A'));
+				assert_equal(make_pair(4u, 0.9f), b.current_glyph(L'B'));
+				assert_equal(make_pair(2u, 91.9f), b.current_glyph(0x9191));
+				assert_equal(make_pair(0u, 3.4f), b.current_glyph(L'D'));
 			}
 
 		end_test_suite
