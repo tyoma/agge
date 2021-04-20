@@ -16,8 +16,6 @@ namespace agge
 		explicit text_engine(loader &loader_, uint8_t precision = 4);
 
 		void render_glyph(RasterizerT &target, const font &font_, glyph_index_t glyph_index, real_t x, real_t y);
-		void render_string(RasterizerT &target, const font &font_, const std::string &text, text_alignment halign,
-			real_t x, real_t y, real_t max_width = (std::numeric_limits<real_t>::max)());
 		void render(RasterizerT &target, const glyph_run &glyphs, point_r reference);
 
 		template <typename ContainerT>
@@ -27,12 +25,12 @@ namespace agge
 		void render(RasterizerT &target, const LayoutT &layout_, text_alignment halign, text_alignment valign,
 			const rect_r &reference);
 
-		template <typename LimitProcessorT>
+		template <typename LimitT>
 		void render(RasterizerT &target, const richtext_t &text, text_alignment halign, text_alignment valign,
-			const rect_r &reference, const LimitProcessorT &limit_processor);
+			const rect_r &reference, const LimitT &limit_);
 
-		template <typename LimitProcessorT>
-		agge::box_r measure(const richtext_t &text, const LimitProcessorT &limit_processor);
+		template <typename LimitT>
+		agge::box_r measure(const richtext_t &text, const LimitT &limit_);
 
 	private:
 		typedef hash_map<int, RasterizerT> rasters_map;
@@ -100,51 +98,20 @@ namespace agge
 	}
 
 	template <typename RasterizerT>
-	template <typename LimitProcessorT>
+	template <typename LimitT>
 	inline void text_engine<RasterizerT>::render(RasterizerT &target, const richtext_t &text, text_alignment halign,
-		text_alignment valign, const rect_r &reference, const LimitProcessorT &limit_processor)
+		text_alignment valign, const rect_r &reference, const LimitT &limit_)
 	{
-		_worker_layout.process(text, limit_processor, *this);
+		_worker_layout.process(text, limit_, *this);
 		render(target, _worker_layout, halign, valign, reference);
 	}
 
 	template <typename RasterizerT>
-	template <typename LimitProcessorT>
-	inline agge::box_r text_engine<RasterizerT>::measure(const richtext_t &text, const LimitProcessorT &limit_processor)
+	template <typename LimitT>
+	inline agge::box_r text_engine<RasterizerT>::measure(const richtext_t &text, const LimitT &limit_)
 	{
-		_worker_layout.process(text, limit_processor, *this);
+		_worker_layout.process(text, limit_, *this);
 		return _worker_layout.get_box();
-	}
-
-	template <typename RasterizerT>
-	inline void text_engine<RasterizerT>::render_string(RasterizerT &target, const font &font_, const std::string &text,
-		text_alignment halign, real_t x, real_t y, real_t max_width)
-	{
-		std::string::const_iterator end = text.end();
-		rasters_map &rasters = get_rasters_map(font_);
-		real_t dx = 0.0f;
-
-		for (std::string::const_iterator i = text.begin(); i != end; ++i)
-		{
-			const real_t dx2 = dx + font_.get_glyph_for_codepoint(*i)->metrics.advance_x;
-
-			if (dx2 > max_width)
-			{
-				end = i;
-				break;
-			}
-			dx = dx2;
-		}
-		if (align_near != halign)
-			x -= align_center == halign ? 0.5f * dx : dx;
-
-		for (std::string::const_iterator i = text.begin(); i != end; ++i)
-		{
-			const glyph *g = font_.get_glyph_for_codepoint(*i);
-
-			render_glyph(target, font_, rasters, g->index, x, y);
-			x += g->metrics.advance_x, y += g->metrics.advance_y;
-		}
 	}
 
 	template <typename RasterizerT>
