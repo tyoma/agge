@@ -420,6 +420,26 @@ namespace agge
 				assert_equal(1312, seq2.current_annotation());
 			}
 
+
+			test( UnderlyingIsReturned )
+			{
+				typedef annotated_string<wchar_t, int> container1_t;
+				typedef annotated_string<char, int> container2_t;
+
+				// INIT / ACT
+				container1_t seq1(1);
+				container2_t seq2(2);
+
+				append(seq1, L"abcd");
+				append(seq2, "efg");
+
+				// ACT / ASSERT
+				assert_equal(seq1.ranges_begin()->begin(), seq1.underlying().begin());
+				assert_equal(seq1.ranges_begin()->end(), seq1.underlying().end());
+				assert_equal(seq2.ranges_begin()->begin(), seq2.underlying().begin());
+				assert_equal(seq2.ranges_begin()->end(), seq2.underlying().end());
+			}
+
 		end_test_suite
 	}
 }
