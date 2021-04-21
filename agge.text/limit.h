@@ -1,6 +1,7 @@
 #pragma once
 
 #include "layout_builder.h"
+#include "tools.h"
 
 #include <agge/config.h>
 
