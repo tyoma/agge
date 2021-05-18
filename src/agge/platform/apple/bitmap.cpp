@@ -46,7 +46,7 @@ namespace agge
 			
 			CGDataProviderRef provider = ::CGDataProviderCreateWithData(0, _memory, size, 0);
 			CGImageRef image = ::CGImageCreate(width, height, component_bits, _bpp, stride,
-				CGBitmapContextGetColorSpace(context), format, provider, NULL, FALSE, kCGRenderingIntentDefault);
+				CGColorSpaceCreateDeviceRGB(), format, provider, NULL, FALSE, kCGRenderingIntentDefault);
 			::CGDataProviderRelease(provider);
 
 			CGRect destination = { { CGFloat(x), CGFloat(y) }, { CGFloat(width), CGFloat(height) } };
