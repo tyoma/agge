@@ -14,6 +14,12 @@ namespace agge
 		align_center,
 	};
 
+	struct full_alignment {
+		static full_alignment create(text_alignment halign_, text_alignment valign_);
+
+		text_alignment halign : 3, valign : 3;
+	};
+
 	enum font_weight {
 		extra_light,
 		light,

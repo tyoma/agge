@@ -21,6 +21,13 @@ namespace agge
 		};
 	}
 
+	full_alignment full_alignment::create(text_alignment halign_, text_alignment valign_)
+	{
+		full_alignment a;
+
+		return a.halign = halign_, a.valign = valign_, a;
+	}
+
 	font_descriptor font_descriptor::create(const string &family, int height, font_weight weight, bool italic,
 		font_hinting hinting)
 	{
