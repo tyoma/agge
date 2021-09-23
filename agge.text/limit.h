@@ -33,8 +33,6 @@ namespace agge
 				CharIteratorT &i, CharIteratorT next, CharIteratorT end);
 
 		private:
-			const wrap &operator =(const wrap &rhs);
-
 			template <typename BuilderT, typename CharIteratorT>
 			bool break_current_line(BuilderT &builder, CharIteratorT &i, CharIteratorT end);
 

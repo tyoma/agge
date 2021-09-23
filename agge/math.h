@@ -22,8 +22,7 @@ namespace agge
 	inline int iround(real_t v)
 	{	return static_cast<int>(v > real_t() ? v + static_cast<real_t>(0.5) : v - static_cast<real_t>(0.5));	}
 
-	inline int muldiv(int a, int b, int c)
-	{	return static_cast<int>(static_cast<long long>(a) * b / c);	}
+	int muldiv(int a, int b, int c);
 
 	inline real_t muldiv(real_t a, real_t b, real_t c)
 	{	return a * b / c;	}

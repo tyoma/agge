@@ -26,12 +26,20 @@ endif()
 add_definitions(-D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
 
 set(GCC_CLANG_COMPILER_OPTIONS_CXX -std=c++11 -fPIC -Wall -fno-rtti)
+set(GCC_CLANG_COMPILER_OPTIONS_CXX ${GCC_CLANG_COMPILER_OPTIONS_CXX}
+	-Wall -Wextra -Wpedantic
+	-Wno-missing-field-initializers
+	-Wno-implicit-fallthrough
+)
 if(NOT ANDROID_ABI OR ANDROID_ABI MATCHES "x86.*")
 	set(GCC_CLANG_COMPILER_OPTIONS_CXX ${GCC_CLANG_COMPILER_OPTIONS_CXX} -msse2)
 endif()	
 
 add_compile_options(
 	"$<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:${GCC_CLANG_COMPILER_OPTIONS_CXX}>"
+	"$<$<CXX_COMPILER_ID:MSVC>:/W4>"
+	"$<$<CXX_COMPILER_ID:MSVC>:/wd4512>"
+	"$<$<CXX_COMPILER_ID:MSVC>:/wd4355>"
 	"$<$<CXX_COMPILER_ID:MSVC>:$<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:/Ox>>"
 	"$<$<CXX_COMPILER_ID:MSVC>:$<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:/Ob2>>"
 	"$<$<CXX_COMPILER_ID:MSVC>:$<$<EQUAL:4,${CMAKE_SIZEOF_VOID_P}>:/arch:SSE2>>"

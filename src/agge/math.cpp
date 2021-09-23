@@ -33,6 +33,9 @@ namespace agge
 	float acos(float v)
 	{	return ::acosf(v);	}
 
+	int muldiv(int a, int b, int c)
+	{	return static_cast<int>(static_cast<long long>(a) * b / c);	}
+
 	real_t optimal_circle_stepping(real_t radius, real_t scale)
 	{
 		int n = static_cast<int>(2.0f * pi / acos(radius / (radius + 0.125f / scale)));

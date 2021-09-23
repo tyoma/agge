@@ -70,7 +70,7 @@ namespace agge
 		}
 		builder.break_current_line();
 		_text_lines.pop_back();
-		for (auto i = _text_lines.begin(); i != _text_lines.end(); ++i)
+		for (text_lines_container_t::const_iterator i = _text_lines.begin(); i != _text_lines.end(); ++i)
 		{
 			if (i->extent > _box.w)
 				_box.w = i->extent;

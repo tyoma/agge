@@ -80,9 +80,6 @@ namespace agge
 				}
 
 			private:
-				const thread_mapping_blender &operator =(const thread_mapping_blender &rhs);
-
-			private:
 				thread_mapping &_mapping;
 				mutex &_mtx;
 			};

@@ -15,7 +15,7 @@ namespace agge
 			_1_shift = 8,
 
 			_1 = 1 << _1_shift,
-			_1_mask = _1 - 1,
+			_1_mask = _1 - 1
 		};
 
 #pragma pack(push, 1)

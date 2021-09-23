@@ -35,7 +35,6 @@ namespace agge
 		void operator ()(int x, int length, const cover_type *covers);
 
 	private:
-		const adapter &operator =(const adapter &rhs);
 		static rect_i make_window(BitmapT &bitmap_, vector_i offset, const rect_i *window);
 
 	private:

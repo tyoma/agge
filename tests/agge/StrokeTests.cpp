@@ -33,9 +33,6 @@ namespace agge
 				{	--_alive;	}
 
 			private:
-				const counted &operator =(const counted &rhs);
-
-			private:
 				size_t &_alive;
 			};
 

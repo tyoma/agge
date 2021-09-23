@@ -80,7 +80,7 @@ namespace agge
 
 		template <typename T, size_t n, int alignment_order>
 		inline size_t aligned_array<T, n, alignment_order>::aligned_offset() const
-		{	return (alignment - (reinterpret_cast<unsigned long long>(_buffer) & alignment_mask)) & alignment_mask;	}
+		{	return (alignment - (reinterpret_cast<size_t>(_buffer) & alignment_mask)) & alignment_mask;	}
 
 		template <typename T, size_t n, int alignment_order>
 		inline bool operator ==(const std::vector<T> &lhs, const aligned_array<T, n, alignment_order> &rhs)

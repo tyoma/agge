@@ -34,9 +34,6 @@ namespace agge
 				log_container &log;
 
 			private:
-				const thread_capture &operator =(const thread_capture &rhs);
-
-			private:
 				mutex &_mutex;
 			};
 

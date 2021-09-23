@@ -10,7 +10,7 @@ namespace agge
 		_metrics.ascent *= _factor;
 		_metrics.descent *= _factor;
 		_metrics.leading *= _factor;
-		memset(_ansi_glyphs, static_cast<const glyph *>(nullptr), ansi_range);
+		memset(_ansi_glyphs, static_cast<const glyph *>(0), ansi_range);
 	}
 
 	font_descriptor font::get_key() const

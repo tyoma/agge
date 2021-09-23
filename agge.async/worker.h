@@ -51,9 +51,6 @@ namespace agge
 		{	w.run(_queue);	}
 
 	private:
-		const consumer &operator =(const consumer &rhs);
-
-	private:
 		typename worker<WorkOutT>::out_queue_type &_queue;
 	};
 

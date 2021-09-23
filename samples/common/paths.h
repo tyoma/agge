@@ -43,9 +43,6 @@ namespace common
 		}
 
 	private:
-		const agg_path_adaptor &operator =(const agg_path_adaptor &rhs);
-
-	private:
 		const AggPath &_path;
 		AggPath::const_iterator _position;
 	};

@@ -10,7 +10,7 @@ namespace agge
 		begin_test_suite( UTF8Tests )
 			test( ANSICharactersAreReadAsIs )
 			{
-				for (auto i = 0u; i != 0x80; ++i)
+				for (unsigned char i = 0u; i != 0x80; ++i)
 				{
 				// INIT
 					char c = static_cast<char>(i);
@@ -26,7 +26,7 @@ namespace agge
 
 			test( InvalidCharacterIsReturnedWhenInvalidSingleCharIsMet )
 			{
-				for (auto i = 0x80u; i != 0xC0u; ++i)
+				for (unsigned char i = 0x80u; i != 0xC0u; ++i)
 				{
 				// INIT
 					char c = static_cast<char>(i);
@@ -40,7 +40,7 @@ namespace agge
 					assert_equal(0x12345u, utf8::next(iterator, end, 0x12345u));
 					assert_equal(end, iterator);
 				}
-				for (auto i = 0xF8u; i != 0x100u; ++i)
+				for (unsigned int i = 0xF8u; i != 0x100u; ++i)
 				{
 				// INIT
 					char c = static_cast<char>(i);
@@ -56,9 +56,9 @@ namespace agge
 
 			test( DoubleByteCharactersAreParsedAndIteratorIsMovedAccordingly )
 			{
-				for (auto i0 = 0xC0u; i0 != 0xE0; ++ i0)
+				for (unsigned char i0 = 0xC0u; i0 != 0xE0; ++ i0)
 				{
-					for (auto i1 = 0x80u; i1 != 0xC0u; ++i1)
+					for (unsigned char i1 = 0x80u; i1 != 0xC0u; ++i1)
 					{
 				// INIT
 						char c[] = {	static_cast<char>(i0), static_cast<char>(i1),	};
@@ -66,7 +66,7 @@ namespace agge
 						char *const end = iterator + 2;
 
 				// ACT / ASSERT
-						assert_equal(((i0 & 0x1F) << 6) + (i1 & 0x3F), utf8::next(iterator, end));
+						assert_equal(((i0 & 0x1Fu) << 6) + (i1 & 0x3Fu), utf8::next(iterator, end));
 						assert_equal(end, iterator);
 					}
 				}
@@ -103,7 +103,7 @@ namespace agge
 
 			test( InvalidContinuationBytesLeadToInvalidCharacter )
 			{
-				for (auto i = 0x00u; i != 0x80u; ++i)
+				for (unsigned char i = 0x00u; i != 0x80u; ++i)
 				{
 			// INIT
 					char c[10] = {	0, static_cast<char>(i),	};
@@ -117,7 +117,7 @@ namespace agge
 					assert_equal(static_cast<utf8::codepoint>('?'), utf8::next(iterator, c + 10));
 					assert_equal(c + 2, iterator);
 				}
-				for (auto i = 0xC0u; i != 0x100u; ++i)
+				for (unsigned int i = 0xC0u; i != 0x100u; ++i)
 				{
 			// INIT
 					char c[10] = {	0, static_cast<char>(i),	};
@@ -131,7 +131,7 @@ namespace agge
 					assert_equal(static_cast<utf8::codepoint>('?'), utf8::next(iterator, c + 10));
 					assert_equal(c + 2, iterator);
 				}
-				for (auto i = 0xC0u; i != 0x100u; ++i)
+				for (unsigned int i = 0xC0u; i != 0x100u; ++i)
 				{
 			// INIT
 					char c[10] = {	0, static_cast<char>(i),	};
@@ -145,7 +145,7 @@ namespace agge
 					assert_equal(static_cast<utf8::codepoint>('?'), utf8::next(iterator, c + 10));
 					assert_equal(c + 3, iterator);
 				}
-				for (auto i = 0xC0u; i != 0x100u; ++i)
+				for (unsigned int i = 0xC0u; i != 0x100u; ++i)
 				{
 			// INIT
 					char c[10] = {	0, static_cast<char>(i),	};

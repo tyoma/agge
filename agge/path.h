@@ -34,8 +34,6 @@ namespace agge
 		enum state { initial = 0, accumulate = 1, generate = 2, stage_mask = 3, complete = 4 };
 
 	private:
-		const path_generator_adapter &operator =(const path_generator_adapter &rhs);
-
 		void set_stage(state stage, bool force_complete = false);
 
 	private:
