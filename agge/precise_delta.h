@@ -10,8 +10,11 @@ namespace agge
 		AGGE_INLINE precise_delta(int numerator, int denominator)
 			: _acc(0), _exp(0)
 		{
-			const float q = static_cast<float>(numerator) / denominator;
-			const int &iq = reinterpret_cast<const int &>(q);
+			union {	float q; int iq;	} u;
+
+			u.q = static_cast<float>(numerator) / denominator;
+
+			const int iq = u.iq;
 			const int exp = (((iq & 0x7F800000)) >> 23) - 127;
 			int m = (iq & 0x7FFFFF) | 0x800000;
 

@@ -19,7 +19,7 @@ namespace agge
 {
 	namespace tests
 	{
-		begin_test_suite( APreciseDeltaTests )
+		begin_test_suite( PreciseDeltaTests )
 			test( PositiveFractionalDeltaDoesNotOverflow )
 			{
 				// INIT
