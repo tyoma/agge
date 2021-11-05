@@ -2,6 +2,13 @@ cmake_minimum_required(VERSION 2.8)
 
 project(AGGE)
 
+option(AGGE_NO_TESTS "Do not build test modules." OFF)
+option(AGGE_NO_SAMPLES "Do not build sample applications." ON)
+
+if (NOT AGGE_NO_TESTS)
+	enable_testing()
+endif()
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/modules)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/_lib)
@@ -55,9 +62,18 @@ if (NOT AGGE_NO_TESTS)
 	if (NOT TARGET utee)
 		add_subdirectory(libraries/utee)
 	endif()
-	add_subdirectory(samples)
 	add_subdirectory(tests)
 	set_property(TARGET agge.tests APPEND PROPERTY COMPILE_OPTIONS $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-std=c++03>)
+	
+	add_test(NAME agge.tests COMMAND utee-runner $<TARGET_FILE:agge.tests>)
+	add_test(NAME agge.text.tests COMMAND utee-runner $<TARGET_FILE:agge.text.tests>)
+	if (NOT MSVC_VERSION OR (MSVC_VERSION GREATER_EQUAL 1600))
+		add_test(NAME agge.async.tests COMMAND utee-runner $<TARGET_FILE:agge.async.tests>)
+	endif()
+	
+endif()
+if (NOT AGGE_NO_SAMPLES)
+	add_subdirectory(samples)
 endif()
 
 set_property(TARGET agge APPEND PROPERTY COMPILE_OPTIONS $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-std=c++03>)
