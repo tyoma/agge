@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.13)
+
+add_compile_options($<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-std=c++03>)
 
 set(AGGE_SOURCES
 	color.cpp
@@ -48,3 +50,4 @@ else()
 endif()
 
 add_library(agge STATIC ${AGGE_SOURCES})
+target_include_directories(agge PUBLIC ../..)

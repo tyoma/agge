@@ -1,6 +1,6 @@
 #include <agge.text/text_engine_base.h>
 
-#include <agge.text/functional.h>
+#include <functional>
 
 namespace agge
 {
@@ -82,8 +82,8 @@ namespace agge
 
 		if (inserted.second)
 		{
-			inserted.first->second.first.reset(new font(acc.first, acc.second), bind(&text_engine_base::on_released, this,
-				&*inserted.first, _1));
+			inserted.first->second.first.reset(new font(acc.first, acc.second), std::bind(&text_engine_base::on_released, this,
+				&*inserted.first, std::placeholders::_1));
 			return inserted.first->second.first;
 		}
 		return create_font(descriptor_normalized);

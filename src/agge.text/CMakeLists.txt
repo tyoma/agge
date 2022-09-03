@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.13)
+
+add_compile_options("$<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:-std=c++11>")
 
 set(AGGE_TEXT_SOURCES
 	font.cpp
@@ -9,4 +11,4 @@ set(AGGE_TEXT_SOURCES
 )
 
 add_library(agge.text STATIC ${AGGE_TEXT_SOURCES})
-
+target_link_libraries(agge.text PUBLIC agge PUBLIC utfia)

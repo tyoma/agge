@@ -1,14 +1,9 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.13)
 
-include(test)
-
-set(GCC_CLANG_COMPILER_OPTIONS_CXX ${GCC_CLANG_COMPILER_OPTIONS_CXX}
-	-Wno-maybe-uninitialized
-	-Wno-array-bounds
-)
+include_directories(BEFORE ..)
 
 add_compile_options(
-	"$<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:${GCC_CLANG_COMPILER_OPTIONS_CXX}>"
+	"$<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-Wno-maybe-uninitialized;-Wno-array-bounds>"
 )
 
 find_package(Threads)

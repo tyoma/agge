@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.13)
+
+add_compile_options($<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-std=c++03>)
 
 set(AGGE_TEST_SOURCES
 	BitmapTests.cpp
@@ -34,5 +36,4 @@ if(NOT ANDROID_ABI OR ANDROID_ABI MATCHES "x86.*")
 endif()	
 
 add_library(agge.tests SHARED ${AGGE_TEST_SOURCES})
-
-target_link_libraries(agge.tests agge tests-common)
+target_link_libraries(agge.tests agge tests-common utfia)

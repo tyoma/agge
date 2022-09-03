@@ -1,6 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
-
-include(strmd)
+cmake_minimum_required(VERSION 3.13)
 
 set(SAMPLES_COMMON_SOURCES
 	font_loader.cpp
@@ -33,7 +31,7 @@ endif()
 
 add_library(samples.common STATIC ${SAMPLES_COMMON_SOURCES})
 
-target_link_libraries(samples.common agge agge.text)
+target_link_libraries(samples.common agge agge.text strmd)
 
 if (APPLE)
 	target_link_libraries(samples.common "-framework Foundation -framework Cocoa")
