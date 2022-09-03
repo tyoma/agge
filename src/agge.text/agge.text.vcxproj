@@ -28,6 +28,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="PropertySheets">
     <Import Project="$(SolutionDir)build.props\agge.props" Condition="exists('$(SolutionDir)build.props\agge.props')" />
+    <Import Project="$(SolutionDir)build.props\utfia.include.props" />
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ItemDefinitionGroup>
@@ -60,7 +61,6 @@
     <ClInclude Include="..\..\agge.text\text_engine_base.h" />
     <ClInclude Include="..\..\agge.text\tools.h" />
     <ClInclude Include="..\..\agge.text\types.h" />
-    <ClInclude Include="..\..\agge.text\utf8.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

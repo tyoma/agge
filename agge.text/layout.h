@@ -4,10 +4,10 @@
 #include "layout_builder.h"
 #include "richtext.h"
 #include "tools.h"
-#include "utf8.h"
 
 #include <agge/math.h>
 #include <agge/tools.h>
+#include <utfia/iterator.h>
 
 namespace agge
 {
@@ -59,7 +59,7 @@ namespace agge
 				}
 
 				std::string::const_iterator next = i;
-				const glyph &g = *font_->get_glyph_for_codepoint(utf8::next(next, end));
+				const glyph &g = *font_->get_glyph_for_codepoint(utfia::utf8::next(next, end));
 
 				if (!limiter.add_glyph(builder, g.index, g.metrics.advance_x, i, next, end))
 				{
