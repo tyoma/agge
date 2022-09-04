@@ -5,16 +5,12 @@ project(AGGE)
 enable_testing()
 
 option(AGGE_NO_TESTS "Do not build test modules." OFF)
+option(AGGE_NO_EXTENSIONS "Do not build/test extensions (like async)." OFF)
 option(AGGE_NO_SAMPLES "Do not build sample applications." ON)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/_lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/_bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/_bin)
-
-set(POLYQ_NO_TESTS ON)
-set(STRMD_NO_TESTS ON)
-set(UTEE_NO_TESTS ON)
-set(UTFIA_NO_TESTS ON)
 
 if (MSVC)
 	if (MSVC_VERSION LESS_EQUAL 1700)
@@ -42,49 +38,47 @@ endif()
 
 add_compile_options(
 	"$<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:${GCC_CLANG_COMPILER_OPTIONS_CXX}>"
-	"$<$<CXX_COMPILER_ID:MSVC>:/W4>"
-	"$<$<CXX_COMPILER_ID:MSVC>:/wd4512>"
-	"$<$<CXX_COMPILER_ID:MSVC>:/wd4355>"
-	"$<$<CXX_COMPILER_ID:MSVC>:$<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:/Ox>>"
-	"$<$<CXX_COMPILER_ID:MSVC>:$<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:/Ob2>>"
-	"$<$<CXX_COMPILER_ID:MSVC>:$<$<EQUAL:4,${CMAKE_SIZEOF_VOID_P}>:/arch:SSE2>>"
+	"$<$<CXX_COMPILER_ID:MSVC>:-W4;-wd4512;-wd4355>"
+	"$<$<CXX_COMPILER_ID:MSVC>:$<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-Ox;-Ob2>>"
+	"$<$<CXX_COMPILER_ID:MSVC>:$<$<EQUAL:4,${CMAKE_SIZEOF_VOID_P}>:-arch:SSE2>>"
 )
 
 if (GNU)
 	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
 endif()
 
-if (NOT TARGET utee)
-	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/libraries/utee/make/build.props)
-	add_subdirectory(libraries/utee)
-endif()
-
 if (NOT TARGET utfia)
+	set(UTFIA_NO_TESTS ON)
 	add_subdirectory(libraries/utfia)
 endif()
 
 add_subdirectory(src/agge)
 add_subdirectory(src/agge.text)
-add_library(agge.async INTERFACE)
-target_include_directories(agge.async INTERFACE .)
-target_link_libraries(agge.async INTERFACE agge INTERFACE polyq)
+if (NOT AGGE_NO_EXTENSIONS AND (NOT MSVC_VERSION OR (MSVC_VERSION GREATER_EQUAL 1600)))
+	if (NOT TARGET polyq)
+		set(POLYQ_NO_TESTS ON)
+		add_subdirectory(libraries/polyq)
+	endif()
+	add_library(agge.async INTERFACE)
+	target_include_directories(agge.async INTERFACE .)
+	target_link_libraries(agge.async INTERFACE agge INTERFACE polyq)
+endif()
 
 if (NOT AGGE_NO_TESTS)
+	if (NOT TARGET utee)
+		set(UTEE_NO_TESTS ON)
+		add_subdirectory(libraries/utee)
+	endif()
 	add_subdirectory(tests)
-	
-	include(utee-test)
-	
 	add_utee_test(agge.tests)
 	add_utee_test(agge.text.tests)
-	if (NOT MSVC_VERSION OR (MSVC_VERSION GREATER_EQUAL 1600))
-		if (NOT TARGET polyq)
-			add_subdirectory(libraries/polyq)
-		endif()
+	if (TARGET agge.async.tests)
 		add_utee_test(agge.async.tests)
 	endif()
 endif()
 if (NOT AGGE_NO_SAMPLES)
 	if (NOT TARGET strmd)
+		set(STRMD_NO_TESTS ON)
 		add_subdirectory(libraries/strmd)
 	endif()
 	add_subdirectory(samples)
