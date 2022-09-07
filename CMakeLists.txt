@@ -37,9 +37,9 @@ if(NOT ANDROID_ABI OR ANDROID_ABI MATCHES "x86.*")
 endif()	
 
 add_compile_options(
-	"$<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:${GCC_CLANG_COMPILER_OPTIONS_CXX}>"
+	"$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:${GCC_CLANG_COMPILER_OPTIONS_CXX}>"
 	"$<$<CXX_COMPILER_ID:MSVC>:-W4;-wd4512;-wd4355>"
-	"$<$<CXX_COMPILER_ID:MSVC>:$<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-Ox;-Ob2>>"
+	"$<$<CXX_COMPILER_ID:MSVC>:$<$<CONFIG:Release,RelWithDebInfo>:-Ox;-Ob2>>"
 	"$<$<CXX_COMPILER_ID:MSVC>:$<$<EQUAL:4,${CMAKE_SIZEOF_VOID_P}>:-arch:SSE2>>"
 )
 

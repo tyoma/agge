@@ -3,7 +3,8 @@ cmake_minimum_required(VERSION 3.13)
 include_directories(BEFORE ..)
 
 add_compile_options(
-	"$<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-Wno-maybe-uninitialized;-Wno-array-bounds>"
+	"$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wno-array-bounds>"
+	"$<$<CXX_COMPILER_ID:GNU>:-Wno-maybe-uninitialized>"
 )
 
 find_package(Threads)

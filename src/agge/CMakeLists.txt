@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-add_compile_options($<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-std=c++03>)
+add_compile_options($<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-std=c++03>)
 
 set(AGGE_SOURCES
 	color.cpp
