@@ -47,7 +47,6 @@
     <ClInclude Include="..\..\agge.text\annotated_string.h" />
     <ClInclude Include="..\..\agge.text\font.h" />
     <ClInclude Include="..\..\agge.text\font_factory.h" />
-    <ClInclude Include="..\..\agge.text\functional.h" />
     <ClInclude Include="..\..\agge.text\glyph.h" />
     <ClInclude Include="..\..\agge.text\layout_builder.h" />
     <ClInclude Include="..\..\agge.text\layout_primitives.h" />
