@@ -44,22 +44,44 @@ namespace agge
 	};
 
 
-	template <typename PathIterator1T, typename PathIterator2T>
-	class joined_path
+	class path_close
 	{
 	public:
-		joined_path(const PathIterator1T &path1, const PathIterator2T &path2);
+		path_close();
 
 		void rewind(unsigned id);
 		int vertex(real_t *x, real_t *y);
 
 	private:
-		enum state { first_initial, first, second };
+		unsigned int _step;
+	};
+
+
+	template <typename PathIterator1T, typename PathIterator2T = void>
+	class join
+	{
+	public:
+		join(const PathIterator1T &lhs, const PathIterator2T &rhs);
+
+		void rewind(unsigned id);
+		int vertex(real_t *x, real_t *y);
 
 	private:
-		PathIterator1T _path1;
-		PathIterator2T _path2;
-		state _state;
+		PathIterator1T _lhs;
+		PathIterator2T _rhs;
+	};
+
+	template <typename PathIterator1T>
+	class join<PathIterator1T, void>
+	{
+	public:
+		join(const PathIterator1T &lhs);
+
+		void rewind(unsigned id);
+		int vertex(real_t *x, real_t *y);
+
+	private:
+		PathIterator1T _lhs;
 	};
 
 
@@ -68,9 +90,9 @@ namespace agge
 	path_generator_adapter<SourceT, GeneratorT> assist(const SourceT &source, GeneratorT &generator)
 	{	return path_generator_adapter<SourceT, GeneratorT>(source, generator);	}
 
-	template <typename PathIterator1T, typename PathIterator2T>
-	joined_path<PathIterator1T, PathIterator2T> join(const PathIterator1T &path1, const PathIterator2T &path2)
-	{	return joined_path<PathIterator1T, PathIterator2T>(path1, path2);	}
+	//template <typename PathIterator1T, typename PathIterator2T>
+	//join<PathIterator1T, PathIterator2T> join(const PathIterator1T &path1, const PathIterator2T &path2)
+	//{	return join<PathIterator1T, PathIterator2T>(path1, path2);	}
 
 	inline bool is_vertex(int c)
 	{	return 0 != (path_vertex_mask & c);	}
@@ -160,44 +182,69 @@ namespace agge
 	{	_state = (stage & stage_mask) | (force_complete ? complete : (_state & complete));	}
 
 
+	inline path_close::path_close()
+		: _step(0)
+	{	}
+
+	inline void path_close::rewind(unsigned)
+	{	_step = 0;	}
+
+	inline int path_close::vertex(real_t *, real_t *)
+	{	return _step ? path_command_stop : (_step++, path_command_end_poly | path_flag_close);	}
+
+
 	template <typename PathIterator1T, typename PathIterator2T>
-	inline joined_path<PathIterator1T, PathIterator2T>::joined_path(const PathIterator1T &path1, const PathIterator2T &path2)
-		: _path1(path1), _path2(path2), _state(first_initial)
+	inline join<PathIterator1T, PathIterator2T>::join(const PathIterator1T &lhs, const PathIterator2T &rhs)
+		: _lhs(lhs), _rhs(rhs)
 	{	}
 
 	template <typename PathIterator1T, typename PathIterator2T>
-	inline void joined_path<PathIterator1T, PathIterator2T>::rewind(unsigned /*id*/)
+	inline void join<PathIterator1T, PathIterator2T>::rewind(unsigned /*id*/)
 	{
-		_state = first_initial;
-		_path1.rewind(0);
-		_path2.rewind(0);
+		_lhs.rewind(0);
+		_rhs.rewind(0);
 	}
 
 	template <typename PathIterator1T, typename PathIterator2T>
-	inline int joined_path<PathIterator1T, PathIterator2T>::vertex(real_t *x, real_t *y)
+	inline int join<PathIterator1T, PathIterator2T>::vertex(real_t *x, real_t *y)
 	{
-		int command;
-
-		switch (_state)
+		switch (int command = _lhs.vertex(x, y))
 		{
-		case first_initial:
-			command = _path1.vertex(x, y);
-			if (command == path_command_stop)
-				_state = second;
-			else
-				return _state = first, command;
+		default:
+			return command;
 
-		case second:
-			return _path2.vertex(x, y);
-
-		case first:
-			command = _path1.vertex(x, y);
-			if (command != path_command_stop)
+		case path_command_stop:
+			switch (command = _rhs.vertex(x, y))
+			{
+			default:
 				return command;
-			_state = second;
-			command = _path2.vertex(x, y);
-			return command == path_command_move_to ? path_command_line_to : command;
+
+			case path_command_move_to:
+				return path_command_line_to;
+			}
 		}
-		return path_command_stop;
 	}
+
+
+	template <typename PathIterator1T>
+	inline join<PathIterator1T, void>::join(const PathIterator1T &lhs)
+		: _lhs(lhs)
+	{	}
+
+	template <typename PathIterator1T>
+	inline void join<PathIterator1T, void>::rewind(unsigned id)
+	{	_lhs.rewind(id);	}
+
+	template <typename PathIterator1T>
+	inline int join<PathIterator1T, void>::vertex(real_t *x, real_t *y)
+	{	return _lhs.vertex(x, y);	}
+
+
+	template <typename T>
+	inline join<T, void> joining(const T &lhs)
+	{	return join<T, void>(lhs);	}
+
+	template <typename T11, typename T12, typename T2>
+	inline join<join<T11, T12>, T2> operator &(const join<T11, T12> &lhs, const T2 &rhs)
+	{	return join<join<T11, T12>, T2>(lhs, rhs);	}
 }

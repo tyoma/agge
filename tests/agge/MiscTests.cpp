@@ -1,5 +1,6 @@
 #include <agge/math.h>
 #include <agge/memory.h>
+#include <agge/path.h>
 #include <agge/tools.h>
 
 #include "helpers.h"
@@ -149,6 +150,25 @@ namespace agge
 
 				assert_equal(create_vector(605, 1005), 5 * create_vector(121, 201));
 				assert_equal(create_vector(-44, 2800), create_vector(-11, 700) * 4);
+			}
+
+
+			test( PathCloseGeneratesExpectedCommands )
+			{
+				// INIT
+				real_t dummy;
+				path_close pc;
+
+				// ACT / ASSERT
+				assert_equal(path_command_end_poly | path_flag_close, pc.vertex(&dummy, &dummy));
+				assert_equal(path_command_stop, pc.vertex(&dummy, &dummy));
+				assert_equal(path_command_stop, pc.vertex(&dummy, &dummy));
+
+				// ACT
+				pc.rewind(0);
+
+				// ACT / ASSERT
+				assert_equal(path_command_end_poly | path_flag_close, pc.vertex(&dummy, &dummy));
 			}
 		end_test_suite
 	}

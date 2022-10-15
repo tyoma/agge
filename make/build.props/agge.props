@@ -12,6 +12,7 @@
       <AdditionalIncludeDirectories Condition="'$(PlatformToolsetVersion)'=='100'">$(MSBuildThisFileDirectory)..\..\compat\msvc10-;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4355;4512;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <AdditionalOptions Condition="'$(Platform)'=='Win32'">/hotpatch %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <GccExceptionHandling>true</GccExceptionHandling>
@@ -21,6 +22,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>/functionpadmin:24 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   

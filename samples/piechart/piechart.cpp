@@ -51,8 +51,8 @@ namespace
 		make_pair(0.01f, c_palette[2]),
 	};
 
-	joined_path<arc, arc> pie_segment(real_t cx, real_t cy, real_t outer_r, real_t inner_r, real_t start, real_t end)
-	{	return join(arc(cx, cy, outer_r, start, end), arc(cx, cy, inner_r, end, start));	}
+	join<arc, arc> pie_segment(real_t cx, real_t cy, real_t outer_r, real_t inner_r, real_t start, real_t end)
+	{	return join<arc, arc>(arc(cx, cy, outer_r, start, end), arc(cx, cy, inner_r, end, start));	}
 
 	class Figures : public application
 	{
