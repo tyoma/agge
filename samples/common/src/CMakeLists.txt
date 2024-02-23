@@ -34,7 +34,7 @@ add_library(samples.common STATIC ${SAMPLES_COMMON_SOURCES})
 target_link_libraries(samples.common agge agge.text strmd)
 
 if (APPLE)
-	target_link_libraries(samples.common "-framework Foundation -framework Cocoa")
+	target_link_libraries(samples.common "-framework Foundation")
 elseif (ANDROID)
 	target_link_libraries(samples.common log android)
 endif()

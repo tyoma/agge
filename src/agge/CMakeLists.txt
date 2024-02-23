@@ -50,4 +50,9 @@ else()
 endif()
 
 add_library(agge STATIC ${AGGE_SOURCES})
+
 target_include_directories(agge PUBLIC ../..)
+if (APPLE)
+	target_link_libraries(agge PRIVATE "-framework Cocoa")
+endif()
+
