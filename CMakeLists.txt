@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.20)
 
 project(AGGE)
 
@@ -24,6 +24,10 @@ if (MSVC)
 	endif()
 endif()
 
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+  include_directories(./compat/arm64)
+endif()
+
 add_definitions(-D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
 
 set(GCC_CLANG_COMPILER_OPTIONS_CXX -std=c++11 -fPIC -Wall -fno-rtti)
@@ -32,7 +36,7 @@ set(GCC_CLANG_COMPILER_OPTIONS_CXX ${GCC_CLANG_COMPILER_OPTIONS_CXX}
 	-Wno-missing-field-initializers
 	-Wno-implicit-fallthrough
 )
-if(NOT ANDROID_ABI OR ANDROID_ABI MATCHES "x86.*")
+if((NOT ANDROID_ABI OR ANDROID_ABI MATCHES "x86.*") AND (NOT CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64"))
 	set(GCC_CLANG_COMPILER_OPTIONS_CXX ${GCC_CLANG_COMPILER_OPTIONS_CXX} -msse2)
 endif()	
 
