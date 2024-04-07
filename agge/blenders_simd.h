@@ -3,7 +3,11 @@
 #include "config.h"
 #include "pixel.h"
 
+#if !defined(__i386__) && !defined(__x86_64__)
+#include <sse2neon.h>
+#else
 #include <emmintrin.h>
+#endif
 
 namespace agge
 {
