@@ -16,6 +16,7 @@ if (WIN32 OR APPLE OR ANDROID)
 		add_executable(text text/text.cpp arial-1000.fnt)
 		if (NOT MSVC_VERSION OR (MSVC_VERSION GREATER_EQUAL 1600))
 			add_executable(balls-async balls-async/balls-async.cpp balls-async/balls_data.cpp)
+			target_link_libraries(balls-async tasker mt)
 		endif()
 	
 		if (WIN32)
