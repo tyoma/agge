@@ -15,7 +15,7 @@ set(AGGE_SOURCES
 	vector_rasterizer.cpp
 )
 
-if(NOT ANDROID_ABI OR ANDROID_ABI MATCHES "x86.*")
+if (AGGE_ARCHITECTURE STREQUAL "intel")
 	set(AGGE_SOURCES ${AGGE_SOURCES}
 		blenders_intel.cpp
 	)

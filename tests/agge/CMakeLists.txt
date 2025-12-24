@@ -31,7 +31,7 @@ if (WIN32)
 else()
 endif()
 
-if(NOT ANDROID_ABI OR ANDROID_ABI MATCHES "x86.*")
+if (AGGE_ARCHITECTURE STREQUAL "intel")
 	set(AGGE_TEST_SOURCES ${AGGE_TEST_SOURCES} SIMDBlendersTests.cpp)
 endif()	
 
