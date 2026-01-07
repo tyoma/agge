@@ -30,8 +30,10 @@ namespace agge
 
 			void resize(count_t width, count_t height);
 
+			bits_per_pixel bpp() const;
 			count_t width() const;
 			count_t height() const;
+			count_t stride() const;
 
 			void *row_ptr(count_t y);
 			const void *row_ptr(count_t y) const;
@@ -59,11 +61,17 @@ namespace agge
 				_extra_pixels((row_extra_bytes + bpp / 8 - 1) / (bpp / 8))
 		{	resize(width, height);	}
 
+		inline bits_per_pixel raw_bitmap::bpp() const
+		{	return _bpp;	}
+
 		inline count_t raw_bitmap::width() const
 		{	return _width;	}
 
 		inline count_t raw_bitmap::height() const
 		{	return _height;	}
+
+		inline count_t raw_bitmap::stride() const
+		{	return _stride;	}
 
 		inline void *raw_bitmap::row_ptr(count_t y)
 		{	return _memory + y * _stride;	}

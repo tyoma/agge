@@ -20,7 +20,7 @@ namespace agge
 				intptr_t row_ptr(raw_bitmap &b, count_t y)
 				{	return reinterpret_cast<intptr_t>(b.row_ptr(y));	}
 
-				intptr_t get_stride(raw_bitmap &b)
+				intptr_t get_real_stride(raw_bitmap &b)
 				{	return reinterpret_cast<intptr_t>(b.row_ptr(1)) - reinterpret_cast<intptr_t>(b.row_ptr(0));	}
 			}
 
@@ -34,12 +34,18 @@ namespace agge
 					const raw_bitmap b3(17, 19, bpp24);
 					
 					// ACT / ASSERT
+					assert_equal(bpp32, b1.bpp());
 					assert_equal(10u, b1.width());
 					assert_equal(100u, b1.height());
+					assert_equal(40u, b1.stride());
+					assert_equal(bpp16, b2.bpp());
 					assert_equal(171u, b2.width());
 					assert_equal(731u, b2.height());
+					assert_equal(344u, b2.stride());
+					assert_equal(bpp24, b3.bpp());
 					assert_equal(17u, b3.width());
 					assert_equal(19u, b3.height());
+					assert_equal(52u, b3.stride());
 				}
 
 
@@ -81,6 +87,7 @@ namespace agge
 					// ASSERT
 					assert_equal(40u, b.width());
 					assert_equal(20u, b.height());
+					assert_equal(160u, b.stride());
 
 					// ACT
 					b.resize(39, 50);
@@ -88,6 +95,7 @@ namespace agge
 					// ASSERT
 					assert_equal(39u, b.width());
 					assert_equal(50u, b.height());
+					assert_equal(160u, b.stride());
 
 					// ACT
 					b.resize(11, 13);
@@ -95,6 +103,14 @@ namespace agge
 					// ASSERT
 					assert_equal(11u, b.width());
 					assert_equal(13u, b.height());
+					assert_equal(160u, b.stride());
+
+					// ACT
+					b.resize(110, 13);
+
+					// ASSERT
+					assert_equal(110u, b.width());
+					assert_equal(440u, b.stride());
 				}
 
 
@@ -134,14 +150,14 @@ namespace agge
 
 					// ASSERT
 					assert_equal(p, b.row_ptr(0));
-					assert_equal(80, get_stride(b));
+					assert_equal(80, get_real_stride(b));
 
 					// ACT
 					b.resize(15, 15);
 
 					// ASSERT
 					assert_equal(p, b.row_ptr(0));
-					assert_equal(80, get_stride(b));
+					assert_equal(80, get_real_stride(b));
 				}
 
 
@@ -158,7 +174,7 @@ namespace agge
 
 					// ASSERT
 					assert_equal(p, b.row_ptr(0));
-					assert_equal(800, get_stride(b));
+					assert_equal(800, get_real_stride(b));
 				}
 
 
@@ -172,7 +188,7 @@ namespace agge
 					b.resize(15, 200);
 
 					// ASSERT
-					assert_equal(800, get_stride(b));
+					assert_equal(800, get_real_stride(b));
 				}
 
 
@@ -204,7 +220,7 @@ namespace agge
 					assert_equal(w, b.width());
 					assert_equal(h, b.height());
 					assert_equal(p, b.row_ptr(0));
-					assert_equal(static_cast<int>(4 * w), get_stride(b));
+					assert_equal(static_cast<int>(4 * w), get_real_stride(b));
 				}
 
 
@@ -217,13 +233,13 @@ namespace agge
 					raw_bitmap b3(17, 19, bpp24);
 
 					// ACT / ASSERT
-					assert_equal(40, get_stride(b1));
+					assert_equal(40, get_real_stride(b1));
 					assert_equal(120, row_ptr(b1, 3) - row_ptr(b1, 0));
 
-					assert_equal(344, get_stride(b2));
+					assert_equal(344, get_real_stride(b2));
 					assert_equal(1032, row_ptr(b2, 3) - row_ptr(b2, 0));
 
-					assert_equal(52, get_stride(b3));
+					assert_equal(52, get_real_stride(b3));
 					assert_equal(364, row_ptr(b3, 7) - row_ptr(b3, 0));
 				}
 
@@ -352,14 +368,17 @@ namespace agge
 					raw_bitmap b32_2(7, 5, bpp32, 1);
 
 					// ASSERT
-					assert_equal(20, get_stride(b8));
-					assert_equal(8, get_stride(b8_2));
-					assert_equal(28, get_stride(b16));
-					assert_equal(16, get_stride(b16_2));
-					assert_equal(36, get_stride(b24));
-					assert_equal(24, get_stride(b24_2));
-					assert_equal(44, get_stride(b32));
-					assert_equal(32, get_stride(b32_2));
+					assert_equal(20, get_real_stride(b8));
+					assert_equal(20u, b8.stride());
+					assert_equal(8, get_real_stride(b8_2));
+					assert_equal(8u, b8_2.stride());
+					assert_equal(28, get_real_stride(b16));
+                    assert_equal(28u, b16.stride());
+					assert_equal(16, get_real_stride(b16_2));
+					assert_equal(36, get_real_stride(b24));
+					assert_equal(24, get_real_stride(b24_2));
+					assert_equal(44, get_real_stride(b32));
+					assert_equal(32, get_real_stride(b32_2));
 				}
 
 
@@ -378,10 +397,10 @@ namespace agge
 					b32.resize(40, 5);
 
 					// ASSERT
-					assert_equal(44, get_stride(b8));
-					assert_equal(84, get_stride(b16));
-					assert_equal(124, get_stride(b24));
-					assert_equal(164, get_stride(b32));
+					assert_equal(44, get_real_stride(b8));
+					assert_equal(84, get_real_stride(b16));
+					assert_equal(124, get_real_stride(b24));
+					assert_equal(164, get_real_stride(b32));
 				}
 
 
@@ -389,19 +408,19 @@ namespace agge
 				{
 					// INIT
 					raw_bitmap b(10, 5, bpp32, 5);
-					const intptr_t stride = get_stride(b);
+					const intptr_t stride = get_real_stride(b);
 
 					// ACT
 					b.resize(10, 6);
 
 					// ACT / ASSERT
-					assert_equal(stride, get_stride(b));
+					assert_equal(stride, get_real_stride(b));
 
 					// ACT
 					b.resize(10, 11);
 
 					// ACT / ASSERT
-					assert_equal(stride, get_stride(b));
+					assert_equal(stride, get_real_stride(b));
 				}
 
 
