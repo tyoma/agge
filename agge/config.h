@@ -13,8 +13,8 @@
 
 #if defined(_M_IX86) || defined(__i386) || defined(_M_X64) || defined(__x86_64__)
 	#define AGGE_ARCH_INTEL
-#elif defined(_M_ARM)
-	#define AGGE_ARCH_ARM _M_ARM
+#elif defined(_M_ARM) || defined(_M_ARM64)
+	#define AGGE_ARCH_ARM
 #elif defined(__arm__)
 	#if defined(__ARM_ARCH_7__)
 		#define AGGE_ARCH_ARM 7
@@ -23,8 +23,10 @@
 	#elif defined(__ARM_ARCH_5__) || defined(__ARM_ARCH_5T__)
 		#define AGGE_ARCH_ARM 5
 	#else
-		#define AGGE_ARCH_ARM 1
+		#define AGGE_ARCH_ARM
 	#endif
+#elif defined(__aarch64__)
+	#define AGGE_ARCH_ARM 8
 #else
 	#define AGGE_ARCH_GENERIC
 #endif

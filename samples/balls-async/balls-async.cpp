@@ -40,7 +40,7 @@ namespace
 		}
 
 		virtual void schedule(function<void()> &&task, mt::milliseconds defer_by) override
-		{	_underlying.schedule(move(task), defer_by);	}
+		{	_underlying.schedule(std::move(task), defer_by);	}
 
 	private:
 		void run()
@@ -86,11 +86,11 @@ namespace
 					if (_ready.empty())
 						_pending.push_back(completion);
 					else
-						item = move(_ready.back()), _ready.pop_back();
+						item = std::move(_ready.back()), _ready.pop_back();
 				}
 				if (item)
-					completion->set(move(item));
-				return task< shared_ptr<T> >(move(completion));
+					completion->set(std::move(item));
+				return task< shared_ptr<T> >(std::move(completion));
 			}
 
 			void put_back(const shared_ptr<T> &item)
@@ -104,7 +104,7 @@ namespace
 					if (_pending.empty())
 						_ready.push_back(item);
 					else
-						completion = move(_pending.back()), _pending.pop_back();
+						completion = std::move(_pending.back()), _pending.pop_back();
 				}
 
 				if (completion)

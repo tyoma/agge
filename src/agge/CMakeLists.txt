@@ -5,6 +5,7 @@ add_compile_options($<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-std=c++03>)
 set(AGGE_SOURCES
 	color.cpp
 	curves.cpp
+	blenders_simd.cpp
 	dash.cpp
 	figures.cpp
 	hybrid_event.cpp
@@ -14,12 +15,6 @@ set(AGGE_SOURCES
 	stroke_features.cpp
 	vector_rasterizer.cpp
 )
-
-if (AGGE_ARCHITECTURE STREQUAL "intel")
-	set(AGGE_SOURCES ${AGGE_SOURCES}
-		blenders_intel.cpp
-	)
-endif()
 
 if (WIN32)
 	set(AGGE_SOURCES ${AGGE_SOURCES}

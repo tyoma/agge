@@ -2,7 +2,7 @@
 
 #include <agge/bitmap.h>
 #include <agge/blenders.h>
-#include <agge/blenders_generic.h>
+#include <agge/blenders_simd.h>
 #include <agge/config.h>
 
 #if defined(AGGE_PLATFORM_ANDROID)
@@ -25,14 +25,7 @@
 
 #endif
 
-#if defined(AGGE_ARCH_INTEL)
-	#include <agge/blenders_simd.h>
-
-	typedef agge::blender_solid_color<agge::simd::blender_solid_color, platform_pixel_order> platform_blender_solid_color;
-
-#else
-	typedef agge::blender_solid_color_rgb<agge::pixel32, platform_pixel_order> platform_blender_solid_color;
-#endif
+typedef agge::blender_solid_color<agge::simd::blender_solid_color, platform_pixel_order> platform_blender_solid_color;
 
 struct services;
 

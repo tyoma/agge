@@ -21,6 +21,7 @@ set(AGGE_TEST_SOURCES
 	RendererTests.cpp
 	RendererParallelTests.cpp
 	ScanlineAdapterTests.cpp
+	SIMDBlendersTests.cpp
 	StrokeFeaturesTests.cpp
 	StrokeTests.cpp
 	VectorRasterizerTests.cpp
@@ -30,10 +31,6 @@ if (WIN32)
 	set(AGGE_TEST_SOURCES ${AGGE_TEST_SOURCES} platform/win32/RawBitmapTests.cpp platform/win32/surface.cpp)
 else()
 endif()
-
-if (AGGE_ARCHITECTURE STREQUAL "intel")
-	set(AGGE_TEST_SOURCES ${AGGE_TEST_SOURCES} SIMDBlendersTests.cpp)
-endif()	
 
 add_library(agge.tests SHARED ${AGGE_TEST_SOURCES})
 target_link_libraries(agge.tests agge tests-common utfia)

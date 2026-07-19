@@ -2,9 +2,7 @@ name: Build / Test
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches: '*'
 
 env:
   BUILD_TYPE: Release
@@ -17,7 +15,9 @@ jobs:
         config:
           - os: ubuntu-latest
           - os: macos-latest
+          - os: macos-15-intel
           - os: windows-latest
+          - os: windows-11-arm
 
     steps:
     - uses: actions/checkout@v2

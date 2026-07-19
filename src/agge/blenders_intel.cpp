@@ -10,18 +10,18 @@ namespace agge
 
 		namespace
 		{
-			__m128i make_color_u16(pixel32 components)
+			uint16x8_t make_color_u16(pixel32 components)
 			{
-				__m128i t = _mm_cvtsi32_si128(reinterpret_cast<const unsigned int &>(components));
+				uint16x8_t t = _mm_cvtsi32_si128(reinterpret_cast<const unsigned int &>(components));
 
 				t = _mm_unpacklo_epi8(t, _mm_setzero_si128());
 				return _mm_unpacklo_epi64(t, t);
 			}
 
-			__m128i make_alpha_u16(unsigned int alpha)
+			uint16x8_t make_alpha_u16(unsigned int alpha)
 			{
 				alpha = (alpha << 6) + 505 * alpha / 1000;
-				__m128i t = _mm_shufflelo_epi16(_mm_cvtsi32_si128(alpha), 0);
+				uint16x8_t t = _mm_shufflelo_epi16(_mm_cvtsi32_si128(alpha), 0);
 				return _mm_unpacklo_epi64(t, t);
 			}
 		}
@@ -37,15 +37,15 @@ namespace agge
 				*pixels = _components;
 		}
 
-		void blender_solid_color::blend4(pixel *pixels, __m128i color_u16, __m128i alpha_u16, unsigned int covers_packed)
+		void blender_solid_color::blend4(pixel *pixels, uint16x8_t color_u16, uint16x8_t alpha_u16, unsigned int covers_packed)
 		{
-			__m128i alpha = _mm_mulhi_epu16(_mm_unpacklo_epi8(_mm_setzero_si128(), _mm_cvtsi32_si128(covers_packed)),
+			uint16x8_t alpha = _mm_mulhi_epu16(_mm_unpacklo_epi8(_mm_setzero_si128(), _mm_cvtsi32_si128(covers_packed)),
 				alpha_u16);
 
 			alpha = _mm_unpacklo_epi16(alpha, alpha);
 
-			__m128i source10 = _mm_loadu_si128(reinterpret_cast<__m128i *>(pixels));
-			__m128i	source32 = _mm_unpackhi_epi8(source10, _mm_setzero_si128());
+			uint16x8_t source10 = _mm_loadu_si128(reinterpret_cast<uint16x8_t *>(pixels));
+			uint16x8_t	source32 = _mm_unpackhi_epi8(source10, _mm_setzero_si128());
 						source10 = _mm_unpacklo_epi8(source10, _mm_setzero_si128());
 
 			// source -= ((source - color) << 2) * alpha >> 16;
@@ -54,7 +54,7 @@ namespace agge
 			source10 = _mm_sub_epi16(source10, _mm_mulhi_epi16(_mm_slli_epi16(_mm_sub_epi16(source10, color_u16), 2),
 				_mm_unpacklo_epi32(alpha, alpha)));
 
-			_mm_storeu_si128(reinterpret_cast<__m128i *>(pixels), _mm_packus_epi16(source10, source32));
+			_mm_storeu_si128(reinterpret_cast<uint16x8_t *>(pixels), _mm_packus_epi16(source10, source32));
 		}
 	}
 }

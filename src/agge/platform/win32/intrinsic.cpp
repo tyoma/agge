@@ -1,5 +1,7 @@
 #include "../../intrinsic.h"
 
+#include <agge/config.h>
+
 #include <intrin.h>
 
 namespace agge
@@ -11,5 +13,11 @@ namespace agge
 	{	return _InterlockedExchange(destination, new_value);	}
 
 	void pause()
-	{	_mm_pause();	}
+	{
+#if defined(AGGE_ARCH_INTEL)
+		_mm_pause();
+#elif defined(AGGE_ARCH_ARM)
+		__yield();
+#endif
+	}
 }
