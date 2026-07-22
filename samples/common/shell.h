@@ -48,4 +48,27 @@ struct application : agge::noncopyable
 
 
 
+inline application::timings operator +(const application::timings &lhs, const application::timings &rhs)
+{
+	application::timings result;
+
+	result.clearing = lhs.clearing + rhs.clearing;
+	result.stroking = lhs.stroking + rhs.stroking;
+	result.rasterization = lhs.rasterization + rhs.rasterization;
+	result.rendition = lhs.rendition + rhs.rendition;
+	result.blitting = lhs.blitting + rhs.blitting;
+	return result;
+}
+
+inline application::timings operator *(double lhs, application::timings rhs)
+{
+	rhs.clearing *= lhs;
+	rhs.stroking *= lhs;
+	rhs.rasterization *= lhs;
+	rhs.rendition *= lhs;
+	rhs.blitting *= lhs;
+	return rhs;
+}
+
+
 extern application *agge_create_application(services &/*s*/);

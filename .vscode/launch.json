@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "debug",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/_build/_bin/sandbox",
+      "args": [],
+      "cwd": "${workspaceFolder}/_build/_bin",
+      "externalConsole": false,
+      "MIMode": "lldb"
+    }
+  ]
+}

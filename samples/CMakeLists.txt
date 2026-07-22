@@ -15,26 +15,12 @@ if (WIN32 OR APPLE OR ANDROID)
 		add_executable(sandbox sandbox/sandbox.cpp)
 		add_executable(text text/text.cpp arial-1000.fnt)
 		if (NOT MSVC_VERSION OR (MSVC_VERSION GREATER_EQUAL 1600))
-			if (UNIX)
-			    add_definitions(-DMP_MT_GENERIC)
-			endif()	
 			add_executable(balls-async balls-async/balls-async.cpp balls-async/balls_data.cpp)
 			target_link_libraries(balls-async tasker mt)
 		endif()
 	
 		if (WIN32)
 			add_executable(text-gdi text-gdi/text-gdi.cpp)
-		endif()
-
-		if (0)
-			set_target_properties(balls balls-async figures lines piechart rasterizer sandbox text PROPERTIES
-				MACOSX_BUNDLE YES
-				MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/common/src/platform/apple/info.plist
-				XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.agge.sample"
-				XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ""
-				XCODE_ATTRIBUTE_DEBUG_INFORMATION_FORMAT "dwarf-with-dsym"
-				XCODE_ATTRIBUTE_INFOPLIST_PREPROCESS YES
-			)
 		endif()
 	elseif (ANDROID)
 		add_library(balls SHARED balls/balls.cpp balls/balls_data.cpp)

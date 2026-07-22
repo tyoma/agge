@@ -4,13 +4,11 @@
 #include "../../shell-inline.h"
 #include "bitmap.h"
 
-#include "sys/timerfd.h"
-
 #include <android/log.h>
 #include <android/native_activity.h>
 #include <memory>
+#include <tasker/ui_queue.h>
 #include <time.h>
-#include <unistd.h>
 
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "agge_sample", __VA_ARGS__))
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "agge_sample", __VA_ARGS__))
@@ -22,13 +20,20 @@ namespace
 	const int c_averaging_n = 100;
 	application::timings c_zero_timings = { };
 
+	mt::milliseconds clock_ms()
+	{
+		struct timespec ts;
+		clock_gettime(CLOCK_MONOTONIC, &ts);
+		return mt::milliseconds(static_cast<long long>(ts.tv_sec) * 1000 + ts.tv_nsec / 1000000);
+	}
+
 	class shell : services
 	{
 	public:
 		shell(ANativeActivity *activity)
 			: _activity(activity), _application(agge_create_application(*this)), _window(0), _timings(c_zero_timings),
-				_timings_averaging(0)
-		{	}
+				_timings_averaging(0), _ui_queue(&clock_ms)
+		{	scheduleRedraw();	}
 
 		void onWindowCreated(ANativeWindow *window)
 		{
@@ -72,24 +77,13 @@ namespace
 
 		void onInputCreated(AInputQueue *queue)
 		{
-			itimerspec ts = {};
 			auto looper = ALooper_prepare(0);
-			auto timer = timerfd_create(CLOCK_MONOTONIC, 0);
 
-			ts.it_value.tv_nsec = ts.it_interval.tv_nsec = 10000000;
-			timerfd_settime(timer, 0, &ts, nullptr);
-
-			LOGI("Timer device created: fd=%d", timer);
-			
-			ALooper_addFd(looper, timer, 0, ALOOPER_EVENT_INPUT, &onTimer, this);
 			AInputQueue_attachLooper(queue, looper, 1, &onMessageS, this);
 			ALooper_acquire(looper);
-			_queue.reset(queue, [looper, timer] (AInputQueue *queue) {
+			_queue.reset(queue, [looper] (AInputQueue *queue) {
 				AInputQueue_detachLooper(queue);
-				ALooper_removeFd(looper, timer);
 				ALooper_release(looper);
-				close(timer);
-				LOGI("Timer device destroyed: fd=%d", timer);
 			});
 
 			LOGI("Input intialized.");
@@ -141,13 +135,11 @@ namespace
 			return 1;
 		}
 
-		static int onTimer(int /*fd*/, int /*events*/, void* data)
+		void scheduleRedraw()
 		{
-			auto self = static_cast<shell *>(data);
-
-			if (self->_window)
-				self->redrawWindow(self->_window);
-			return 1;
+			if (_window)
+				redrawWindow(_window);
+			_ui_queue.schedule([this] { scheduleRedraw(); }, mt::milliseconds(10));
 		}
 
 	private:
@@ -157,6 +149,7 @@ namespace
 		ANativeWindow *_window;
 		application::timings _timings;
 		int _timings_averaging;
+		tasker::ui_queue _ui_queue;
 	};
 
 	void onDestroy(ANativeActivity *activity)

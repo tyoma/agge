@@ -31,7 +31,7 @@ endif()
 
 add_library(samples.common STATIC ${SAMPLES_COMMON_SOURCES})
 
-target_link_libraries(samples.common agge agge.text strmd)
+target_link_libraries(samples.common agge agge.text strmd tasker mt)
 
 if (APPLE)
 	target_link_libraries(samples.common "-framework Foundation")

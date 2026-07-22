@@ -20,6 +20,7 @@
 
 #include <samples/common/services.h>
 #include <samples/common/shell.h>
+#include <samples/common/smoothing.h>
 #include <samples/common/timing.h>
 
 #include "../../shell-inline.h"
@@ -27,8 +28,8 @@
 #include <memory>
 #include <stdexcept>
 #include <stdio.h>
+#include <tasker/ui_queue.h>
 #include <tchar.h>
-#include <tests/common/scoped_ptr.h>
 #include <windows.h>
 
 using namespace std;
@@ -38,196 +39,145 @@ namespace
 	const application::timings c_zero_timings = { };
 	const int c_initial_width = 736;
 	const int c_initial_height = 800;
+	const auto c_prop_name = _T("window_proc");
+
+	mt::milliseconds clock_ms()
+	{
+		static const double period = [] {
+			LARGE_INTEGER f;
+			::QueryPerformanceFrequency(&f);
+			return 1000.0 / f.QuadPart;
+		}();
+		LARGE_INTEGER c;
+		::QueryPerformanceCounter(&c);
+		return mt::milliseconds(static_cast<long long>(period * c.QuadPart));
+	}
 
 	class desktop_services : public services
 	{
-		virtual stream *open_file(const char *path);
+		virtual stream *open_file(const char *path) override
+		{
+			class file_stream : public stream
+			{
+			public:
+				file_stream(const char *path)
+					: _stream(fopen(path, "rb"), &fclose)
+				{	}
+
+				virtual void read(void *buffer, size_t size)
+				{	fread(buffer, 1, size, _stream.get());	}
+
+			private:
+				shared_ptr<FILE> _stream;
+			};
+
+			return new file_stream(path);
+		}
 	};
 
-	class MainDialog
+	class application_window
 	{
 	public:
-		MainDialog(application &application_);
-		~MainDialog();
-
-		void UpdateText();
-
-		static void PumpMessages();
-
-	private:
-		static uintptr_t __stdcall windowProcProxy(HWND hwnd, unsigned int message, uintptr_t wparam, uintptr_t lparam);
-		uintptr_t windowProc(unsigned int message, uintptr_t wparam, uintptr_t lparam);
-
-		void onDestroy();
-
-		void destroy();
-
-	private:
-		HWND _window;
-		uintptr_t _previousWindowProc;
-		platform_bitmap _bitmap;
-		application &_application;
-
-		int _cycles;
-		application::timings _timings;
-	};
-
-
-
-	stream *desktop_services::open_file(const char *path)
-	{
-		class file_stream : public stream
+		application_window(application &application_)
+			: _window(::CreateWindow(_T("#32770"), NULL, WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 0, 0, NULL, NULL, NULL,
+				NULL), &::DestroyWindow),
+			_bitmap(1, 1), _application(application_), _queue(&clock_ms)
 		{
-		public:
-			file_stream(const char *path)
-				: _stream(fopen(path, "rb"), &fclose)
-			{	}
-
-			virtual void read(void *buffer, size_t size)
-			{	fread(buffer, 1, size, _stream.get());	}
-
-		private:
-			shared_ptr<FILE> _stream;
-		};
-
-		return new file_stream(path);
-	}
-
-
-	MainDialog::MainDialog(application &application_)
-		: _window(::CreateWindow(_T("#32770"), NULL, WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, c_initial_width, c_initial_height, NULL, NULL, NULL, NULL)),
-			_bitmap(1, 1), _application(application_), _cycles(0), _timings(c_zero_timings)
-	{
-		if (!_window)
-			throw std::runtime_error("Cannot create window!");
-		::SetProp(_window, _T("windowProc"), static_cast<HANDLE>(this));
-		_previousWindowProc = ::SetWindowLongPtr(_window, GWLP_WNDPROC, reinterpret_cast<uintptr_t>(&windowProcProxy));
-
-		RECT rc;
-
-		::GetClientRect(_window, &rc);
-
-		_bitmap.resize(rc.right, rc.bottom);
-		_application.resize(rc.right, rc.bottom);
-
-		UpdateText();
-
-		::SetTimer(_window, 1, 1, 0);
-	}
-
-	MainDialog::~MainDialog()
-	{
-		destroy();
-	}
-
-	void MainDialog::onDestroy()
-	{
-		::SetWindowLongPtr(_window, GWLP_WNDPROC, _previousWindowProc);
-		::RemoveProp(_window, _T("windowProc"));
-		_window = NULL;
-	}
-
-	void MainDialog::destroy()
-	{
-		if (_window)
-		{
-			::DestroyWindow(_window);
+			if (!_window)
+				throw std::runtime_error("Cannot create window!");
+			::SetProp(hwnd(), c_prop_name, static_cast<HANDLE>(this));
+			_original_wndproc = ::SetWindowLongPtr(hwnd(), GWLP_WNDPROC, reinterpret_cast<uintptr_t>(&window_proc_s));
+			::SetWindowPos(hwnd(), HWND_TOP, 0, 0, c_initial_width, c_initial_height, SWP_NOMOVE | SWP_NOZORDER);
+			schedule_invalidation();
 		}
-	}
 
-	uintptr_t __stdcall MainDialog::windowProcProxy(HWND hwnd, unsigned int message, uintptr_t wparam, uintptr_t lparam)
-	{
-		return static_cast<MainDialog *>(::GetProp(hwnd, _T("windowProc")))->windowProc(message, wparam, lparam);
-	}
-
-	uintptr_t MainDialog::windowProc(unsigned int message, uintptr_t wparam, uintptr_t lparam)
-	{
-		switch (message)
+		void update_text()
 		{
-		case WM_SIZE:
+			TCHAR caption[1000] = { };
+			RECT rc;
+			const auto &t = _timings_smoothing.get();
+
+			::GetClientRect(hwnd(), &rc);
+
+			_stprintf_s(caption, _T("Total (%dx%d): %.2fms, clear: %.2fms, stroking: %.2fms, raster: %.2fms, render: %.2fms, blitting: %.2fms"), rc.right, rc.bottom,
+				t.clearing + t.stroking + t.rasterization + t.rendition,
+				t.clearing,
+				t.stroking,
+				t.rasterization,
+				t.rendition,
+				t.blitting);
+			::SetWindowText(hwnd(), caption);
+		}
+
+	private:
+		HWND hwnd() const
+		{	return static_cast<HWND>(_window.get());	}
+
+		static uintptr_t __stdcall window_proc_s(HWND hwnd, unsigned int message, uintptr_t wparam, uintptr_t lparam)
+		{	return static_cast<application_window *>(::GetProp(hwnd, c_prop_name))->window_proc(message, wparam, lparam);	}
+
+		uintptr_t window_proc(unsigned int message, uintptr_t wparam, uintptr_t lparam)
+		{
+			switch (message)
 			{
+			case WM_SIZE:
 				if (LOWORD(lparam) && HIWORD(lparam))
 				{
 					_bitmap.resize(LOWORD(lparam), HIWORD(lparam));
 					_application.resize(LOWORD(lparam), HIWORD(lparam));
-					::InvalidateRect(_window, NULL, FALSE);
+					::InvalidateRect(hwnd(), NULL, FALSE);
 				}
-			}
-			return 0;
+				return 0;
 
-		case WM_CLOSE:
-			{
+			case WM_NCDESTROY:
+				::SetWindowLongPtr(hwnd(), GWLP_WNDPROC, _original_wndproc);
+				::RemoveProp(hwnd(), _T("window_proc"));
+				return 0;
+
+			case WM_CLOSE:
 				PostQuitMessage(0);
-				destroy();
-			}
-			return 0;
+				return 0;
 
-		case WM_PAINT:
-			{
+			case WM_ERASEBKGND:
+				return TRUE;
+
+			default:
+				return ::CallWindowProc(reinterpret_cast<WNDPROC>(_original_wndproc), hwnd(), message, wparam, lparam);
+
+			case WM_PAINT:
 				PAINTSTRUCT ps;
 				long long counter;
+				application::timings t = {};
 
-				_application.draw(_bitmap, _timings);
+				_application.draw(_bitmap, t);
 
 				stopwatch(counter);
-				::BeginPaint(_window, &ps);
+				::BeginPaint(hwnd(), &ps);
 				_bitmap.blit(ps.hdc, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right - ps.rcPaint.left, ps.rcPaint.bottom - ps.rcPaint.top);
-				::EndPaint(_window, &ps);
-				_timings.blitting += stopwatch(counter);
-				++_cycles;
-
-				UpdateText();
+				::EndPaint(hwnd(), &ps);
+				t.blitting += stopwatch(counter);
+				_timings_smoothing.add(t);
+				return 0;
 			}
-			return 0;
-
-		case WM_ERASEBKGND:
-			return TRUE;
-
-		case WM_TIMER:
-			UpdateText();
-			::InvalidateRect(_window, NULL, TRUE);
-			return TRUE;
-
-		default:
-			return ::CallWindowProc(reinterpret_cast<WNDPROC>(_previousWindowProc), _window, message, wparam, lparam);
 		}
-	}
 
-
-	void MainDialog::UpdateText()
-	{
-		if (_cycles > 100)
+		void schedule_invalidation()
 		{
-			TCHAR caption[1000] = { };
-			RECT rc;
-
-			::GetClientRect(_window, &rc);
-
-			_stprintf_s(caption, _T("Total (%dx%d): %gms, clear: %gms, stroking: %gms, raster: %gms, render: %gms, blitting: %gms"), rc.right, rc.bottom,
-				(_timings.clearing + _timings.stroking + _timings.rasterization + _timings.rendition) / _cycles,
-				_timings.clearing / _cycles,
-				_timings.stroking / _cycles,
-				_timings.rasterization / _cycles,
-				_timings.rendition / _cycles,
-				_timings.blitting / _cycles);
-			_cycles = 0;
-			_timings = c_zero_timings;
-			::SetWindowText(_window, caption);
-
-			::InvalidateRect(_window, NULL, TRUE);
+			::InvalidateRect(hwnd(), NULL, TRUE);
+			update_text();
+			_queue.schedule([this] {
+				schedule_invalidation();
+			}, mt::milliseconds(20));
 		}
-	}
 
-	void MainDialog::PumpMessages()
-	{
-		MSG msg;
-
-		while (::GetMessage(&msg, NULL, 0, 0))
-		{
-			::TranslateMessage(&msg);
-			::DispatchMessage(&msg);
-		}
-	}
+	private:
+		shared_ptr<void> _window;
+		uintptr_t _original_wndproc;
+		platform_bitmap _bitmap;
+		application &_application;
+		smoothing<application::timings> _timings_smoothing;
+		tasker::ui_queue _queue;
+	};
 }
 
 int main()
@@ -235,8 +185,13 @@ int main()
 	::SetProcessDPIAware();
 
 	desktop_services s;
-	agge::tests::scoped_ptr<application> app(agge_create_application(s));
-	MainDialog dialog(*app);
+	unique_ptr<application> app(agge_create_application(s));
+	application_window dialog(*app);
+	MSG msg;
 
-	MainDialog::PumpMessages();
+	while (::GetMessage(&msg, NULL, 0, 0))
+	{
+		::TranslateMessage(&msg);
+		::DispatchMessage(&msg);
+	}
 }

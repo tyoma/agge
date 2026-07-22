@@ -12,6 +12,15 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/_lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/_bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/_bin)
 
+set(STRMD_NO_TESTS ON)
+set(TASKER_NO_TESTS ON)
+set(UTEE_NO_TESTS ON)
+set(UTFIA_NO_TESTS ON)
+
+if (MSVC AND (MSVC_VERSION LESS_EQUAL 1600))
+	set(TASKER_USE_STD_MT OFF)
+endif()
+
 if (MSVC)
 	if (MSVC_VERSION LESS_EQUAL 1700)
 		include_directories(./compat/msvc10-)
@@ -26,7 +35,7 @@ endif()
 
 add_definitions(-D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
 
-set(GCC_CLANG_COMPILER_OPTIONS_CXX -std=c++11 -fPIC -Wall -fno-rtti)
+set(GCC_CLANG_COMPILER_OPTIONS_CXX -std=c++11 -fPIC -Wall -g)
 set(GCC_CLANG_COMPILER_OPTIONS_CXX ${GCC_CLANG_COMPILER_OPTIONS_CXX}
 	-Wall -Wextra -Wpedantic
 	-Wno-missing-field-initializers
@@ -48,7 +57,6 @@ if (GNU)
 endif()
 
 if (NOT TARGET utfia)
-	set(UTFIA_NO_TESTS ON)
 	add_subdirectory(libraries/utfia)
 endif()
 
@@ -57,7 +65,6 @@ add_subdirectory(src/agge.text)
 
 if (NOT AGGE_NO_TESTS)
 	if (NOT TARGET utee)
-		set(UTEE_NO_TESTS ON)
 		add_subdirectory(libraries/utee)
 	endif()
 	add_subdirectory(tests)
@@ -66,12 +73,10 @@ if (NOT AGGE_NO_TESTS)
 endif()
 if (NOT AGGE_NO_SAMPLES)
 	if (NOT TARGET strmd)
-		set(STRMD_NO_TESTS ON)
 		add_subdirectory(libraries/strmd)
 	endif()
 	if (NOT MSVC_VERSION OR (MSVC_VERSION GREATER_EQUAL 1600))
 		if (NOT TARGET tasker)
-			set(TASKER_NO_TESTS ON)
 			add_subdirectory(libraries/tasker)
 		endif()
 	endif()
