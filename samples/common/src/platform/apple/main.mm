@@ -1,57 +1,33 @@
-#import <samples/common/src/platform/apple/ShellView.h>
+#include "ShellView.h"
 
-#import <Cocoa/Cocoa.h>
+#include <Cocoa/Cocoa.h>
 #include <memory>
 
-@interface AppDelegate : NSObject<NSApplicationDelegate>
-	{
-		NSWindow *_window;
-		ShellView *_view;
-	}
-@end
-
-@implementation AppDelegate
-	- (id)init
-	{
-		if (self = [super init])
-		{
-			NSRect content = NSMakeRect(0.0f, 0.0f, 600.0f, 400.0f);
-			
-			_window = [[NSWindow alloc] initWithContentRect:content styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskResizable)
-				backing:NSBackingStoreBuffered defer:YES];
-			_view = [[ShellView alloc] initWithFrame:content];
-		}
-		return self;
-	}
-
-	- (void)dealloc
-	{
-		[_view release];
-		[_window release];
-		[super dealloc];
-	}
-
-	- (void)applicationWillFinishLaunching:(NSNotification *)notification
-	{	[_window setContentView:_view];	}
-
-	- (void)applicationDidFinishLaunching:(NSNotification *)notification
-	{	[_window makeKeyAndOrderFront:self];	}
-@end
-
-int main(int /*argc*/, const char * /*argv*/[])
+int main(int argc, const char * argv[])
 {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	NSApplication *application = [NSApplication sharedApplication];
-	AppDelegate *applicationDelegate =[[[AppDelegate alloc] init] autorelease];
+	@autoreleasepool
+	{
+		auto app = [NSApplication sharedApplication];
 
-	[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
-	[NSApp activateIgnoringOtherApps:YES];
+		[app setActivationPolicy:NSApplicationActivationPolicyRegular];
 
-	[application setDelegate:applicationDelegate];
+		auto frame = NSMakeRect(100, 100, 640, 480);
+		auto style = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable;	
+		auto window = [[NSWindow alloc] initWithContentRect:frame styleMask:style backing:NSBackingStoreBuffered defer:NO];
+		auto shell = [[ShellView alloc] initWithFrame:frame];
 
-	[application run];
-
-	[pool drain];
-
+		[window setTitle:@"Console-created NSWindow"];
+		[window makeKeyAndOrderFront:nil];
+		[window setContentView:shell];
+		[shell setOnUpdateCaption:^(const char *text) {
+			[window setTitle:[NSString stringWithUTF8String:text]];
+		}];
+		[[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:window queue:nil usingBlock:^(NSNotification *note) {
+			[app stop:nil];
+		}];
+		[app activateIgnoringOtherApps:YES];
+		[app run];
+		[shell setOnUpdateCaption:nil];
+	}
 	return 0;
 }
