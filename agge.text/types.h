@@ -52,9 +52,9 @@ namespace agge
 
 		std::string family;
 		int height : 20;
-		font_weight weight : 4;
+		font_weight weight : 5;
 		unsigned italic : 1;
-		font_hinting hinting : 2;
+		font_hinting hinting : 3;
 	};
 
 
